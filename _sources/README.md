@@ -9,6 +9,8 @@
 
 This repository contains one python notebook per section.
 
+[![deploy-book](https://github.com/gtbook/robotics/actions/workflows/book.yml/badge.svg)](https://github.com/gtbook/robotics/actions/workflows/book.yml)
+
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/gtbook/robotics/HEAD)
 
 Current Draft TOC (chapters will be viewable as we finish drafts):
