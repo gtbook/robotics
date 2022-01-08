@@ -12,17 +12,16 @@ on:
 jobs:
   deploy-book:
     runs-on: ubuntu-latest
+    env:
+      CONDA_LOCK: ${{ false }}
     defaults:
       run:
         shell: bash -l {0}
     steps:
       - uses: actions/checkout@v2
 
-      - env:
-          CONDA_LOCK: ${{ false }}
-
       - name: Activate conda env with conda.lock
-        if: CONDA_LOCK == true
+        if: env.CONDA_LOCK == true
         uses: conda-incubator/setup-miniconda@v2
         with:
           auto-update-conda: false
@@ -31,7 +30,7 @@ jobs:
           environment-file: conda-linux-64.lock
 
       - name: Activate conda env with environment.yml
-        if: CONDA_LOCK == false
+        if: env.CONDA_LOCK == false
         uses: conda-incubator/setup-miniconda@v2
         with:
           auto-update-conda: false
@@ -41,19 +40,19 @@ jobs:
           environment-file: environment.yml
 
       - run: conda info --envs
-        if: CONDA_LOCK == false
+        if: env.CONDA_LOCK == false
         name: Check active env
 
       - run: conda list
-        if: CONDA_LOCK == false
+        if: env.CONDA_LOCK == false
         name: Check versions
 
       - run: pip install plotly==5.5.0
-        if: CONDA_LOCK == true
+        if: env.CONDA_LOCK == true
         name: Install plotly
 
       - run: pip install gtbook
-        if: CONDA_LOCK == true
+        if: env.CONDA_LOCK == true
         name: Install gtbook
 
       - name: Build Frank and Seth's book
