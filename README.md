@@ -1,6 +1,6 @@
 # Introduction to Robotics and Perception *Draft*
 
-> Copyright (c) Frank Dellaert and Seth Hutchinson, All rights Reserved
+> Copyright (c) Frank Dellaert and Seth Hutchinson, All rights Reserved 
 
 > The code in the notebooks and python .py files is covered by the BSD license, like GTSAM; see the LICENSE file for details.
 
