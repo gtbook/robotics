@@ -302,13 +302,30 @@
             <nav id="bd-toc-nav" aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#evaluating-the-cost-of-applying-an-action">
-   2.5.1. Evaluating the Cost of Applying an Action
+  <a class="reference internal nav-link" href="#naive-decision-making-using-priors">
+   2.5.1. Naive decision making using priors
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#minimum-cost">
-   2.5.2. Minimum cost
+  <a class="reference internal nav-link" href="#optimizing-for-the-worst-case">
+   2.5.2. Optimizing for the worst case
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#minimizing-expected-cost">
+   2.5.3. Minimizing expected cost
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#implementation-in-python">
+     2.5.3.1. Implementation in Python
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#incorporating-sensor-information">
+   2.5.4. Incorporating sensor information
   </a>
  </li>
 </ul>
@@ -332,13 +349,30 @@
                         <nav aria-label="Page">
                             <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#evaluating-the-cost-of-applying-an-action">
-   2.5.1. Evaluating the Cost of Applying an Action
+  <a class="reference internal nav-link" href="#naive-decision-making-using-priors">
+   2.5.1. Naive decision making using priors
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#minimum-cost">
-   2.5.2. Minimum cost
+  <a class="reference internal nav-link" href="#optimizing-for-the-worst-case">
+   2.5.2. Optimizing for the worst case
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#minimizing-expected-cost">
+   2.5.3. Minimizing expected cost
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#implementation-in-python">
+     2.5.3.1. Implementation in Python
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#incorporating-sensor-information">
+   2.5.4. Incorporating sensor information
   </a>
  </li>
 </ul>
@@ -360,21 +394,23 @@
 <div class="cell_output docutils container">
 <div class="output text_html">
 <div align='center'>
-<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S25-Trash%20sorting%20robot%20with%20gripper-05.jpg?raw=1' style='height:256 width:100%'/>
+<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S25-Trash%20sorting%20robot%20with%20gripper-07.jpg?raw=1' style='height:256 width:100%'/>
 </div>
 </div></div>
 </div>
-<p>Planning is simple for the trash sorter robot.  At each time instant, we make a decision about what to do, and do it.
-There is no coupling between actions, no dependence on the current action for ensuring success at future stages.
-Thus, planning reduces to nothing more than simple decision making: at this moment, based on the best information
-I have, what single action should I execute. And then repeat this each time a new item of trash arrives.</p>
-<div class="section" id="evaluating-the-cost-of-applying-an-action">
-<h2><span class="section-number">2.5.1. </span>Evaluating the Cost of Applying an Action<a class="headerlink" href="#evaluating-the-cost-of-applying-an-action" title="Permalink to this headline">¶</a></h2>
+<p>Planning is simple for the trash sorter robot.  At each time instant, the robot makes a decision about what
+action to take and then executes that action.
+There is no coupling between actions,
+and there is no dependence on the current action to establish conditions that will ensure success at future stages.
+Thus, planning reduces to simple decision making: at this moment, based on the best information
+available, what single action should the robot execute.
+This process is repeated each time a new item of trash arrives.</p>
+<div class="section" id="naive-decision-making-using-priors">
+<h2><span class="section-number">2.5.1. </span>Naive decision making using priors<a class="headerlink" href="#naive-decision-making-using-priors" title="Permalink to this headline">¶</a></h2>
 <blockquote>
-<div><p>When the world is uncertain, choosing actions is a game of chance. Probability provides some useful tools. The concept of <em>Expectation</em> is key.</p>
+<div><p>A robot without sensors and make naive decisions using prior information.</p>
 </div></blockquote>
-<p>Uncertainty can arise from many sources.
-For the moment, consider the extreme case in which our trash sorting robot is not equipped with any sensing capabilities.
+<p>Consider the case of a trash sorting robot that is not equipped with any sensing capabilities.
 How can this robot make a decision about how to act in the world?
 Without sensing, the best information that is available is the prior knowledge the robot has about the world.
 In our case, this knowledge is encoded as the prior probability <span class="math notranslate nohighlight">\(P(C)\)</span> over the categories of trash.
@@ -386,27 +422,50 @@ We could adopt a simple decision rule for selecting actions:
 This would result in the robot always putting trash in the paper bin.
 If we do this, we expect that the robot will do the right thing around 50% of the time. This isn’t great, but it’s better than any other action, given the typical distribution of categories of trash.
 This approach, however, takes no account of the cost of wrong actions, which can result in significant problems.</p>
+</div>
+<div class="section" id="optimizing-for-the-worst-case">
+<h2><span class="section-number">2.5.2. </span>Optimizing for the worst case<a class="headerlink" href="#optimizing-for-the-worst-case" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>A conservative approach to accounting for costs is to minimize the damage that can occur in the worst case scenario.</p>
+</div></blockquote>
 <p>One way to account for the costs of actions would be to apply an action that minimizes the worst-case cost.
 This provides a quantitative upper bound on how badly things could go.
-We can express this formally as
-$<span class="math notranslate nohighlight">\(a^* = \arg \min_{a_i} \max_{c \in \Omega} \mathrm{cost}(a_i,c).\)</span>$
-From the table above, we see that this approach leads
+Denote by <span class="math notranslate nohighlight">\(\mathrm{cost}(a_i,c)\)</span> the cost of applying action <span class="math notranslate nohighlight">\(a_i\)</span> when the piece of trash
+in the work cell is from category <span class="math notranslate nohighlight">\(c\)</span>.
+We then write our decision rule as a minimization problem</p>
+<div class="math notranslate nohighlight">
+\[a^* = \arg \min_{a_i} \max_{c \in \Omega} \mathrm{cost}(a_i,c).\]</div>
+<p>From the table of costs given in previous sections, we see that this approach leads
 to always executing the <em>nop</em> action, since the worst-case cost for this action is 1,
 while the worst-case costs for the other three actions are 6, 2, and 10.
-This approach, however, makes no sense at all. It merely reduces our trash sorting
-system to a conveyor belt that allows all items of trash to pass through, unsorted.</p>
-<p>What is the right way to approach this problem? The ideal decision would always minimize the cost of executing the action, but because our knowledge of the world is uncertain (captured in the prior probability distribution),
+This approach, however, merely reduces our trash sorting
+system to a conveyor belt that allows all items of trash to pass through, unsorted.
+In this case, the conservative action is to take no action, and
+the robot becomes a motionless spectator.</p>
+</div>
+<div class="section" id="minimizing-expected-cost">
+<h2><span class="section-number">2.5.3. </span>Minimizing expected cost<a class="headerlink" href="#minimizing-expected-cost" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>If the system will operate over a long period of time, we can optimize the long-term average cost.</p>
+</div></blockquote>
+<p>When uncertainty exists for each action, what is the right way to minimize costs?
+The ideal decision would always minimize the cost of executing each action, but because our knowledge of the world is uncertain (captured in the prior probability distribution),
 it is impossible to know which action this would be.
-In such cases, the concept of <span class="math notranslate nohighlight">\(expectation\)</span> from probability theory provides a principled way to reason about decisions.</p>
-<p>The idea of expected cost is this: If we were to perform the action many times, what do we expect would be the average cost over those many actions.
-Let us denote the cost of applying action <span class="math notranslate nohighlight">\(a\)</span> to trash category <span class="math notranslate nohighlight">\(c\)</span> by <span class="math notranslate nohighlight">\(cost(a,c)\)</span>. The expected value for the cost of applying action <span class="math notranslate nohighlight">\(a\)</span>
+In such cases, the concept of <span class="math notranslate nohighlight">\(expectation\)</span> from probability theory (introduced above) provides a principled way to reason about decisions.</p>
+<p>The idea of expected cost is this: what do we expect to be the average cost of performing an action many times.
+The expected value for the cost of applying action <span class="math notranslate nohighlight">\(a\)</span>
 is merely the weighted average of the costs <span class="math notranslate nohighlight">\(cost(a,c)\)</span>, where the weights are exactly the prior probabilities assigned to the categories, <span class="math notranslate nohighlight">\(c\)</span>:</p>
 <div class="math notranslate nohighlight">
 \[E[ cost(a, C) ] = \sum_{c \in \Omega} cost(a,c) P(c) \]</div>
-<p>In the equation above for expectation, the notation <span class="math notranslate nohighlight">\(E [ cost(a, C) ]\)</span> denotes the expected cost for executing the action <span class="math notranslate nohighlight">\(a\)</span> with the expectation being taken with respect to the randomly occurring trash category.
+<p>In the equation above for expectation, the notation <span class="math notranslate nohighlight">\(E [ cost(a, C) ]\)</span> denotes the expected cost for executing the action <span class="math notranslate nohighlight">\(a\)</span> with the expectation being taken with respect to the randomly occurring trash category <span class="math notranslate nohighlight">\(C\)</span>.
 We use upper case <span class="math notranslate nohighlight">\(C\)</span> to indicate that the category is a random quantity, and that the expectation
 should be computed with respect to the probability distribution on categories
 (i.e., the priors given in the previous section).</p>
+<p>We can now formulate our decision process as the following minimization problem</p>
+<div class="math notranslate nohighlight">
+\[a^* = \arg \min_{a_i} E[ cost(a_i, C) ]\]</div>
+<div class="section" id="implementation-in-python">
+<h3><span class="section-number">2.5.3.1. </span>Implementation in Python<a class="headerlink" href="#implementation-in-python" title="Permalink to this headline">¶</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># as before, in S12:</span>
@@ -510,10 +569,6 @@ should be computed with respect to the probability distribution on categories
 </table>
 </div></div></div>
 </div>
-<p>With this, we can calculate the expected cost of taking action “put in glass bin”:</p>
-<p><span class="math notranslate nohighlight">\(E[cost(a_1, C)] = 2 \times 0.25 + 2 \times 0.2 + 4 \times 0.3 + 6 \times 0.2 + 0 \times 0.05 = 3.3\)</span></p>
-<p>If we apply this to each action, we arrive to the following table of expected costs for the actions:</p>
-<p><strong>CAN WE CHANGE THE NOTATION BELOW FROM P(T) TO SOMETHING ABOUT COSTS??</strong></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cost</span> <span class="o">@</span> <span class="n">category_prior</span><span class="o">.</span><span class="n">pmf</span><span class="p">()</span>
@@ -531,13 +586,29 @@ categories is to always place the trash item in the metal bin.
 If we wish to improve upon this, it will be necessary for the robot to somehow improve
 its knowledge of the world state.  This can be done by using sensors to measure various
 properties of the world, and then drawing inferences about the world state using these measurements.
-We now turn out attention to this problem.</p>
+We now turn our attention to this problem.</p>
 </div>
-<div class="section" id="minimum-cost">
-<h2><span class="section-number">2.5.2. </span>Minimum cost<a class="headerlink" href="#minimum-cost" title="Permalink to this headline">¶</a></h2>
-<p>Given an posterior probability over the possible classes does not yet tell us what action to take. With decision theory, we can associate a cost with making the right or wrong decision.</p>
+</div>
+<div class="section" id="incorporating-sensor-information">
+<h2><span class="section-number">2.5.4. </span>Incorporating sensor information<a class="headerlink" href="#incorporating-sensor-information" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>We can exploit sensor information to make better decisions.</p>
+</div></blockquote>
+<p>Above, we learned how to compute the posterior <span class="math notranslate nohighlight">\(P(C|S)\)</span> using MAP estimation.
+We can use this conditional distribution to compute the expectation of the
+cost of an action given that the sensor returned a specific measurement.
+This can be done by modifying the usual equation for expectation so
+that the conditional distribution $<span class="math notranslate nohighlight">\(P(C|S)\)</span> is used instead of the prior <span class="math notranslate nohighlight">\(P(C)\)</span>:</p>
 <div class="math notranslate nohighlight">
-\[a^*(Z=z) = \arg \min_a \sum_c C(a|C=c) P(C=c|Z=z)\]</div>
+\[E[ cost(a, C) | S=s ] = \sum_{c \in \Omega} cost(a,c) P(c|S=s) \]</div>
+<p>Our decision process can then be formulated as a minimization of this conditional
+expected cost:</p>
+<div class="math notranslate nohighlight">
+\[a^*(S=s) = \arg \min_a E [ cost(a, C) | S=s ]\]</div>
+<p>Note that this approach can also be applied when we have multiple sensors by conditioning
+on the collection of sensor readings, say <span class="math notranslate nohighlight">\(s_1, \dots, s_n\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[E[ cost(a, C) | S_1=s_1, \dots, S_n=s_n ] = \sum_{c \in \Omega} cost(a,c) P(c|S_1=s_1, \dots, S_n=s_n ) \]</div>
 <p>In python, we just calculate the expected cost, now using the posterior instead of the prior, and take argmin using <code class="docutils literal notranslate"><span class="pre">np.argmin</span></code>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
