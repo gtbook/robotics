@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>A Vacuum Cleaning Robot &#8212; Introduction to Robotics and Perception</title>
+    <title>A Robot Vacuum Cleaner &#8212; Introduction to Robotics and Perception</title>
     
   <link href="_static/css/theme.css" rel="stylesheet">
   <link href="_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
@@ -55,8 +55,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="1. State Abstractions" href="S31_vacuum_state.html" />
-    <link rel="prev" title="6. Learning" href="S26_sorter_learning.html" />
+    <link rel="next" title="1. Modeling the State of the Vacuum Cleaning Robot" href="S31_vacuum_state.html" />
+    <link rel="prev" title="1.6. Learning" href="S26_sorter_learning.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
     
@@ -155,7 +155,7 @@
  </li>
  <li class="toctree-l1 has-children">
   <a class="reference internal" href="S20_sorter_intro.html">
-   A Trash Sorting Robot
+   1. A Trash Sorting Robot
   </a>
   <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
   <label for="toctree-checkbox-2">
@@ -165,39 +165,39 @@
   <ul>
    <li class="toctree-l2">
     <a class="reference internal" href="S21_sorter_state.html">
-     1. Modeling the World State
+     1.1. Modeling the World State
     </a>
    </li>
    <li class="toctree-l2">
     <a class="reference internal" href="S22_sorter_actions.html">
-     2. Actions for Sorting Trash
+     1.2. Actions for Sorting Trash
     </a>
    </li>
    <li class="toctree-l2">
     <a class="reference internal" href="S23_sorter_sensing.html">
-     3. Sensors for Sorting Trash
+     1.3. Sensors for Sorting Trash
     </a>
    </li>
    <li class="toctree-l2">
     <a class="reference internal" href="S24_sorter_perception.html">
-     4. Perception
+     1.4. Perception
     </a>
    </li>
    <li class="toctree-l2">
     <a class="reference internal" href="S25_sorter_decision_theory.html">
-     5. Decision Theory
+     1.5. Decision Theory
     </a>
    </li>
    <li class="toctree-l2">
     <a class="reference internal" href="S26_sorter_learning.html">
-     6. Learning
+     1.6. Learning
     </a>
    </li>
   </ul>
  </li>
  <li class="toctree-l1 current active has-children">
   <a class="current reference internal" href="#">
-   A Vacuum Cleaning Robot
+   A Robot Vacuum Cleaner
   </a>
   <input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
   <label for="toctree-checkbox-3">
@@ -207,7 +207,7 @@
   <ul>
    <li class="toctree-l2">
     <a class="reference internal" href="S31_vacuum_state.html">
-     1. State Abstractions
+     1. Modeling the State of the Vacuum Cleaning Robot
     </a>
    </li>
    <li class="toctree-l2">
@@ -223,6 +223,11 @@
    <li class="toctree-l2">
     <a class="reference internal" href="S34_vacuum_perception.html">
      4. Perception with Graphical Models
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S35_vacuum_decision.html">
+     5. Markov Decision Processes
     </a>
    </li>
   </ul>
@@ -333,7 +338,7 @@
         <div class="col-12 col-md-9 pl-md-3 pr-md-0">
             <!-- Table of contents that is only displayed when printing the page -->
             <div id="jb-print-docs-body" class="onlyprint">
-                <h1>A Vacuum Cleaning Robot</h1>
+                <h1>A Robot Vacuum Cleaner</h1>
                 <!-- Table of contents -->
                 <div id="print-main-content">
                     <div id="jb-print-toc">
@@ -345,26 +350,56 @@
               <div>
                 
   <p><a href="https://colab.research.google.com/github/gtbook/robotics/blob/main/S30_vacuum_intro.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a></p>
-<div class="tex2jax_ignore mathjax_ignore section" id="a-vacuum-cleaning-robot">
-<h1>A Vacuum Cleaning Robot<a class="headerlink" href="#a-vacuum-cleaning-robot" title="Permalink to this headline">¶</a></h1>
+<div class="tex2jax_ignore mathjax_ignore section" id="a-robot-vacuum-cleaner">
+<h1>A Robot Vacuum Cleaner<a class="headerlink" href="#a-robot-vacuum-cleaner" title="Permalink to this headline">¶</a></h1>
 <blockquote>
-<div><p>A domestic vacuuming robot is a good model to introduce probabilistic actions and reasoning over time, still in discrete state spaces.</p>
+<div><p>A vacuum cleaning robot can be used to model reasoning over time about probabilistic actions in a discrete state space.</p>
 </div></blockquote>
-<p><strong>This Section is still in draft mode and was released for adventurous spirits (and TAs) only.</strong></p>
 <div class="cell tag_remove-input docutils container">
 <div class="cell_output docutils container">
 <div class="output text_html">
 <div align='center'>
-<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S30-iRobot%20vacuuming%20robot-02.jpg?raw=1' style='height:256 width:100%'/>
+<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S30-iRobot%20vacuuming%20robot-07.jpg?raw=1' style='height:256 width:100%'/>
 </div>
 </div></div>
 </div>
-<p>The second robot we will discuss is a vacuuming robot that knows about rooms in a house, but still reasons in a discrete state space. However, we will now add (discrete) time as a new dimension.</p>
-<p>We will learn about probabilistic outcomes of actions, which we can model with conditional probability distributions, just like we did with the measurements in the previous chapter. Given set of actions over time, we can then sample  plausible state trajectories. For our vacuum robot, states corresponds to location, and hence it is as if we are simulating the robot moving from room to room.</p>
-<p>Sensing will be quite limited in this chapter. We will just model a (discrete) light sensor, because this chapter will mainly be concerned with action.</p>
-<p>To turn noisy actions and probabilistic sensing into an evolving probability over the current state of the robot, i.e., where it is, we will introduce <strong>Hidden Markov Models</strong>. An HMM, as they are frequently abbreviated, is a probabilistic model for sensing over time, and has its roots in speech recognition. But we will use it to find the most probable sequence of states given a set of measurements and actions.</p>
-<p>Finally, to plan in a sequential fashion, we will introduce <strong>Markov Decision Processes</strong>. An MDP adds the notion of <em>reward</em>, which will allow us to reason about optimal actions. We will even be able to deduce an optimal <em>policy</em>, i.e., a recipe for what to do in what state, to maximize your reward over time.</p>
-<p>Finally, we will introduce the notion of reinforcement learning, where we will estimate the parameters of an MDP from data.</p>
+<p>The second robot we will discuss is a vacuuming robot.  We assume that this robot is equipped with software that can perform navigation, motion planning, and motion control.  This assumption allows us to focus on high-level problems (for example, deciding which room to clean next), without worrying now about low-level details (e.g., planning specific paths
+to cover a particular room, or navigating through a doorway).</p>
+<p>There are a number of differences between this robot and the trash sorting robot of the previous chapter.
+First, the effects of actions depend on the current world state; if a robot is in the living room and moves to
+its left, it will arrive to a different location than if it had started in the office.
+Second, the actions executed by the vacuum cleaning robot have uncertain effects.
+This is much different than the actions of the trash sorting robot, which achieved its goals deterministically,
+regardless of the current state (the “move object to the metal bin” action moves an object to the metal
+bin, regardless of the category of the object, and with 100% reliability).
+Third, because the effects of actions depend on state, achieving goals in the future will depend
+on the actions the robot executes now (since current actions affect future states).
+Therefore, this robot must consider how the world state evolves with the passing of time.</p>
+<p>In this chapter, we will learn about probabilistic outcomes of actions, which we can model with conditional probability distributions, just like we did with the measurements in the previous chapter.
+We will learn how to propagate uncertainty forward in time for specific sequences of actions,
+and how to generate sample trajectories from the corresponding probability distributions.
+For our vacuum robot, states correspond to rooms in the house and trajectories
+correspond to the robot moving from room to room.</p>
+<p>Sensing will be quite limited in this chapter.
+We will use a simple (discrete) light sensor.
+However, because sensor measurements depend on state, and because state depends on
+the sequence of actions that has been executed, perception becomes a more interesting
+problem.
+While our trash sorting robot relied on simple MLE or MAP estimation using the current sensor reading,
+our vacuum cleaning robot will combine knowledge about the history of its actions (which have uncertain
+effects) with the sequence of sensor measurements.
+We will solve this perception problem using <strong>Hidden Markov Models (HMM’s)</strong>.
+An HMM is a probabilistic model for sensing over time.
+While they initially gained popularity in the field of speech recognition,
+we will use them to find the most probable sequence of states given a set of measurements and actions.</p>
+<p>Planning is also more interesting for our vacuum cleaning robot.
+Instead of choosing a single action to minimize a cost for the current action,
+we must reason about sequences of actions that occur over time.
+To do this, we will introduce <strong>Markov Decision Processes (MDPs)</strong>.
+An MDP adds the notion of <em>reward</em>, which will allow us to reason about optimal actions.
+We will even be able to deduce an optimal <em>policy</em>, i.e., a recipe for what to do in each state
+to maximize the aggregate reward over time.</p>
+<p>Finally, we will introduce the notion of reinforcement learning, where we will estimate the parameters of an MDP data during the robot’s normal operation.</p>
 <div class="toctree-wrapper compound">
 </div>
 </div>
@@ -398,13 +433,13 @@
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
             <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title"><span class="section-number">6. </span>Learning</p>
+            <p class="prev-next-title"><span class="section-number">1.6. </span>Learning</p>
         </div>
     </a>
     <a class='right-next' id="next-link" href="S31_vacuum_state.html" title="next page">
     <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title"><span class="section-number">1. </span>State Abstractions</p>
+        <p class="prev-next-title"><span class="section-number">1. </span>Modeling the State of the Vacuum Cleaning Robot</p>
     </div>
     <i class="fas fa-angle-right"></i>
     </a>
