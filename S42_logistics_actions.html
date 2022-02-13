@@ -1,0 +1,960 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>4.2. Moving in 2D &#8212; Introduction to Robotics and Perception</title>
+    
+  <link href="_static/css/theme.css" rel="stylesheet">
+  <link href="_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-book-theme.css?digest=c3fdc42140077d1ad13ad2f1588a4309" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/style.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    
+  <link rel="preload" as="script" href="_static/js/index.be7d3bbb2ef33a8344ce.js">
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/togglebutton.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="_static/sphinx-book-theme.d59cb220de22ca1c485ebbdc042f0030.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script async="async" src="https://unpkg.com/thebe@0.5.1/lib/index.js"></script>
+    <script>
+        const thebe_selector = ".thebe"
+        const thebe_selector_input = "pre"
+        const thebe_selector_output = ".output"
+    </script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="4.3. Sensor Models with Continuous State" href="S43_logistics_sensing.html" />
+    <link rel="prev" title="4.1. Continuous State" href="S41_logistics_state.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+<script async="" src="https://www.google-analytics.com/analytics.js"></script>
+<script>
+                        window.ga = window.ga || function () {
+                            (ga.q = ga.q || []).push(arguments) };
+                        ga.l = +new Date;
+                        ga('create', 'UA-312077-7', 'auto');
+                        ga('set', 'anonymizeIp', true);
+                        ga('send', 'pageview');
+                    </script>
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="_static/logo.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Introduction to Robotics and Perception</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="intro.html">
+   Introduction to Robotics and Perception
+  </a>
+ </li>
+</ul>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="S10_introduction.html">
+   1. Introduction
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S11_intro_state.html">
+     1.1. Representing State
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S12_intro_actions.html">
+     1.2. Robot Actions
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S13_intro_sensing.html">
+     1.3. Sensing
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S14_intro_perception.html">
+     1.4. Perception
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S15_intro_decision.html">
+     1.5. Planning
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S16_intro_learning.html">
+     1.6. Learning
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="S20_sorter_intro.html">
+   2. A Trash Sorting Robot
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S21_sorter_state.html">
+     2.1. Modeling the World State
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S22_sorter_actions.html">
+     2.2. Actions for Sorting Trash
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S23_sorter_sensing.html">
+     2.3. Sensors for Sorting Trash
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S24_sorter_perception.html">
+     2.4. Perception
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S25_sorter_decision_theory.html">
+     2.5. Decision Theory
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S26_sorter_learning.html">
+     2.6. Learning
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="S30_vacuum_intro.html">
+   3. A Robot Vacuum Cleaner
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S31_vacuum_state.html">
+     3.1. Modeling the State of the Vacuum Cleaning Robot
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S32_vacuum_actions.html">
+     3.2. Actions over time
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S33_vacuum_sensing.html">
+     3.3. Dynamic Bayes Nets
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S34_vacuum_perception.html">
+     3.4. Perception with Graphical Models
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S35_vacuum_decision.html">
+     3.5. Markov Decision Processes
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S36_vacuum_RL.html">
+     3.6. Reinforcement Learning
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="S40_logistics_intro.html">
+   4. Warehouse Robots in 2D
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2">
+    <a class="reference internal" href="S41_logistics_state.html">
+     4.1. Continuous State
+    </a>
+   </li>
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     4.2. Moving in 2D
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S43_logistics_sensing.html">
+     4.3. Sensor Models with Continuous State
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S44_logistics_perception.html">
+     4.4. Localization
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="topbar container-xl fixed-top">
+    <div class="topbar-contents row">
+        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
+        <div class="col pl-md-4 topbar-main">
+            
+            <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+                data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+                <i class="fas fa-bars"></i>
+                <i class="fas fa-arrow-left"></i>
+                <i class="fas fa-arrow-up"></i>
+            </button>
+            
+            
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="_sources/S42_logistics_actions.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.ipynb</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+                onclick="printPdf(this)" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+            <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/gtbook/robotics"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        <a class="issues-button"
+            href="https://github.com/gtbook/robotics/issues/new?title=Issue%20on%20page%20%2FS42_logistics_actions.html&body=Your%20issue%20content%20here."><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
+        
+    </div>
+</div>
+
+            <!-- Full screen (wrap in <a> to have style consistency -->
+
+<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+        title="Fullscreen mode"><i
+            class="fas fa-expand"></i></button></a>
+
+            <!-- Launch buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
+    <div class="dropdown-buttons">
+        
+        <a class="binder-button" href="https://mybinder.org/v2/gh/gtbook/robotics/main?urlpath=tree/S42_logistics_actions.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
+                data-placement="left"><img class="binder-button-logo"
+                    src="_static/images/logo_binder.svg"
+                    alt="Interact on binder">Binder</button></a>
+        
+        
+        
+        
+    </div>
+</div>
+
+        </div>
+
+        <!-- Table of contents -->
+        <div class="d-none d-md-block col-md-2 bd-toc show noprint">
+            
+            <div class="tocsection onthispage pt-5 pb-3">
+                <i class="fas fa-list"></i> Contents
+            </div>
+            <nav id="bd-toc-nav" aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#omni-wheels">
+   4.2.1. Omni Wheels
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#example">
+   4.2.2. Example
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#kinematics-of-omni-wheels">
+   4.2.3. Kinematics of Omni Wheels
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-jacobian-matrix">
+   4.2.4. The Jacobian Matrix
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#omni-directional-movement-in-practice">
+   4.2.5. Omni-directional Movement in Practice
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#a-gaussian-dynamic-bayes-net">
+   4.2.6. A Gaussian Dynamic Bayes Net
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#gaussian-dbns-in-code">
+   4.2.7. Gaussian DBNs in Code
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exercise">
+     4.2.7.1. Exercise
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#simulating-a-continuous-trajectory">
+   4.2.8. Simulating a Continuous Trajectory
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#gtsam-101">
+   4.2.9. GTSAM 101
+  </a>
+ </li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Moving in 2D</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#omni-wheels">
+   4.2.1. Omni Wheels
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#example">
+   4.2.2. Example
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#kinematics-of-omni-wheels">
+   4.2.3. Kinematics of Omni Wheels
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-jacobian-matrix">
+   4.2.4. The Jacobian Matrix
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#omni-directional-movement-in-practice">
+   4.2.5. Omni-directional Movement in Practice
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#a-gaussian-dynamic-bayes-net">
+   4.2.6. A Gaussian Dynamic Bayes Net
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#gaussian-dbns-in-code">
+   4.2.7. Gaussian DBNs in Code
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exercise">
+     4.2.7.1. Exercise
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#simulating-a-continuous-trajectory">
+   4.2.8. Simulating a Continuous Trajectory
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#gtsam-101">
+   4.2.9. GTSAM 101
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            
+              <div>
+                
+  <p><a href="https://colab.research.google.com/github/gtbook/robotics/blob/main/S42_logistics_actions.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a></p>
+<div class="tex2jax_ignore mathjax_ignore section" id="moving-in-2d">
+<h1><span class="section-number">4.2. </span>Moving in 2D<a class="headerlink" href="#moving-in-2d" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div><p>Omniwheels are a great way to move omnidirectionally in 2D.</p>
+</div></blockquote>
+<p><strong>This Section is still in draft mode and was released for adventurous spirits (and TAs) only.</strong></p>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<div class="output text_html">
+<div align='center'>
+<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S42-Warehouse%20robots-05.jpg?raw=1' style='height:256 width:100%'/>
+</div>
+</div></div>
+</div>
+<div class="section" id="omni-wheels">
+<h2><span class="section-number">4.2.1. </span>Omni Wheels<a class="headerlink" href="#omni-wheels" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>Omni wheels make omnidirectional movement possible.</p>
+</div></blockquote>
+<p>An <a class="reference external" href="https://en.wikipedia.org/wiki/Omni_wheel">omni wheel</a> is a wheel that -instead of a tire- has small rollers along its rim, whose axes are arranged perpendicular to the wheel’s own axis. Because of this, unlike a conventional wheel, movement perpendicular to the wheel is <em>not</em> resisted, i.e., the wheel can slide effortless from left to right. The image below (from Wikipedia) shows an example:</p>
+<p><a title="Rotacaster, CC BY 1.0 &lt;https://creativecommons.org/licenses/by/1.0&gt;, via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:Triple_Rotacaster_commercial_industrial_omni_wheel.jpg"><img width="256" alt="Triple Rotacaster commercial industrial omni wheel" src="https://upload.wikimedia.org/wikipedia/commons/e/e3/Triple_Rotacaster_commercial_industrial_omni_wheel.jpg"></a></p>
+<p>Apart from being potentially amazing for parallel parking, in robotics omni wheels are very popular to enable omni-directional movement of robot platforms.</p>
+</div>
+<div class="section" id="example">
+<h2><span class="section-number">4.2.2. </span>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>Three wheels is enough!</p>
+</div></blockquote>
+<p>As an example, let us imagine that our flatbed warehouse robot is circular and has three omni wheels mounted on its rim. The coordinates of each wheel, in body coordinates, are</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align*}
+p^i_x &amp;= R \cos(\theta^i) \\
+p^i_y &amp;= R \cos(\theta^i) \\
+\theta^i &amp;= i \frac{2\pi}{3}
+\end{align*}
+\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(R\)</span> is the radius of the robot. The angle <span class="math notranslate nohighlight">\(\theta^i\)</span> is angle between the robot’s x-axis and the wheel’s axis.</p>
+<p>In code, we create a small function:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">R</span> <span class="o">=</span> <span class="mf">0.50</span> <span class="c1"># robot is circular with 50 cm radius</span>
+<span class="n">r</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="mf">0.20</span><span class="p">,</span> <span class="mf">0.06</span> <span class="c1"># wheel radius and width</span>
+<span class="n">num_wheels</span> <span class="o">=</span> <span class="mi">3</span>
+
+<span class="k">def</span> <span class="nf">wheel_pose</span><span class="p">(</span><span class="n">i</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return x,y, and theta for wheel with given index.&quot;&quot;&quot;</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="mi">2</span><span class="o">/</span><span class="n">num_wheels</span>
+    <span class="n">px</span><span class="p">,</span> <span class="n">py</span> <span class="o">=</span> <span class="n">R</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="n">R</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">,</span> <span class="n">theta</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>This yields the configuration below:</p>
+<div class="cell tag_hide-input docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">8</span><span class="p">))</span>
+
+<span class="n">circle</span> <span class="o">=</span> <span class="n">Circle</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">R</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">circle</span><span class="p">)</span>
+
+<span class="n">wheels</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+    <span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">,</span> <span class="n">theta</span> <span class="o">=</span> <span class="n">wheel_pose</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">wheel</span> <span class="o">=</span> <span class="n">Rectangle</span><span class="p">((</span><span class="o">-</span><span class="n">w</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="n">r</span><span class="p">),</span> <span class="n">w</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">r</span><span class="p">)</span>
+    <span class="n">wheel</span><span class="o">.</span><span class="n">set_transform</span><span class="p">(</span><span class="n">Affine2D</span><span class="p">()</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">))</span>
+    <span class="n">wheels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wheel</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">add_collection</span><span class="p">(</span><span class="n">PatchCollection</span><span class="p">(</span><span class="n">wheels</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">);</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/S42_logistics_actions_11_0.png" src="_images/S42_logistics_actions_11_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="kinematics-of-omni-wheels">
+<h2><span class="section-number">4.2.3. </span>Kinematics of Omni Wheels<a class="headerlink" href="#kinematics-of-omni-wheels" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>From robot velocity to wheel velocity.</p>
+</div></blockquote>
+<p>Kinematics is the study of moving things. In particular, for our omni-directional robot we will ask “What should the individual wheel velocities be given that we want the robot to move with a certain velocity?”</p>
+<p>We will only be concerned with the <strong>translational velocity</strong> <span class="math notranslate nohighlight">\(v=(v_x, v_y)\)</span> for now. For a <em>single</em> wheel, if the robot moves with velocity <span class="math notranslate nohighlight">\(v\)</span>, then this induces a velocity at the wheel’s location <em>parallel</em> and <em>perpendicular</em> to the wheel. In particular, for wheel <span class="math notranslate nohighlight">\(i\)</span> we have</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align*}
+v^i_{\parallel} &amp;= - v_x \sin \theta^i + v_y \cos \theta^i \\
+v^i_{\perp} &amp;= v_x \cos \theta^i + v_y \sin \theta^i
+\end{align*}
+\end{split}\]</div>
+<p>In code:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">wheel_velocity</span><span class="p">(</span><span class="n">vx</span><span class="p">:</span><span class="nb">float</span><span class="p">,</span> <span class="n">vy</span><span class="p">:</span><span class="nb">float</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calulate parallel and perpendicular velocities at wheel i&quot;&quot;&quot;</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">theta</span> <span class="o">=</span> <span class="n">wheel_pose</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">para</span> <span class="o">=</span> <span class="o">-</span> <span class="n">vx</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">+</span> <span class="n">vy</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+    <span class="n">perp</span> <span class="o">=</span>   <span class="n">vx</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">+</span> <span class="n">vy</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">para</span><span class="p">,</span> <span class="n">perp</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Below we use this to show how the desired velocity (in blue) translates graphically to parallel (green) and perpendicular (red) velocity components at the wheel sites:</p>
+<div class="cell tag_hide-input docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">vx</span><span class="p">,</span> <span class="n">vy</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.1</span> <span class="c1"># change these !</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">8</span><span class="p">))</span>
+
+<span class="n">circle</span> <span class="o">=</span> <span class="n">Circle</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">R</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">circle</span><span class="p">)</span>
+
+<span class="n">wheels</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+    <span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">,</span> <span class="n">theta</span> <span class="o">=</span> <span class="n">wheel_pose</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">wheel</span> <span class="o">=</span> <span class="n">Rectangle</span><span class="p">((</span><span class="o">-</span><span class="n">w</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="n">r</span><span class="p">),</span> <span class="n">w</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">r</span><span class="p">)</span>
+    <span class="n">wheel</span><span class="o">.</span><span class="n">set_transform</span><span class="p">(</span><span class="n">Affine2D</span><span class="p">()</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">))</span>
+    <span class="n">wheels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wheel</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">add_collection</span><span class="p">(</span><span class="n">PatchCollection</span><span class="p">(</span><span class="n">wheels</span><span class="p">))</span>
+
+
+<span class="n">plt</span><span class="o">.</span><span class="n">arrow</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">vx</span><span class="p">,</span> <span class="n">vy</span><span class="p">,</span> <span class="n">head_width</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+    <span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">,</span> <span class="n">theta</span> <span class="o">=</span> <span class="n">wheel_pose</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">para</span><span class="p">,</span> <span class="n">perp</span> <span class="o">=</span> <span class="n">wheel_velocity</span><span class="p">(</span><span class="n">vx</span><span class="p">,</span> <span class="n">vy</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">arrow</span><span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">,</span> <span class="n">vx</span><span class="p">,</span> <span class="n">vy</span><span class="p">,</span> <span class="n">head_width</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">arrow</span><span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span><span class="o">*</span><span class="n">para</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span><span class="o">*</span><span class="n">para</span><span class="p">,</span> <span class="n">head_width</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;lightgreen&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">arrow</span><span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span><span class="o">*</span><span class="n">perp</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span><span class="o">*</span><span class="n">perp</span><span class="p">,</span> <span class="n">head_width</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">);</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/S42_logistics_actions_15_0.png" src="_images/S42_logistics_actions_15_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="the-jacobian-matrix">
+<h2><span class="section-number">4.2.4. </span>The Jacobian Matrix<a class="headerlink" href="#the-jacobian-matrix" title="Permalink to this headline">¶</a></h2>
+<p>The motion <em>perpendicular</em> to the wheel is not resisted by the rollers: they will just roll at exactly the right speed to accommodate any movement in this direction. Because this allows the wheel to “slide”, we also call this the <strong>sliding direction</strong>.</p>
+<p>On the other hand, the contact of each wheel has to move exactly opposite to the parallel or <strong>driving direction</strong> of the velocity, because it cannot slide in that direction. As a consequence, if the radius of each wheel is <span class="math notranslate nohighlight">\(r\)</span>, the angular velocity <span class="math notranslate nohighlight">\(\omega^i\)</span> of the wheel has to be</p>
+<div class="math notranslate nohighlight">
+\[\omega^i = \frac{v^i_\parallel}{r}\]</div>
+<p>Because we have three wheels, we can combine all of the above in <span class="math notranslate nohighlight">\(3\times2\)</span> <strong>Jacobian matrix</strong> that translates a desired robot velocity <span class="math notranslate nohighlight">\(v=(v_x,v_y)\)</span> to the appropriate commanded wheel velocities:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{pmatrix}\omega^1 \\ \omega^2 \\ \omega^3 \end{pmatrix} 
+= \frac{1}{r}
+\begin{pmatrix}- \sin\theta^1 &amp; \cos\theta^1 \\ - \sin\theta^2 &amp; \cos\theta^2 \\ - \sin\theta^3 &amp; \cos\theta^3 
+\end{pmatrix}
+\begin{pmatrix}v_x \\ v_y \end{pmatrix}
+\end{split}\]</div>
+<p>For the three regularly arranged omni wheels with <span class="math notranslate nohighlight">\(\theta^1=0\)</span>, <span class="math notranslate nohighlight">\(\theta^2=2\pi/3\)</span>, and <span class="math notranslate nohighlight">\(\theta^3=4\pi/3\)</span> this becomes</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{pmatrix}\omega^1 \\ \omega^2 \\ \omega^3 \end{pmatrix} 
+= \frac{1}{r}
+\begin{pmatrix}0 &amp; 1 \\ -0.866 &amp; -0.5 \\ 0.866 &amp; -0.5 
+\end{pmatrix}
+\begin{pmatrix}v_x \\ v_y \end{pmatrix}
+\end{split}\]</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">jacobian_matrix</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Compute matrix converting from velocity to wheel velocities.&quot;&quot;&quot;</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_wheels</span><span class="p">):</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">theta</span> <span class="o">=</span> <span class="n">wheel_pose</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)])</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span><span class="o">/</span><span class="n">r</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can verify that doing the matrix-velocity multiplication yields the same result as using the <code class="docutils literal notranslate"><span class="pre">wheel_velocity</span></code> function:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+    <span class="n">para</span><span class="p">,</span> <span class="n">perp</span> <span class="o">=</span> <span class="n">wheel_velocity</span><span class="p">(</span><span class="n">vx</span><span class="p">,</span> <span class="n">vy</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;wheel </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">para</span><span class="o">/</span><span class="n">r</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Using matrix method:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">jacobian_matrix</span><span class="p">()</span> <span class="o">@</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Point2</span><span class="p">(</span><span class="n">vx</span><span class="p">,</span> <span class="n">vy</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>wheel 0: 0.5
+wheel 1: -1.549038105676658
+wheel 2: 1.0490381056766573
+
+Using matrix method:
+[ 0.5        -1.54903811  1.04903811]
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="omni-directional-movement-in-practice">
+<h2><span class="section-number">4.2.5. </span>Omni-directional Movement in Practice<a class="headerlink" href="#omni-directional-movement-in-practice" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>Additional transforms might be required.</p>
+</div></blockquote>
+<p>To summarize, given a velocity in the robot’s body coordinates, we can multiply it with the Jacobian matrix <span class="math notranslate nohighlight">\(J\)</span> to obtain the angular wheel velocities that can be commanded. The above exposition can be directly generalized to an arbitrary number of wheels, mounted in arbitrary locations. Some care needs to be taken that the chosen configuration is not singular, which would result in being only to move in one particular direction (or not at all!).</p>
+<p>In general we want a robot to move in a particular direction in the warehouse, or, in general in <em>world coordinates</em>. In this chapter we have assumed that the robot orientation is aligned with the warehouse orientation, so conveniently we have to do nothing.However, if one were to model the robot’s orientation, we would simply have to rotate the desired world velocity into the body coordinate frame. We will see how to do this later in this book.</p>
+<p>If we <em>do</em> care about orientation, omni wheels can actually be used to <em>rotate</em> the robot, as well. Think about applying the same constant angular velocity to all three wheels: the robot will now simply rotate in place. In other words, we could add a <em>third</em> column to the Jacobian matrix that translates a desired angular velocity into wheel velocities. That will allow us to command any combination of linear and angular velocity.</p>
+<p>Finally, there is a second type of wheel, the “mecanum wheel”, where the rollers are <em>not</em> aligned with the wheel rim, but are rotated by some (constant) amount. That complicates the math a little bit, but in the end we will again obtain a Jacobian matrix. We will not discuss this further.</p>
+</div>
+<div class="section" id="a-gaussian-dynamic-bayes-net">
+<h2><span class="section-number">4.2.6. </span>A Gaussian Dynamic Bayes Net<a class="headerlink" href="#a-gaussian-dynamic-bayes-net" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>Modeling stochastic action in continuous spaces can again be done using DBS.</p>
+</div></blockquote>
+<p>Modeling with continuous densities is done with <em>continuous</em> dynamic bayes nets (DBNs).
+Omni wheels are notoriously flaky in the execution, especially on uneven ground or carpet. Hence, we need to model the uncertainty associated with commanded movements, which are now continuous displacements <span class="math notranslate nohighlight">\(u_k\in\mathbb{R}^2\)</span>.
+Recall that we created a DBN with discrete actions, states, and measurements in the previous chapter. Here we do the same, except with <em>continuous</em> densities, specifying a DBN that encodes the joint density <span class="math notranslate nohighlight">\(p(X|U)\)</span> on the continuous states <span class="math notranslate nohighlight">\(X\doteq\{x_k\}_{k=1}^N\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[
+p(X|U) = p(x_1) \prod_{k=2}^N p(x_k|x_{k-1}, u_k)
+\]</div>
+<p>where we assumed the <strong>control variables</strong> <span class="math notranslate nohighlight">\(U\doteq\{u_k\}_{k=1}^{N-1}\)</span> as <em>given</em> to us.</p>
+<p>Let us assume we <em>know</em> that the robot starts out in the warehouse at coordinates <span class="math notranslate nohighlight">\(\mu_1 =(20,10)\)</span>, plus or minus half a meter. We can encode this knowledge into a continuous Gaussian prior as</p>
+<div class="math notranslate nohighlight">
+\[p(x_1) = \mathcal{N}(x_1;\mu=\mu_1,\Sigma=P) \propto \exp\{ - \frac{1}{2} (x_1-\mu_1)^TP^{-1}(x_1-\mu_1) \}\]</div>
+<p>with the covariance matrix <span class="math notranslate nohighlight">\(P=\text{diag}(0.5^2,0.5^2)\)</span>. In code:</p>
+<p>A Gaussian <em>motion model</em> is a bit trickier. We need to create a <strong>conditional Gaussian density</strong>, where the mean is a linear function of another variable:</p>
+<div class="math notranslate nohighlight">
+\[
+p(x_k|x_{k-1}, u_k) = \mathcal{N}(x_k;\mu=A_k x_{k-1} + B u_k, \Sigma=Q)
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(Q\)</span> is the traditional symbol used for motion model covariance. If we assume the robot executes actions <span class="math notranslate nohighlight">\(u_k\)</span> with a standard deviation of 20cm, then we will have <span class="math notranslate nohighlight">\(Q=\text{diag}(0.2^2,0.2^2)\)</span>. As an aside, if you have ever taken a linear controls class, you might recognize the matrices <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(B\)</span> can be recognized as the linear system matrices associated with the motion model.</p>
+</div>
+<div class="section" id="gaussian-dbns-in-code">
+<h2><span class="section-number">4.2.7. </span>Gaussian DBNs in Code<a class="headerlink" href="#gaussian-dbns-in-code" title="Permalink to this headline">¶</a></h2>
+<p>In GTSAM, a Gaussian density is specified using the class <code class="docutils literal notranslate"><span class="pre">GaussianDensity</span></code>, which correspond to a negative log-probability given by</p>
+<div class="math notranslate nohighlight">
+\[\frac{1}{2 \sigma^2} \|x - \mu\|^2.\]</div>
+<p>with a named constructor <code class="docutils literal notranslate"><span class="pre">FromMeanAndStddev</span></code> that takes <span class="math notranslate nohighlight">\(\mu\)</span> and <span class="math notranslate nohighlight">\(\sigma\)</span>. For their part, Gaussian <em>conditional</em> densities are specified using the class <code class="docutils literal notranslate"><span class="pre">GaussianConditional</span></code>, which correspond to a negative log-probability given by</p>
+<div class="math notranslate nohighlight">
+\[\frac{1}{2 \sigma^2} \|x - (A_1 p_1 + A_2 p_2 + b))\|^2.\]</div>
+<p>i.e., the mean on <span class="math notranslate nohighlight">\(x\)</span> is a linear function of the conditioning variables <span class="math notranslate nohighlight">\(p_1\)</span> and <span class="math notranslate nohighlight">\(p_2\)</span>. Again, a named constructor <code class="docutils literal notranslate"><span class="pre">FromMeanAndStddev</span></code> is there to assist us. Details in the GTSAM 101 section at the end, as always.</p>
+<p>All of the above is used in the following piece of code, which builds the dynamic Bayes net:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gaussianBayesNet</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">GaussianBayesNet</span><span class="p">()</span>
+<span class="n">A</span><span class="p">,</span> <span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">motion_model_sigma</span> <span class="o">=</span> <span class="mf">0.2</span>
+<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">indices</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+    <span class="n">gaussianBayesNet</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">gtsam</span><span class="o">.</span><span class="n">GaussianConditional</span><span class="o">.</span><span class="n">FromMeanAndStddev</span><span class="p">(</span>
+        <span class="n">x</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">A</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">B</span><span class="p">,</span> <span class="n">u</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">motion_model_sigma</span><span class="p">))</span>
+<span class="n">p_x1</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">GaussianDensity</span><span class="o">.</span><span class="n">FromMeanAndStddev</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span><span class="mi">10</span><span class="p">],</span> <span class="mf">0.5</span><span class="p">)</span>
+<span class="n">gaussianBayesNet</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">p_x1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">position_hints</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;u&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+<span class="n">show</span><span class="p">(</span><span class="n">gaussianBayesNet</span><span class="p">,</span> <span class="n">hints</span><span class="o">=</span><span class="n">position_hints</span><span class="p">,</span> <span class="n">boxes</span><span class="o">=</span><span class="nb">set</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">values</span><span class="p">())))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/S42_logistics_actions_29_0.svg" src="_images/S42_logistics_actions_29_0.svg" /></div>
+</div>
+<div class="section" id="exercise">
+<h3><span class="section-number">4.2.7.1. </span>Exercise<a class="headerlink" href="#exercise" title="Permalink to this headline">¶</a></h3>
+<p>Note that we used a constant motion model noise here, which is perhaps unrealistic: if a robot is commanded to go further, it could be expected to do a worse job at going exactly the distance it was supposed to go. How could you modify the above code to account for that?</p>
+</div>
+</div>
+<div class="section" id="simulating-a-continuous-trajectory">
+<h2><span class="section-number">4.2.8. </span>Simulating a Continuous Trajectory<a class="headerlink" href="#simulating-a-continuous-trajectory" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>Bayes nets are great for simulation.</p>
+</div></blockquote>
+<p>Let us now create a simulated trajectory in our example warehouse, by specifying a “control tape” and using the dynamic Bayes net created above to do the heavy lifting for us:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">control_tape</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">VectorValues</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="p">(</span><span class="n">ux</span><span class="p">,</span><span class="n">uy</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">indices</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[(</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">)]):</span>
+    <span class="n">control_tape</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">u</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Point2</span><span class="p">(</span><span class="n">ux</span><span class="p">,</span><span class="n">uy</span><span class="p">))</span>
+<span class="n">control_tape</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<table class='VectorValues'>
+  <thead>
+    <tr><th>Variable</th><th>value</th></tr>
+  </thead>
+  <tbody>
+    <tr><th>u1</th><td>2 0</td></tr>
+    <tr><th>u2</th><td>2 0</td></tr>
+    <tr><th>u3</th><td>0 2</td></tr>
+    <tr><th>u4</th><td>0 2</td></tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gaussianBayesNet</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">control_tape</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<table class='VectorValues'>
+  <thead>
+    <tr><th>Variable</th><th>value</th></tr>
+  </thead>
+  <tbody>
+    <tr><th>u1</th><td>2 0</td></tr>
+    <tr><th>u2</th><td>2 0</td></tr>
+    <tr><th>u3</th><td>0 2</td></tr>
+    <tr><th>u4</th><td>0 2</td></tr>
+    <tr><th>x1</th><td>20.6469  10.199</td></tr>
+    <tr><th>x2</th><td>22.8706 9.90054</td></tr>
+    <tr><th>x3</th><td>24.8089 10.1832</td></tr>
+    <tr><th>x4</th><td>25.1275 12.2733</td></tr>
+    <tr><th>x5</th><td>25.0941 14.5563</td></tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+</div>
+<div class="section" id="gtsam-101">
+<h2><span class="section-number">4.2.9. </span>GTSAM 101<a class="headerlink" href="#gtsam-101" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>The GTSAM concepts used in this section, explained.</p>
+</div></blockquote>
+<p>A <code class="docutils literal notranslate"><span class="pre">gtsam.GaussianDensity</span></code> class can be constructed via the following named constructor:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">FromMeanAndStddev</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Key</span><span class="p">,</span> <span class="n">mean</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">sigma</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">GaussianDensity</span>
+</pre></div>
+</div>
+<p>and a two similar named constructors exists for <code class="docutils literal notranslate"><span class="pre">gtsam.GaussianConditional</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">-</span> <span class="n">FromMeanAndStddev</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Key</span><span class="p">,</span> <span class="n">A</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Key</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">[</span><span class="n">m</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span> <span class="n">sigma</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">GaussianConditional</span>
+      
+<span class="o">-</span> <span class="n">FromMeanAndStddev</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Key</span><span class="p">,</span> <span class="n">A1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">parent1</span><span class="p">:</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Key</span><span class="p">,</span> <span class="n">A2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">parent2</span><span class="p">:</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Key</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">sigma</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">GaussianConditional</span>
+</pre></div>
+</div>
+<p>Both classes support some other methods that can come in handy, as demonstrated here on the prior created above:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">p_x1</span><span class="p">)</span> <span class="c1"># printing</span>
+
+<span class="n">values</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">VectorValues</span><span class="p">()</span>
+<span class="n">values</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">19</span><span class="p">,</span><span class="mi">12</span><span class="p">])</span>
+
+<span class="n">e</span> <span class="o">=</span> <span class="n">p_x1</span><span class="o">.</span><span class="n">unweighted_error</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;unweighted error vector = </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">w</span> <span class="o">=</span> <span class="n">p_x1</span><span class="o">.</span><span class="n">error_vector</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;weighted error vector = </span><span class="si">{</span><span class="n">w</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">E</span>  <span class="o">=</span> <span class="n">p_x1</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;error 0.5 w&#39;*w = </span><span class="si">{</span><span class="n">E</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">E</span> <span class="o">==</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">w</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">w</span><span class="p">)</span> <span class="c1"># check 10 == (4+16)/2</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>GaussianDensity: density on [x1] 
+mean: [20; 10];
+covariance: [
+	0.25, 0;
+	0, 0.25
+]
+isotropic dim=2 sigma=0.5
+
+unweighted error vector = [-1.  2.]
+weighted error vector = [-2.  4.]
+error 0.5 w&#39;*w = 10.0
+</pre></div>
+</div>
+</div>
+</div>
+<p>In the above, all error functions take an instance of <code class="docutils literal notranslate"><span class="pre">gtsam.VectorValues</span></code>, which is simply a map from GTSAM keys to values as vectors. This is the equivalent of <code class="docutils literal notranslate"><span class="pre">gtsam.DiscreteValues</span></code> from the previous sections.</p>
+</div>
+</div>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+            
+                <!-- Previous / next buttons -->
+<div class='prev-next-area'> 
+    <a class='left-prev' id="prev-link" href="S41_logistics_state.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title"><span class="section-number">4.1. </span>Continuous State</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="S43_logistics_sensing.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">4.3. </span>Sensor Models with Continuous State</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            
+        </div>
+    </div>
+    <footer class="footer">
+  <p>
+    
+      By Frank Dellaert and Seth Hutchinson<br/>
+    
+        &copy; Copyright 2021.<br/>
+  </p>
+</footer>
+</main>
+
+
+      </div>
+    </div>
+  
+  <script src="_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
+
+  </body>
+</html>
