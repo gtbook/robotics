@@ -524,7 +524,6 @@
 <blockquote>
 <div><p>Omniwheels are a great way to move omnidirectionally in 2D.</p>
 </div></blockquote>
-<p><strong>This Section is still in draft mode and was released for adventurous spirits (and TAs) only.</strong></p>
 <div class="cell tag_remove-input docutils container">
 <div class="cell_output docutils container">
 <div class="output text_html">
@@ -538,7 +537,7 @@
 <blockquote>
 <div><p>Omni wheels make omnidirectional movement possible.</p>
 </div></blockquote>
-<p>An <a class="reference external" href="https://en.wikipedia.org/wiki/Omni_wheel">omni wheel</a> is a wheel that -instead of a tire- has small rollers along its rim, whose axes are arranged perpendicular to the wheel’s own axis. Because of this, unlike a conventional wheel, movement perpendicular to the wheel is <em>not</em> resisted, i.e., the wheel can slide effortless from left to right. The image below (from Wikipedia) shows an example:</p>
+<p>An <a class="reference external" href="https://en.wikipedia.org/wiki/Omni_wheel">omni wheel</a> is a wheel that -instead of a tire- has small rollers along its rim, whose axes are arranged perpendicular to the wheel’s own axis. Because of this, unlike a conventional wheel, movement perpendicular to the wheel is <em>not</em> resisted, i.e., the wheel can slide effortlessly from left to right. The image below (from Wikipedia) shows an example:</p>
 <p><a title="Rotacaster, CC BY 1.0 &lt;https://creativecommons.org/licenses/by/1.0&gt;, via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:Triple_Rotacaster_commercial_industrial_omni_wheel.jpg"><img width="256" alt="Triple Rotacaster commercial industrial omni wheel" src="https://upload.wikimedia.org/wikipedia/commons/e/e3/Triple_Rotacaster_commercial_industrial_omni_wheel.jpg"></a></p>
 <p>Apart from being potentially amazing for parallel parking, in robotics omni wheels are very popular to enable omni-directional movement of robot platforms.</p>
 </div>
@@ -603,8 +602,49 @@ p^i_y &amp;= R \cos(\theta^i) \\
 <blockquote>
 <div><p>From robot velocity to wheel velocity.</p>
 </div></blockquote>
-<p>Kinematics is the study of moving things. In particular, for our omni-directional robot we will ask “What should the individual wheel velocities be given that we want the robot to move with a certain velocity?”</p>
-<p>We will only be concerned with the <strong>translational velocity</strong> <span class="math notranslate nohighlight">\(v=(v_x, v_y)\)</span> for now. For a <em>single</em> wheel, if the robot moves with velocity <span class="math notranslate nohighlight">\(v\)</span>, then this induces a velocity at the wheel’s location <em>parallel</em> and <em>perpendicular</em> to the wheel. In particular, for wheel <span class="math notranslate nohighlight">\(i\)</span> we have</p>
+<p>Kinematics is the study of motion, without regard for the forces required to cause the motion.
+In particular, for our omni-directional robot we will ask “What should the individual wheel velocities be given that we want the robot to move with a certain velocity?”</p>
+<p>The key property of omni-wheels is that they roll without slipping in the steering direction,
+but roll freely in the perpendicular direction (sometimes called the slipping direction).
+In the figure below, these directions correspond to the unit vectors <span class="math notranslate nohighlight">\(u_\|\)</span> and <span class="math notranslate nohighlight">\(u_\perp\)</span>.
+Because of this, the wheel actuators directly produce motion in the direction <span class="math notranslate nohighlight">\(u_\|\)</span>,
+and the robot moves freely in the direction <span class="math notranslate nohighlight">\(u_\perp\)</span>.</p>
+<figure>
+<img src="https://github.com/gtbook/robotics/blob/main/Figures4/omni-wheel-frame.png?raw=1" id="fig:omni-wheel-frame" style="width:14cm" alt="">
+<figcaption>Orthogonal coordinate frame for a single omni-wheel.</figcaption>
+</figure>
+<p>These vectors are defined in the local coordinate frame of the robot, but since our robot
+does not rotate, we can define them directly in the world coordinate frame.
+Let <span class="math notranslate nohighlight">\(\theta\)</span> denote the angle from the world <span class="math notranslate nohighlight">\(x\)</span>-axis to the axle axis of the wheel.
+The vectors <span class="math notranslate nohighlight">\(u_\|\)</span> and <span class="math notranslate nohighlight">\(u_\perp\)</span> are given by</p>
+<div class="math notranslate nohighlight">
+\[\begin{split} u_\| =\left[ \begin{array}{c} -\sin \theta \\ \cos \theta \end{array}\right]
+\;\;\;\;\;\;\; \rm{and} \;\;\;\;\;\;\;
+u_\perp =\left[ \begin{array}{c} \cos \theta \\ \sin \theta \end{array}\right]
+\end{split}\]</div>
+<p>When an object moves with a purely translational motion (i.e., there is no rotation), every point
+on the object moves with the same velocity.
+Suppose that the robot, and therefore this specific wheel,
+moves with  the <strong>translational velocity</strong> <span class="math notranslate nohighlight">\(v=(v_x, v_y)\)</span>, as shown in the figure below.
+We can decompose the velocity <span class="math notranslate nohighlight">\(v\)</span> into components that are parallel and perpendicular to the
+steering direction by projecting <span class="math notranslate nohighlight">\(v\)</span> onto the vectors <span class="math notranslate nohighlight">\(u_\|\)</span> and <span class="math notranslate nohighlight">\(u_\perp\)</span>.</p>
+<figure>
+<img src="https://github.com/gtbook/robotics/blob/main/Figures4/wheel-velocity.png?raw=1" id="fig:wheel-velocity" style="width:14cm" alt="">
+<figcaption>Wheel velocity $v$.</figcaption>
+</figure>
+<p>In particular, we can write</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align*}
+v &amp;= (v \cdot u_\| )u_\| + (v \cdot u_\perp) u_\perp \\
+&amp;=
+(- v_x \sin \theta + v_y \cos \theta) u_\|
++
+(v_x \cos \theta + v_y \sin \theta) u_\perp \\
+&amp;= v_{\parallel}u_\| +  v_{\perp}u_\perp\\
+\end{align*}
+\end{split}\]</div>
+<p>which gives</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 \begin{align*}
@@ -644,30 +684,32 @@ v^i_{\perp} &amp;= v_x \cos \theta^i + v_y \sin \theta^i
 <span class="n">ax</span><span class="o">.</span><span class="n">add_collection</span><span class="p">(</span><span class="n">PatchCollection</span><span class="p">(</span><span class="n">wheels</span><span class="p">))</span>
 
 
-<span class="n">plt</span><span class="o">.</span><span class="n">arrow</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">vx</span><span class="p">,</span> <span class="n">vy</span><span class="p">,</span> <span class="n">head_width</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">arrow</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">vx</span><span class="p">,</span> <span class="n">vy</span><span class="p">,</span> <span class="n">head_width</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;dodgerblue&quot;</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
     <span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">,</span> <span class="n">theta</span> <span class="o">=</span> <span class="n">wheel_pose</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
     <span class="n">para</span><span class="p">,</span> <span class="n">perp</span> <span class="o">=</span> <span class="n">wheel_velocity</span><span class="p">(</span><span class="n">vx</span><span class="p">,</span> <span class="n">vy</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">arrow</span><span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">,</span> <span class="n">vx</span><span class="p">,</span> <span class="n">vy</span><span class="p">,</span> <span class="n">head_width</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">arrow</span><span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span><span class="o">*</span><span class="n">para</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span><span class="o">*</span><span class="n">para</span><span class="p">,</span> <span class="n">head_width</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;lightgreen&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">arrow</span><span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span><span class="o">*</span><span class="n">perp</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span><span class="o">*</span><span class="n">perp</span><span class="p">,</span> <span class="n">head_width</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">arrow</span><span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">,</span> <span class="n">vx</span><span class="p">,</span> <span class="n">vy</span><span class="p">,</span> <span class="n">head_width</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;dodgerblue&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">arrow</span><span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span><span class="o">*</span><span class="n">perp</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span><span class="o">*</span><span class="n">perp</span><span class="p">,</span> <span class="n">head_width</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;yellowgreen&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">arrow</span><span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span><span class="o">*</span><span class="n">para</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span><span class="o">*</span><span class="n">para</span><span class="p">,</span> <span class="n">head_width</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;purple&quot;</span><span class="p">)</span>
 
 <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">);</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/S42_logistics_actions_15_0.png" src="_images/S42_logistics_actions_15_0.png" />
+<img alt="_images/S42_logistics_actions_17_0.png" src="_images/S42_logistics_actions_17_0.png" />
 </div>
 </div>
 </div>
 <div class="section" id="the-jacobian-matrix">
 <h2><span class="section-number">4.2.4. </span>The Jacobian Matrix<a class="headerlink" href="#the-jacobian-matrix" title="Permalink to this headline">¶</a></h2>
-<p>The motion <em>perpendicular</em> to the wheel is not resisted by the rollers: they will just roll at exactly the right speed to accommodate any movement in this direction. Because this allows the wheel to “slide”, we also call this the <strong>sliding direction</strong>.</p>
-<p>On the other hand, the contact of each wheel has to move exactly opposite to the parallel or <strong>driving direction</strong> of the velocity, because it cannot slide in that direction. As a consequence, if the radius of each wheel is <span class="math notranslate nohighlight">\(r\)</span>, the angular velocity <span class="math notranslate nohighlight">\(\omega^i\)</span> of the wheel has to be</p>
+<p>As mentioned above, the motion <em>perpendicular</em> to the wheel is not resisted by the rollers: they will roll freely
+at exactly the right speed to accommodate any movement in this direction. Because this allows the wheel to “slide”, we also call this the <strong>sliding direction</strong>.</p>
+<p>On the other hand, the contact of each wheel has to move exactly opposite to the parallel or <strong>driving direction</strong> of the velocity, because it cannot slide in that direction. As a consequence, if the radius of each wheel is <span class="math notranslate nohighlight">\(r\)</span>, the wheel’s angular velocity <span class="math notranslate nohighlight">\(\omega^i\)</span> (i.e., the angular rate at which the wheel spins about its axle)
+must satisfy</p>
 <div class="math notranslate nohighlight">
 \[\omega^i = \frac{v^i_\parallel}{r}\]</div>
-<p>Because we have three wheels, we can combine all of the above in <span class="math notranslate nohighlight">\(3\times2\)</span> <strong>Jacobian matrix</strong> that translates a desired robot velocity <span class="math notranslate nohighlight">\(v=(v_x,v_y)\)</span> to the appropriate commanded wheel velocities:</p>
+<p>Because we have three wheels, we can combine all of the above in <span class="math notranslate nohighlight">\(3\times2\)</span> <strong>Jacobian matrix</strong> that maps a desired robot velocity <span class="math notranslate nohighlight">\(v=(v_x,v_y)\)</span> to the appropriate commanded wheel velocities:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 \begin{pmatrix}\omega^1 \\ \omega^2 \\ \omega^3 \end{pmatrix} 
@@ -727,34 +769,73 @@ Using matrix method:
 <blockquote>
 <div><p>Additional transforms might be required.</p>
 </div></blockquote>
-<p>To summarize, given a velocity in the robot’s body coordinates, we can multiply it with the Jacobian matrix <span class="math notranslate nohighlight">\(J\)</span> to obtain the angular wheel velocities that can be commanded. The above exposition can be directly generalized to an arbitrary number of wheels, mounted in arbitrary locations. Some care needs to be taken that the chosen configuration is not singular, which would result in being only to move in one particular direction (or not at all!).</p>
-<p>In general we want a robot to move in a particular direction in the warehouse, or, in general in <em>world coordinates</em>. In this chapter we have assumed that the robot orientation is aligned with the warehouse orientation, so conveniently we have to do nothing.However, if one were to model the robot’s orientation, we would simply have to rotate the desired world velocity into the body coordinate frame. We will see how to do this later in this book.</p>
-<p>If we <em>do</em> care about orientation, omni wheels can actually be used to <em>rotate</em> the robot, as well. Think about applying the same constant angular velocity to all three wheels: the robot will now simply rotate in place. In other words, we could add a <em>third</em> column to the Jacobian matrix that translates a desired angular velocity into wheel velocities. That will allow us to command any combination of linear and angular velocity.</p>
-<p>Finally, there is a second type of wheel, the “mecanum wheel”, where the rollers are <em>not</em> aligned with the wheel rim, but are rotated by some (constant) amount. That complicates the math a little bit, but in the end we will again obtain a Jacobian matrix. We will not discuss this further.</p>
+<p>To summarize, given a translational velocity, <span class="math notranslate nohighlight">\(v\)</span>, in the robot’s body coordinates,
+we compute the corresponding vector angular wheel velocities as <span class="math notranslate nohighlight">\(Jv\)</span>.
+The above exposition can be directly generalized to an arbitrary number of wheels, mounted in arbitrary locations. Some care needs to be taken that the chosen configuration is not singular, which would result in being only to move in one particular direction (or not at all!).</p>
+<p>In general we want a robot to move in a particular direction in the warehouse, or, in general in <em>world coordinates</em>. In this chapter we have assumed that the robot orientation is aligned with the warehouse orientation, so conveniently we have to do nothing.
+However, if one were to include the robot’s orientation in the state representation, we would simply have to rotate the desired world velocity into the body coordinate frame. We will see how to do this later in this book.</p>
+<p>If we <em>do</em> care about orientation, omni wheels can actually be used to <em>rotate</em> the robot, as well. Think about applying the same constant angular velocity to all three wheels: the robot will now simply rotate in place. In other words, we could add a <em>third</em> column to the Jacobian matrix that maps a desired angular velocity into wheel velocities. This would allow us to command any combination of linear and angular velocity.</p>
+<p>Finally, there is a more general type of wheel, the “mecanum wheel”, where the rollers are <em>not</em> aligned with the wheel rim, but are rotated by some (constant) amount. That complicates the math a little bit, but in the end we will again obtain a Jacobian matrix that maps robot velocity to wheel angular velocities. We will not discuss this further.</p>
 </div>
 <div class="section" id="a-gaussian-dynamic-bayes-net">
 <h2><span class="section-number">4.2.6. </span>A Gaussian Dynamic Bayes Net<a class="headerlink" href="#a-gaussian-dynamic-bayes-net" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div><p>Modeling stochastic action in continuous spaces can again be done using DBS.</p>
 </div></blockquote>
-<p>Modeling with continuous densities is done with <em>continuous</em> dynamic bayes nets (DBNs).
-Omni wheels are notoriously flaky in the execution, especially on uneven ground or carpet. Hence, we need to model the uncertainty associated with commanded movements, which are now continuous displacements <span class="math notranslate nohighlight">\(u_k\in\mathbb{R}^2\)</span>.
+<p>Modeling with continuous densities is done with <em>continuous</em> dynamic Bayes nets (DBNs).
+Omni wheels are notoriously flaky in the execution, especially on uneven ground or carpet.
+Hence, we need to model the uncertainty associated with commanded movements.
+Because we are modeling our robot as a discrete-time system,
+we let <span class="math notranslate nohighlight">\(u_k = v \Delta T\)</span> denote the displacement that occurs when the robot
+moves with velocity <span class="math notranslate nohighlight">\(v\)</span> for time <span class="math notranslate nohighlight">\(\Delta T\)</span>.
+Since the velocity can be in any direction, <span class="math notranslate nohighlight">\(u_k\in\mathbb{R}^2\)</span>.
+In the absence of uncertainty, our motion model would simply
+be <span class="math notranslate nohighlight">\(x_{k+1} = x_k + u_k\)</span>.</p>
+<p>Given the uncertainty inherent to the use of omni-wheels, we will instead develop a probabilistic
+motion model.
 Recall that we created a DBN with discrete actions, states, and measurements in the previous chapter. Here we do the same, except with <em>continuous</em> densities, specifying a DBN that encodes the joint density <span class="math notranslate nohighlight">\(p(X|U)\)</span> on the continuous states <span class="math notranslate nohighlight">\(X\doteq\{x_k\}_{k=1}^N\)</span>,</p>
 <div class="math notranslate nohighlight">
 \[
-p(X|U) = p(x_1) \prod_{k=2}^N p(x_k|x_{k-1}, u_k)
+p(X|U) = p(x_1) \prod_{k=1}^{N-1} p(x_{k+1}|x_{k}, u_{k})
 \]</div>
 <p>where we assumed the <strong>control variables</strong> <span class="math notranslate nohighlight">\(U\doteq\{u_k\}_{k=1}^{N-1}\)</span> as <em>given</em> to us.</p>
 <p>Let us assume we <em>know</em> that the robot starts out in the warehouse at coordinates <span class="math notranslate nohighlight">\(\mu_1 =(20,10)\)</span>, plus or minus half a meter. We can encode this knowledge into a continuous Gaussian prior as</p>
 <div class="math notranslate nohighlight">
 \[p(x_1) = \mathcal{N}(x_1;\mu=\mu_1,\Sigma=P) \propto \exp\{ - \frac{1}{2} (x_1-\mu_1)^TP^{-1}(x_1-\mu_1) \}\]</div>
-<p>with the covariance matrix <span class="math notranslate nohighlight">\(P=\text{diag}(0.5^2,0.5^2)\)</span>. In code:</p>
-<p>A Gaussian <em>motion model</em> is a bit trickier. We need to create a <strong>conditional Gaussian density</strong>, where the mean is a linear function of another variable:</p>
+<p>with the covariance matrix <span class="math notranslate nohighlight">\(P=\text{diag}(0.5^2,0.5^2)\)</span>.</p>
+<p>A Gaussian <em>motion model</em> is a bit trickier.
+Here we need a <strong>conditional Gaussian density</strong> that depends on the current state
+and the commanded motion.
+The usual way to incorporate uncertainty into a motion model is to assume that
+a random disturbance is added to the nominal motion of the robot.
+We can model this as</p>
+<div class="math notranslate nohighlight">
+\[x_{k+1} = x_k + u_k + w_k\]</div>
+<p>in which <span class="math notranslate nohighlight">\(w_k\)</span> is a random vector whose probability distribution is typically based on empirical
+observations of the system. In our case, we will assume that this disturbance
+is Gaussian, <span class="math notranslate nohighlight">\(w_k \sim N(\mu,\Sigma)\)</span>.
+In this case, it can be shown that the conditional distribution of <span class="math notranslate nohighlight">\(x_{k+1}\)</span>
+given <span class="math notranslate nohighlight">\(x_k\)</span> and <span class="math notranslate nohighlight">\(u_k\)</span> is given by a <strong>conditional Gaussian density</strong> of the form</p>
 <div class="math notranslate nohighlight">
 \[
-p(x_k|x_{k-1}, u_k) = \mathcal{N}(x_k;\mu=A_k x_{k-1} + B u_k, \Sigma=Q)
+p(x_{k+1}|x_{k}, u_k) = \mathcal{N}(x_{k_1}; x_{k} +  u_k, \Sigma)
 \]</div>
-<p>where <span class="math notranslate nohighlight">\(Q\)</span> is the traditional symbol used for motion model covariance. If we assume the robot executes actions <span class="math notranslate nohighlight">\(u_k\)</span> with a standard deviation of 20cm, then we will have <span class="math notranslate nohighlight">\(Q=\text{diag}(0.2^2,0.2^2)\)</span>. As an aside, if you have ever taken a linear controls class, you might recognize the matrices <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(B\)</span> can be recognized as the linear system matrices associated with the motion model.</p>
+<p>i.e., the conditional distribution for the next state is a Gaussian, with mean equal to the
+nominal (i.e., noise-free) next state <span class="math notranslate nohighlight">\(x_k + u_k\)</span>, and variance equal to the noise variance.</p>
+<p>It is easy to generalize this motion model to linear systems of the form</p>
+<div class="math notranslate nohighlight">
+\[
+x_{k+1} = A x_k + B u_k + w_k
+\]</div>
+<p>which is the general form for a linear time-invariant (LTI)) system with additive noise.
+The matrix <span class="math notranslate nohighlight">\(A \in \mathbb{R}^{n \times n}\)</span> is called the system matrix,
+and the matrix <span class="math notranslate nohighlight">\(B\)</span> maps control input <span class="math notranslate nohighlight">\(u_k\)</span> to a vector in the state space.
+The motion model for this general LTI system is given by</p>
+<div class="math notranslate nohighlight">
+\[
+p(x_{k+1}|x_{k}, u_k) = \mathcal{N}(x_{k+1};\mu=A x_{k} + B u_k, \Sigma=Q)
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(Q\)</span> is the traditional symbol used for motion model covariance. If we assume the robot executes actions <span class="math notranslate nohighlight">\(u_k\)</span> with a standard deviation of 20cm, then we will have <span class="math notranslate nohighlight">\(Q=\text{diag}(0.2^2,0.2^2)\)</span>.</p>
 </div>
 <div class="section" id="gaussian-dbns-in-code">
 <h2><span class="section-number">4.2.7. </span>Gaussian DBNs in Code<a class="headerlink" href="#gaussian-dbns-in-code" title="Permalink to this headline">¶</a></h2>
@@ -788,7 +869,7 @@ p(x_k|x_{k-1}, u_k) = \mathcal{N}(x_k;\mu=A_k x_{k-1} + B u_k, \Sigma=Q)
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/S42_logistics_actions_29_0.svg" src="_images/S42_logistics_actions_29_0.svg" /></div>
+<img alt="_images/S42_logistics_actions_32_0.svg" src="_images/S42_logistics_actions_32_0.svg" /></div>
 </div>
 <div class="section" id="exercise">
 <h3><span class="section-number">4.2.7.1. </span>Exercise<a class="headerlink" href="#exercise" title="Permalink to this headline">¶</a></h3>

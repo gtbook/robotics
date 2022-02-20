@@ -404,29 +404,41 @@
 <blockquote>
 <div><p>Omnidirectional robots operating in a warehouse-like environment with LIDAR sensors.</p>
 </div></blockquote>
-<p><strong>This Section is still in draft mode and was released for adventurous spirits (and TAs) only.</strong></p>
 <div class="cell tag_remove-input docutils container">
 <div class="cell_output docutils container">
 <div class="output text_html">
 <div align='center'>
-<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S40-Warehouse%20robots-02.jpg?raw=1' style='height:256 width:100%'/>
+<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S40-Warehouse%20robots-05.jpg?raw=1' style='height:256 width:100%'/>
 </div>
 </div></div>
 </div>
-<p>As a preview, this is what we’ll do in this chapter:</p>
-<ul class="simple">
-<li><p>State:        2D, i.e., <span class="math notranslate nohighlight">\((x,y)\)</span></p></li>
-<li><p>Actuators:    Omni wheels</p></li>
-<li><p>Sensors:      Proximity, range, and GPS-like</p></li>
-<li><p>Perception:   Localization (Markov, Monte Carlo, Kalman)</p></li>
-<li><p>Planning:     Graph-based, configuration space</p></li>
-<li><p>Learning:     Learning a motion model</p></li>
-</ul>
-<p>The state will for the first time be continuous. We just operate in 2D translation space for now, because adding orientation adds complexity, mainly because of the nonlinearities inherent in sine/cosine evaluations.</p>
-<p>As actuators (described in the next section) we use omni-directional or “Swedish” wheels, which allows us to move in x and y without constraint. This is in contrast to cars and bicycles, which are “non-holonomic”.</p>
-<p>As sensors, we will discuss three different type of sensors one might encounter in a warehouse scenario. We derive an observation models which we can then use in perception.</p>
-<p>Perception in this chapter is limited to <em>localizing</em> in these 2D environments, given an a priori map. We first look at “Markov Localization”, which is a straightforward application of HMMs. We then look at a particle filter as a better alternative. When applied to localization, the resulting algorithm is called “Monte Carlo Localization”. Finally, as an advanced technique, Kalman smoothing is discussed.</p>
-<p>To plan our actions, we use graph-based approaches to plan in configuration space.</p>
+<p>In this chapter, we consider a simple mobile robot that operates in a warehouse,
+and whose main task is to transport products from various storage locations to a shipping station.
+The representations and models in this chapter are significantly more complex than those
+in the previous chapters, but they are also much more realistic than those of previous chapters,
+and in some cases are not so different from what is used in current state-of-the-art robotic systems.</p>
+<p>For the first time, we will consider the case in which the state space is continuous.
+While we do not consider rotation in this chapter, we will assume that
+the robot can translate freely to any point in the warehouse, so the state space will be a subset
+of <span class="math notranslate nohighlight">\(\mathbb{R}^2\)</span>.
+In order to represent uncertainty in state, we will introduce continuous probability
+distributions on  <span class="math notranslate nohighlight">\(\mathbb{R}^2\)</span>.
+To model the motion of such a robot, we introduce omni-wheels, and investigate
+the geometry of motion using such wheels.
+Then, to model uncertainty in the motion model, we introduce the multi-variate Gaussian
+distribution.</p>
+<p>For sensing and perception, we again use continuous probability distributions: one-dimensional
+distributions for a range sensor, and two-dimensional distributions for a GPS-like sensor.
+We then introduce the perception problem of localization: given a map of the environment,
+along with the action and sensor measurement histories, determine the robot’s current location
+(i.e., the current state).
+We first look at “Markov Localization”, which is a straightforward application of HMMs. We then look at a particle filter as a better alternative. When applied to localization, the resulting algorithm is called “Monte Carlo Localization”. Finally, as an advanced technique, Kalman smoothing is discussed.
+These three solution approaches demonstrate trade-offs between computational cost and accuracy.</p>
+<p>For planning, we will extend our value iteration algorithm of the previous chapter to the case of
+planning motions for a robot that translates in the plane,  with uncertainty in both its motion model
+and its knowledge of the current state.
+This requires defining a reward function that guides the robot to its goal while avoiding
+collisions with obstacles.</p>
 <div class="toctree-wrapper compound">
 </div>
 </div>
