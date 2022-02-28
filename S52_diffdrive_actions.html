@@ -1,0 +1,722 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>5.2. Motion Model for the Differential Drive Robot &#8212; Introduction to Robotics and Perception</title>
+    
+  <link href="_static/css/theme.css" rel="stylesheet">
+  <link href="_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-book-theme.css?digest=c3fdc42140077d1ad13ad2f1588a4309" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/style.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    
+  <link rel="preload" as="script" href="_static/js/index.be7d3bbb2ef33a8344ce.js">
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/togglebutton.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="_static/sphinx-book-theme.d59cb220de22ca1c485ebbdc042f0030.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script async="async" src="https://unpkg.com/thebe@0.5.1/lib/index.js"></script>
+    <script>
+        const thebe_selector = ".thebe"
+        const thebe_selector_input = "pre"
+        const thebe_selector_output = ".output"
+    </script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="5.1. State Space for a Differential Drive Robot" href="S51_diffdrive_state.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+<script async="" src="https://www.google-analytics.com/analytics.js"></script>
+<script>
+                        window.ga = window.ga || function () {
+                            (ga.q = ga.q || []).push(arguments) };
+                        ga.l = +new Date;
+                        ga('create', 'UA-312077-7', 'auto');
+                        ga('set', 'anonymizeIp', true);
+                        ga('send', 'pageview');
+                    </script>
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="_static/logo.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Introduction to Robotics and Perception</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="intro.html">
+   Introduction to Robotics and Perception
+  </a>
+ </li>
+</ul>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="S10_introduction.html">
+   1. Introduction
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S11_intro_state.html">
+     1.1. Representing State
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S12_intro_actions.html">
+     1.2. Robot Actions
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S13_intro_sensing.html">
+     1.3. Sensing
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S14_intro_perception.html">
+     1.4. Perception
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S15_intro_decision.html">
+     1.5. Planning
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S16_intro_learning.html">
+     1.6. Learning
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="S20_sorter_intro.html">
+   2. A Trash Sorting Robot
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S21_sorter_state.html">
+     2.1. Modeling the World State
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S22_sorter_actions.html">
+     2.2. Actions for Sorting Trash
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S23_sorter_sensing.html">
+     2.3. Sensors for Sorting Trash
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S24_sorter_perception.html">
+     2.4. Perception
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S25_sorter_decision_theory.html">
+     2.5. Decision Theory
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S26_sorter_learning.html">
+     2.6. Learning
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="S30_vacuum_intro.html">
+   3. A Robot Vacuum Cleaner
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S31_vacuum_state.html">
+     3.1. Modeling the State of the Vacuum Cleaning Robot
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S32_vacuum_actions.html">
+     3.2. Actions over time
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S33_vacuum_sensing.html">
+     3.3. Dynamic Bayes Nets
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S34_vacuum_perception.html">
+     3.4. Perception with Graphical Models
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S35_vacuum_decision.html">
+     3.5. Markov Decision Processes
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S36_vacuum_RL.html">
+     3.6. Reinforcement Learning
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="S40_logistics_intro.html">
+   4. Warehouse Robots in 2D
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S41_logistics_state.html">
+     4.1. Continuous State
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S42_logistics_actions.html">
+     4.2. Moving in 2D
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S43_logistics_sensing.html">
+     4.3. Sensor Models with Continuous State
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S44_logistics_perception.html">
+     4.4. Localization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S45_logistics_planning.html">
+     4.5. Planning for Logistics
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S46_logistics_learning.html">
+     4.6. Some System Identification
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="S50_diffdrive_intro.html">
+   5. A Mobile Robot With Simple Kinematics
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <label for="toctree-checkbox-5">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2">
+    <a class="reference internal" href="S51_diffdrive_state.html">
+     5.1. State Space for a Differential Drive Robot
+    </a>
+   </li>
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     5.2. Motion Model for the Differential Drive Robot
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="topbar container-xl fixed-top">
+    <div class="topbar-contents row">
+        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
+        <div class="col pl-md-4 topbar-main">
+            
+            <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+                data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+                <i class="fas fa-bars"></i>
+                <i class="fas fa-arrow-left"></i>
+                <i class="fas fa-arrow-up"></i>
+            </button>
+            
+            
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="_sources/S52_diffdrive_actions.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.ipynb</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+                onclick="printPdf(this)" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+            <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/gtbook/robotics"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        <a class="issues-button"
+            href="https://github.com/gtbook/robotics/issues/new?title=Issue%20on%20page%20%2FS52_diffdrive_actions.html&body=Your%20issue%20content%20here."><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
+        
+    </div>
+</div>
+
+            <!-- Full screen (wrap in <a> to have style consistency -->
+
+<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+        title="Fullscreen mode"><i
+            class="fas fa-expand"></i></button></a>
+
+            <!-- Launch buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
+    <div class="dropdown-buttons">
+        
+        <a class="binder-button" href="https://mybinder.org/v2/gh/gtbook/robotics/main?urlpath=tree/S52_diffdrive_actions.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
+                data-placement="left"><img class="binder-button-logo"
+                    src="_static/images/logo_binder.svg"
+                    alt="Interact on binder">Binder</button></a>
+        
+        
+        
+        
+    </div>
+</div>
+
+        </div>
+
+        <!-- Table of contents -->
+        <div class="d-none d-md-block col-md-2 bd-toc show noprint">
+            
+            <div class="tocsection onthispage pt-5 pb-3">
+                <i class="fas fa-list"></i> Contents
+            </div>
+            <nav id="bd-toc-nav" aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-relationship-between-wheel-rotation-and-robot-velocity">
+   5.2.1. The Relationship Between Wheel Rotation and Robot Velocity
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#kinematics-in-code">
+   5.2.2. Kinematics in Code
+  </a>
+ </li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Motion Model for the Differential Drive Robot</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-relationship-between-wheel-rotation-and-robot-velocity">
+   5.2.1. The Relationship Between Wheel Rotation and Robot Velocity
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#kinematics-in-code">
+   5.2.2. Kinematics in Code
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            
+              <div>
+                
+  <p><a href="https://colab.research.google.com/github/gtbook/robotics/blob/main/S52_duckiebot_actions.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a></p>
+<div class="tex2jax_ignore mathjax_ignore section" id="motion-model-for-the-differential-drive-robot">
+<h1><span class="section-number">5.2. </span>Motion Model for the Differential Drive Robot<a class="headerlink" href="#motion-model-for-the-differential-drive-robot" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div><p>By rotating the two wheels indpendently, we control both the linear and angular velocity of the DDR.</p>
+</div></blockquote>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<div class="output text_html">
+<div align='center'>
+<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S52-Two-wheeled%20Toy%20Robot-02.jpg?raw=1' style='height:256 width:100%'/>
+</div>
+</div></div>
+</div>
+<p>The motion model for the logistics robot of the previous chapter was fairly simple;
+we assumed that the robot moved with constant linear velocity <span class="math notranslate nohighlight">\(v\)</span> for a time interval <span class="math notranslate nohighlight">\(\Delta T\)</span>,
+and therefore we expressed the motion model as <span class="math notranslate nohighlight">\(x_{k+1} = x_k + v \Delta T\)</span>.
+Further, by assigning the robot’s body-attached frame to be parallel to the world frame,
+we were able to simply ignore the body-attached frame, and reason directly in the world frame without difficulty.
+Things are more complex for our DDR, due to the role of orientation.</p>
+<p>When describing the motion of our DDR, the orientation of the robot enters in two ways.
+First, because the robot wheels roll without slipping,
+the linear velocity of the robot is always instantaneously in the steering direction.
+Second, because the robot can rotate, we must take account of its angular velocity, in addition to the linear velocity.
+This is illustrated in the figure below.
+Suppose the robot is following a path <span class="math notranslate nohighlight">\(\gamma(s)\)</span> (where <span class="math notranslate nohighlight">\(s\)</span> parameterizes the path).
+The instantaneous linear velocity expressed with respect to the body frame is given by:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+v^{\mathrm{body,linear}}
+\begin{bmatrix} v_x \\ 0 \end{bmatrix}
+\end{split}\]</div>
+<p>Note that the velocity is tangent to the curve <span class="math notranslate nohighlight">\(\gamma\)</span> at <span class="math notranslate nohighlight">\(s\)</span>, and that in the body-attached frame the y-component of the velocity
+is zero (i.e., in the body-attached frame, <span class="math notranslate nohighlight">\(v_y = 0\)</span>).
+The steering direction is determined by the angle <span class="math notranslate nohighlight">\(\theta\)</span> as <span class="math notranslate nohighlight">\([\cos \theta, \sin \theta]^T\)</span>,
+so that the linear velocity with respect to the world frame is given by</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+v^{\mathrm{world,linear}}
+\begin{bmatrix} v_x \cos \theta \\ v_x \sin \theta \end{bmatrix}
+\end{split}\]</div>
+<p>Because our robot moves in the plane, the z-axis of the body-attached frame is always parallel to the z-axis of the world frame.
+This greatly simplifies the description of angular velocity, which in this case we may define as <span class="math notranslate nohighlight">\(\omega = \dot{\theta}\)</span>,
+the instantaneous rate of change of the robot’s orientation.</p>
+<p>It is common to combine the angular and linear velocity into a single vector,</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+v^{\mathrm{body}}=
+\begin{bmatrix} v_x   \\ 0 \\ \dot{\theta} \end{bmatrix}
+~~~~~~~
+v^{\mathrm{world}}=
+\begin{bmatrix} v_x \cos \theta \\ v_x \sin \theta \\ \dot{\theta} \end{bmatrix}
+\end{split}\]</div>
+<figure>
+<img src="https://github.com/gtbook/robotics/blob/main/Figures5/DDR-velocity.png?raw=1" id="fig:DDR-velocity" style="width:9cm" alt="">
+<figcaption>The linear velocity is always in the steering direction.</figcaption>
+</figure>
+<div class="section" id="the-relationship-between-wheel-rotation-and-robot-velocity">
+<h2><span class="section-number">5.2.1. </span>The Relationship Between Wheel Rotation and Robot Velocity<a class="headerlink" href="#the-relationship-between-wheel-rotation-and-robot-velocity" title="Permalink to this headline">¶</a></h2>
+<p>Because the wheels of the DDR are independently actuated, it is possible to achieve a large range of robot velocities.
+We can derive the relationship between wheel rotation and robot velocity by considering first the motion of a single
+wheel, and then considering the effect of coupling the two wheels along a single axis of rotation.</p>
+<p>The figure below shows a side-view of the right wheel.
+We denote by <span class="math notranslate nohighlight">\(\phi_R\)</span> the instantaneous orientation of the right wheel with respect to the world z-axis (Note
+that we measure the angle <span class="math notranslate nohighlight">\(\phi_R\)</span> by attaching a distinguished point to the wheel, so that we can uniquely identify
+its orientation. In the figure, a red star is used to denote this point.)
+As we have seen in the previous chapter when modeling the forward motion of an omni-wheel,
+the relationship between the forward linear speed of the wheel and the rotation speed is
+given by</p>
+<div class="math notranslate nohighlight">
+\[
+v_\mathrm{right} = r \dot{\phi}_R
+\]</div>
+<p>The same reasoning can be applied to the left wheel  to obtain</p>
+<div class="math notranslate nohighlight">
+\[
+v_\mathrm{left} = r \dot{\phi}_L
+\]</div>
+<figure>
+<img src="https://github.com/gtbook/robotics/blob/main/Figures5/DDR-one-wheel.png?raw=1" id="fig:DDR-one-wheel" style="width:9cm" alt="">
+<figcaption>The linear velocity is always in the steering direction.</figcaption>
+</figure>
+<p>Suppose now that both wheels spin at the same speed, <span class="math notranslate nohighlight">\(\dot{\phi}_R = \dot{\phi}_L\)</span>.
+In this case, the forward speed of the wheels will also be equal, <span class="math notranslate nohighlight">\(v_\mathrm{left} = v_\mathrm{right}\)</span>,
+and the robot will move in purely translational motion (i.e., <span class="math notranslate nohighlight">\(\omega = 0\)</span>), with
+<span class="math notranslate nohighlight">\(v_x = v_\mathrm{left} = v_\mathrm{right}\)</span>, since all points on the robot move with exactly the
+same velocity for pure translational motion.
+Using the results above, we obtain</p>
+<div class="math notranslate nohighlight">
+\[
+\dot{\phi}_L = \dot{\phi}_R = \frac{v_x}{r}
+\]</div>
+<figure>
+<img src="https://github.com/gtbook/robotics/blob/main/Figures5/DDR-pure-translation.png?raw=1" id="fig:DDR-pure-translation" style="width:9cm" alt="">
+<figcaption>When the wheels spin in the same direction with the same speed, the robot moves with pure translation.</figcaption>
+</figure><p>Suppose instead that the two wheels spin in opposite directions,
+so that <span class="math notranslate nohighlight">\(\dot{\phi}_R = -\dot{\phi}_L\)</span>.
+In this case, <span class="math notranslate nohighlight">\(v_\mathrm{left} = -r\dot{\phi}_L \)</span> and <span class="math notranslate nohighlight">\(v_\mathrm{right} = r\dot{\phi}_R\)</span>.
+Because the two wheels are constrained by the physical mechanism to remain in a fixed geometric relationship
+to one another, these opposite but equal forward wheel speeds cause the robot to rotate,
+with both <span class="math notranslate nohighlight">\(v_\mathrm{left}\)</span> and <span class="math notranslate nohighlight">\(v_\mathrm{right}\)</span> tangent to a circle of diameter <span class="math notranslate nohighlight">\(L\)</span> centered at the origin of the body-attached frame.
+Note that the linear velocity of the robot, <span class="math notranslate nohighlight">\(v_x\)</span>, is zero in this case,
+since <span class="math notranslate nohighlight">\(v_\mathrm{left}\)</span> and <span class="math notranslate nohighlight">\(v_\mathrm{right}\)</span> “cancel one another out” w.r.t. the linear velocity of the robot.
+Applying the equation of circular motion yields</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{L}{2} \omega = -v_\mathrm{left} = -r\dot{\phi}_R
+~~~~~~~
+\frac{L}{2} \omega =  v_\mathrm{right} = r\dot{\phi}_R
+\]</div>
+<p>which leads to</p>
+<div class="math notranslate nohighlight">
+\[
+\dot{\phi}_L= -\frac{L}{2} \frac{\omega}{r}
+~~~~~~~
+\dot{\phi}_R= \frac{L}{2} \frac{\omega}{r}
+\]</div>
+<figure>
+<img src="https://github.com/gtbook/robotics/blob/main/Figures5/DDR-pure-rotation.png?raw=1" id="fig:DDR-pure-rotation" style="width:9cm" alt="">
+<figcaption>When the wheels spin in the opposite direction with the same speed, the robot moves with pure rotation..</figcaption>
+</figure>
+<p>We have now considered the two special cases of pure translation and pure rotation.
+Because instantaneous velocities lie in a vector space, we can add these in the same
+way that we would add any vectors.
+Therefore, by spinning the wheels at different rates, we can obtain various linear combinations
+of the above pure translations and rotations.
+Adding these two equations, we obtain</p>
+<div class="math notranslate nohighlight">
+\[
+\dot{\phi}_L = \frac{v_x}{r} -\frac{L}{2} \frac{\omega}{r}
+~~~~~~~
+\dot{\phi}_R = \frac{v_x}{r} + \frac{L}{2} \frac{\omega}{r}
+\]</div>
+<p>These two equations define the <strong>inverse velocity kinematics</strong> for our DDR:
+Given a desired <em>output</em> specified as <span class="math notranslate nohighlight">\(v,\omega\)</span>,
+determine the required <span class="math notranslate nohighlight">\(input\)</span> specified as <span class="math notranslate nohighlight">\(\dot{\phi}_R\)</span> and <span class="math notranslate nohighlight">\(\dot{\phi}_L\)</span>.
+These equations can be used to determine the required wheel actuation to achieve
+the desired linear and angular velocities of the robot.</p>
+<p>The <strong>forward velocity kinematics</strong>
+are easily obtained from the above equations via simple algebra:</p>
+<div class="math notranslate nohighlight">
+\[
+v_x = \frac{r}{2} (\dot{\phi}_R + \dot{\phi}_L)
+~~~~~~~~
+\omega = \frac{r}{L} (\dot{\phi}_R - \dot{\phi}_L)
+\]</div>
+<p>This leads immediately to the system equations with respect to the body-attached frame
+and with respect to the world frame</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+v^{\mathrm{body}}=
+\begin{bmatrix} v_x   \\ 0 \\ \dot{\theta} \end{bmatrix}
+=
+\begin{bmatrix} \frac{r}{2} (\dot{\phi}_R + \dot{\phi}_L)   \\ 0 \\ \frac{r}{L} (\dot{\phi}_R - \dot{\phi}_L)\end{bmatrix}
+~~~~~~~
+v^{\mathrm{world}}=
+\begin{bmatrix} v_x \cos \theta \\ v_x \sin \theta \\ \dot{\theta} \end{bmatrix}
+=\begin{bmatrix} \frac{r}{2} (\dot{\phi}_R + \dot{\phi}_L) \cos\theta  \\  \frac{r}{2} (\dot{\phi}_R + \dot{\phi}_L) \sin\theta  \\ \frac{r}{L} (\dot{\phi}_R - \dot{\phi}_L)\end{bmatrix}\end{split}\]</div>
+</div>
+<div class="section" id="kinematics-in-code">
+<h2><span class="section-number">5.2.2. </span>Kinematics in Code<a class="headerlink" href="#kinematics-in-code" title="Permalink to this headline">¶</a></h2>
+<p>The equations above can be easily implemented in code. We do so below:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">ddr_ik</span><span class="p">(</span><span class="n">v_x</span><span class="p">,</span> <span class="n">omega</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;DDR inverse kinematics: calculate wheels speeds from desired velocity.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">v_x</span> <span class="o">-</span> <span class="p">(</span><span class="n">L</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">omega</span><span class="p">)</span><span class="o">/</span><span class="n">r</span><span class="p">,</span> <span class="p">(</span><span class="n">v_x</span> <span class="o">+</span> <span class="p">(</span><span class="n">L</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">omega</span><span class="p">)</span><span class="o">/</span><span class="n">r</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">ddr_fk</span><span class="p">(</span><span class="n">phidot_L</span><span class="p">,</span> <span class="n">phidot_R</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;DDR inverse kinematics: calculate wheels speeds from desired velocity.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Point3</span><span class="p">((</span><span class="n">phidot_R</span><span class="o">+</span><span class="n">phidot_L</span><span class="p">)</span><span class="o">*</span><span class="n">r</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="n">phidot_R</span><span class="o">-</span><span class="n">phidot_L</span><span class="p">)</span><span class="o">*</span><span class="n">r</span><span class="o">/</span><span class="n">L</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>As an example, let us try to move forward with a velocity of 20 cm/s, while turning counterclockwise at 0.3 rad/s:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">phidot_L</span><span class="p">,</span> <span class="n">phidot_R</span> <span class="o">=</span> <span class="n">ddr_ik</span><span class="p">(</span><span class="n">v_x</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">omega</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">phidot_L</span><span class="p">,</span> <span class="n">phidot_R</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1.25 2.75
+</pre></div>
+</div>
+</div>
+</div>
+<p>As expected, the left wheel rotates less quickly, making us turn counter-clockwise. To sanity-check, let us put these same wheel speeds through the <em>forward</em> kinematics:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">ddr_fk</span><span class="p">(</span><span class="n">phidot_L</span><span class="p">,</span> <span class="n">phidot_R</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[0.2 0.  0.3]
+</pre></div>
+</div>
+</div>
+</div>
+<p>The velocities are as desired, validating both the equations and their implementation. Feel free to experiment with other values above!</p>
+</div>
+</div>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+            
+                <!-- Previous / next buttons -->
+<div class='prev-next-area'> 
+    <a class='left-prev' id="prev-link" href="S51_diffdrive_state.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title"><span class="section-number">5.1. </span>State Space for a Differential Drive Robot</p>
+        </div>
+    </a>
+</div>
+            
+        </div>
+    </div>
+    <footer class="footer">
+  <p>
+    
+      By Frank Dellaert and Seth Hutchinson<br/>
+    
+        &copy; Copyright 2021.<br/>
+  </p>
+</footer>
+</main>
+
+
+      </div>
+    </div>
+  
+  <script src="_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
+
+  </body>
+</html>
