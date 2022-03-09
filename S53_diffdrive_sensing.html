@@ -446,6 +446,11 @@
    5.3.7. Camera Field of View
   </a>
  </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#stereo-vision">
+   5.3.8. Stereo Vision
+  </a>
+ </li>
 </ul>
 
             </nav>
@@ -499,6 +504,11 @@
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#camera-field-of-view">
    5.3.7. Camera Field of View
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#stereo-vision">
+   5.3.8. Stereo Vision
   </a>
  </li>
 </ul>
@@ -836,6 +846,43 @@ The horizontal FOV can then be calculated by</p>
 </div>
 </div>
 </div>
+</div>
+<div class="section" id="stereo-vision">
+<h2><span class="section-number">5.3.8. </span>Stereo Vision<a class="headerlink" href="#stereo-vision" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>Given two cameras, we can calculate depth.</p>
+</div></blockquote>
+<p>When using two cameras, we can triangulate features seen in both cameras to calculate its location in space.
+Given a projection <span class="math notranslate nohighlight">\(p=(u,v)\)</span> of a point <span class="math notranslate nohighlight">\(P=(X,Y,Z)\)</span> in a single camera we can only determine the <em>ray</em> on which the point <span class="math notranslate nohighlight">\(P\)</span> must lie.
+However, if we see <em>two</em> projections of the same feature in two cameras, placed side by side, we can <em>triangulate</em> the location of <span class="math notranslate nohighlight">\(P\)</span>.
+In particular, let us name the cameras “Left” and “Right”, abbreviated as “L” and “R”, and let the two projections be <span class="math notranslate nohighlight">\(p_L=(u_L,v_L)\)</span> and <span class="math notranslate nohighlight">\(p_R=(u_R,v_R)\)</span>. How could we recover the coordinates <span class="math notranslate nohighlight">\((X,Y,Z)\)</span> in, say, the <em>left</em> camera coordinate frame?</p>
+<p>We can easily work out the answer <em>if</em> the cameras have the same calibration <em>and</em> the camera pair is in a “stereo” configuration. The latter means that the cameras have exactly the same orientation with respect to the world, and the right camera is displaced only horizontally with respect to the left camera. We call the displacement the <strong>stereo baseline</strong> <span class="math notranslate nohighlight">\(B\)</span>. In that case we have</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align*}
+u_L &amp;= u_0 + f \frac{X}{Z}~~~~v_L = v_0 + f \frac{Y}{Z} \\
+u_R &amp;= u_0 + f \frac{X-B}{Z}~~~~v_R = v_0 + f \frac{Y}{Z}
+\end{align*}
+\end{split}\]</div>
+<p>Two interesting things to note: (a) <span class="math notranslate nohighlight">\(u_L\)</span> and <span class="math notranslate nohighlight">\(u_R\)</span> differ only because the <span class="math notranslate nohighlight">\(X\)</span> coordinate of the point <span class="math notranslate nohighlight">\(P\)</span>, measured in the right camera, is <span class="math notranslate nohighlight">\(B\)</span> less than its value in the left camera.
+and (b) <span class="math notranslate nohighlight">\(v_L\)</span> and <span class="math notranslate nohighlight">\(v_R\)</span> have the same value: <em>corresponding</em> points in a stereo pair lie on the same scanline in the images. We can use the first fact to calculate the <em>unknown depth</em> <span class="math notranslate nohighlight">\(Z\)</span>, by defining the <strong>disparity</strong> <span class="math notranslate nohighlight">\(d\)</span> as the difference of <span class="math notranslate nohighlight">\(u_L\)</span> and <span class="math notranslate nohighlight">\(u_R\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[
+d \doteq u_L - u_R = f \frac{X}{Z} - f \frac{X-B}{Z},
+\]</div>
+<p>and then performing some algebraic manipulation to obtain the <strong>fundamental stereo equation</strong>:</p>
+<div class="math notranslate nohighlight">
+\[
+Z = B \frac{f}{d}.
+\]</div>
+<p>The fraction <span class="math notranslate nohighlight">\(f/d\)</span> is dimensionless, as both disparity <span class="math notranslate nohighlight">\(d\)</span> and focal length <span class="math notranslate nohighlight">\(f\)</span> are expressed in pixels, and hence the resulting depth <span class="math notranslate nohighlight">\(Z\)</span> is expressed in the units of the baseline <span class="math notranslate nohighlight">\(B\)</span>. Using the other equation we can now completely reconstruct the location of the point <span class="math notranslate nohighlight">\(P\)</span> in (left) camera coordinates:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{bmatrix}X\\Y\\Z\end{bmatrix}
+= \begin{bmatrix}Z(u_L-u_0)/f\\Z(v_L-v_0)/f\\B f/d\end{bmatrix}
+= B \frac{f}{d} \begin{bmatrix}(u_L-u_0)/f\\(v_L-v_0)/f\\1\end{bmatrix}
+\end{split}\]</div>
+<p>Stereo cameras are used very often on robotics platforms because of this ability to reconstruct the world in 3D, at least in in principle. This is akin to our own (human) ability to perceive depth by virtue of having two eyes, a feature we have in common with many animals - primarily predators, who need accurate depth vision to hunt prey. In practice, using a stereo camera is not as straightforward, as it has to be carefully calibrated and finding <em>correspondences</em> between left and right cameras is not always straightforward. However, the latter has been alleviated quite a bit by recent advances in neural networks, which we will discuss in the next section.</p>
 </div>
 </div>
 
