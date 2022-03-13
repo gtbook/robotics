@@ -316,6 +316,11 @@
      5.5. Path Planning
     </a>
    </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S56_diffdrive_learning.html">
+     5.6. Deep Learning
+    </a>
+   </li>
   </ul>
  </li>
 </ul>
@@ -585,7 +590,7 @@
             
               <div>
                 
-  <p><a href="https://colab.research.google.com/github/gtbook/robotics/blob/main/S54_duckiebot_perception.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a></p>
+  <p><a href="https://colab.research.google.com/github/gtbook/robotics/blob/main/S54_diffdrive_perception.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a></p>
 <div class="tex2jax_ignore mathjax_ignore section" id="computer-vision-101">
 <h1><span class="section-number">5.4. </span>Computer Vision 101<a class="headerlink" href="#computer-vision-101" title="Permalink to this headline">¶</a></h1>
 <blockquote>
@@ -598,7 +603,7 @@
 <div class="cell_output docutils container">
 <div class="output text_html">
 <div align='center'>
-<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S54-Two-wheeled%20Toy%20Robot-02.jpg?raw=1' style='height:256 width:100%'/>
+<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S54-Two-wheeled%20Toy%20Robot-01.jpg?raw=1' style='height:256 width:100%'/>
 </div>
 </div></div>
 </div>
@@ -611,8 +616,8 @@
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">image_name</span> <span class="o">=</span> <span class="s2">&quot;LL_color_1201754063.387872.bmp&quot;</span>
-<span class="n">image</span> <span class="o">=</span> <span class="n">diffdrive</span><span class="o">.</span><span class="n">read_image</span><span class="p">(</span><span class="n">image_name</span><span class="p">)</span> <span class="c1"># locally: PIL.Image.open(image_name)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image</span><span class="p">);</span>
+<span class="n">lagr_image</span> <span class="o">=</span> <span class="n">diffdrive</span><span class="o">.</span><span class="n">read_image</span><span class="p">(</span><span class="n">image_name</span><span class="p">)</span> <span class="c1"># locally: PIL.Image.open(image_name)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">lagr_image</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
@@ -623,7 +628,7 @@
 <p>First, to explain linear filtering operations, we will convert the image to grayscale:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">grayscale_image</span> <span class="o">=</span> <span class="n">PIL</span><span class="o">.</span><span class="n">ImageOps</span><span class="o">.</span><span class="n">grayscale</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">grayscale_image</span> <span class="o">=</span> <span class="n">PIL</span><span class="o">.</span><span class="n">ImageOps</span><span class="o">.</span><span class="n">grayscale</span><span class="p">(</span><span class="n">lagr_image</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">grayscale_image</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -835,6 +840,7 @@ f[o] = \theta \begin{pmatrix}\sum_i W[o,k] x[k] + b[o]\end{pmatrix} = \theta(W x
 <blockquote>
 <div><p>Convolve, “threshold”, repeat…</p>
 </div></blockquote>
+<p>Below we motivate a new type of neural network which is more efficient and more amenable to successful training. We discuss what it means to go wide and deep, and discuss the important concept of pooling.</p>
 <div class="section" id="cnns-and-translational-invariance">
 <h3><span class="section-number">5.4.6.1. </span>CNNs and Translational Invariance<a class="headerlink" href="#cnns-and-translational-invariance" title="Permalink to this headline">¶</a></h3>
 <p>Three separate ideas gave rise to <strong>Convolutional Neural Networks</strong> or CNNs, which replace fully connected or <em>dense</em> layers with <em>convolutional</em> layers:</p>
@@ -912,20 +918,24 @@ The MNIST task is now considered solved, and LeNet-5 is not even the best perfor
 <div><p>What do neural networks do for robots?</p>
 </div></blockquote>
 <p>In section 5.6 we will see some other applications, but a very relevant task for robotics is <strong>semantic segmentation</strong>. In this task, every pixel in the image is classified into a finite set of <em>classes</em>, such as road, vegetation, building, sky, etc. Think back to Chapter 1, where we discussed a trash sorting robot’s need to classify pieces of trash into different categories. Semantic segmentation is similar, but we now do this for <em>every</em> pixel in the image. This is a very useful capability for a <em>mobile</em> robot, e.g., it can help plan a path over drivable surfaces.</p>
-<p>Below we give a pytorch example running a pre-trained semantic segmentation neural network.</p>
+<p>Below we give a pytorch example running a pre-trained semantic segmentation neural network. We can load it from the <a class="reference external" href="https://pytorch.org/hub/">Pytorch Hub</a>, a repository of state of the art neural network models:</p>
 <div class="cell tag_remove-output docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;pytorch/vision:v0.10.0&#39;</span><span class="p">,</span> <span class="s1">&#39;deeplabv3_resnet50&#39;</span><span class="p">,</span> <span class="n">pretrained</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;pytorch/vision:v0.10.0&#39;</span><span class="p">,</span> <span class="s1">&#39;deeplabv3_resnet50&#39;</span><span class="p">,</span> <span class="n">pretrained</span><span class="o">=</span><span class="kc">True</span><span class="p">);</span>
+<span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">DEVICE</span><span class="p">)</span> <span class="c1"># DEVICE will be equal to &#39;cuda&#39; if GPU is available</span>
 <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">();</span>
 </pre></div>
 </div>
 </div>
 </div>
+<p>We load a highway driving example to test it:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">image_name</span> <span class="o">=</span> <span class="s2">&quot;highway280.jpg&quot;</span>
-<span class="n">input_image</span> <span class="o">=</span> <span class="n">diffdrive</span><span class="o">.</span><span class="n">read_image</span><span class="p">(</span><span class="n">image_name</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;resolution = </span><span class="si">{</span><span class="n">input_image</span><span class="o">.</span><span class="n">width</span><span class="si">}</span><span class="s2">x</span><span class="si">{</span><span class="n">input_image</span><span class="o">.</span><span class="n">height</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">highway_image</span> <span class="o">=</span> <span class="n">diffdrive</span><span class="o">.</span><span class="n">read_image</span><span class="p">(</span><span class="n">image_name</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;resolution = </span><span class="si">{</span><span class="n">highway_image</span><span class="o">.</span><span class="n">width</span><span class="si">}</span><span class="s2">x</span><span class="si">{</span><span class="n">highway_image</span><span class="o">.</span><span class="n">height</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">highway_image</span> <span class="o">=</span> <span class="n">highway_image</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">&quot;RGB&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">highway_image</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
@@ -933,36 +943,22 @@ The MNIST task is now considered solved, and LeNet-5 is not even the best perfor
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>resolution = 1282x962
 </pre></div>
 </div>
+<img alt="_images/S54_diffdrive_perception_42_1.png" src="_images/S54_diffdrive_perception_42_1.png" />
 </div>
 </div>
+<p>We then run the model, after first transforming the image to match the way it was presented to the network during training (which we glean from the PyTorch Hub examples for this model):</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># sample execution (requires torchvision)</span>
-<span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
 <span class="kn">from</span> <span class="nn">torchvision</span> <span class="kn">import</span> <span class="n">transforms</span>
-<span class="n">input_image</span> <span class="o">=</span> <span class="n">input_image</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">&quot;RGB&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">input_image</span><span class="p">);</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="_images/S54_diffdrive_perception_42_0.png" src="_images/S54_diffdrive_perception_42_0.png" />
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">preprocess</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">([</span>
+<span class="n">preprocess</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">([</span>
     <span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">(),</span>
     <span class="n">transforms</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span><span class="n">mean</span><span class="o">=</span><span class="p">[</span><span class="mf">0.485</span><span class="p">,</span> <span class="mf">0.456</span><span class="p">,</span> <span class="mf">0.406</span><span class="p">],</span> <span class="n">std</span><span class="o">=</span><span class="p">[</span><span class="mf">0.229</span><span class="p">,</span> <span class="mf">0.224</span><span class="p">,</span> <span class="mf">0.225</span><span class="p">]),</span>
 <span class="p">])</span>
 
-<span class="n">input_tensor</span> <span class="o">=</span> <span class="n">preprocess</span><span class="p">(</span><span class="n">input_image</span><span class="p">)</span>
-<span class="n">input_batch</span> <span class="o">=</span> <span class="n">input_tensor</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># create a mini-batch as expected by the model</span>
-
-<span class="c1"># move the input and model to GPU for speed if available</span>
-<span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
-    <span class="n">input_batch</span> <span class="o">=</span> <span class="n">input_batch</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;cuda&#39;</span><span class="p">)</span>
-    <span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;cuda&#39;</span><span class="p">)</span>
+<span class="n">input_tensor</span> <span class="o">=</span> <span class="n">preprocess</span><span class="p">(</span><span class="n">highway_image</span><span class="p">)</span>
+<span class="n">input_batch</span> <span class="o">=</span> <span class="n">input_tensor</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># create mini-batch as expected by the model</span>
+<span class="n">input_batch</span> <span class="o">=</span> <span class="n">input_batch</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">DEVICE</span><span class="p">)</span>
 
 <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
     <span class="n">output</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">input_batch</span><span class="p">)[</span><span class="s1">&#39;out&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
@@ -971,6 +967,7 @@ The MNIST task is now considered solved, and LeNet-5 is not even the best perfor
 </div>
 </div>
 </div>
+<p>Again, we use example code from PyTorch Hub to display the result as a color-coded per-pixel segmentation image. Note the method calls <code class="docutils literal notranslate"><span class="pre">.cpu()</span></code> and <code class="docutils literal notranslate"><span class="pre">.numpy()</span></code> which respectively transfer a PyTorch tensor to the CPU (if it’s not already there) and then convert the tensor to a <code class="docutils literal notranslate"><span class="pre">numpy</span></code> array, to play nicely with <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># create a color pallette, selecting a color for each class</span>
@@ -979,7 +976,7 @@ The MNIST task is now considered solved, and LeNet-5 is not even the best perfor
 <span class="n">colors</span> <span class="o">=</span> <span class="p">(</span><span class="n">colors</span> <span class="o">%</span> <span class="mi">255</span><span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;uint8&quot;</span><span class="p">)</span>
 
 <span class="c1"># plot the semantic segmentation predictions of 21 classes in each color</span>
-<span class="n">r</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">fromarray</span><span class="p">(</span><span class="n">output_predictions</span><span class="o">.</span><span class="n">byte</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">input_image</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">PIL</span><span class="o">.</span><span class="n">Image</span><span class="o">.</span><span class="n">fromarray</span><span class="p">(</span><span class="n">output_predictions</span><span class="o">.</span><span class="n">byte</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">highway_image</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
 <span class="n">r</span><span class="o">.</span><span class="n">putpalette</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span>
 
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
@@ -988,7 +985,7 @@ The MNIST task is now considered solved, and LeNet-5 is not even the best perfor
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/S54_diffdrive_perception_44_0.png" src="_images/S54_diffdrive_perception_44_0.png" />
+<img alt="_images/S54_diffdrive_perception_46_0.png" src="_images/S54_diffdrive_perception_46_0.png" />
 </div>
 </div>
 </div>
@@ -997,74 +994,42 @@ The MNIST task is now considered solved, and LeNet-5 is not even the best perfor
 <blockquote>
 <div><p>deep neural networks can infer depth even from a single image.</p>
 </div></blockquote>
-<p>Below we give a pytorch example running a pre-trained single image depth neural network.</p>
+<p>Below we give a pytorch example running a pre-trained single image depth neural network. Again we read it from the PyTorch Hub, using the MiDaS model trained by Intel researchers:</p>
 <div class="cell tag_remove-output docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model_type</span> <span class="o">=</span> <span class="s2">&quot;MiDaS_small&quot;</span>  <span class="c1"># MiDaS v2.1 - Small   (lowest accuracy, highest inference speed)</span>
-<span class="n">midas</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;intel-isl/MiDaS&quot;</span><span class="p">,</span> <span class="n">model_type</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
-<span class="n">midas</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">);</span>
+<span class="n">midas</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;intel-isl/MiDaS&quot;</span><span class="p">,</span> <span class="n">model_type</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">);</span>
+<span class="n">midas</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">DEVICE</span><span class="p">);</span>
 <span class="n">midas</span><span class="o">.</span><span class="n">eval</span><span class="p">();</span>
 </pre></div>
 </div>
 </div>
 </div>
+<p>This time we manually transform the image:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">resized</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="mi">256</span><span class="p">,</span><span class="mi">256</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">resized</span> <span class="o">=</span> <span class="n">highway_image</span><span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="mi">256</span><span class="p">,</span><span class="mi">256</span><span class="p">))</span>
 <span class="n">normalized</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">resized</span><span class="p">)</span><span class="o">-</span><span class="p">[</span><span class="mf">0.485</span><span class="p">,</span> <span class="mf">0.456</span><span class="p">,</span> <span class="mf">0.406</span><span class="p">])</span><span class="o">/</span><span class="p">[</span><span class="mf">0.229</span><span class="p">,</span> <span class="mf">0.224</span><span class="p">,</span> <span class="mf">0.225</span><span class="p">]</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">normalized</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 <span class="n">transposed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">normalized</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">transposed</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 <span class="n">image32</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="n">transposed</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">image32</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 <span class="n">input_batch</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">image32</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
-<span class="n">input_batch</span><span class="o">.</span><span class="n">shape</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(256, 256, 3)
-(3, 256, 256)
-(3, 256, 256)
-</pre></div>
-</div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>torch.Size([1, 3, 256, 256])
 </pre></div>
 </div>
 </div>
 </div>
+<p>After evaluating the network, we show the result using matplotlib:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
     <span class="n">prediction</span> <span class="o">=</span> <span class="n">midas</span><span class="p">(</span><span class="n">input_batch</span><span class="p">)</span>
 
-    <span class="n">prediction</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span>
-        <span class="n">prediction</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
-        <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span><span class="mi">256</span><span class="p">),</span>
-        <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;bicubic&quot;</span><span class="p">,</span>
-        <span class="n">align_corners</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
-
-<span class="n">output</span> <span class="o">=</span> <span class="n">prediction</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">output</span><span class="p">);</span>
+<span class="n">output</span> <span class="o">=</span> <span class="n">prediction</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">output</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/S54_diffdrive_perception_50_0.png" src="_images/S54_diffdrive_perception_50_0.png" />
+<img alt="_images/S54_diffdrive_perception_52_0.png" src="_images/S54_diffdrive_perception_52_0.png" />
 </div>
 </div>
 </div>

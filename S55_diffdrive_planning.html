@@ -57,6 +57,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="5.6. Deep Learning" href="S56_diffdrive_learning.html" />
     <link rel="prev" title="5.4. Computer Vision 101" href="S54_diffdrive_perception.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
@@ -315,6 +316,11 @@
      5.5. Path Planning
     </a>
    </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S56_diffdrive_learning.html">
+     5.6. Deep Learning
+    </a>
+   </li>
   </ul>
  </li>
 </ul>
@@ -437,8 +443,8 @@
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#probabilistic-roadmaps-prms">
-   5.5.4. Probabilistic Roadmaps (PRMs)
+  <a class="reference internal nav-link" href="#probabilistic-road-maps-prms">
+   5.5.4. Probabilistic Road Maps (PRMs)
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -482,8 +488,8 @@
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#probabilistic-roadmaps-prms">
-   5.5.4. Probabilistic Roadmaps (PRMs)
+  <a class="reference internal nav-link" href="#probabilistic-road-maps-prms">
+   5.5.4. Probabilistic Road Maps (PRMs)
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -500,7 +506,7 @@
             
               <div>
                 
-  <p><a href="https://colab.research.google.com/github/gtbook/robotics/blob/main/S55_duckiebot_decision_theory.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a></p>
+  <p><a href="https://colab.research.google.com/github/gtbook/robotics/blob/main/S55_diffdrive_planning.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a></p>
 <div class="tex2jax_ignore mathjax_ignore section" id="path-planning">
 <h1><span class="section-number">5.5. </span>Path Planning<a class="headerlink" href="#path-planning" title="Permalink to this headline">¶</a></h1>
 <blockquote>
@@ -511,7 +517,7 @@
 <div class="cell_output docutils container">
 <div class="output text_html">
 <div align='center'>
-<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S55-Two-wheeled%20Toy%20Robot-01.jpg?raw=1' style='height:256 width:100%'/>
+<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S55-Two-wheeled%20Toy%20Robot-04.jpg?raw=1' style='height:256 width:100%'/>
 </div>
 </div></div>
 </div>
@@ -555,7 +561,7 @@ We can define the set <span class="math notranslate nohighlight">\({\cal Q}_\mat
 <p>We can now formally define a free path as a continuous map from the unit interval
 (or any convenient interval that represents path length) as <span class="math notranslate nohighlight">\(\gamma : [0,1] \rightarrow {\cal Q}_\mathrm{free}\)</span>,
 such that <span class="math notranslate nohighlight">\(q(0) = q_\mathrm{init}\)</span> and <span class="math notranslate nohighlight">\(q(1) = q_\mathrm{goal}\)</span>.
-In some cases we require that <span class="math notranslate nohighlight">\(\gamma\)</span> also be differntiable, but this will not be necessary for our DDR.</p>
+In some cases we require that <span class="math notranslate nohighlight">\(\gamma\)</span> also be differentiable, but this will not be necessary for our DDR.</p>
 <p>When the dimension of the configuration space is small (e.g., <span class="math notranslate nohighlight">\({\cal Q} \subset \mathbb{R}^2\)</span>),
 it may be possible to explicitly compute <span class="math notranslate nohighlight">\({\cal Q}_\mathrm{free}\)</span>;
 however, the time required for this computation grows exponentially with the
@@ -588,7 +594,7 @@ precluding the use of this method to plan paths for more complex robots.</p>
 </div>
 <div class="section" id="artificial-potential-fields">
 <h2><span class="section-number">5.5.3. </span>Artificial Potential Fields<a class="headerlink" href="#artificial-potential-fields" title="Permalink to this headline">¶</a></h2>
-<p>Instead of exhastively applying value iteration to a 2D grid representation of the configuration space,
+<p>Instead of exhaustively applying value iteration to a 2D grid representation of the configuration space,
 we could try to construct a function that can be expressed in closed-form, such that following
 the gradient of this function would lead to the goal configuration while avoiding any configuration
 space obstacles.
@@ -610,9 +616,9 @@ We can define such a potential function as</p>
 \[
 U(q) = U_\mathrm{attr}(q) + U_\mathrm{rep}(q)
 \]</div>
-<p>in wihch <span class="math notranslate nohighlight">\(U_\mathrm{attr}\)</span> is the *attractive potential<span class="math notranslate nohighlight">\( with a single global minimum at \)</span>q_\mathrm{goal}<span class="math notranslate nohighlight">\(,
-and \)</span>U_\mathrm{rep}<span class="math notranslate nohighlight">\( is the repulsive potential, whose value goes to infinity on the boundary
-of \)</span>{\cal Q}_\mathrm{obst}$.</p>
+<p>in which <span class="math notranslate nohighlight">\(U_\mathrm{attr}\)</span> is the <em>attractive potential</em> with a single global minimum at <span class="math notranslate nohighlight">\(q_\mathrm{goal}\)</span>,
+and <span class="math notranslate nohighlight">\(U_\mathrm{rep}\)</span> is the repulsive potential, whose value goes to infinity on the boundary
+of <span class="math notranslate nohighlight">\({\cal Q}_\mathrm{obst}\)</span>.</p>
 <p>There are many possible candidates for these two potentials, but it the basic behavior
 can be captured by using a parabolic well for <span class="math notranslate nohighlight">\(U_\mathrm{attr}\)</span>, and defining <span class="math notranslate nohighlight">\(U_\mathrm{rep}\)</span>
 in terms of the inverse distance to the nearest obstacle:</p>
@@ -653,12 +659,12 @@ The second key difference is that value functions always have a single optimum, 
 descent is guaranteed to find it, unlike potential fields that are apt to be trapped
 in local minima.</p>
 </div>
-<div class="section" id="probabilistic-roadmaps-prms">
-<h2><span class="section-number">5.5.4. </span>Probabilistic Roadmaps (PRMs)<a class="headerlink" href="#probabilistic-roadmaps-prms" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="probabilistic-road-maps-prms">
+<h2><span class="section-number">5.5.4. </span>Probabilistic Road Maps (PRMs)<a class="headerlink" href="#probabilistic-road-maps-prms" title="Permalink to this headline">¶</a></h2>
 <p>As discussed above, the value function is guaranteed to find a path because it essentially explores the entire configuration space (applying dynamic programming outward from the goal configuration), while potential field planning is efficient because it focuses computation on the search for an individual path.
 A compromise approach would be to build a global representation, but to encode only a small number of
 paths in that representation.
-Probabilistic Roadmaps (PRMs) do just this.</p>
+Probabilistic Road Maps (PRMs) do just this.</p>
 <p>A PRM is a graph <span class="math notranslate nohighlight">\(G=(V,E)\)</span> that is embedded in the configuration space.
 Vertices correspond to configurations, and edges correspond to free paths.
 A PRM is constructed by randomly sampling the configuration space to generate
@@ -722,21 +728,6 @@ distribution on the configuration space, then the distribution of nodes
 in <span class="math notranslate nohighlight">\(T_k\)</span> will converge to a uniform distribution).</p>
 <p>RRTs have become increasingly popular in the robot motion planning community, for reasons that will become more apparent when we revisit RRT-style planning for aerial drones in Chapter 7.
 For now, we will use a very simple implementation of RRTs to construct motion plans for our DDR.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">start</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">45</span><span class="p">))</span>
-<span class="n">goal</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">90</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">goal</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(1, 2, 0.785398)
- (10, 5, 1.5708)
-</pre></div>
-</div>
-</div>
-</div>
 </div>
 </div>
 
@@ -771,6 +762,13 @@ For now, we will use a very simple implementation of RRTs to construct motion pl
             <p class="prev-next-subtitle">previous</p>
             <p class="prev-next-title"><span class="section-number">5.4. </span>Computer Vision 101</p>
         </div>
+    </a>
+    <a class='right-next' id="next-link" href="S56_diffdrive_learning.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">5.6. </span>Deep Learning</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
     </a>
 </div>
             
