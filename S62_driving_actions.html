@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>4. Warehouse Robots in 2D &#8212; Introduction to Robotics and Perception</title>
+    <title>6.2. Kinematics for Driving &#8212; Introduction to Robotics and Perception</title>
     
   <link href="_static/css/theme.css" rel="stylesheet">
   <link href="_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
@@ -57,8 +57,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="4.1. Continuous State" href="S41_logistics_state.html" />
-    <link rel="prev" title="3.6. Reinforcement Learning" href="S36_vacuum_RL.html" />
+    <link rel="next" title="6.3. Sensing for Autonomous Vehicles" href="S63_driving_sensing.html" />
+    <link rel="prev" title="6.1. Planar Geometry" href="S61_driving_state.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
     
@@ -239,11 +239,11 @@
    </li>
   </ul>
  </li>
- <li class="toctree-l1 current active has-children">
-  <a class="current reference internal" href="#">
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="S40_logistics_intro.html">
    4. Warehouse Robots in 2D
   </a>
-  <input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
   <label for="toctree-checkbox-4">
    <i class="fas fa-chevron-down">
    </i>
@@ -323,23 +323,23 @@
    </li>
   </ul>
  </li>
- <li class="toctree-l1 has-children">
+ <li class="toctree-l1 current active has-children">
   <a class="reference internal" href="S60_driving_intro.html">
    6. Autonomous Vehicles
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
   <label for="toctree-checkbox-6">
    <i class="fas fa-chevron-down">
    </i>
   </label>
-  <ul>
+  <ul class="current">
    <li class="toctree-l2">
     <a class="reference internal" href="S61_driving_state.html">
      6.1. Planar Geometry
     </a>
    </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="S62_driving_actions.html">
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
      6.2. Kinematics for Driving
     </a>
    </li>
@@ -396,7 +396,7 @@
         <!-- ipynb file if we had a myst markdown file -->
         
         <!-- Download raw file -->
-        <a class="dropdown-buttons" href="_sources/S40_logistics_intro.ipynb"><button type="button"
+        <a class="dropdown-buttons" href="_sources/S62_driving_actions.ipynb"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
                 data-placement="left">.ipynb</button></a>
         <!-- Download PDF via print -->
@@ -416,7 +416,7 @@
                 data-toggle="tooltip" data-placement="left" title="Source repository"><i
                     class="fab fa-github"></i>repository</button></a>
         <a class="issues-button"
-            href="https://github.com/gtbook/robotics/issues/new?title=Issue%20on%20page%20%2FS40_logistics_intro.html&body=Your%20issue%20content%20here."><button
+            href="https://github.com/gtbook/robotics/issues/new?title=Issue%20on%20page%20%2FS62_driving_actions.html&body=Your%20issue%20content%20here."><button
                 type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
                 title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
         
@@ -437,7 +437,7 @@
         aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
     <div class="dropdown-buttons">
         
-        <a class="binder-button" href="https://mybinder.org/v2/gh/gtbook/robotics/main?urlpath=tree/S40_logistics_intro.ipynb"><button type="button"
+        <a class="binder-button" href="https://mybinder.org/v2/gh/gtbook/robotics/main?urlpath=tree/S62_driving_actions.ipynb"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
                 data-placement="left"><img class="binder-button-logo"
                     src="_static/images/logo_binder.svg"
@@ -454,6 +454,24 @@
         <!-- Table of contents -->
         <div class="d-none d-md-block col-md-2 bd-toc show noprint">
             
+            <div class="tocsection onthispage pt-5 pb-3">
+                <i class="fas fa-list"></i> Contents
+            </div>
+            <nav id="bd-toc-nav" aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#car-kinematics">
+   6.2.1. Car kinematics
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#differential-kinematics">
+   6.2.2. Differential Kinematics
+  </a>
+ </li>
+</ul>
+
+            </nav>
         </div>
     </div>
 </div>
@@ -461,60 +479,174 @@
         <div class="col-12 col-md-9 pl-md-3 pr-md-0">
             <!-- Table of contents that is only displayed when printing the page -->
             <div id="jb-print-docs-body" class="onlyprint">
-                <h1>Warehouse Robots in 2D</h1>
+                <h1>Kinematics for Driving</h1>
                 <!-- Table of contents -->
                 <div id="print-main-content">
                     <div id="jb-print-toc">
                         
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#car-kinematics">
+   6.2.1. Car kinematics
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#differential-kinematics">
+   6.2.2. Differential Kinematics
+  </a>
+ </li>
+</ul>
+
+                        </nav>
                     </div>
                 </div>
             </div>
             
               <div>
                 
-  <p><a href="https://colab.research.google.com/github/gtbook/robotics/blob/main/S40_logistics_intro.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a></p>
-<div class="tex2jax_ignore mathjax_ignore section" id="warehouse-robots-in-2d">
-<h1><span class="section-number">4. </span>Warehouse Robots in 2D<a class="headerlink" href="#warehouse-robots-in-2d" title="Permalink to this headline">¶</a></h1>
+  <p><a href="https://colab.research.google.com/github/gtbook/robotics/blob/main/S62_driving_actions.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a></p>
+<div class="tex2jax_ignore mathjax_ignore section" id="kinematics-for-driving">
+<h1><span class="section-number">6.2. </span>Kinematics for Driving<a class="headerlink" href="#kinematics-for-driving" title="Permalink to this headline">¶</a></h1>
 <blockquote>
-<div><p>Omnidirectional robots operating in a warehouse-like environment with LIDAR sensors.</p>
+<div><p>Cars are more complex than differential drive robots: they cannot turn in place, and they typically have front-wheel steering.</p>
 </div></blockquote>
 <div class="cell tag_remove-input docutils container">
 <div class="cell_output docutils container">
 <div class="output text_html">
 <div align='center'>
-<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S40-Warehouse%20robots-06.jpg?raw=1' style='height:256 width:100%'/>
+<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S62-Autonomous%20Vehicle%20with%20LIDAR%20and%20cameras-02.jpg?raw=1' style='height:256 width:100%'/>
 </div>
 </div></div>
 </div>
-<p>In this chapter, we consider a simple mobile robot that operates in a warehouse,
-and whose main task is to transport products from various storage locations to a shipping station.
-The representations and models in this chapter are significantly more complex than those
-in the previous chapters, but they are also much more realistic than those of previous chapters,
-and in some cases are not so different from what is used in current state-of-the-art robotic systems.</p>
-<p>For the first time, we will consider the case in which the state space is continuous.
-While we do not consider rotation in this chapter, we will assume that
-the robot can translate freely to any point in the warehouse, so the state space will be a subset
-of <span class="math notranslate nohighlight">\(\mathbb{R}^2\)</span>.
-In order to represent uncertainty in state, we will introduce continuous probability
-distributions on  <span class="math notranslate nohighlight">\(\mathbb{R}^2\)</span>.
-To model the motion of such a robot, we introduce omni-wheels, and investigate
-the geometry of motion using such wheels.
-Then, to model uncertainty in the motion model, we introduce the multi-variate Gaussian
-distribution.</p>
-<p>For sensing and perception, we again use continuous probability distributions: one-dimensional
-distributions for a range sensor, and two-dimensional distributions for a GPS-like sensor.
-We then introduce the perception problem of localization: given a map of the environment,
-along with the action and sensor measurement histories, determine the robot’s current location
-(i.e., the current state).
-We first look at “Markov Localization”, which is a straightforward application of HMMs. We then look at a particle filter as a better alternative. When applied to localization, the resulting algorithm is called “Monte Carlo Localization”. Finally, as an advanced technique, Kalman smoothing is discussed.
-These three solution approaches demonstrate trade-offs between computational cost and accuracy.</p>
-<p>For planning, we will extend our value iteration algorithm of the previous chapter to the case of
-planning motions for a robot that translates in the plane,  with uncertainty in both its motion model
-and its knowledge of the current state.
-This requires defining a reward function that guides the robot to its goal while avoiding
-collisions with obstacles.</p>
-<div class="toctree-wrapper compound">
-</div>
+<p>In this section we introduce the kinematic model for cars.
+Unlike the differential drive robots of the previous chapter, cars have four wheels, two of which are used for steering,
+and two of which are used to induce linear motion (either the two rear or two front wheels, except in the case of four-wheel drive vehicles).
+Therefore, we might choose to model the car as having two inputs: a steering angle and an acceleration.
+While this might be a more accurate physical model, we will use a slightly simplified model, in which the
+forward speed and turning rate are the inputs.
+Unless the car is traveling at high speed, or experiencing large accelerations, this model is
+accurate enough for most purposes.</p>
+<div class="section" id="car-kinematics">
+<h2><span class="section-number">6.2.1. </span>Car kinematics<a class="headerlink" href="#car-kinematics" title="Permalink to this headline">¶</a></h2>
+<p>We will assume that our car has front-wheel steering, and that forward velocity is achieved by actuation
+of the rear wheels.
+We assign a body-attached frame to the car with origin at the midpoint of the rear axle and <span class="math notranslate nohighlight">\(x\)</span>-axis pointing forward,
+as shown in the figure below.
+If the tires roll without slipping, the instantaneous velocity of the car is always in the direction of
+the body-attached <span class="math notranslate nohighlight">\(x\)</span>-axis.
+We denote the forward speed by <span class="math notranslate nohighlight">\(v_\mathrm{car}\)</span>.</p>
+<figure>
+<img src="https://github.com/gtbook/robotics/blob/main/Figures6/car1.png?raw=1" id="fig:TransformComposition" style="width:8cm" alt="">
+<figcaption>Coordinate frame for a car-like vehicle. </figcaption>
+</figure>
+<p>At first glance, it may appear that the two front wheels have the same orientation w.r.t. the car frame.
+This is not the case, however.
+As the origin of the car frame traces out a curve in the plane, in order for all wheels to roll without
+slipping, their instantaneous velocities must be tangent to a set of circles that share a common origin,
+called the center of the turning circle.
+For the rear wheels, because they share a common axle and maintain a fixed orientation w.r.t. the car frame,
+the axle coincides with the radius of concentric circles,
+and each of the rear wheels has instantaneous velocity that is perpendicular to this radius.
+For the front wheels, the inner wheel follows a circle with smaller radius than the outside wheel.</p>
+<p>This kind of steering for the front wheels is called <strong>Ackermann steering</strong>.
+The physical mechanism required to implement Ackermann steering is slightly complex,
+but happily we can model the system by using a single <em>virtual wheel</em> placed
+at the midpoint between the two front wheels, rolling in a direction perpendicular to the line from
+the center of the turning circle to this midpoint.
+We denote by <span class="math notranslate nohighlight">\(\phi\)</span> the angle from the car <span class="math notranslate nohighlight">\(x\)</span>-axis to the forward direction of this virtual wheel,
+as shown in the figure below.</p>
+<figure>
+<img src="https://github.com/gtbook/robotics/blob/main/Figures6/ackermann1.PNG?raw=1" id="fig:TransformComposition" style="width:8cm" alt="">
+\hspace{0.1in}
+<img src="https://github.com/gtbook/robotics/blob/main/Figures6/car2.png?raw=1" id="fig:TransformComposition" style="width:8cm" alt="">
+<figcaption>Ackermann steering (left), and virtual wheel used to model Ackermann steering (right). </figcaption>
+</figure><p>The configuration of the car can be represented as <span class="math notranslate nohighlight">\(q = (x,y,\theta, \phi)\)</span>, in which <span class="math notranslate nohighlight">\(x,y\)</span> denotes the position
+of the origin of the car frame, <span class="math notranslate nohighlight">\(\theta\)</span> denotes the orientation of car frame (the angle from the world <span class="math notranslate nohighlight">\(x\)</span>-axis
+to the car frame <span class="math notranslate nohighlight">\(x\)</span>-axis), and <span class="math notranslate nohighlight">\(\phi\)</span> denotes the steering angle.
+The inputs to the car are</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(u_1= v_\mathrm{car}\)</span>, the linear speed of the car, and</p></li>
+<li><p><span class="math notranslate nohighlight">\(u_2 = \dot{\phi}\)</span>, the turning rate of the virtual front wheel.</p></li>
+</ul>
+<figure>
+<img src="https://github.com/gtbook/robotics/blob/main/Figures6/car3.png?raw=1" id="fig:TransformComposition" style="width:12cm" alt="">
+<figcaption>Configuration parameters for the car. </figcaption>
+</figure></div>
+<div class="section" id="differential-kinematics">
+<h2><span class="section-number">6.2.2. </span>Differential Kinematics<a class="headerlink" href="#differential-kinematics" title="Permalink to this headline">¶</a></h2>
+<p>The differential kinematics for the car are specified as an equation,
+<span class="math notranslate nohighlight">\(\dot{q} = f(q, u_1, u_2)\)</span>.
+The first two components, <span class="math notranslate nohighlight">\(\dot{x}\)</span> and <span class="math notranslate nohighlight">\(\dot{y}\)</span> are straightforward functions
+of  <span class="math notranslate nohighlight">\(v_\mathrm{car}\)</span> and <span class="math notranslate nohighlight">\(\theta\)</span></p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align*}
+\dot{x} &amp;=  v_\mathrm{car} \cos \theta = u_1 \cos \theta \\
+\dot{y} &amp;=  v_\mathrm{car} \sin \theta = u_1 \sin \theta 
+\end{align*}
+\end{split}\]</div>
+<p>The steering angle is also straightforward:</p>
+<div class="math notranslate nohighlight">
+\[
+\dot{\phi} = u_2 \]</div>
+<p>Note that using this model, we cannot directly control the car’s orientation <span class="math notranslate nohighlight">\(\theta\)</span>.
+We cannot even directly choose the steering angle <span class="math notranslate nohighlight">\(\phi\)</span>.
+We have direct control only over <span class="math notranslate nohighlight">\(\dot{\phi}\)</span>.</p>
+<p>The equation for <span class="math notranslate nohighlight">\(\dot{\theta}\)</span> is slightly more complex.
+From the figure below, we observe the following</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align*}
+v_\mathrm{wheel} \cos \phi &amp;=  v_\mathrm{car}  \\
+v_\mathrm{wheel} \sin \phi &amp;=  v_\mathrm{tangent}  \\
+\end{align*}
+\end{split}\]</div>
+<p>Combining these to eliminate <span class="math notranslate nohighlight">\(v_\mathrm{wheel}\)</span> we obtain</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{v_\mathrm{car}}{\cos \phi} \sin \phi = v_\mathrm{car} \tan \phi = v_\mathrm{tangent}
+\]</div>
+<p>Now, using <span class="math notranslate nohighlight">\(L \dot{\theta} = v_\mathrm{tangent}\)</span> (where <span class="math notranslate nohighlight">\(L\)</span> is the baseline distance between front and rear axles),
+we obtain</p>
+<div class="math notranslate nohighlight">
+\[
+\dot{\theta} = v_\mathrm{car} \frac{1}{L} \tan \phi = u_1 \frac{1}{L} \tan \phi
+\]</div>
+<p>Collecting these terms together, we can write the differential kinematics
+in matrix form as:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{bmatrix}
+\dot{x}\\
+\dot{y}\\
+\dot{\theta}\\
+\dot{\phi}
+\end{bmatrix}
+=
+\begin{bmatrix}
+\cos \theta\\
+\sin \theta \\
+\frac{1}{L} \tan \phi\\
+0
+\end{bmatrix}
+u_1
++
+\begin{bmatrix}
+0\\
+0\\
+0\\
+1
+\end{bmatrix}
+u_2
+\end{split}\]</div>
+<figure>
+<img src="https://github.com/gtbook/robotics/blob/main/Figures6/car4.png?raw=1" id="fig:TransformComposition" style="width:12cm" alt="">
+<figcaption>Relevant velocities for computing the differential kinamatics of the car. </figcaption>
+</figure></div>
 </div>
 
     <script type="text/x-thebe-config">
@@ -542,17 +674,17 @@ collisions with obstacles.</p>
             
                 <!-- Previous / next buttons -->
 <div class='prev-next-area'> 
-    <a class='left-prev' id="prev-link" href="S36_vacuum_RL.html" title="previous page">
+    <a class='left-prev' id="prev-link" href="S61_driving_state.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
             <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title"><span class="section-number">3.6. </span>Reinforcement Learning</p>
+            <p class="prev-next-title"><span class="section-number">6.1. </span>Planar Geometry</p>
         </div>
     </a>
-    <a class='right-next' id="next-link" href="S41_logistics_state.html" title="next page">
+    <a class='right-next' id="next-link" href="S63_driving_sensing.html" title="next page">
     <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title"><span class="section-number">4.1. </span>Continuous State</p>
+        <p class="prev-next-title"><span class="section-number">6.3. </span>Sensing for Autonomous Vehicles</p>
     </div>
     <i class="fas fa-angle-right"></i>
     </a>

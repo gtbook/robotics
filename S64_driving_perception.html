@@ -1,0 +1,1308 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>6.4. PoseSLAM &#8212; Introduction to Robotics and Perception</title>
+    
+  <link href="_static/css/theme.css" rel="stylesheet">
+  <link href="_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-book-theme.css?digest=c3fdc42140077d1ad13ad2f1588a4309" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/style.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    
+  <link rel="preload" as="script" href="_static/js/index.be7d3bbb2ef33a8344ce.js">
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/togglebutton.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="_static/sphinx-book-theme.d59cb220de22ca1c485ebbdc042f0030.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script async="async" src="https://unpkg.com/thebe@0.5.1/lib/index.js"></script>
+    <script>
+        const thebe_selector = ".thebe"
+        const thebe_selector_input = "pre"
+        const thebe_selector_output = ".output"
+    </script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="6.3. Sensing for Autonomous Vehicles" href="S63_driving_sensing.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+<script async="" src="https://www.google-analytics.com/analytics.js"></script>
+<script>
+                        window.ga = window.ga || function () {
+                            (ga.q = ga.q || []).push(arguments) };
+                        ga.l = +new Date;
+                        ga('create', 'UA-312077-7', 'auto');
+                        ga('set', 'anonymizeIp', true);
+                        ga('send', 'pageview');
+                    </script>
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="_static/logo.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Introduction to Robotics and Perception</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="intro.html">
+   Introduction to Robotics and Perception
+  </a>
+ </li>
+</ul>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="S10_introduction.html">
+   1. Introduction
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S11_intro_state.html">
+     1.1. Representing State
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S12_intro_actions.html">
+     1.2. Robot Actions
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S13_intro_sensing.html">
+     1.3. Sensing
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S14_intro_perception.html">
+     1.4. Perception
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S15_intro_decision.html">
+     1.5. Planning
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S16_intro_learning.html">
+     1.6. Learning
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="S20_sorter_intro.html">
+   2. A Trash Sorting Robot
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S21_sorter_state.html">
+     2.1. Modeling the World State
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S22_sorter_actions.html">
+     2.2. Actions for Sorting Trash
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S23_sorter_sensing.html">
+     2.3. Sensors for Sorting Trash
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S24_sorter_perception.html">
+     2.4. Perception
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S25_sorter_decision_theory.html">
+     2.5. Decision Theory
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S26_sorter_learning.html">
+     2.6. Learning
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="S30_vacuum_intro.html">
+   3. A Robot Vacuum Cleaner
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S31_vacuum_state.html">
+     3.1. Modeling the State of the Vacuum Cleaning Robot
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S32_vacuum_actions.html">
+     3.2. Actions over time
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S33_vacuum_sensing.html">
+     3.3. Dynamic Bayes Nets
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S34_vacuum_perception.html">
+     3.4. Perception with Graphical Models
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S35_vacuum_decision.html">
+     3.5. Markov Decision Processes
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S36_vacuum_RL.html">
+     3.6. Reinforcement Learning
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="S40_logistics_intro.html">
+   4. Warehouse Robots in 2D
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S41_logistics_state.html">
+     4.1. Continuous State
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S42_logistics_actions.html">
+     4.2. Moving in 2D
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S43_logistics_sensing.html">
+     4.3. Sensor Models with Continuous State
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S44_logistics_perception.html">
+     4.4. Localization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S45_logistics_planning.html">
+     4.5. Planning for Logistics
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S46_logistics_learning.html">
+     4.6. Some System Identification
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="S50_diffdrive_intro.html">
+   5. A Mobile Robot With Simple Kinematics
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <label for="toctree-checkbox-5">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S51_diffdrive_state.html">
+     5.1. State Space for a Differential Drive Robot
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S52_diffdrive_actions.html">
+     5.2. Motion Model for the Differential Drive Robot
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S53_diffdrive_sensing.html">
+     5.3. Robot Vision
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S54_diffdrive_perception.html">
+     5.4. Computer Vision 101
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S55_diffdrive_planning.html">
+     5.5. Path Planning
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S56_diffdrive_learning.html">
+     5.6. Deep Learning
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="S60_driving_intro.html">
+   6. Autonomous Vehicles
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <label for="toctree-checkbox-6">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2">
+    <a class="reference internal" href="S61_driving_state.html">
+     6.1. Planar Geometry
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S62_driving_actions.html">
+     6.2. Kinematics for Driving
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S63_driving_sensing.html">
+     6.3. Sensing for Autonomous Vehicles
+    </a>
+   </li>
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     6.4. PoseSLAM
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="topbar container-xl fixed-top">
+    <div class="topbar-contents row">
+        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
+        <div class="col pl-md-4 topbar-main">
+            
+            <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+                data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+                <i class="fas fa-bars"></i>
+                <i class="fas fa-arrow-left"></i>
+                <i class="fas fa-arrow-up"></i>
+            </button>
+            
+            
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="_sources/S64_driving_perception.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.ipynb</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+                onclick="printPdf(this)" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+            <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/gtbook/robotics"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        <a class="issues-button"
+            href="https://github.com/gtbook/robotics/issues/new?title=Issue%20on%20page%20%2FS64_driving_perception.html&body=Your%20issue%20content%20here."><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
+        
+    </div>
+</div>
+
+            <!-- Full screen (wrap in <a> to have style consistency -->
+
+<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+        title="Fullscreen mode"><i
+            class="fas fa-expand"></i></button></a>
+
+            <!-- Launch buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
+    <div class="dropdown-buttons">
+        
+        <a class="binder-button" href="https://mybinder.org/v2/gh/gtbook/robotics/main?urlpath=tree/S64_driving_perception.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
+                data-placement="left"><img class="binder-button-logo"
+                    src="_static/images/logo_binder.svg"
+                    alt="Interact on binder">Binder</button></a>
+        
+        
+        
+        
+    </div>
+</div>
+
+        </div>
+
+        <!-- Table of contents -->
+        <div class="d-none d-md-block col-md-2 bd-toc show noprint">
+            
+            <div class="tocsection onthispage pt-5 pb-3">
+                <i class="fas fa-list"></i> Contents
+            </div>
+            <nav id="bd-toc-nav" aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#iterative-closest-points">
+   6.4.1. Iterative Closest Points
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#finding-closest-points">
+     6.4.1.1. Finding Closest Points
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#estimating-the-pairwise-transform">
+     6.4.1.2. Estimating the Pairwise Transform
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#slam">
+   6.4.2. SLAM
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-poseslam-factor-graph">
+   6.4.3. The PoseSLAM Factor Graph
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#nonlinear-optimization-for-poseslam">
+   6.4.4. Nonlinear Optimization for PoseSLAM
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-variable-elimination-algorithm">
+   6.4.5. The Variable Elimination Algorithm
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#complexity">
+   6.4.6. Complexity
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exercises">
+     6.4.6.1. Exercises
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#map-estimation">
+   6.4.7. MAP Estimation
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id1">
+     6.4.7.1. Exercises
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#optimization-with-gtsam">
+   6.4.8. Optimization with GTSAM
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#summary">
+   6.4.9. Summary
+  </a>
+ </li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>PoseSLAM</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#iterative-closest-points">
+   6.4.1. Iterative Closest Points
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#finding-closest-points">
+     6.4.1.1. Finding Closest Points
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#estimating-the-pairwise-transform">
+     6.4.1.2. Estimating the Pairwise Transform
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#slam">
+   6.4.2. SLAM
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-poseslam-factor-graph">
+   6.4.3. The PoseSLAM Factor Graph
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#nonlinear-optimization-for-poseslam">
+   6.4.4. Nonlinear Optimization for PoseSLAM
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-variable-elimination-algorithm">
+   6.4.5. The Variable Elimination Algorithm
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#complexity">
+   6.4.6. Complexity
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exercises">
+     6.4.6.1. Exercises
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#map-estimation">
+   6.4.7. MAP Estimation
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id1">
+     6.4.7.1. Exercises
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#optimization-with-gtsam">
+   6.4.8. Optimization with GTSAM
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#summary">
+   6.4.9. Summary
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            
+              <div>
+                
+  <p><a href="https://colab.research.google.com/github/gtbook/robotics/blob/main/S64_driving_perception.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># %pip install -q -U gtbook</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">plotly.express</span> <span class="k">as</span> <span class="nn">px</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">google.colab</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">plotly.io</span> <span class="k">as</span> <span class="nn">pio</span>
+    <span class="n">pio</span><span class="o">.</span><span class="n">renderers</span><span class="o">.</span><span class="n">default</span> <span class="o">=</span> <span class="s2">&quot;png&quot;</span>
+
+<span class="kn">import</span> <span class="nn">gtsam</span> 
+<span class="kn">from</span> <span class="nn">gtbook</span> <span class="kn">import</span> <span class="n">driving</span>
+<span class="kn">from</span> <span class="nn">gtbook.display</span> <span class="kn">import</span> <span class="n">show</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="tex2jax_ignore mathjax_ignore section" id="poseslam">
+<h1><span class="section-number">6.4. </span>PoseSLAM<a class="headerlink" href="#poseslam" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div><p>PoseSLAM is SLAM with pose priors and relative pose constraints only.</p>
+</div></blockquote>
+<p><strong>This Section is still in draft mode and was released for adventurous spirits (and TAs) only.</strong></p>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<div class="output text_html">
+<div align='center'>
+<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S64-Autonomous%20Vehicle%20with%20LIDAR%20and%20cameras-05.jpg?raw=1' style='height:256 width:100%'/>
+</div>
+</div></div>
+</div>
+<div class="section" id="iterative-closest-points">
+<h2><span class="section-number">6.4.1. </span>Iterative Closest Points<a class="headerlink" href="#iterative-closest-points" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>ICP is a seminal method to align 2 point clouds.</p>
+</div></blockquote>
+<p><strong>Iterative closest points</strong> or <strong>ICP</strong> is a method to align two point clouds, e.g., two successive LIDAR scans. Let us use superscripts <span class="math notranslate nohighlight">\(a\)</span> and <span class="math notranslate nohighlight">\(b\)</span> to distinguish the two point clouds, and the points therein. Under the assumption that we have a good initial estimate <span class="math notranslate nohighlight">\(\hat{T^a_b}\)</span> for the relative pose <span class="math notranslate nohighlight">\(T^a_b\)</span> between the two point clouds, we iterate between two steps:</p>
+<ul class="simple">
+<li><p>find closest point correspondences between the two clouds;</p></li>
+<li><p>re-estimate the relative pose <span class="math notranslate nohighlight">\(\hat{T^a_b}\)</span> between the two clouds.</p></li>
+</ul>
+<p>These two steps are iterated until convergence, hence the name. Below we  explain both steps in order.</p>
+<div class="section" id="finding-closest-points">
+<h3><span class="section-number">6.4.1.1. </span>Finding Closest Points<a class="headerlink" href="#finding-closest-points" title="Permalink to this headline">¶</a></h3>
+<p>The first step is the easiest: for each point <span class="math notranslate nohighlight">\(P^a_j\)</span> in the first point cloud, find the closest point <span class="math notranslate nohighlight">\(P^b_j\)</span> in the second point cloud. Stated formally we have:</p>
+<div class="math notranslate nohighlight">
+\[
+P^b_j = \arg \min_{P^b} \| P^b - P^a_j\|^2
+\]</div>
+<p>where minimizing the square is just as good as minimizing the distance, because they are monotonically related. This is known as the <strong>nearest neighbor</strong> problem, and doing so for all points is the <strong>all nearest neighbors</strong> problem.</p>
+<p>The brute force algorithm of iterating over all points in the second cloud can be quite slow, and indeed finding all nearest neighbors that way has quadratic complexity. However, very fast <em>approximate</em> nearest neighbor algorithms are available. Many of these use specialized data structures, such as “KD-trees” or “Oct-trees” (in 3D). While the details are out of scope, intuitively these data structures  recursively divide up the point clouds into sub-clouds, such that sub-clouds unlikely to contain the nearest neighbor can be quickly excluded. We build his data structure ones for the beat second cloud, and then use it for all nearest neighbor searches, leading to complexity which is approximately <span class="math notranslate nohighlight">\(O(N \log N\)</span>).</p>
+</div>
+<div class="section" id="estimating-the-pairwise-transform">
+<h3><span class="section-number">6.4.1.2. </span>Estimating the Pairwise Transform<a class="headerlink" href="#estimating-the-pairwise-transform" title="Permalink to this headline">¶</a></h3>
+<p>The second step is the more interesting one: given a set of closest point pairs <span class="math notranslate nohighlight">\((P^a_j, P^b_j)\)</span>, how can we estimate from those the relative pose <span class="math notranslate nohighlight">\(\widehat{T^a_b}\)</span> between two points clouds? This is known as the <strong>pose alignment</strong> problem.</p>
+<p>Let us first assume that the two point clouds only differ by a rotation <span class="math notranslate nohighlight">\(R^a_b\)</span>. When this is the case, and assuming we have corresponding points <span class="math notranslate nohighlight">\(P^a\)</span> and <span class="math notranslate nohighlight">\(P^b\)</span>, then each point <span class="math notranslate nohighlight">\(P^a\)</span> in the first cloud can be expressed as a function of a point <span class="math notranslate nohighlight">\(P^b\)</span> in the second cloud:</p>
+<div class="math notranslate nohighlight">
+\[
+P^a = R^a_b P^b
+\]</div>
+<p>One might be tempted to think that therefore</p>
+<div class="math notranslate nohighlight">
+\[
+R^a_b = P^a (P^b)^T
+\]</div>
+<p>but that is just silly (think about why!). Interestingly, though, if we form the matrix</p>
+<div class="math notranslate nohighlight">
+\[
+H = \sum_j P^a_j (P^b_j)^T
+\]</div>
+<p>by summing over at least 3 point pairs <span class="math notranslate nohighlight">\((P^a_j, P^b_j)\)</span>, it turns out that the rotation matrix <span class="math notranslate nohighlight">\(\widehat{R^a_b}\)</span> closest to <span class="math notranslate nohighlight">\(H\)</span> in the least squares sense <em>is</em> the best possible estimate for the unknown rotation <span class="math notranslate nohighlight">\(R^a_b\)</span>. In addition, using the <em>singular value decomposition</em> <span class="math notranslate nohighlight">\(H=U\Lambda V^T\)</span> from linear algebra, it is <em>very</em> easy to compute:</p>
+<div class="math notranslate nohighlight">
+\[
+\widehat{R^a_b} = U V^T
+\]</div>
+<p>Interesting aside: this problem is known as the <em>orthogonal Procrustes problem</em> and its solution via SVD been known since 1966, from a paper by Peter Schönemann in a <em>psychology</em> journal.</p>
+<p>The above solves the problem when there is only rotation, but it turns out that the best possible translation estimate will always align both <em>centroids</em> of the point clouds. Hence, when there is translation present, we simply compute the matrix <span class="math notranslate nohighlight">\(H\)</span> from the <em>centered</em> points,</p>
+<div class="math notranslate nohighlight">
+\[
+H = \sum_j (P^a_j-C^a) (P^b_j-C^b)^T
+\]</div>
+<p>where the point cloud centroids <span class="math notranslate nohighlight">\(C^a\)</span> and <span class="math notranslate nohighlight">\(C^b\)</span> are computed as
+$<span class="math notranslate nohighlight">\(
+C^a = \frac{1}{N} \sum_j P^a_j\text{  and  }C^b = \frac{1}{N} \sum_j P^b_j.
+\)</span>$</p>
+<p>Given the estimated rotation <span class="math notranslate nohighlight">\(\widehat{R^a_b}\)</span>, the translation estimate <span class="math notranslate nohighlight">\(\widehat{t^a_b}\)</span> can be estimated from</p>
+<div class="math notranslate nohighlight">
+\[
+C^a = \widehat{R^a_b} C^b + \widehat{t^a_b},
+\]</div>
+<p>and the final relative pose estimate is given by <span class="math notranslate nohighlight">\(\widehat{T^a_b} =(\widehat{R^a_b}, \widehat{t^a_b})\)</span>. By the way, all of the above math is identical for both the 2D and 3D case.</p>
+</div>
+</div>
+<div class="section" id="slam">
+<h2><span class="section-number">6.4.2. </span>SLAM<a class="headerlink" href="#slam" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>SLAM is Simultaneous Localization and Mapping.</p>
+</div></blockquote>
+<p><strong>SLAM</strong> is <strong>Simultaneous Localization and Mapping</strong>. In the SLAM
+problem the goal is to localize a robot using the information coming
+from the robot’s sensors. The additional wrinkle in SLAM is that we do
+<em>not</em> know the map a priori, and hence we have to infer the unknown map
+simultaneously with localization with respect to the evolving map.</p>
+<p><strong>PoseSLAM</strong> is a variant of SLAM that uses pose constraints as the
+basic building block, and where we optimize over the unknown vehicles
+poses. We do not explicitly optimize over a map: that is reconstructed
+after the fact.</p>
+<p>To represent the pose of a vehicle, recall that 2D poses
+<span class="math notranslate nohighlight">\(T\doteq(x,y,\theta)\)</span> form the Special Euclidean group <span class="math notranslate nohighlight">\(SE(2)\)</span>, and
+can be represented by <span class="math notranslate nohighlight">\(3\times3\)</span> matrix of the form
+$<span class="math notranslate nohighlight">\(
+T=\left[\begin{array}{cc|c}
+\cos\theta &amp; -\sin\theta &amp; x\\
+sin\theta &amp; \cos\theta &amp; y\\
+\hline 0 &amp; 0 &amp; 1
+\end{array}\right]=\left[\begin{array}{cc}
+R &amp; t\\
+0 &amp; 1
+\end{array}\right]
+\)</span><span class="math notranslate nohighlight">\(
+with the \)</span>2\times1<span class="math notranslate nohighlight">\( vector \)</span>t<span class="math notranslate nohighlight">\(
+representing the position of the vehicle, and \)</span>R<span class="math notranslate nohighlight">\( the \)</span>2\times2$
+rotation matrix representing the vehicle’s orientation in the plane.</p>
+<p>Note that this representation generalizes equally to three dimensions,
+but of course <span class="math notranslate nohighlight">\(t\)</span> will be a three-vector, and <span class="math notranslate nohighlight">\(R\)</span> will be a <span class="math notranslate nohighlight">\(3\times3\)</span>
+rotation matrix representing the 3DOF attitude of the vehicle. The
+latter can be decomposed into roll, pitch, and yaw, if so desired.</p>
+<p>The PoseSLAM problem is then:</p>
+<blockquote>
+<div><p>given a set of noisy relative measurements or <strong>pose constraints</strong>
+<span class="math notranslate nohighlight">\(\tilde{T}_{ij}\)</span>, recover the optimal set of poses <span class="math notranslate nohighlight">\(T_{i}^{*}\)</span> that
+maximizes the posteriori probability, i.e., recover the MAP solution.</p>
+</div></blockquote>
+<p>In the case of mapping for autonomous driving, these relative
+measurements can be derived from performing ICP between overlapping
+scans. We can use GPS and/or IMU measurements to decide which scans
+overlap, so that we do not have to compare <span class="math notranslate nohighlight">\(O(n^{2})\)</span> scans. Depending
+on the situation, we can optimize for 3D or 2D poses, in the way we will
+discus below. Afterwards, we can reconstruct a detailed map by
+transforming the local LIDAR scans into the world frame, using the
+optimized poses <span class="math notranslate nohighlight">\(T_{i}^{*}\)</span>.</p>
+</div>
+<div class="section" id="the-poseslam-factor-graph">
+<h2><span class="section-number">6.4.3. </span>The PoseSLAM Factor Graph<a class="headerlink" href="#the-poseslam-factor-graph" title="Permalink to this headline">¶</a></h2>
+<p>In our factor-graph-based view of the world, a pose constraint is
+represented as a factor. As before, the factor graph represent the
+posterior distribution over the unknown pose variables
+<span class="math notranslate nohighlight">\(\mathcal{T}=\{X_{1}\dots X_{5}\}\)</span> given the known measurements:</p>
+<div class="math notranslate nohighlight">
+\[
+\phi(\mathcal{T})=\prod_{i}\phi_{i}(\mathcal{T}_{i}).
+\]</div>
+<p>The factor graph encodes which factors are connected to which variables,
+exposing the sparsity pattern of the corresponding estimation problem.</p>
+<figure>
+<img src="https://github.com/gtbook/robotics/blob/main/Figures6/PoseSLAM-FG.png?raw=1" id="fig:PoseSLAMFG" style="width:60.0%" /><figcaption><span id="fig:PoseSLAMFG" label="fig:PoseSLAMFG">[fig:PoseSLAMFG]</span> PoseSLAM factor graph example.</figcaption>
+</figure>
+<p>An example is shown in Figure
+<a href="#fig:PoseSLAMFG" data-reference-type="ref" data-reference="fig:PoseSLAMFG">1</a>.
+The example represents a vehicle driving around, and taking LIDAR scans
+at 5 different world poses, represented by <span class="math notranslate nohighlight">\(T_{1}\)</span> to <span class="math notranslate nohighlight">\(T_{5}\)</span>.
+The factors <span class="math notranslate nohighlight">\(f_{1}\)</span> to <span class="math notranslate nohighlight">\(f_{4}\)</span> are binary factors representing the pose
+constraints obtained by matching successive LIDAR scans. The factor
+<span class="math notranslate nohighlight">\(f_{5}(T_{5},T_{2})\)</span> is a so-called “loop closure” constraint:
+rather than derived from two successive scans, this one is derived from
+matching the scan taken at <span class="math notranslate nohighlight">\(T_{5}\)</span> with the one at <span class="math notranslate nohighlight">\(T_{2}\)</span>.
+Detecting such loops can be done through a variety of means. The final,
+unary factor <span class="math notranslate nohighlight">\(f_{0}(T_{1})\)</span> is there to “anchor” the solution to the
+origin: if it is not there, the solution will be undetermined. Another
+way to anchor the solution is to add unary factors at every time-step,
+derived from GPS.
+Finding the MAP in the case that variables are continuous and
+measurements are linear combinations of them can be done via
+least-squares. Above we have discussed MAP inference for discrete
+variables, and we have discussed probability distributions for
+continuous variables, but we have never put the two together. In the
+case of measurements corrupted by zero-mean Gaussian noise, we can
+recover the MAP solution by minimization. Recall that a multivariate
+Gaussian density <strong>with mean</strong> <span class="math notranslate nohighlight">\(\mu\)</span> and <strong>variance</strong> <span class="math notranslate nohighlight">\(\sigma^{2}\)</span> is
+given by</p>
+<div class="math notranslate nohighlight">
+\[
+\mathcal{N} x\mu\sigma^2=\frac{1}{\sqrt{2\pi\sigma^{2}}}\exp\left\{ -\frac{1}{2}\left(\frac{x-\mu}{\sigma}\right)^{2}\right\} .
+\]</div>
+<p>If we focus our attention in PoseSLAM on just the x coordinates, then we
+predict relative measurements <span class="math notranslate nohighlight">\(\tilde{x}_{ij}\)</span> by</p>
+<div class="math notranslate nohighlight">
+\[
+\tilde{x}_{ij}\approx h(x_{i,}x_{j})=x_{j}-x_{i}
+\]</div>
+<p>and each factor in
+Figure
+<a href="#fig:PoseSLAMFG" data-reference-type="ref" data-reference="fig:PoseSLAMFG">1</a>
+could be written as</p>
+<div class="math notranslate nohighlight">
+\[
+\phi(x_{i},x_{j})=\frac{1}{\sqrt{2\pi}}\exp\left\{ -\frac{1}{2}\left(x_{j}-x_{i}-\tilde{x}_{ij}\right)^{2}\right\} ,
+\]</div>
+<p>where we assumed <span class="math notranslate nohighlight">\(\sigma=1\)</span> for now. By taking the negative log,
+maximizing the posterior corresponds to minimizing the following sum of
+squares, where sum ranges over all <span class="math notranslate nohighlight">\((i,j)\)</span> pairs for which we have a
+pairwise measurement:</p>
+<div class="math notranslate nohighlight">
+\[
+\mathcal{X}^{*}=\arg\min_{\mathcal{X}}\sum_{k}\frac{1}{2}\left(h(x_{i},x_{j})-\tilde{x}_{ij}\right)^{2}=\arg\min_{\mathcal{X}}\sum_{k}\frac{1}{2}\left(x_{j}-x_{i}-\tilde{x}_{ij}\right)^{2}.
+\]</div>
+<p>Linear least squares problems like these are easily solved by numerical
+computing packages like MATLAB or numpy.</p>
+<p>Unfortunately, in the PoseSLAM case we cannot use linear least squares,
+because poses are not simply vectors, and the measurements are not
+simply linear functions of the poses. Indeed, in PoseSLAM both the
+prediction <span class="math notranslate nohighlight">\(h(T_{i},T_{j})\)</span> and the measurement <span class="math notranslate nohighlight">\(\tilde{T}_{ij}\)</span>
+are relative poses. The measurement prediction function <span class="math notranslate nohighlight">\(h(.)\)</span> is given
+by
+$<span class="math notranslate nohighlight">\(
+h(T_{i},T_{j})=T_{i}^{-1}T_{j}
+\)</span>$
+and the
+measurement error to be minimized is</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{1}{2}\left\Vert \log\left(\tilde{T}_{ij}^{-1}T_{i}^{-1}T_{j}\right)\right\Vert ^{2}
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\log:SE(2)\rightarrow\mathbb{R}^3\)</span> denotes a map from <span class="math notranslate nohighlight">\(SE(2)\)</span> to a
+three-dimensional local coordinate vector <span class="math notranslate nohighlight">\(\xi\)</span>, which will be defined
+in detail below.</p>
+</div>
+<div class="section" id="nonlinear-optimization-for-poseslam">
+<h2><span class="section-number">6.4.4. </span>Nonlinear Optimization for PoseSLAM<a class="headerlink" href="#nonlinear-optimization-for-poseslam" title="Permalink to this headline">¶</a></h2>
+<p>There are two ways out of the nonlinear quandary. The first is to
+realize that the only non-linearities stem from the <span class="math notranslate nohighlight">\(\sin\)</span> and <span class="math notranslate nohighlight">\(\cos\)</span>
+terms in the poses, associated with the unknown orientations
+<span class="math notranslate nohighlight">\(\theta_{i}\)</span>. Hence, one solution is to try and solve for the
+orientations first, and then solve for the translations using linear
+least squares, exactly as above. This approach is known as <strong>rotation
+averaging</strong> followed by linear translation recovery. Unfortunately it is
+sub-optimal as it does not consider the orientation and translation
+simultaneously. However, it can serve to provide a (very) good initial
+estimate for nonlinear optimization, discussed below.</p>
+<p>Indeed, we will prefer to take a second route, which is to use
+<strong>nonlinear optimization</strong>. As discussed, the error expressions
+(<a href="#eq:logmap" data-reference-type="ref" data-reference="eq:logmap">[eq:logmap]</a>)
+are <em>nonlinear</em>, and we cannot directly optimize over the poses
+<span class="math notranslate nohighlight">\(T_{i}\)</span>. Instead, we will locally linearize the problem and solve
+the corresponding linear problem using least-squares, and iterate this
+until convergence. We do this by, at each iteration, parameterizing a
+pose <span class="math notranslate nohighlight">\(T\)</span> by
+$<span class="math notranslate nohighlight">\(
+T\approx\bar{T}\Delta(\xi)
+\)</span>$</p>
+<p>where <span class="math notranslate nohighlight">\(\xi\)</span> are 3D local coordinates
+<span class="math notranslate nohighlight">\(\xi\doteq(\delta x,\delta y,\delta\theta)\)</span> and the incremental pose
+<span class="math notranslate nohighlight">\(\Delta(\xi)\in SE(2)\)</span> is defined as</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\Delta(\xi)=\left[\begin{array}{cc|c}
+1 &amp; -\delta\theta &amp; \delta x\\
+\delta\theta &amp; 1 &amp; \delta y\\
+\hline 0 &amp; 0 &amp; 1
+\end{array}\right]
+\end{split}\]</div>
+<p>which you can recognize as a small angle
+approximation of the <span class="math notranslate nohighlight">\(SE(2)\)</span> matrix
+(<a href="#eq:SE2-matrix" data-reference-type="ref" data-reference="eq:SE2-matrix">[eq:SE2-matrix]</a>).
+In 3D the local coordinates <span class="math notranslate nohighlight">\(\xi\)</span> are 6-dimensional, and the small angle
+approximation is defined as
+$<span class="math notranslate nohighlight">\(
+\Delta(\xi)=\left[\begin{array}{ccc|c}
+1 &amp; -\delta\theta_{z} &amp; \delta\theta_{y} &amp; \delta x\\
+\delta\theta_{z} &amp; 1 &amp; -\delta\theta_{x} &amp; \delta y\\
+-\delta\theta_{y} &amp; \delta\theta_{x} &amp; 1 &amp; \delta z\\
+\hline 0 &amp; 0 &amp; 0 &amp; 1
+\end{array}\right]
+\)</span>$
+With this new notation, we can approximate the
+nonlinear error
+(<a href="#eq:logmap" data-reference-type="ref" data-reference="eq:logmap">[eq:logmap]</a>)
+by a linear approximation:</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{1}{2}\left\Vert \log\left(\tilde{T}_{ij}^{-1}T_{i}^{-1}T_{j}\right)\right\Vert ^{2}\approx\frac{1}{2}\left\Vert A_{i}\xi_{i}+A_{j}\xi_{j}-b\right\Vert ^{2}.
+\]</div>
+<p>For <span class="math notranslate nohighlight">\(SE(2)\)</span> the matrices <span class="math notranslate nohighlight">\(A_{i}\)</span> and <span class="math notranslate nohighlight">\(A_{j}\)</span> are the <span class="math notranslate nohighlight">\(3\times3\)</span> <strong>or
+Jacobian matrices</strong> and <span class="math notranslate nohighlight">\(b\)</span> is a <span class="math notranslate nohighlight">\(3\times1\)</span> bias term. The above
+provides a linear approximation of the term within the norm as a
+function of the incremental local coordinates <span class="math notranslate nohighlight">\(\xi_{i}\)</span> and <span class="math notranslate nohighlight">\(\xi_{j}\)</span>.
+Deriving the detailed expressions for these Jacobians is beyond the
+scope of this document, but suffice to say that they exist and not too
+expensive to compute. In three dimensions, the Jacobian matrices are
+<span class="math notranslate nohighlight">\(6\times6\)</span> and <span class="math notranslate nohighlight">\(16\times6\)</span>, respectively.</p>
+<p>The final optimization will—in each iteration—minimize over the local
+coordinates of all poses by summing over all pose constraints. If we
+index those constraints by <span class="math notranslate nohighlight">\(k\)</span>, we have the following least squares
+problem:</p>
+<div class="math notranslate nohighlight">
+\[
+\Xi^{*}=\arg\min_{\Xi}\sum_{k}\frac{1}{2}\Vert A_{ki}\xi_{i}+A_{kj}\xi_{j}-b_{k}\Vert ^{2}
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\Xi\doteq \{  \xi_{i}\}\)</span>, the set
+of all incremental pose coordinates.</p>
+<p>After solving for the incremental updates <span class="math notranslate nohighlight">\(\Xi\)</span>, we update all poses
+using equation
+<a href="#eq:update" data-reference-type="ref" data-reference="eq:update">[eq:update]</a>
+and check for convergence. If the error does not decrease significantly
+we terminate, otherwise we linearize and solve again, until the error
+converges. While this is not guaranteed to converge to a global minimum,
+in practice it does so if there are enough relative measurements and a
+good initial estimate is available. For example, GPS can provide us with
+a good initial estimate. However, especially in urban environments GPS
+can be quite noisy, and it could happen that the map quality suffers by
+converging to a bad local minimum. Hence, a good quality control process
+is absolutely necessary in production environments.</p>
+<p>For SLAM we typically use specializes packages such as G2O, Ceres, or
+GTSAM that exploit the sparsity of the factor graphs to dramatically
+speed up computation. Note that MATLAB and/or numpy can solve sparse
+least squares problems: the specialized SLAM packages simply provide the
+translation as well as the calculation of the Jacobian matrices above.</p>
+<p>In summary, the algorithm for nonlinear optimization is</p>
+<ul class="simple">
+<li><p>Start with an initial estimate <span class="math notranslate nohighlight">\(\mathcal{T}^{0}\)</span></p></li>
+<li><p>Iterate:</p>
+<ol class="simple">
+<li><p>Linearize the factors
+<span class="math notranslate nohighlight">\(\frac{1}{2}\Vert \log(\tilde{T}_{ij}^{-1}T_{i}^{-1}T_{j})\Vert ^{2}\approx\frac{1}{2}\Vert A_{i}\xi_{i}+A_{j}\xi_{j}-b\Vert ^{2}\)</span></p></li>
+<li><p>Solve the least squares problem
+<span class="math notranslate nohighlight">\(\Xi^{*}=\arg\min_{\Xi}\sum_{k}\frac{1}{2}\Vert A_{ki}\xi_{i}+A_{kj}\xi_{j}-b_{k}\Vert ^{2}\)</span></p></li>
+<li><p>Update <span class="math notranslate nohighlight">\(X_{i}^{t+1}\leftarrow X_{j}^{t}\Delta(\xi_{i})\)</span></p></li>
+</ol>
+</li>
+<li><p>Until the nonlinear error
+<span class="math notranslate nohighlight">\(J(\mathcal{T})\doteq\sum_{k}\frac{1}{2}\Vert \log(\tilde{T}_{ij}^{-1}T_{i}^{-1}T_{j})\Vert ^{2}\)</span>
+converges.</p></li>
+</ul>
+</div>
+<div class="section" id="the-variable-elimination-algorithm">
+<h2><span class="section-number">6.4.5. </span>The Variable Elimination Algorithm<a class="headerlink" href="#the-variable-elimination-algorithm" title="Permalink to this headline">¶</a></h2>
+<p>There exists a general algorithm that, given <em>any</em> factor graph, can
+compute the corresponding posterior distribution
+<span class="math notranslate nohighlight">\(p(\mathcal{X}|\mathcal{Z})\)</span> on the unknown variables <span class="math notranslate nohighlight">\(\mathcal{X}\)</span>.
+Above we saw that a factor graph represents the unnormalized posterior
+<span class="math notranslate nohighlight">\(\phi(\mathcal{X})\propto P(\mathcal{X}|\mathcal{Z})\)</span> as a product of
+factors, typically generated directly from the measurements. The
+variable elimination algorithm is a general recipe for converting any
+factor graph back to a Bayes net, but now <em>only</em> on the unknown
+variables <span class="math notranslate nohighlight">\(\mathcal{X}\)</span>.</p>
+<p>In particular, the <strong>variable elimination</strong> algorithm is a way to
+factorize any factor graph of the form</p>
+<div class="math notranslate nohighlight">
+\[\phi(\mathcal{X})=\phi(X_{1},\ldots,X_{n})\]</div>
+<p>into a factored Bayes net
+probability density of the form</p>
+<div class="math notranslate nohighlight">
+\[p(\mathcal{X})=p(X_{1}|\mathcal{S}_{1})p(X_{2}|\mathcal{S}_{2})\ldots p(X_{n})=\prod_{j}p(X_{j}|\mathcal{S}_{j}),\]</div>
+<p>where the <strong>separator</strong> <span class="math notranslate nohighlight">\(\mathcal{\mathcal{S}}(X_{j})\)</span> is defined as the
+set of variables on which <span class="math notranslate nohighlight">\(X_{j}\)</span> is conditioned, after elimination.
+While this factorization is akin to the chain rule, eliminating a sparse
+factor graph will typically lead to small separators, although this
+depends on the chosen variable ordering <span class="math notranslate nohighlight">\(X_{1},\ldots,X_{n}\)</span>.</p>
+<p>The variable elimination algorithm is listed below,
+where we again used the shorthand notation
+<span class="math notranslate nohighlight">\(\Phi_{j:n}\doteq\phi(X_{j},\ldots,X_{n})\)</span> to denote a partially
+eliminated factor graph.</p>
+<hr class="docutils" />
+<p><code class="docutils literal notranslate"><span class="pre">Eliminate</span></code>(<span class="math notranslate nohighlight">\(\Phi_{1:n}\)</span>):
+Given a factor graph on <span class="math notranslate nohighlight">\(n\)</span> variables, call <code class="docutils literal notranslate"><span class="pre">EliminateOne</span></code> below for all variables <span class="math notranslate nohighlight">\(X_j\)</span>, every time yielding a conditional <span class="math notranslate nohighlight">\(p(X_{j}|S_{j})\)</span>. Return the product of conditionals as the resulting Bayes net:</p>
+<ul class="simple">
+<li><p>For <span class="math notranslate nohighlight">\(j=1...n\)</span>:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(p(X_{j}|S_{j}),\Phi_{j+1:n}\gets \text{EliminateOne}(\Phi_{j:n},X_{j})\)</span></p></li>
+</ul>
+</li>
+<li><p>return <span class="math notranslate nohighlight">\(p(X_{1}|S_{1})p(X_{2}|S_{2})\ldots p(X_{n})\)</span></p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">EliminateOne</span></code>(<span class="math notranslate nohighlight">\(\Phi_{j:n},X_{j}\)</span>):
+Eliminate variable <span class="math notranslate nohighlight">\(X_{j}\)</span> from a factor graph <span class="math notranslate nohighlight">\(\Phi_{j:n}\)</span>:</p>
+<ul class="simple">
+<li><p>Remove all factors <span class="math notranslate nohighlight">\(\phi_{i}(\mathcal{X}_{i})\)</span> that are
+adjacent to <span class="math notranslate nohighlight">\(X_{j}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathcal{S}(X_{j})\)</span> <span class="math notranslate nohighlight">\(\gets\)</span> all variables involved
+excluding <span class="math notranslate nohighlight">\(X_{j}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\psi(X_{j},S_{j})\gets\prod_{i}\phi_{i}(\mathcal{X}_{i})\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(p(X_{j}|S_{j})\tau(S_{j})\gets\psi(X_{j},S_{j})\)</span></p></li>
+<li><p>Add the new factor {<span class="math notranslate nohighlight">\(\tau(S_{j})\)</span>} back into the graph</p></li>
+<li><p>return <span class="math notranslate nohighlight">\(p(X_{j}|S_{j}),\Phi_{j+1:n}\)</span></p></li>
+</ul>
+<hr class="docutils" />
+<p>The algorithm proceeds by eliminating one
+variable <span class="math notranslate nohighlight">\(X_{j}\)</span> at a time, starting with the complete factor graph
+<span class="math notranslate nohighlight">\(\Phi_{1:n}\)</span>. As we eliminate each variable <span class="math notranslate nohighlight">\(X_{j}\)</span>, the function
+produces a single conditional <span class="math notranslate nohighlight">\(p(X_{j}|\mathcal{S}_{j})\)</span>, as well as a
+reduced factor graph <span class="math notranslate nohighlight">\(\Phi_{j+1:n}\)</span> on the remaining variables. After
+all variables have been eliminated, the algorithm returns the resulting
+Bayes net with the desired factorization.</p>
+<p>Above we gave the sum-product version of the variable elimination
+algorithm. The corresponding max-product version produces a DAG of
+lookup tables instead, supporting the computation of the MPE. In both
+cases, the complexity is similar but depends on the chosen variable
+ordering <span class="math notranslate nohighlight">\(X_{1},\ldots,X_{n}\)</span>, as we discuss next.</p>
+</div>
+<div class="section" id="complexity">
+<h2><span class="section-number">6.4.6. </span>Complexity<a class="headerlink" href="#complexity" title="Permalink to this headline">¶</a></h2>
+<p>The elimination algorithm has exponential complexity in the size of the
+largest separator. The chosen variable ordering <span class="math notranslate nohighlight">\(X_{1},\ldots,X_{n}\)</span> can
+affect the complexity dramatically. Some orderings lead to smaller
+separators, and unfortunately it is hard to find an optimal ordering -
+although it can be done for small graphs. A good heuristic is to
+greedily eliminate the variables with the smallest separator first.
+Another is to recursively split the graph, and eliminate starting from
+the leaves of the binary tree that is formed by the splitting process,
+but we will not discuss that here.</p>
+<p>In the special case of HMMs, and in fact any singly connected graph, the
+complexity is linear in the number of nodes. The reason is easiest to
+see for an HMM, as after conversion to a factor graph the graph is just
+a chain. You can easily prove, by induction, that the size of the
+separator is always one. It must be, by the way, as the resulting DAG is
+also singly connected (there is at most one path from any node to any
+other node). Algorithms
+<a href="#alg:max-product-HMM" data-reference-type="ref" data-reference="alg:max-product-HMM">[alg:max-product-HMM]</a>
+and
+<a href="#alg:Sum-product-HMM" data-reference-type="ref" data-reference="alg:Sum-product-HMM">[alg:Sum-product-HMM]</a>
+are the max-product and sum-product variants that we obtain when
+eliminating from left to right. However, it is possible to choose a
+different ordering, even for HMMs. For example, if we eliminate from
+right to left, we get an equally efficient algorithm, although all the
+intermediate product and marginal factors will be different.</p>
+<div class="section" id="exercises">
+<h3><span class="section-number">6.4.6.1. </span>Exercises<a class="headerlink" href="#exercises" title="Permalink to this headline">¶</a></h3>
+<ol class="simple">
+<li><p>Perform symbolic elimination, i.e., just the graph part without
+computation, on some factor graphs of interest.</p></li>
+<li><p>Come up with an ordering for an HMM which is neither left-right or
+right-left which nevertheless results in a singly-connected Bayes
+net.</p></li>
+<li><p>Come up with an ordering to eliminate an HMM which does not lead to
+a singly-connected Bayes net.</p></li>
+</ol>
+</div>
+</div>
+<div class="section" id="map-estimation">
+<h2><span class="section-number">6.4.7. </span>MAP Estimation<a class="headerlink" href="#map-estimation" title="Permalink to this headline">¶</a></h2>
+<figure>
+<img src="https://github.com/gtbook/robotics/blob/main/Figures3/hmm-map-X3.png?raw=1" style="width:50.0%" alt="">
+<figcaption>
+<em>X</em><sub>1</sub></span>, respectively: we simply change the elimination order to make sure the variable(s) of interest are eliminated last.
+</figcaption>
+</figure>
+<figure>
+<img src="https://github.com/gtbook/robotics/blob/main/Figures3/hmm-map-1.png?raw=1" style="width:50.0%" alt="">
+<figcaption>
+<em>X</em><sub>1</sub></span>, respectively: we simply change the elimination order to make sure the variable(s) of interest are eliminated last.
+</figcaption>
+</figure>
+<p>Maximum a posteriori estimation is at least as expensive as MPE or
+calculating the full posterior. Remember that MAP estimation is only
+interested in a subset of the variables, and we partition the variables
+into three sets: the variables of interest <span class="math notranslate nohighlight">\(\mathcal{X}\)</span>, the nuisance
+variables <span class="math notranslate nohighlight">\(\mathcal{Y}\)</span>, and the observed variables <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span>. The
+elimination algorithm is easy to modify to do MAP estimation, simply <em>by
+making sure that the variables of interest <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> are eliminated
+last</em>.</p>
+<p>Why does this work? We can easily see this if we take a “30,000 feet
+view” of the elimination algorithm. In MAP estimation, we are interested
+in maximizing <span class="math notranslate nohighlight">\(P(\mathcal{X}|\mathcal{Z}=\mathfrak{z})\)</span>, but the Bayes
+net gives us the joint distribution
+<span class="math notranslate nohighlight">\(P(\mathcal{X},\mathcal{Y},\mathcal{Z})\)</span>. The first step is to
+instantiate the evidence <span class="math notranslate nohighlight">\(\mathfrak{z}\)</span>and convert to a factor graph
+<span class="math notranslate nohighlight">\(f(\mathcal{X},\mathcal{Y};\mathcal{Z}=\mathfrak{z})\)</span>. When we eliminate
+using the sum-product algorithm, using the elimination order
+<span class="math notranslate nohighlight">\(\mathcal{Y},\)</span><span class="math notranslate nohighlight">\(\mathcal{X}\)</span>, we obtain a DAG encoding the resulting
+posterior as
+$<span class="math notranslate nohighlight">\(P(\mathcal{Y}|\mathcal{X},\mathcal{Z}=\mathfrak{z})P(\mathcal{X}|\mathcal{Z}=\mathfrak{z})\)</span><span class="math notranslate nohighlight">\(
+where \)</span>P(\mathcal{X}|\mathcal{Z}=\mathfrak{z})<span class="math notranslate nohighlight">\( is the desired marginal
+distribution on \)</span>\mathcal{X}<span class="math notranslate nohighlight">\(. Using max-product, the resulting DAG for
+the MPE is
+\)</span><span class="math notranslate nohighlight">\(\pi(\mathcal{Y}|\mathcal{X},\mathcal{Z}=\mathfrak{z})\pi(\mathcal{X}|\mathcal{Z}=\mathfrak{z})\)</span><span class="math notranslate nohighlight">\(
+where the lookup table \)</span>\pi(\mathcal{X}|\mathcal{Z}=\mathfrak{z})$
+corresponds to the MAP estimate.</p>
+<p>The higher complexity of MAP estimation derives from the fact that not
+all elimination orderings are allowed anymore. In particular, the
+optimal ordering, or even approximately optimal orderings, may all be
+incompatible with eliminating <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> last.</p>
+<div class="section" id="id1">
+<h3><span class="section-number">6.4.7.1. </span>Exercises<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<ol class="simple">
+<li><p>Do MAP estimation for some factor graphs of interest.</p></li>
+<li><p>Construct a small example where MAP estimation is more expensive
+than MPE, even when using optimal orderings for both.</p></li>
+<li><p>Think about the complexity of MAP estimation in an HMM. When is it
+not more expensive than MPE?</p></li>
+</ol>
+</div>
+</div>
+<div class="section" id="optimization-with-gtsam">
+<h2><span class="section-number">6.4.8. </span>Optimization with GTSAM<a class="headerlink" href="#optimization-with-gtsam" title="Permalink to this headline">¶</a></h2>
+<p>GTSAM exploits sparsity to be computationally efficient. Typically
+measurements only provide information on the relationship between a
+handful of variables, and hence the resulting factor graph will be
+sparsely connected. This is exploited by the algorithms implemented in
+GTSAM to reduce computational complexity. Even when graphs are too dense
+to be handled efficiently by direct methods, GTSAM provides iterative
+methods that are quite efficient regardless.</p>
+<p>The following code, included in GTSAM as an example, creates the
+factor graph from Figure
+<a href="#fig:PoseSLAMFG" data-reference-type="ref" data-reference="fig:PoseSLAMFG">1</a>
+in code:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">graph</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">NonlinearFactorGraph</span><span class="p">()</span>
+<span class="n">priorNoise</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">noiseModel</span><span class="o">.</span><span class="n">Diagonal</span><span class="o">.</span><span class="n">Sigmas</span><span class="p">((</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">))</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">gtsam</span><span class="o">.</span><span class="n">PriorFactorPose2</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">priorNoise</span><span class="p">))</span>
+
+<span class="c1"># Create odometry (Between) factors between consecutive poses</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">noiseModel</span><span class="o">.</span><span class="n">Diagonal</span><span class="o">.</span><span class="n">Sigmas</span><span class="p">((</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">))</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">gtsam</span><span class="o">.</span><span class="n">BetweenFactorPose2</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">model</span><span class="p">))</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">gtsam</span><span class="o">.</span><span class="n">BetweenFactorPose2</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span> <span class="n">model</span><span class="p">))</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">gtsam</span><span class="o">.</span><span class="n">BetweenFactorPose2</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span> <span class="n">model</span><span class="p">))</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">gtsam</span><span class="o">.</span><span class="n">BetweenFactorPose2</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span> <span class="n">model</span><span class="p">))</span>
+
+<span class="c1"># Add the loop closure constraint</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">gtsam</span><span class="o">.</span><span class="n">BetweenFactorPose2</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span> <span class="n">model</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Lines 1-4 create a nonlinear factor graph and add the unary factor
+<span class="math notranslate nohighlight">\(f_{0}(T_{1})\)</span>. As the vehicle travels through the world, it creates
+binary factors <span class="math notranslate nohighlight">\(f_{t}(T_{t},T_{t+1})\)</span> corresponding to odometry,
+added to the graph in lines 6-12 (Note that M_PI_2 refers to pi/2).
+But line 15 models a different event: a <strong>loop closure</strong>. For example,
+the vehicle might recognize the same location using vision or a laser
+range finder, and calculate the geometric pose constraint to when it
+first visited this location. This is illustrated for poses <span class="math notranslate nohighlight">\(T_{5}\)</span>
+and <span class="math notranslate nohighlight">\(T_{2}\)</span>, and generates the (red) loop closing factor
+<span class="math notranslate nohighlight">\(f_{5}(T_{5},T_{2})\)</span>.</p>
+<p>We can optimize this factor graph, by creating an initial estimate of
+type <code class="docutils literal notranslate"><span class="pre">gtsam.Values</span></code>, and creating and running an optimizer. This is
+illustrated in the listing below:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create the initial estimate</span>
+<span class="n">initial_estimate</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Values</span><span class="p">()</span>
+<span class="n">initial_estimate</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">))</span>
+<span class="n">initial_estimate</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="mf">2.3</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2</span><span class="p">))</span>
+<span class="n">initial_estimate</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="mf">4.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">initial_estimate</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span>
+<span class="n">initial_estimate</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="mf">2.1</span><span class="p">,</span> <span class="mf">2.1</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span>
+
+<span class="c1"># Optimize the initial values using a Gauss-Newton nonlinear optimizer</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">GaussNewtonOptimizer</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">initial_estimate</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">optimize</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Final Result:</span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Final Result:
+Values with 5 values:
+Value 1: (gtsam::Pose2)
+(-2.76843e-20, -8.152e-20, -3.57721e-20)
+
+Value 2: (gtsam::Pose2)
+(2, -1.89295e-19, -5.34287e-20)
+
+Value 3: (gtsam::Pose2)
+(4, -3.42174e-11, 1.5708)
+
+Value 4: (gtsam::Pose2)
+(4, 2, 3.14159)
+
+Value 5: (gtsam::Pose2)
+(2, 2, -1.5708)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">show</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">DefaultKeyFormatter</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/S64_driving_perception_25_0.svg" src="_images/S64_driving_perception_25_0.svg" /></div>
+</div>
+<p>The result is shown graphically in Figure
+<a href="#fig:example" data-reference-type="ref" data-reference="fig:example">2</a>,
+along with covariance ellipses shown in green. These covariance ellipses
+in 2D indicate the marginal over position, over all possible
+orientations, and show the area which contain 68.26% of the probability
+mass (in 1D this would correspond to one standard deviation). The graph
+shows in a clear manner that the uncertainty on pose <span class="math notranslate nohighlight">\(T_{5}\)</span> is now
+much less than if there would be only odometry measurements. The pose
+with the highest uncertainty, <span class="math notranslate nohighlight">\(T_{4}\)</span>, is the one furthest away from
+the unary constraint <span class="math notranslate nohighlight">\(f_{0}(T_{1})\)</span>, which is the only factor tying
+the graph to a global coordinate frame.</p>
+<p>The figure above was created using an interface that allows you to use
+GTSAM from within MATLAB, which provides some excellent visualization
+tools. Similar matplotlib-based visualization tools are available in
+python.</p>
+</div>
+<div class="section" id="summary">
+<h2><span class="section-number">6.4.9. </span>Summary<a class="headerlink" href="#summary" title="Permalink to this headline">¶</a></h2>
+<p>We briefly summarize what we learned in this section:</p>
+<ol class="simple">
+<li><p>LIDAR is a key sensor for autonomous driving</p></li>
+<li><p>Localization can be done with LIDAR, or image-based</p></li>
+<li><p>PoseSLAM: a SLAM variant using ICP pose constraints</p></li>
+<li><p>The PoseSLAM factor graph graphically shows the constraints</p></li>
+<li><p>MAP/MAP solution can be done via nonlinear optimization</p></li>
+<li><p>GTSAM is an easy way to optimize over poses in C++/MATLAB/python</p></li>
+</ol>
+</div>
+</div>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+            
+                <!-- Previous / next buttons -->
+<div class='prev-next-area'> 
+    <a class='left-prev' id="prev-link" href="S63_driving_sensing.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title"><span class="section-number">6.3. </span>Sensing for Autonomous Vehicles</p>
+        </div>
+    </a>
+</div>
+            
+        </div>
+    </div>
+    <footer class="footer">
+  <p>
+    
+      By Frank Dellaert and Seth Hutchinson<br/>
+    
+        &copy; Copyright 2021.<br/>
+  </p>
+</footer>
+</main>
+
+
+      </div>
+    </div>
+  
+  <script src="_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
+
+  </body>
+</html>

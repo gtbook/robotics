@@ -1,0 +1,970 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>6.1. Planar Geometry &#8212; Introduction to Robotics and Perception</title>
+    
+  <link href="_static/css/theme.css" rel="stylesheet">
+  <link href="_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-book-theme.css?digest=c3fdc42140077d1ad13ad2f1588a4309" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/style.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    
+  <link rel="preload" as="script" href="_static/js/index.be7d3bbb2ef33a8344ce.js">
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/togglebutton.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="_static/sphinx-book-theme.d59cb220de22ca1c485ebbdc042f0030.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script async="async" src="https://unpkg.com/thebe@0.5.1/lib/index.js"></script>
+    <script>
+        const thebe_selector = ".thebe"
+        const thebe_selector_input = "pre"
+        const thebe_selector_output = ".output"
+    </script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="6.2. Kinematics for Driving" href="S62_driving_actions.html" />
+    <link rel="prev" title="6. Autonomous Vehicles" href="S60_driving_intro.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+<script async="" src="https://www.google-analytics.com/analytics.js"></script>
+<script>
+                        window.ga = window.ga || function () {
+                            (ga.q = ga.q || []).push(arguments) };
+                        ga.l = +new Date;
+                        ga('create', 'UA-312077-7', 'auto');
+                        ga('set', 'anonymizeIp', true);
+                        ga('send', 'pageview');
+                    </script>
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="_static/logo.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Introduction to Robotics and Perception</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="intro.html">
+   Introduction to Robotics and Perception
+  </a>
+ </li>
+</ul>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="S10_introduction.html">
+   1. Introduction
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S11_intro_state.html">
+     1.1. Representing State
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S12_intro_actions.html">
+     1.2. Robot Actions
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S13_intro_sensing.html">
+     1.3. Sensing
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S14_intro_perception.html">
+     1.4. Perception
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S15_intro_decision.html">
+     1.5. Planning
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S16_intro_learning.html">
+     1.6. Learning
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="S20_sorter_intro.html">
+   2. A Trash Sorting Robot
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S21_sorter_state.html">
+     2.1. Modeling the World State
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S22_sorter_actions.html">
+     2.2. Actions for Sorting Trash
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S23_sorter_sensing.html">
+     2.3. Sensors for Sorting Trash
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S24_sorter_perception.html">
+     2.4. Perception
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S25_sorter_decision_theory.html">
+     2.5. Decision Theory
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S26_sorter_learning.html">
+     2.6. Learning
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="S30_vacuum_intro.html">
+   3. A Robot Vacuum Cleaner
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S31_vacuum_state.html">
+     3.1. Modeling the State of the Vacuum Cleaning Robot
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S32_vacuum_actions.html">
+     3.2. Actions over time
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S33_vacuum_sensing.html">
+     3.3. Dynamic Bayes Nets
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S34_vacuum_perception.html">
+     3.4. Perception with Graphical Models
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S35_vacuum_decision.html">
+     3.5. Markov Decision Processes
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S36_vacuum_RL.html">
+     3.6. Reinforcement Learning
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="S40_logistics_intro.html">
+   4. Warehouse Robots in 2D
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S41_logistics_state.html">
+     4.1. Continuous State
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S42_logistics_actions.html">
+     4.2. Moving in 2D
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S43_logistics_sensing.html">
+     4.3. Sensor Models with Continuous State
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S44_logistics_perception.html">
+     4.4. Localization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S45_logistics_planning.html">
+     4.5. Planning for Logistics
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S46_logistics_learning.html">
+     4.6. Some System Identification
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="S50_diffdrive_intro.html">
+   5. A Mobile Robot With Simple Kinematics
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <label for="toctree-checkbox-5">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S51_diffdrive_state.html">
+     5.1. State Space for a Differential Drive Robot
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S52_diffdrive_actions.html">
+     5.2. Motion Model for the Differential Drive Robot
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S53_diffdrive_sensing.html">
+     5.3. Robot Vision
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S54_diffdrive_perception.html">
+     5.4. Computer Vision 101
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S55_diffdrive_planning.html">
+     5.5. Path Planning
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S56_diffdrive_learning.html">
+     5.6. Deep Learning
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="S60_driving_intro.html">
+   6. Autonomous Vehicles
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <label for="toctree-checkbox-6">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     6.1. Planar Geometry
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S62_driving_actions.html">
+     6.2. Kinematics for Driving
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S63_driving_sensing.html">
+     6.3. Sensing for Autonomous Vehicles
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S64_driving_perception.html">
+     6.4. PoseSLAM
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="topbar container-xl fixed-top">
+    <div class="topbar-contents row">
+        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
+        <div class="col pl-md-4 topbar-main">
+            
+            <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+                data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+                <i class="fas fa-bars"></i>
+                <i class="fas fa-arrow-left"></i>
+                <i class="fas fa-arrow-up"></i>
+            </button>
+            
+            
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="_sources/S61_driving_state.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.ipynb</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+                onclick="printPdf(this)" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+            <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/gtbook/robotics"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        <a class="issues-button"
+            href="https://github.com/gtbook/robotics/issues/new?title=Issue%20on%20page%20%2FS61_driving_state.html&body=Your%20issue%20content%20here."><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
+        
+    </div>
+</div>
+
+            <!-- Full screen (wrap in <a> to have style consistency -->
+
+<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+        title="Fullscreen mode"><i
+            class="fas fa-expand"></i></button></a>
+
+            <!-- Launch buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
+    <div class="dropdown-buttons">
+        
+        <a class="binder-button" href="https://mybinder.org/v2/gh/gtbook/robotics/main?urlpath=tree/S61_driving_state.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
+                data-placement="left"><img class="binder-button-logo"
+                    src="_static/images/logo_binder.svg"
+                    alt="Interact on binder">Binder</button></a>
+        
+        
+        
+        
+    </div>
+</div>
+
+        </div>
+
+        <!-- Table of contents -->
+        <div class="d-none d-md-block col-md-2 bd-toc show noprint">
+            
+            <div class="tocsection onthispage pt-5 pb-3">
+                <i class="fas fa-list"></i> Contents
+            </div>
+            <nav id="bd-toc-nav" aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#planar-rotations">
+   6.1.1. Planar Rotations
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-special-orthogonal-group-of-order-2-aka-so-2">
+   6.1.2. The Special Orthogonal Group of Order 2, aka SO(2)
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#coordinate-transformations-for-pure-rotations">
+   6.1.3. Coordinate Transformations for Pure Rotations
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#d-rigid-transforms-aka-se-2">
+   6.1.4. 2D Rigid Transforms aka SE(2)
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#composition-of-homogeneous-transformations">
+   6.1.5. Composition of Homogeneous Transformations
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#lie-groups">
+   6.1.6. Lie Groups
+  </a>
+ </li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Planar Geometry</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#planar-rotations">
+   6.1.1. Planar Rotations
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-special-orthogonal-group-of-order-2-aka-so-2">
+   6.1.2. The Special Orthogonal Group of Order 2, aka SO(2)
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#coordinate-transformations-for-pure-rotations">
+   6.1.3. Coordinate Transformations for Pure Rotations
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#d-rigid-transforms-aka-se-2">
+   6.1.4. 2D Rigid Transforms aka SE(2)
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#composition-of-homogeneous-transformations">
+   6.1.5. Composition of Homogeneous Transformations
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#lie-groups">
+   6.1.6. Lie Groups
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            
+              <div>
+                
+  <p><a href="https://colab.research.google.com/github/gtbook/robotics/blob/main/S21_sorter_state.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a></p>
+<div class="tex2jax_ignore mathjax_ignore section" id="planar-geometry">
+<h1><span class="section-number">6.1. </span>Planar Geometry<a class="headerlink" href="#planar-geometry" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div><p>Linear algebra can be used to deal efficiently with rotation and translations in the plane.</p>
+</div></blockquote>
+<p>In this section, we saw that the configuration space for the differential drive robot
+was  <span class="math notranslate nohighlight">\({\cal Q} = \mathbb{R}^2 \times [0, 2\pi),\)</span>
+and we used <span class="math notranslate nohighlight">\(q = (x,y,\theta)\)</span> to parameterize the configuration space.
+This choice of parameterization has the nice property of being minimal:
+<span class="math notranslate nohighlight">\({\cal Q}\)</span> is a three-dimensional object, and at least three
+parameters are required to represent arbitrary configurations.
+Unfortunately, this choice of parameterization doesn’t help much when reasoning
+about the geometry of the robot and its motion.
+Recall, for example, the ad hoc planar geometry we used to derive coordinates of points
+on the DDR as a function of <span class="math notranslate nohighlight">\(x,y,\theta\)</span>.
+In this section, we use tools from linear algebra to represent and manipulate configurations.
+We begin by focusing our attention on representing orientation.
+We then extend our methods to include translation, and develop methods
+to describe relative configurations of a robot, which could be used to describe
+sample points along a continuous trajectory in <span class="math notranslate nohighlight">\(\cal Q\)</span>.</p>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<div class="output text_html">
+<div align='center'>
+<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S61-Autonomous%20Vehicle%20with%20LIDAR%20and%20cameras-00.jpg?raw=1' style='height:256 width:100%'/>
+</div>
+</div></div>
+</div>
+<div class="section" id="planar-rotations">
+<h2><span class="section-number">6.1.1. </span>Planar Rotations<a class="headerlink" href="#planar-rotations" title="Permalink to this headline">¶</a></h2>
+<p>In the previous chapter, we represented the orientation of the robot simply by <span class="math notranslate nohighlight">\(\theta \in [0,2\pi)\)</span>.
+There are two main drawbacks to this choice.
+First, the mapping from the robot’s orientation to the parameter <span class="math notranslate nohighlight">\(\theta\)</span> is not continuous.
+If the robot’s orientation is <span class="math notranslate nohighlight">\(\theta = 2\pi - \epsilon\)</span>, for example, and we rotate the robot clockwise
+(decreasing <span class="math notranslate nohighlight">\(\epsilon\)</span> to zero), we will encounter a discontinuity when <span class="math notranslate nohighlight">\(\theta\)</span> goes from very nearly <span class="math notranslate nohighlight">\(2\pi\)</span> to zero.  This will occur regardless of the initial
+value we choose for <span class="math notranslate nohighlight">\(\epsilon\)</span>: when <span class="math notranslate nohighlight">\(\epsilon\)</span> reaches zero, there will be a jump in the value of <span class="math notranslate nohighlight">\(\theta\)</span>.
+We call this jump a <span class="math notranslate nohighlight">\(singularity\)</span>.
+The second drawback is that parameterizing orientation by a single angle <span class="math notranslate nohighlight">\(\theta\)</span> does not generalize in a straightforward way to representing orientation in 3D.
+Further, even if we go to the effort to make this generalization work, the problems with singularities
+are complex, and can cause serious problems if not handled properly.</p>
+<p>Both difficulties above stem from the use of a minimal representation of orientation.
+To solve these problems, we’ll introduce a somewhat redundant representation that explicity
+encodes the orientation of the axes of a target frame relative to a reference frame.
+Consider the two coordinate frames shown in the figure below.
+These two frames share a common origin, and Frame 1 is obtained by rotating by angle <span class="math notranslate nohighlight">\(\theta\)</span> w.r.t.
+frame 0.
+We can express the <span class="math notranslate nohighlight">\(x\)</span>-axis of Frame 1 in coordinates relative to Frame 0
+by projecting <span class="math notranslate nohighlight">\(x_1\)</span> onto <span class="math notranslate nohighlight">\(x_0\)</span> and <span class="math notranslate nohighlight">\(y_0\)</span> (note that these are coordinate free representations
+of these vectors).
+Likewise,
+we can express the   <span class="math notranslate nohighlight">\(y\)</span>-axis of Frame 1 w.r.t. Frame 0
+by projecting <span class="math notranslate nohighlight">\(y_1\)</span> onto <span class="math notranslate nohighlight">\(x_0\)</span> and <span class="math notranslate nohighlight">\(y_0\)</span>.
+Because all of these vectors are unit vectors,
+the projections can be achieved using the dot product.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+x_{1}^{0}=
+\begin{bmatrix}
+x_1 \cdot x_0 \\
+x_1 \cdot y_0
+\end{bmatrix}=
+\begin{bmatrix}
+\cos \theta \\
+\sin \theta
+\end{bmatrix}
+~~~~~~~~~~~
+y_{1}^{0}=
+\begin{bmatrix}
+y_1 \cdot x_0 \\
+y_1 \cdot y_0
+\end{bmatrix}=
+\begin{bmatrix}
+-\sin \theta \\
+\cos \theta
+\end{bmatrix}
+\end{split}\]</div>
+<p>Above, we adopt the notational convention that a subscript indicates the target
+frame, and the superscript indicates the reference frame.  In well-formed equations, subscripts on
+one symbol match the superscript of the next symbol.
+Thus, <span class="math notranslate nohighlight">\(x_1^0\)</span> denotes the <span class="math notranslate nohighlight">\(x\)</span>-axis of Frame 1, expressed in coordinates relative to Frame 0.</p>
+<figure>
+<img src="https://github.com/gtbook/robotics/blob/main/Figures6/2D-rotation.PNG?raw=1" id="fig:2drotation" style="width:10cm" alt="">
+<figcaption>Two coordinate frames that share a common origin.</figcaption>
+</figure><p>We can group these two vectors into a a <strong>rotation matrix</strong></p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+R_{1}^{0}
+=\begin{bmatrix}
+x_1 \cdot x_0 &amp;  y_1 \cdot x_0\\
+x_1 \cdot y_0 &amp; y_1 \cdot y_0
+\end{bmatrix}
+=\begin{bmatrix}
+\cos \theta &amp;  -\sin \theta\\
+\sin \theta &amp; \cos \theta
+\end{bmatrix}
+\end{split}\]</div>
+<p>that describes the orientation of Frame 1 w.r.t. Frame 0.
+Using the notational convention defined above, <span class="math notranslate nohighlight">\(R_{1}^{0}\)</span> indicates the reference frame
+as the superscript (Frame 0) and the target frame as the subscript (Frame 1).</p>
+</div>
+<div class="section" id="the-special-orthogonal-group-of-order-2-aka-so-2">
+<h2><span class="section-number">6.1.2. </span>The Special Orthogonal Group of Order 2, aka SO(2)<a class="headerlink" href="#the-special-orthogonal-group-of-order-2-aka-so-2" title="Permalink to this headline">¶</a></h2>
+<p>The set of <span class="math notranslate nohighlight">\(2\times2\)</span> rotation matrices, together with matrix multiplication as the
+composition operator, form a group called the <strong>Special Orthogonal group of order 2</strong>,
+denoted by <span class="math notranslate nohighlight">\(SO(2)\)</span>.
+All matrices <span class="math notranslate nohighlight">\(R \in SO(2)\)</span> have the following properties:</p>
+<ol class="simple">
+<li><p>Each column <span class="math notranslate nohighlight">\(c_i\)</span> is a unit vector.</p></li>
+<li><p>The columns are orthogonal (i.e., <span class="math notranslate nohighlight">\(c_i \cdot c_j = 0\)</span> for <span class="math notranslate nohighlight">\(i \neq j\)</span>).</p></li>
+<li><p>The inverse of <span class="math notranslate nohighlight">\(R\)</span> is equal to its transpose, <span class="math notranslate nohighlight">\(R^{-1}=R^{T}\)</span>.</p></li>
+<li><p>The determinant of <span class="math notranslate nohighlight">\(R\)</span> is +1.</p></li>
+</ol>
+<p>The first three properties hold for all orthogonal matrices.</p>
+<p>It is easy to understand the first two properties by thinking of the columns
+as representations of coordinate axes. We typically use unit vectors to represent
+the directions of coordinate axes, and any two coordinate axes are orthogonal to one
+another.</p>
+<p>The third property provides a simple method for inverting rotation matrices,
+which is a frequently used operation in robotics applications.</p>
+<p>The fourth property holds for rotation matrices, but not for arbitrary orthogonal
+matrices.
+The determinant of an arbitrary orthogonal matrix is <span class="math notranslate nohighlight">\(\pm 1\)</span>.
+Those orthogonal matrices with determinant <span class="math notranslate nohighlight">\(+1\)</span> correspond to right-handed coordinate systems
+(when curling the fingers of your right hand from the <span class="math notranslate nohighlight">\(x\)</span>-axis to the <span class="math notranslate nohighlight">\(y\)</span>-axis, your thumb points
+in the direction of the <span class="math notranslate nohighlight">\(z\)</span>-axis, which is “out of the page” in the 2D case).
+Those orthogonal matrices with determinant <span class="math notranslate nohighlight">\(-1\)</span> correspond to left-handed systems,
+which are useful in computer graphics applications, but not so much for roboticists.
+Note that it is this fourth property that justifies the designation <em>special</em> for this
+set of matrices.</p>
+<p>As we will see in the next chapter, all of the properties described above generalize to the case
+of rotations in 3D.</p>
+</div>
+<div class="section" id="coordinate-transformations-for-pure-rotations">
+<h2><span class="section-number">6.1.3. </span>Coordinate Transformations for Pure Rotations<a class="headerlink" href="#coordinate-transformations-for-pure-rotations" title="Permalink to this headline">¶</a></h2>
+<p>We can use rotation matrices to perform coordinate transformations under pure rotation.
+Consider a point <span class="math notranslate nohighlight">\(P\)</span> that is rigidly attached to Frame 1, and whose coordinates w.r.t. Frame 1
+are given by</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+P_{}^{1}=\begin{bmatrix}
+p_x \\
+p_y
+\end{bmatrix}
+\end{split}\]</div>
+<p>Using the definition of coordinates, we can describe the point <span class="math notranslate nohighlight">\(P\)</span>
+using the equation</p>
+<div class="math notranslate nohighlight">
+\[
+P = p_x x_1 + p_y y_1
+\]</div>
+<p>in which <span class="math notranslate nohighlight">\(x_1\)</span> and <span class="math notranslate nohighlight">\(y_1\)</span> are the vectors defining the coordinate axes of Frame 1.
+To compute the coordinates of <span class="math notranslate nohighlight">\(P\)</span> w.r.t. Frame 0, we merely project <span class="math notranslate nohighlight">\(P\)</span> onto the <span class="math notranslate nohighlight">\(x\)</span>- and <span class="math notranslate nohighlight">\(y\)</span>- axes
+of Frame 0. Since the vectors <span class="math notranslate nohighlight">\(x_0\)</span> and <span class="math notranslate nohighlight">\(y_0\)</span> are unit vectors, this projection can be accomplished
+using a the dot product:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+P^0 = 
+\begin{bmatrix}
+P \cdot x_0 \\
+P \cdot y_0
+\end{bmatrix}
+=
+\begin{bmatrix}
+(p_x x_1 + p_y y_1) \cdot x_0 \\
+(p_x x_1 + p_y y_1) \cdot y_0
+\end{bmatrix} 
+=
+\begin{bmatrix}
+p_x (x_1 \cdot x_0) + p_y(y_1 \cdot x_0)   \\
+p_x (x_1 \cdot y_0) + p_y(y_1 \cdot y_0)  
+\end{bmatrix}
+=
+\begin{bmatrix}
+x_1 \cdot x_0  &amp; y_1 \cdot x_0   \\
+x_1 \cdot y_0  &amp; y_1 \cdot y_0  
+\end{bmatrix}
+\begin{bmatrix}
+p_x    \\
+ p_y
+\end{bmatrix}
+= R^0_1 P^1
+\end{split}\]</div>
+<p>Summarizing the above:
+$<span class="math notranslate nohighlight">\(
+P^0 =  R^0_1 P^1
+\)</span>$</p>
+<figure>
+<img src="https://github.com/gtbook/robotics/blob/main/Figures6/2d-rotation-transformation.png?raw=1" id="fig:2drotation-trans" style="width:10cm" alt="">
+<figcaption>Coordinate transformation under pure rotation.</figcaption>
+</figure></div>
+<div class="section" id="d-rigid-transforms-aka-se-2">
+<h2><span class="section-number">6.1.4. </span>2D Rigid Transforms aka SE(2)<a class="headerlink" href="#d-rigid-transforms-aka-se-2" title="Permalink to this headline">¶</a></h2>
+<p>It is easy to extend the above method of coordinate transformations to the case of both
+rotation and translation.
+Suppose that, as above, the point <span class="math notranslate nohighlight">\(P\)</span> is rigidly attached to a frame that is rotated
+by angle <span class="math notranslate nohighlight">\(\theta\)</span> w.r.t. Frame 0.
+If we now translate that frame, as shown in the figure below, the point <span class="math notranslate nohighlight">\(P\)</span> undergoes
+the same translation as the frame.
+To calculate the coordinates of <span class="math notranslate nohighlight">\(P\)</span> relative to Frame 0, we merely
+perform the rotational coordinate transformation as above,
+and then add the translation from the origin of Frame 0 to the origin of Frame 1:
+$<span class="math notranslate nohighlight">\(
+P^0 =  R^0_1 P^1 + d^0_1
+\)</span>$</p>
+<figure>
+<img src="https://github.com/gtbook/robotics/blob/main/Figures6/2d-coord-trans.png?raw=1" id="fig:2drotation-trans" style="width:20cm" alt="">
+<figcaption>Coordinate transformation under both rotation and translation.</figcaption>
+</figure><p>We can write the above coordinate transformation as a matrix equation:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{bmatrix}
+P^0 \\ 1
+\end{bmatrix}
+=
+\begin{bmatrix}
+R_{1}^{0} &amp; d_{1}^{0}\\
+0_{2} &amp; 1
+\end{bmatrix}
+\begin{bmatrix}
+P^1 \\ 0
+\end{bmatrix}
+\end{split}\]</div>
+<p>in which <span class="math notranslate nohighlight">\(0_2\)</span> denotes the row vector <span class="math notranslate nohighlight">\([0~ 0]\)</span>.
+Note that the bottom row of this matrix equation is merely the equation</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+1 = \begin{bmatrix} 0 &amp; 0 &amp; 1 \end{bmatrix} 
+\begin{bmatrix} p_x \\ p_y \\ 1 \end{bmatrix}
+\end{split}\]</div>
+<p>which holds for any <span class="math notranslate nohighlight">\(p_x, p_y\)</span>.</p>
+<p>It is convenient to define the vector <span class="math notranslate nohighlight">\(\tilde{P}\)</span> as</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\tilde{P} =
+\begin{bmatrix}
+P \\ 1
+\end{bmatrix}
+\end{split}\]</div>
+<p>Using this convention, we can write the homogeneous coordinate transformation as</p>
+<div class="math notranslate nohighlight">
+\[
+\tilde{P}^0 = T^0_1 \tilde{P}^1
+\]</div>
+<p>The set of matrices of the form</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+T =
+\begin{bmatrix}
+R &amp; d\\
+0_2 &amp; 1
+\end{bmatrix}
+\end{split}\]</div>
+<p>with <span class="math notranslate nohighlight">\(R \in SO(2)\)</span> and <span class="math notranslate nohighlight">\(d \in \mathbb{R}^2\)</span> is called
+the <strong>special Euclidean group of order 2</strong>, denoted by SE(2).</p>
+</div>
+<div class="section" id="composition-of-homogeneous-transformations">
+<h2><span class="section-number">6.1.5. </span>Composition of Homogeneous Transformations<a class="headerlink" href="#composition-of-homogeneous-transformations" title="Permalink to this headline">¶</a></h2>
+<p>Consider a mobile robot that begins at some initial configuration, moves to a new location, reorients itself and then moves to another location. How can we determine the final configuration of the robot if we are given
+only the individual motions in the sequence?
+The answer is suprisingly simple.
+Suppose the point <span class="math notranslate nohighlight">\(P\)</span> is rigidly attached to the robot.
+Using the coordinate transformation equation above, we have the following:</p>
+<div class="math notranslate nohighlight">
+\[\tilde{P}^0 = T^0_1 \tilde{P}^1, ~~~~~ \tilde{P}^1 = T^1_2 \tilde{P}^2, ~~~~~ \tilde{P}^0 = T^0_2 \tilde{P}^2\]</div>
+<p>Combining the first two of these gives</p>
+<div class="math notranslate nohighlight">
+\[\tilde{P}^0 = T^0_1 T^1_2 \tilde{P}^2\]</div>
+<p>and since this equation holds for every possible <span class="math notranslate nohighlight">\(\tilde{P}^2\)</span> we have</p>
+<div class="math notranslate nohighlight">
+\[T^0_2 = T^0_1 T^1_2 \]</div>
+<p>It is easy to show (by induction) that this result extends to an arbitarily long sequence of transformations.
+Therefore, if we have a sequence of robot configurations <span class="math notranslate nohighlight">\(T^{i-1}_i\)</span>, for <span class="math notranslate nohighlight">\(i = 1, \dots , n\)</span> we can compute
+the composite transformation <span class="math notranslate nohighlight">\(T^0_n\)</span> using</p>
+<div class="math notranslate nohighlight">
+\[T^0_n = T^0_1 \dots T^{n-1}_n \]</div>
+<figure>
+<img src="https://github.com/gtbook/robotics/blob/main/Figures6/transform-composition.png?raw=1" id="fig:TransformComposition" style="width:14cm" alt="">
+<figcaption>The composition of two homogeneous transformations. </figcaption>
+</figure>
+</div>
+<div class="section" id="lie-groups">
+<h2><span class="section-number">6.1.6. </span>Lie Groups<a class="headerlink" href="#lie-groups" title="Permalink to this headline">¶</a></h2>
+<p>A <strong>group</strong> (in mathematics) consists of a set (in our case, a set of matrices) along
+with a group operator (in our case, matrix multiplication).
+All groups posses certain properties, sometimes called the <em>group axioms</em>.
+For a matrix group, <span class="math notranslate nohighlight">\(G\)</span>, with matrix multiplication as the group operation,
+these properties are as follows:</p>
+<ol class="simple">
+<li><p><strong>Closure</strong>: For all matrices <span class="math notranslate nohighlight">\(M, M' \in G\)</span>, their product is also in <span class="math notranslate nohighlight">\(G\)</span>, i.e., <span class="math notranslate nohighlight">\(MM' \in G\)</span>.</p></li>
+<li><p><strong>Identity Element</strong>: The identity matrix <span class="math notranslate nohighlight">\(I\)</span> is included in the group, and for
+all <span class="math notranslate nohighlight">\(M\in G\)</span> we have <span class="math notranslate nohighlight">\(MI = IM = M\)</span>.</p></li>
+<li><p><strong>Inverse</strong>: For every <span class="math notranslate nohighlight">\(M \in G\)</span> there exists <span class="math notranslate nohighlight">\(M^{-1} \in G\)</span> such that <span class="math notranslate nohighlight">\(M^{-1}M = MM^{-1} = I\)</span>.</p></li>
+<li><p><strong>Associativity</strong>: For all <span class="math notranslate nohighlight">\(M_1, M_2, M_3 \in G\)</span>, <span class="math notranslate nohighlight">\((M_1 M_2) M_3 = M_1 (M_2 M_3)\)</span>.</p></li>
+</ol>
+<p>Both <span class="math notranslate nohighlight">\(SO(2)\)</span> and <span class="math notranslate nohighlight">\(SE(2)\)</span>, together with their composition operators, are examples of groups.</p>
+<p>Consider first <span class="math notranslate nohighlight">\(SO(2)\)</span>.
+Of these four properties, only the fourth applies to arbitrary sets of matrices, since matrix multiplication is associative.
+Therefore <span class="math notranslate nohighlight">\(SO(2)\)</span> satisfies the fourth property.
+The identity matrix satisfies the conditions of <span class="math notranslate nohighlight">\(SO(2)\)</span>, and is therefore included in the group, satisfying the
+second property.
+Each <span class="math notranslate nohighlight">\(R \in SO(2)\)</span> has as its inverse <span class="math notranslate nohighlight">\(R^{-1} = R^T\)</span>, which satisfies the third property.
+It can be shown that <span class="math notranslate nohighlight">\(SO(2)\)</span> is closed under matrix multiplication, but we omit this proof here.</p>
+<p>It is interesting, but potentially dangerous, to note that <span class="math notranslate nohighlight">\(SO(2)\)</span> is an <strong>abelian group</strong>, i.e.,
+for <span class="math notranslate nohighlight">\(R_1, R_2 \in SO(2)\)</span>, <span class="math notranslate nohighlight">\(R_1 R_2 = R_2 R_1\)</span>. Beware: this property does not hold
+for <span class="math notranslate nohighlight">\(SO(3)\)</span>, nor does it hold for <span class="math notranslate nohighlight">\(SE(n)\)</span> (for any <span class="math notranslate nohighlight">\(n\)</span>).</p>
+<p>Consider now <span class="math notranslate nohighlight">\(SE(2)\)</span>.
+Each matrix <span class="math notranslate nohighlight">\(T \in SE(2)\)</span> can be written as</p>
+<div class="math notranslate nohighlight">
+\[\begin{split} T =
+\begin{bmatrix}
+R &amp; d \\
+0_2 &amp; 1
+\end{bmatrix}
+\end{split}\]</div>
+<p>As above, since matrix multiplication is associative, <span class="math notranslate nohighlight">\(SE(2)\)</span> satisfies the fourth property.
+The identity matrix satisfies the conditions of <span class="math notranslate nohighlight">\(SE(2)\)</span> (simply let <span class="math notranslate nohighlight">\(d = 0\)</span>, and <span class="math notranslate nohighlight">\(R = I_{2\times 2}\)</span>), and is therefore included in the group, satisfying the second property.
+The inverse of <span class="math notranslate nohighlight">\(T \in SE(2)\)</span> is given by</p>
+<div class="math notranslate nohighlight">
+\[\begin{split} T^{-1} =
+\begin{bmatrix}
+R^T &amp; -R^Td \\
+0_2 &amp; 1
+\end{bmatrix}
+\end{split}\]</div>
+<p>Finally, as with <span class="math notranslate nohighlight">\(SO(2)\)</span>, It can be shown that <span class="math notranslate nohighlight">\(SE(2)\)</span> is closed under matrix multiplication, but we omit this proof here.</p>
+<p>It is worth pointing out again the following for <span class="math notranslate nohighlight">\(T, T_1, T_2 \in SE(2)\)</span>:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(T^{-1} \neq T^T\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(T_1 T_2 \neq T_2 T_1\)</span>.</p></li>
+</ul>
+<p>Groups can be either discrete or continous.
+For example, the set of integers along with addition as the group operation forms a discrete
+group.
+In contrast, both <span class="math notranslate nohighlight">\(SO(2)\)</span> and <span class="math notranslate nohighlight">\(SE(2)\)</span> are continuous groups.
+Not only are they continuous, but they are examples of <strong>manifolds</strong>.
+Informally, a manifold is a set that is locally like <span class="math notranslate nohighlight">\(\mathbb{R}^k\)</span> for some <span class="math notranslate nohighlight">\(k\)</span>.
+In the present case, <span class="math notranslate nohighlight">\(SO(2)\)</span> is locally like <span class="math notranslate nohighlight">\(\mathbb{R}^1\)</span>, and <span class="math notranslate nohighlight">\(SE(2)\)</span> is locally like <span class="math notranslate nohighlight">\(\mathbb{R}^3\)</span>.</p>
+<p>While the topic of manifolds is beyond the scope of this book,
+the easiest way to understand this is to note that <span class="math notranslate nohighlight">\(SO(2)\)</span> can be parameterized by the angle <span class="math notranslate nohighlight">\(\theta \in [0,2\pi) \subset \mathbb{R}^1\)</span>.
+This parameterization is local (and not global) because it breaks down in a neighborhood of <span class="math notranslate nohighlight">\(\theta = 2\pi\)</span> (as described above).
+This is not a problem, however, since in that case, we can simply
+choose to use <span class="math notranslate nohighlight">\(\theta \in [-\pi, pi)\)</span> instead of <span class="math notranslate nohighlight">\(\theta \in [0,2\pi)\)</span>.
+We can completely <em>cover</em> <span class="math notranslate nohighlight">\(SO(2)\)</span> using two parameterizations: one for cases when <span class="math notranslate nohighlight">\(\theta\)</span> is near <span class="math notranslate nohighlight">\(2\pi\)</span>,
+and a second for when <span class="math notranslate nohighlight">\(\theta\)</span> is near <span class="math notranslate nohighlight">\(\pi\)</span>.</p>
+<p>For the case of <span class="math notranslate nohighlight">\(SE(2)\)</span>, we merely use the two parameterizations <span class="math notranslate nohighlight">\((x,y,\theta) \in \mathbb{R}^2 \times [0,2\pi) \subset \mathbb{R}^3\)</span>
+and <span class="math notranslate nohighlight">\((x,y,\theta) \in \mathbb{R}^2 \times [-\pi,\pi) \subset \mathbb{R}^3\)</span>,
+which demonstrates that <em>locally</em> <span class="math notranslate nohighlight">\(SE(2)\)</span> is like <span class="math notranslate nohighlight">\(\mathbb{R}^3\)</span>.</p>
+<p>In addition to being manifolds, both <span class="math notranslate nohighlight">\(SO(2)\)</span> and <span class="math notranslate nohighlight">\(SE(2)\)</span> posses the additional property of being differentiable.
+Such groups are known as <strong>Lie groups</strong> (pronounced “Lee groups”).
+While again beyond the scope of this book,
+we can understand this by considering the parameterizations for <span class="math notranslate nohighlight">\(SO(2)\)</span> and <span class="math notranslate nohighlight">\(SE(2)\)</span> described above.
+For each of these parameterizations, we can differentiate the elements of <span class="math notranslate nohighlight">\(SO(2)\)</span> and <span class="math notranslate nohighlight">\(SE(2)\)</span>,
+which implies the existence of linear and angular velocities.
+In fact, in this chapter, we will use define the actions of the car using these velocities as
+the inputs to the system.</p>
+</div>
+</div>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+            
+                <!-- Previous / next buttons -->
+<div class='prev-next-area'> 
+    <a class='left-prev' id="prev-link" href="S60_driving_intro.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title"><span class="section-number">6. </span>Autonomous Vehicles</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="S62_driving_actions.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">6.2. </span>Kinematics for Driving</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            
+        </div>
+    </div>
+    <footer class="footer">
+  <p>
+    
+      By Frank Dellaert and Seth Hutchinson<br/>
+    
+        &copy; Copyright 2021.<br/>
+  </p>
+</footer>
+</main>
+
+
+      </div>
+    </div>
+  
+  <script src="_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
+
+  </body>
+</html>
