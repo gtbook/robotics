@@ -475,18 +475,28 @@
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#d-rotations-in-gtsam">
+   6.1.4. 2D Rotations in GTSAM
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#d-rigid-transforms-aka-se-2">
-   6.1.4. 2D Rigid Transforms aka SE(2)
+   6.1.5. 2D Rigid Transforms aka SE(2)
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#composition-of-homogeneous-transformations">
-   6.1.5. Composition of Homogeneous Transformations
+   6.1.6. Composition of Homogeneous Transformations
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#lie-groups">
-   6.1.6. Lie Groups
+   6.1.7. Lie Groups
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#d-poses-in-gtsam">
+   6.1.8. 2D Poses in GTSAM
   </a>
  </li>
 </ul>
@@ -525,18 +535,28 @@
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#d-rotations-in-gtsam">
+   6.1.4. 2D Rotations in GTSAM
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#d-rigid-transforms-aka-se-2">
-   6.1.4. 2D Rigid Transforms aka SE(2)
+   6.1.5. 2D Rigid Transforms aka SE(2)
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#composition-of-homogeneous-transformations">
-   6.1.5. Composition of Homogeneous Transformations
+   6.1.6. Composition of Homogeneous Transformations
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#lie-groups">
-   6.1.6. Lie Groups
+   6.1.7. Lie Groups
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#d-poses-in-gtsam">
+   6.1.8. 2D Poses in GTSAM
   </a>
  </li>
 </ul>
@@ -548,12 +568,20 @@
             
               <div>
                 
-  <p><a href="https://colab.research.google.com/github/gtbook/robotics/blob/main/S21_sorter_state.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a></p>
+  <p><a href="https://colab.research.google.com/github/gtbook/robotics/blob/main/S61_driving_state.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a></p>
 <div class="tex2jax_ignore mathjax_ignore section" id="planar-geometry">
 <h1><span class="section-number">6.1. </span>Planar Geometry<a class="headerlink" href="#planar-geometry" title="Permalink to this headline">¶</a></h1>
 <blockquote>
 <div><p>Linear algebra can be used to deal efficiently with rotation and translations in the plane.</p>
 </div></blockquote>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<div class="output text_html">
+<div align='center'>
+<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S61-Autonomous%20Vehicle%20with%20LIDAR%20and%20cameras-00.jpg?raw=1' style='height:256 width:100%'/>
+</div>
+</div></div>
+</div>
 <p>In this section, we saw that the configuration space for the differential drive robot
 was  <span class="math notranslate nohighlight">\({\cal Q} = \mathbb{R}^2 \times [0, 2\pi),\)</span>
 and we used <span class="math notranslate nohighlight">\(q = (x,y,\theta)\)</span> to parameterize the configuration space.
@@ -569,16 +597,11 @@ We begin by focusing our attention on representing orientation.
 We then extend our methods to include translation, and develop methods
 to describe relative configurations of a robot, which could be used to describe
 sample points along a continuous trajectory in <span class="math notranslate nohighlight">\(\cal Q\)</span>.</p>
-<div class="cell tag_remove-input docutils container">
-<div class="cell_output docutils container">
-<div class="output text_html">
-<div align='center'>
-<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S61-Autonomous%20Vehicle%20with%20LIDAR%20and%20cameras-00.jpg?raw=1' style='height:256 width:100%'/>
-</div>
-</div></div>
-</div>
 <div class="section" id="planar-rotations">
 <h2><span class="section-number">6.1.1. </span>Planar Rotations<a class="headerlink" href="#planar-rotations" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>Where we define <span class="math notranslate nohighlight">\(2\times 2\)</span> rotation matrices.</p>
+</div></blockquote>
 <p>In the previous chapter, we represented the orientation of the robot simply by <span class="math notranslate nohighlight">\(\theta \in [0,2\pi)\)</span>.
 There are two main drawbacks to this choice.
 First, the mapping from the robot’s orientation to the parameter <span class="math notranslate nohighlight">\(\theta\)</span> is not continuous.
@@ -589,11 +612,14 @@ We call this jump a <span class="math notranslate nohighlight">\(singularity\)</
 The second drawback is that parameterizing orientation by a single angle <span class="math notranslate nohighlight">\(\theta\)</span> does not generalize in a straightforward way to representing orientation in 3D.
 Further, even if we go to the effort to make this generalization work, the problems with singularities
 are complex, and can cause serious problems if not handled properly.</p>
-<p>Both difficulties above stem from the use of a minimal representation of orientation.
+<figure>
+<img src="https://github.com/gtbook/robotics/blob/main/Figures6/2D-rotation.PNG?raw=1" id="fig:2drotation" style="width:10cm" alt="">
+<figcaption>Two coordinate frames that share a common origin.</figcaption>
+</figure><p>Both difficulties above stem from the use of a minimal representation of orientation.
 To solve these problems, we’ll introduce a somewhat redundant representation that explicity
 encodes the orientation of the axes of a target frame relative to a reference frame.
-Consider the two coordinate frames shown in the figure below.
-These two frames share a common origin, and Frame 1 is obtained by rotating by angle <span class="math notranslate nohighlight">\(\theta\)</span> w.r.t.
+Consider the two coordinate frames shown in the figure above.
+These two frames share a common origin, and Frame 1 is obtained by rotating by an angle <span class="math notranslate nohighlight">\(\theta\)</span> w.r.t.
 frame 0.
 We can express the <span class="math notranslate nohighlight">\(x\)</span>-axis of Frame 1 in coordinates relative to Frame 0
 by projecting <span class="math notranslate nohighlight">\(x_1\)</span> onto <span class="math notranslate nohighlight">\(x_0\)</span> and <span class="math notranslate nohighlight">\(y_0\)</span> (note that these are coordinate free representations
@@ -629,10 +655,7 @@ y_1 \cdot y_0
 frame, and the superscript indicates the reference frame.  In well-formed equations, subscripts on
 one symbol match the superscript of the next symbol.
 Thus, <span class="math notranslate nohighlight">\(x_1^0\)</span> denotes the <span class="math notranslate nohighlight">\(x\)</span>-axis of Frame 1, expressed in coordinates relative to Frame 0.</p>
-<figure>
-<img src="https://github.com/gtbook/robotics/blob/main/Figures6/2D-rotation.PNG?raw=1" id="fig:2drotation" style="width:10cm" alt="">
-<figcaption>Two coordinate frames that share a common origin.</figcaption>
-</figure><p>We can group these two vectors into a a <strong>rotation matrix</strong></p>
+<p>We can group these two vectors into a a <strong>rotation matrix</strong></p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 R_{1}^{0}
@@ -651,8 +674,11 @@ as the superscript (Frame 0) and the target frame as the subscript (Frame 1).</p
 </div>
 <div class="section" id="the-special-orthogonal-group-of-order-2-aka-so-2">
 <h2><span class="section-number">6.1.2. </span>The Special Orthogonal Group of Order 2, aka SO(2)<a class="headerlink" href="#the-special-orthogonal-group-of-order-2-aka-so-2" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>Rotation matrices form a group.</p>
+</div></blockquote>
 <p>The set of <span class="math notranslate nohighlight">\(2\times2\)</span> rotation matrices, together with matrix multiplication as the
-composition operator, form a group called the <strong>Special Orthogonal group of order 2</strong>,
+composition operator, form a <em>group</em> called the <strong>Special Orthogonal group of order 2</strong>,
 denoted by <span class="math notranslate nohighlight">\(SO(2)\)</span>.
 All matrices <span class="math notranslate nohighlight">\(R \in SO(2)\)</span> have the following properties:</p>
 <ol class="simple">
@@ -683,8 +709,15 @@ of rotations in 3D.</p>
 </div>
 <div class="section" id="coordinate-transformations-for-pure-rotations">
 <h2><span class="section-number">6.1.3. </span>Coordinate Transformations for Pure Rotations<a class="headerlink" href="#coordinate-transformations-for-pure-rotations" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>The rotation group acts on 2D points.</p>
+</div></blockquote>
+<figure>
+<img src="https://github.com/gtbook/robotics/blob/main/Figures6/2d-rotation-transformation.png?raw=1" id="fig:2drotation-trans" style="width:10cm" alt="">
+<figcaption>Coordinate transformation under pure rotation.</figcaption>
+</figure>
 <p>We can use rotation matrices to perform coordinate transformations under pure rotation.
-Consider a point <span class="math notranslate nohighlight">\(P\)</span> that is rigidly attached to Frame 1, and whose coordinates w.r.t. Frame 1
+Consider a point <span class="math notranslate nohighlight">\(P\)</span> that is rigidly attached to Frame 1 and, as illustrated in the Figures above, whose coordinates w.r.t. Frame 1
 are given by</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
@@ -699,8 +732,8 @@ using the equation</p>
 \[
 P = p_x x_1 + p_y y_1
 \]</div>
-<p>in which <span class="math notranslate nohighlight">\(x_1\)</span> and <span class="math notranslate nohighlight">\(y_1\)</span> are the vectors defining the coordinate axes of Frame 1.
-To compute the coordinates of <span class="math notranslate nohighlight">\(P\)</span> w.r.t. Frame 0, we merely project <span class="math notranslate nohighlight">\(P\)</span> onto the <span class="math notranslate nohighlight">\(x\)</span>- and <span class="math notranslate nohighlight">\(y\)</span>- axes
+<p>in which <span class="math notranslate nohighlight">\(x_1\)</span> and <span class="math notranslate nohighlight">\(y_1\)</span> are the vectors defining the coordinate axes of Frame 1.</p>
+<p>To compute the coordinates of <span class="math notranslate nohighlight">\(P\)</span> w.r.t. Frame 0, we merely project <span class="math notranslate nohighlight">\(P\)</span> onto the <span class="math notranslate nohighlight">\(x\)</span>- and <span class="math notranslate nohighlight">\(y\)</span>- axes
 of Frame 0. Since the vectors <span class="math notranslate nohighlight">\(x_0\)</span> and <span class="math notranslate nohighlight">\(y_0\)</span> are unit vectors, this projection can be accomplished
 using a the dot product:</p>
 <div class="math notranslate nohighlight">
@@ -731,16 +764,83 @@ p_x    \\
 \end{bmatrix}
 = R^0_1 P^1
 \end{split}\]</div>
-<p>Summarizing the above:
+<p>Summarizing the above, we have
 $<span class="math notranslate nohighlight">\(
-P^0 =  R^0_1 P^1
-\)</span>$</p>
-<figure>
-<img src="https://github.com/gtbook/robotics/blob/main/Figures6/2d-rotation-transformation.png?raw=1" id="fig:2drotation-trans" style="width:10cm" alt="">
-<figcaption>Coordinate transformation under pure rotation.</figcaption>
-</figure></div>
+P^0 =  R^0_1 P^1,
+\)</span><span class="math notranslate nohighlight">\(
+which is how a rotation \)</span>R^0_1<span class="math notranslate nohighlight">\( *acts* on a point \)</span>P^1$.</p>
+</div>
+<div class="section" id="d-rotations-in-gtsam">
+<h2><span class="section-number">6.1.4. </span>2D Rotations in GTSAM<a class="headerlink" href="#d-rotations-in-gtsam" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">Rot2</span></code> acts on <code class="docutils literal notranslate"><span class="pre">Point2</span></code>.</p>
+</div></blockquote>
+<p>It will not surprise anyone by now that all of this is built into GTSAM. In particular, the 2-D rotations are represented by the type <code class="docutils literal notranslate"><span class="pre">Rot2</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">theta</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
+<span class="n">R</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Rot2</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">R</span><span class="o">.</span><span class="n">matrix</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[ 0.8660254 -0.5      ]
+ [ 0.5        0.8660254]]
+</pre></div>
+</div>
+</div>
+</div>
+<p>Rotations form a <em>commutative</em> group, as demonstrated here in code:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">R</span> <span class="o">*</span> <span class="n">R</span><span class="p">,</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Rot2</span><span class="p">))</span> <span class="c1"># closure</span>
+<span class="n">I2</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Rot2</span><span class="o">.</span><span class="n">identity</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">R</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">R</span> <span class="o">*</span> <span class="n">I2</span><span class="p">,</span> <span class="mf">1e-9</span><span class="p">))</span> <span class="c1"># identity</span>
+<span class="nb">print</span><span class="p">((</span><span class="n">R</span> <span class="o">*</span> <span class="n">R</span><span class="o">.</span><span class="n">inverse</span><span class="p">())</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">I2</span><span class="p">,</span> <span class="mf">1e-9</span><span class="p">))</span> <span class="c1"># inverse</span>
+<span class="n">R1</span><span class="p">,</span> <span class="n">R2</span><span class="p">,</span> <span class="n">R3</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Rot2</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Rot2</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Rot2</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(((</span><span class="n">R1</span> <span class="o">*</span> <span class="n">R2</span><span class="p">)</span><span class="o">*</span> <span class="n">R3</span><span class="p">)</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">R1</span> <span class="o">*</span> <span class="p">(</span><span class="n">R2</span> <span class="o">*</span> <span class="n">R3</span><span class="p">),</span> <span class="mf">1e-9</span><span class="p">))</span> <span class="c1"># associative</span>
+<span class="nb">print</span><span class="p">((</span><span class="n">R1</span> <span class="o">*</span> <span class="n">R2</span><span class="p">)</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">R2</span> <span class="o">*</span> <span class="n">R1</span><span class="p">,</span> <span class="mf">1e-9</span><span class="p">))</span> <span class="c1"># commutative</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>True
+True
+True
+True
+True
+</pre></div>
+</div>
+</div>
+</div>
+<p>Finally, rotations can act on points, which we can do using matrix multiplication, or using the <code class="docutils literal notranslate"><span class="pre">Rot2.rotate</span></code> method:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">R01</span> <span class="o">=</span>  <span class="n">gtsam</span><span class="o">.</span><span class="n">Rot2</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>
+<span class="n">P1</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Point2</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;P0 = </span><span class="si">{</span><span class="n">R01</span><span class="o">.</span><span class="n">matrix</span><span class="p">()</span> <span class="o">@</span> <span class="n">P1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;P0 = </span><span class="si">{</span><span class="n">R01</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">P1</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>P0 = [2.73271005 4.18715844]
+P0 = [2.73271005 4.18715844]
+</pre></div>
+</div>
+</div>
+</div>
+</div>
 <div class="section" id="d-rigid-transforms-aka-se-2">
-<h2><span class="section-number">6.1.4. </span>2D Rigid Transforms aka SE(2)<a class="headerlink" href="#d-rigid-transforms-aka-se-2" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">6.1.5. </span>2D Rigid Transforms aka SE(2)<a class="headerlink" href="#d-rigid-transforms-aka-se-2" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>From <span class="math notranslate nohighlight">\(SO(2)\)</span> to <span class="math notranslate nohighlight">\(SE(2)\)</span>.</p>
+</div></blockquote>
+<figure>
+<img src="https://github.com/gtbook/robotics/blob/main/Figures6/2d-coord-trans.png?raw=1" id="fig:2drotation-trans" style="width:20cm" alt="">
+<figcaption>Coordinate transformation under both rotation and translation.</figcaption>
+</figure>
 <p>It is easy to extend the above method of coordinate transformations to the case of both
 rotation and translation.
 Suppose that, as above, the point <span class="math notranslate nohighlight">\(P\)</span> is rigidly attached to a frame that is rotated
@@ -753,10 +853,7 @@ and then add the translation from the origin of Frame 0 to the origin of Frame 1
 $<span class="math notranslate nohighlight">\(
 P^0 =  R^0_1 P^1 + d^0_1
 \)</span>$</p>
-<figure>
-<img src="https://github.com/gtbook/robotics/blob/main/Figures6/2d-coord-trans.png?raw=1" id="fig:2drotation-trans" style="width:20cm" alt="">
-<figcaption>Coordinate transformation under both rotation and translation.</figcaption>
-</figure><p>We can write the above coordinate transformation as a matrix equation:</p>
+<p>We can write the above coordinate transformation as a matrix equation:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 \begin{bmatrix}
@@ -805,7 +902,7 @@ R &amp; d\\
 the <strong>special Euclidean group of order 2</strong>, denoted by SE(2).</p>
 </div>
 <div class="section" id="composition-of-homogeneous-transformations">
-<h2><span class="section-number">6.1.5. </span>Composition of Homogeneous Transformations<a class="headerlink" href="#composition-of-homogeneous-transformations" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">6.1.6. </span>Composition of Homogeneous Transformations<a class="headerlink" href="#composition-of-homogeneous-transformations" title="Permalink to this headline">¶</a></h2>
 <p>Consider a mobile robot that begins at some initial configuration, moves to a new location, reorients itself and then moves to another location. How can we determine the final configuration of the robot if we are given
 only the individual motions in the sequence?
 The answer is suprisingly simple.
@@ -830,7 +927,7 @@ the composite transformation <span class="math notranslate nohighlight">\(T^0_n\
 </figure>
 </div>
 <div class="section" id="lie-groups">
-<h2><span class="section-number">6.1.6. </span>Lie Groups<a class="headerlink" href="#lie-groups" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">6.1.7. </span>Lie Groups<a class="headerlink" href="#lie-groups" title="Permalink to this headline">¶</a></h2>
 <p>A <strong>group</strong> (in mathematics) consists of a set (in our case, a set of matrices) along
 with a group operator (in our case, matrix multiplication).
 All groups posses certain properties, sometimes called the <em>group axioms</em>.
@@ -904,6 +1001,69 @@ For each of these parameterizations, we can differentiate the elements of <span 
 which implies the existence of linear and angular velocities.
 In fact, in this chapter, we will use define the actions of the car using these velocities as
 the inputs to the system.</p>
+</div>
+<div class="section" id="d-poses-in-gtsam">
+<h2><span class="section-number">6.1.8. </span>2D Poses in GTSAM<a class="headerlink" href="#d-poses-in-gtsam" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">Pose2</span></code> acts on <code class="docutils literal notranslate"><span class="pre">Point2</span></code>.</p>
+</div></blockquote>
+<p>In GTSAM, <span class="math notranslate nohighlight">\(SE(2)\)</span> is represented by the type <code class="docutils literal notranslate"><span class="pre">Pose2</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">theta</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
+<span class="n">T</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">matrix</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[ 0.8660254 -0.5       10.       ]
+ [ 0.5        0.8660254 20.       ]
+ [ 0.         0.         1.       ]]
+</pre></div>
+</div>
+</div>
+</div>
+<p>2D poses form a <em>non-commutative</em> group, as demonstrated here in code:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">T</span> <span class="o">*</span> <span class="n">T</span><span class="p">,</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">))</span> <span class="c1"># closure</span>
+<span class="n">I3</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="o">.</span><span class="n">identity</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">T</span> <span class="o">*</span> <span class="n">I3</span><span class="p">,</span> <span class="mf">1e-9</span><span class="p">))</span> <span class="c1"># identity</span>
+<span class="nb">print</span><span class="p">((</span><span class="n">T</span> <span class="o">*</span> <span class="n">T</span><span class="o">.</span><span class="n">inverse</span><span class="p">())</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">I3</span><span class="p">,</span> <span class="mf">1e-9</span><span class="p">))</span> <span class="c1"># inverse</span>
+<span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">,</span> <span class="n">T3</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(((</span><span class="n">T1</span> <span class="o">*</span> <span class="n">T2</span><span class="p">)</span><span class="o">*</span> <span class="n">T3</span><span class="p">)</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">T1</span> <span class="o">*</span> <span class="p">(</span><span class="n">T2</span> <span class="o">*</span> <span class="n">T3</span><span class="p">),</span> <span class="mf">1e-9</span><span class="p">))</span> <span class="c1"># associative</span>
+<span class="nb">print</span><span class="p">((</span><span class="n">T1</span> <span class="o">*</span> <span class="n">T2</span><span class="p">)</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">T2</span> <span class="o">*</span> <span class="n">T1</span><span class="p">,</span> <span class="mf">1e-9</span><span class="p">))</span> <span class="c1"># not commutative !!!!</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>True
+True
+True
+True
+False
+</pre></div>
+</div>
+</div>
+</div>
+<p>Finally, poses can act on points, which we can do using matrix multiplication, or using the <code class="docutils literal notranslate"><span class="pre">Pose2.transformFrom</span></code> method:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">T01</span> <span class="o">=</span>  <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>
+<span class="n">P1</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Point2</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;P0 = </span><span class="si">{</span><span class="n">T01</span><span class="o">.</span><span class="n">matrix</span><span class="p">()</span> <span class="o">@</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># need to make P0 homogeneous</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;P0 = </span><span class="si">{</span><span class="n">T01</span><span class="o">.</span><span class="n">transformFrom</span><span class="p">(</span><span class="n">P1</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>P0 = [3.73271005 6.18715844 1.        ]
+P0 = [3.73271005 6.18715844]
+</pre></div>
+</div>
+</div>
+</div>
 </div>
 </div>
 
