@@ -475,8 +475,12 @@
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#d-rotations-in-gtsam">
-   6.1.4. 2D Rotations in GTSAM
+  <a class="reference internal nav-link" href="#the-group-so-2-in-gtsam">
+   6.1.4. The Group
+   <span class="math notranslate nohighlight">
+    \(SO(2)\)
+   </span>
+   in GTSAM
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -490,13 +494,17 @@
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#lie-groups">
-   6.1.7. Lie Groups
+  <a class="reference internal nav-link" href="#the-group-se-2-in-gtsam">
+   6.1.7. The Group
+   <span class="math notranslate nohighlight">
+    \(SE(2)\)
+   </span>
+   in GTSAM
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#d-poses-in-gtsam">
-   6.1.8. 2D Poses in GTSAM
+  <a class="reference internal nav-link" href="#lie-groups">
+   6.1.8. Lie Groups*
   </a>
  </li>
 </ul>
@@ -535,8 +543,12 @@
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#d-rotations-in-gtsam">
-   6.1.4. 2D Rotations in GTSAM
+  <a class="reference internal nav-link" href="#the-group-so-2-in-gtsam">
+   6.1.4. The Group
+   <span class="math notranslate nohighlight">
+    \(SO(2)\)
+   </span>
+   in GTSAM
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -550,13 +562,17 @@
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#lie-groups">
-   6.1.7. Lie Groups
+  <a class="reference internal nav-link" href="#the-group-se-2-in-gtsam">
+   6.1.7. The Group
+   <span class="math notranslate nohighlight">
+    \(SE(2)\)
+   </span>
+   in GTSAM
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#d-poses-in-gtsam">
-   6.1.8. 2D Poses in GTSAM
+  <a class="reference internal nav-link" href="#lie-groups">
+   6.1.8. Lie Groups*
   </a>
  </li>
 </ul>
@@ -578,7 +594,7 @@
 <div class="cell_output docutils container">
 <div class="output text_html">
 <div align='center'>
-<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S61-Autonomous%20Vehicle%20with%20LIDAR%20and%20cameras-00.jpg?raw=1' style='height:256 width:100%'/>
+<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S61-Autonomous%20Vehicle%20with%20LIDAR%20and%20cameras-07.jpg?raw=1' style='height:256 width:100%'/>
 </div>
 </div></div>
 </div>
@@ -770,11 +786,31 @@ P^0 =  R^0_1 P^1,
 \)</span><span class="math notranslate nohighlight">\(
 which is how a rotation \)</span>R^0_1<span class="math notranslate nohighlight">\( *acts* on a point \)</span>P^1$.</p>
 </div>
-<div class="section" id="d-rotations-in-gtsam">
-<h2><span class="section-number">6.1.4. </span>2D Rotations in GTSAM<a class="headerlink" href="#d-rotations-in-gtsam" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="the-group-so-2-in-gtsam">
+<h2><span class="section-number">6.1.4. </span>The Group <span class="math notranslate nohighlight">\(SO(2)\)</span> in GTSAM<a class="headerlink" href="#the-group-so-2-in-gtsam" title="Permalink to this headline">¶</a></h2>
 <blockquote>
-<div><p><code class="docutils literal notranslate"><span class="pre">Rot2</span></code> acts on <code class="docutils literal notranslate"><span class="pre">Point2</span></code>.</p>
+<div><p><code class="docutils literal notranslate"><span class="pre">Rot2</span></code> is a group, and acts on <code class="docutils literal notranslate"><span class="pre">Point2</span></code>.</p>
 </div></blockquote>
+<p><span class="math notranslate nohighlight">\(SO(2)\)</span> is a <em>group</em>, in the mathematical sense.
+A <strong>group</strong> consists of a set (in our case, a set of 2D rotations) along
+with a group operator (in our case, composition).
+All groups posses certain properties, sometimes called the <em>group axioms</em>.
+For the group, <span class="math notranslate nohighlight">\(SO(2)\)</span> these properties are as follows:</p>
+<ol class="simple">
+<li><p><strong>Closure</strong>: For all rotations <span class="math notranslate nohighlight">\(R, R' \in SO(2)\)</span>, their product is also in <span class="math notranslate nohighlight">\(SO(2)\)</span>, i.e., <span class="math notranslate nohighlight">\(RR' \in SO(2)\)</span>.</p></li>
+<li><p><strong>Identity Element</strong>: The <span class="math notranslate nohighlight">\(2\times 2\)</span> identity matrix <span class="math notranslate nohighlight">\(I\)</span> is included in the group, and for
+all <span class="math notranslate nohighlight">\(R\in SO(2)\)</span> we have <span class="math notranslate nohighlight">\(RI = IR = R\)</span>.</p></li>
+<li><p><strong>Inverse</strong>: For every <span class="math notranslate nohighlight">\(R \in SO(2)\)</span> there exists <span class="math notranslate nohighlight">\(R^{-1} \in SO(2)\)</span> such that <span class="math notranslate nohighlight">\(R^{-1}R = RR^{-1} = I\)</span>.</p></li>
+<li><p><strong>Associativity</strong>: For all <span class="math notranslate nohighlight">\(R_1, R_2, R_3 \in SO(2)\)</span>, <span class="math notranslate nohighlight">\((R_1 R_2) R_3 = R_1 (R_2 R_3)\)</span>.</p></li>
+</ol>
+<p>In addition (only in 2D!) rotations in <span class="math notranslate nohighlight">\(SO(2)\)</span> <em>commute</em>:</p>
+<ol class="simple">
+<li><p><strong>Commutativity</strong>: For all <span class="math notranslate nohighlight">\(R_1, R_2 \in SO(2)\)</span>, <span class="math notranslate nohighlight">\(R_1 R_2 = R_2 R_1\)</span>.</p></li>
+</ol>
+<p>Finally (for <em>all</em> rotation groups <span class="math notranslate nohighlight">\(SO(n)\)</span> in any dimension) the inverse of the rotation matrix <span class="math notranslate nohighlight">\(R\in SO(n)\)</span> happens to be the transpose:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(R^{-1} = R^T\)</span></p></li>
+</ul>
 <p>It will not surprise anyone by now that all of this is built into GTSAM. In particular, the 2-D rotations are represented by the type <code class="docutils literal notranslate"><span class="pre">Rot2</span></code>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -837,15 +873,19 @@ P0 = [2.73271005 4.18715844]
 <blockquote>
 <div><p>From <span class="math notranslate nohighlight">\(SO(2)\)</span> to <span class="math notranslate nohighlight">\(SE(2)\)</span>.</p>
 </div></blockquote>
+<p><strong>2D rigid transforms</strong> combine rotation with translation, and are used in two <em>different</em> ways in robotics:</p>
+<p>– to specify the <strong>pose</strong> of a robot, which consists of a translation and an orientation</p>
+<ul class="simple">
+<li><p>to talk about relative pose or the <strong>transformation</strong> between two different robot poses</p></li>
+</ul>
+<p>We can use the same mathematical object for both use cases, i.e., 2D rigid transforms <span class="math notranslate nohighlight">\(T\in SE(2)\)</span>, which combine translation and orientation in a <span class="math notranslate nohighlight">\(3 \times 3\)</span> matrix, as explained below.</p>
 <figure>
 <img src="https://github.com/gtbook/robotics/blob/main/Figures6/2d-coord-trans.png?raw=1" id="fig:2drotation-trans" style="width:20cm" alt="">
 <figcaption>Coordinate transformation under both rotation and translation.</figcaption>
 </figure>
-<p>It is easy to extend the above method of coordinate transformations to the case of both
-rotation and translation.
-Suppose that, as above, the point <span class="math notranslate nohighlight">\(P\)</span> is rigidly attached to a frame that is rotated
+<p>Let us start by assuming as before that the point <span class="math notranslate nohighlight">\(P\)</span> is rigidly attached to a frame that is rotated
 by angle <span class="math notranslate nohighlight">\(\theta\)</span> w.r.t. Frame 0.
-If we now translate that frame, as shown in the figure below, the point <span class="math notranslate nohighlight">\(P\)</span> undergoes
+If we now translate that frame, as shown in the figure above, the point <span class="math notranslate nohighlight">\(P\)</span> undergoes
 the same translation as the frame.
 To calculate the coordinates of <span class="math notranslate nohighlight">\(P\)</span> relative to Frame 0, we merely
 perform the rotational coordinate transformation as above,
@@ -865,7 +905,7 @@ R_{1}^{0} &amp; d_{1}^{0}\\
 0_{2} &amp; 1
 \end{bmatrix}
 \begin{bmatrix}
-P^1 \\ 0
+P^1 \\ 1
 \end{bmatrix}
 \end{split}\]</div>
 <p>in which <span class="math notranslate nohighlight">\(0_2\)</span> denotes the row vector <span class="math notranslate nohighlight">\([0~ 0]\)</span>.
@@ -876,7 +916,7 @@ Note that the bottom row of this matrix equation is merely the equation</p>
 \begin{bmatrix} p_x \\ p_y \\ 1 \end{bmatrix}
 \end{split}\]</div>
 <p>which holds for any <span class="math notranslate nohighlight">\(p_x, p_y\)</span>.</p>
-<p>It is convenient to define the vector <span class="math notranslate nohighlight">\(\tilde{P}\)</span> as</p>
+<p>It is convenient to define the 3-vector <span class="math notranslate nohighlight">\(\tilde{P}\)</span> as</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 \tilde{P} =
@@ -884,7 +924,8 @@ Note that the bottom row of this matrix equation is merely the equation</p>
 P \\ 1
 \end{bmatrix}
 \end{split}\]</div>
-<p>Using this convention, we can write the homogeneous coordinate transformation as</p>
+<p>which we call the homogeneous coordinates of the point <span class="math notranslate nohighlight">\(P\)</span>.
+Using this convention, we can write the <em>homogeneous coordinate transformation</em> as</p>
 <div class="math notranslate nohighlight">
 \[
 \tilde{P}^0 = T^0_1 \tilde{P}^1
@@ -903,6 +944,13 @@ the <strong>special Euclidean group of order 2</strong>, denoted by SE(2).</p>
 </div>
 <div class="section" id="composition-of-homogeneous-transformations">
 <h2><span class="section-number">6.1.6. </span>Composition of Homogeneous Transformations<a class="headerlink" href="#composition-of-homogeneous-transformations" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>We can implement composition by matrix multiplication.</p>
+</div></blockquote>
+<figure>
+<img src="https://github.com/gtbook/robotics/blob/main/Figures6/transform-composition.png?raw=1" id="fig:TransformComposition" style="width:14cm" alt="">
+<figcaption>The composition of two homogeneous transformations. </figcaption>
+</figure>
 <p>Consider a mobile robot that begins at some initial configuration, moves to a new location, reorients itself and then moves to another location. How can we determine the final configuration of the robot if we are given
 only the individual motions in the sequence?
 The answer is suprisingly simple.
@@ -921,62 +969,89 @@ Therefore, if we have a sequence of robot configurations <span class="math notra
 the composite transformation <span class="math notranslate nohighlight">\(T^0_n\)</span> using</p>
 <div class="math notranslate nohighlight">
 \[T^0_n = T^0_1 \dots T^{n-1}_n \]</div>
-<figure>
-<img src="https://github.com/gtbook/robotics/blob/main/Figures6/transform-composition.png?raw=1" id="fig:TransformComposition" style="width:14cm" alt="">
-<figcaption>The composition of two homogeneous transformations. </figcaption>
-</figure>
+</div>
+<div class="section" id="the-group-se-2-in-gtsam">
+<h2><span class="section-number">6.1.7. </span>The Group <span class="math notranslate nohighlight">\(SE(2)\)</span> in GTSAM<a class="headerlink" href="#the-group-se-2-in-gtsam" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">Pose2</span></code> is a <em>non-commutative</em> group, and also acts on <code class="docutils literal notranslate"><span class="pre">Point2</span></code>.</p>
+</div></blockquote>
+<p>Unsurprisingly, <span class="math notranslate nohighlight">\(SE(2)\)</span> is also a group, as the following properties all hold:</p>
+<ol class="simple">
+<li><p><strong>Closure</strong>: For all transforms <span class="math notranslate nohighlight">\(T, T' \in SE(2)\)</span>, their product is also in <span class="math notranslate nohighlight">\(SE(2)\)</span>, i.e., <span class="math notranslate nohighlight">\(T T' \in SE(2)\)</span>.</p></li>
+<li><p><strong>Identity Element</strong>: The <span class="math notranslate nohighlight">\(3\times 3\)</span> identity matrix <span class="math notranslate nohighlight">\(I\)</span> is included in the group, and for
+all <span class="math notranslate nohighlight">\(T \in SE(2)\)</span> we have <span class="math notranslate nohighlight">\(T I = I T = T\)</span>.</p></li>
+<li><p><strong>Inverse</strong>: For every <span class="math notranslate nohighlight">\(T \in SE(2)\)</span> there exists <span class="math notranslate nohighlight">\(T^{-1} \in SE(2)\)</span> such that <span class="math notranslate nohighlight">\(T^{-1}T = T T^{-1} = I\)</span>.</p></li>
+<li><p><strong>Associativity</strong>: For all <span class="math notranslate nohighlight">\(T_1, T_2, T_3 \in SE(2)\)</span>, <span class="math notranslate nohighlight">\((T_1 T_2) T_3 = T_1 (T_2 T_3)\)</span>.</p></li>
+</ol>
+<p>However, in contrast to 2D rotations, 2D rigid transforms do <em>not</em> commute. Also, The inverse <span class="math notranslate nohighlight">\(T^{-1}\)</span> is not just the transpose; instead, we have:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+T^{-1} = \begin{bmatrix}R &amp; d\\0_2 &amp; 1\end{bmatrix}^{-1}
+ = \begin{bmatrix}R^T &amp; -R^T d\\0_2 &amp; 1\end{bmatrix}
+\end{split}\]</div>
+<p>which you can easily verify by multiplying to obtain <span class="math notranslate nohighlight">\(I\)</span>. Again, all of this is built into GTSAM,where both 2D poses and 2D rigid transforms are represented by the type <code class="docutils literal notranslate"><span class="pre">Pose2</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">theta</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
+<span class="n">T</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;2D Pose (x, y, theta) = </span><span class="si">{</span><span class="n">T</span><span class="si">}</span><span class="s2">corresponding to transformation matrix:</span><span class="se">\n</span><span class="si">{</span><span class="n">T</span><span class="o">.</span><span class="n">matrix</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2D Pose (x, y, theta) = (3, -2, 0.523599)
+corresponding to transformation matrix:
+[[ 0.8660254 -0.5        3.       ]
+ [ 0.5        0.8660254 -2.       ]
+ [ 0.         0.         1.       ]]
+</pre></div>
+</div>
+</div>
+</div>
+<p>2D transforms form a <em>non-commutative</em> group, as demonstrated here in code:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">T</span> <span class="o">*</span> <span class="n">T</span><span class="p">,</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">))</span> <span class="c1"># closure</span>
+<span class="n">I3</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="o">.</span><span class="n">identity</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">T</span> <span class="o">*</span> <span class="n">I3</span><span class="p">,</span> <span class="mf">1e-9</span><span class="p">))</span> <span class="c1"># identity</span>
+<span class="nb">print</span><span class="p">((</span><span class="n">T</span> <span class="o">*</span> <span class="n">T</span><span class="o">.</span><span class="n">inverse</span><span class="p">())</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">I3</span><span class="p">,</span> <span class="mf">1e-9</span><span class="p">))</span> <span class="c1"># inverse</span>
+<span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">,</span> <span class="n">T3</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">),</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(((</span><span class="n">T1</span> <span class="o">*</span> <span class="n">T2</span><span class="p">)</span><span class="o">*</span> <span class="n">T3</span><span class="p">)</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">T1</span> <span class="o">*</span> <span class="p">(</span><span class="n">T2</span> <span class="o">*</span> <span class="n">T3</span><span class="p">),</span> <span class="mf">1e-9</span><span class="p">))</span> <span class="c1"># associative</span>
+<span class="nb">print</span><span class="p">((</span><span class="n">T1</span> <span class="o">*</span> <span class="n">T2</span><span class="p">)</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">T2</span> <span class="o">*</span> <span class="n">T1</span><span class="p">,</span> <span class="mf">1e-9</span><span class="p">))</span> <span class="c1"># NOT commutative</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>True
+True
+True
+True
+False
+</pre></div>
+</div>
+</div>
+</div>
+<p>Finally, 2D transforms can act on points, which we can do using matrix multiplication, or using the <code class="docutils literal notranslate"><span class="pre">Pose2.transformFrom</span></code> method:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">T01</span> <span class="o">=</span>  <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>
+<span class="n">P1</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Point2</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;P0 = </span><span class="si">{</span><span class="n">T01</span><span class="o">.</span><span class="n">matrix</span><span class="p">()</span> <span class="o">@</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># need to make P0 homogeneous</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;P0 = </span><span class="si">{</span><span class="n">T01</span><span class="o">.</span><span class="n">transformFrom</span><span class="p">(</span><span class="n">P1</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>P0 = [3.73271005 6.18715844 1.        ]
+P0 = [3.73271005 6.18715844]
+</pre></div>
+</div>
+</div>
+</div>
 </div>
 <div class="section" id="lie-groups">
-<h2><span class="section-number">6.1.7. </span>Lie Groups<a class="headerlink" href="#lie-groups" title="Permalink to this headline">¶</a></h2>
-<p>A <strong>group</strong> (in mathematics) consists of a set (in our case, a set of matrices) along
-with a group operator (in our case, matrix multiplication).
-All groups posses certain properties, sometimes called the <em>group axioms</em>.
-For a matrix group, <span class="math notranslate nohighlight">\(G\)</span>, with matrix multiplication as the group operation,
-these properties are as follows:</p>
-<ol class="simple">
-<li><p><strong>Closure</strong>: For all matrices <span class="math notranslate nohighlight">\(M, M' \in G\)</span>, their product is also in <span class="math notranslate nohighlight">\(G\)</span>, i.e., <span class="math notranslate nohighlight">\(MM' \in G\)</span>.</p></li>
-<li><p><strong>Identity Element</strong>: The identity matrix <span class="math notranslate nohighlight">\(I\)</span> is included in the group, and for
-all <span class="math notranslate nohighlight">\(M\in G\)</span> we have <span class="math notranslate nohighlight">\(MI = IM = M\)</span>.</p></li>
-<li><p><strong>Inverse</strong>: For every <span class="math notranslate nohighlight">\(M \in G\)</span> there exists <span class="math notranslate nohighlight">\(M^{-1} \in G\)</span> such that <span class="math notranslate nohighlight">\(M^{-1}M = MM^{-1} = I\)</span>.</p></li>
-<li><p><strong>Associativity</strong>: For all <span class="math notranslate nohighlight">\(M_1, M_2, M_3 \in G\)</span>, <span class="math notranslate nohighlight">\((M_1 M_2) M_3 = M_1 (M_2 M_3)\)</span>.</p></li>
-</ol>
-<p>Both <span class="math notranslate nohighlight">\(SO(2)\)</span> and <span class="math notranslate nohighlight">\(SE(2)\)</span>, together with their composition operators, are examples of groups.</p>
-<p>Consider first <span class="math notranslate nohighlight">\(SO(2)\)</span>.
-Of these four properties, only the fourth applies to arbitrary sets of matrices, since matrix multiplication is associative.
-Therefore <span class="math notranslate nohighlight">\(SO(2)\)</span> satisfies the fourth property.
-The identity matrix satisfies the conditions of <span class="math notranslate nohighlight">\(SO(2)\)</span>, and is therefore included in the group, satisfying the
-second property.
-Each <span class="math notranslate nohighlight">\(R \in SO(2)\)</span> has as its inverse <span class="math notranslate nohighlight">\(R^{-1} = R^T\)</span>, which satisfies the third property.
-It can be shown that <span class="math notranslate nohighlight">\(SO(2)\)</span> is closed under matrix multiplication, but we omit this proof here.</p>
-<p>It is interesting, but potentially dangerous, to note that <span class="math notranslate nohighlight">\(SO(2)\)</span> is an <strong>abelian group</strong>, i.e.,
-for <span class="math notranslate nohighlight">\(R_1, R_2 \in SO(2)\)</span>, <span class="math notranslate nohighlight">\(R_1 R_2 = R_2 R_1\)</span>. Beware: this property does not hold
-for <span class="math notranslate nohighlight">\(SO(3)\)</span>, nor does it hold for <span class="math notranslate nohighlight">\(SE(n)\)</span> (for any <span class="math notranslate nohighlight">\(n\)</span>).</p>
-<p>Consider now <span class="math notranslate nohighlight">\(SE(2)\)</span>.
-Each matrix <span class="math notranslate nohighlight">\(T \in SE(2)\)</span> can be written as</p>
-<div class="math notranslate nohighlight">
-\[\begin{split} T =
-\begin{bmatrix}
-R &amp; d \\
-0_2 &amp; 1
-\end{bmatrix}
-\end{split}\]</div>
-<p>As above, since matrix multiplication is associative, <span class="math notranslate nohighlight">\(SE(2)\)</span> satisfies the fourth property.
-The identity matrix satisfies the conditions of <span class="math notranslate nohighlight">\(SE(2)\)</span> (simply let <span class="math notranslate nohighlight">\(d = 0\)</span>, and <span class="math notranslate nohighlight">\(R = I_{2\times 2}\)</span>), and is therefore included in the group, satisfying the second property.
-The inverse of <span class="math notranslate nohighlight">\(T \in SE(2)\)</span> is given by</p>
-<div class="math notranslate nohighlight">
-\[\begin{split} T^{-1} =
-\begin{bmatrix}
-R^T &amp; -R^Td \\
-0_2 &amp; 1
-\end{bmatrix}
-\end{split}\]</div>
-<p>Finally, as with <span class="math notranslate nohighlight">\(SO(2)\)</span>, It can be shown that <span class="math notranslate nohighlight">\(SE(2)\)</span> is closed under matrix multiplication, but we omit this proof here.</p>
-<p>It is worth pointing out again the following for <span class="math notranslate nohighlight">\(T, T_1, T_2 \in SE(2)\)</span>:</p>
-<ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(T^{-1} \neq T^T\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(T_1 T_2 \neq T_2 T_1\)</span>.</p></li>
-</ul>
-<p>Groups can be either discrete or continous.
+<h2><span class="section-number">6.1.8. </span>Lie Groups*<a class="headerlink" href="#lie-groups" title="Permalink to this headline">¶</a></h2>
+<p>Groups can be either discrete or continuous.
 For example, the set of integers along with addition as the group operation forms a discrete
 group.
 In contrast, both <span class="math notranslate nohighlight">\(SO(2)\)</span> and <span class="math notranslate nohighlight">\(SE(2)\)</span> are continuous groups.
@@ -1001,69 +1076,6 @@ For each of these parameterizations, we can differentiate the elements of <span 
 which implies the existence of linear and angular velocities.
 In fact, in this chapter, we will use define the actions of the car using these velocities as
 the inputs to the system.</p>
-</div>
-<div class="section" id="d-poses-in-gtsam">
-<h2><span class="section-number">6.1.8. </span>2D Poses in GTSAM<a class="headerlink" href="#d-poses-in-gtsam" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div><p><code class="docutils literal notranslate"><span class="pre">Pose2</span></code> acts on <code class="docutils literal notranslate"><span class="pre">Point2</span></code>.</p>
-</div></blockquote>
-<p>In GTSAM, <span class="math notranslate nohighlight">\(SE(2)\)</span> is represented by the type <code class="docutils literal notranslate"><span class="pre">Pose2</span></code>:</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">theta</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
-<span class="n">T</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">matrix</span><span class="p">())</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[ 0.8660254 -0.5       10.       ]
- [ 0.5        0.8660254 20.       ]
- [ 0.         0.         1.       ]]
-</pre></div>
-</div>
-</div>
-</div>
-<p>2D poses form a <em>non-commutative</em> group, as demonstrated here in code:</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">T</span> <span class="o">*</span> <span class="n">T</span><span class="p">,</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">))</span> <span class="c1"># closure</span>
-<span class="n">I3</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="o">.</span><span class="n">identity</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">T</span> <span class="o">*</span> <span class="n">I3</span><span class="p">,</span> <span class="mf">1e-9</span><span class="p">))</span> <span class="c1"># identity</span>
-<span class="nb">print</span><span class="p">((</span><span class="n">T</span> <span class="o">*</span> <span class="n">T</span><span class="o">.</span><span class="n">inverse</span><span class="p">())</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">I3</span><span class="p">,</span> <span class="mf">1e-9</span><span class="p">))</span> <span class="c1"># inverse</span>
-<span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">,</span> <span class="n">T3</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(((</span><span class="n">T1</span> <span class="o">*</span> <span class="n">T2</span><span class="p">)</span><span class="o">*</span> <span class="n">T3</span><span class="p">)</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">T1</span> <span class="o">*</span> <span class="p">(</span><span class="n">T2</span> <span class="o">*</span> <span class="n">T3</span><span class="p">),</span> <span class="mf">1e-9</span><span class="p">))</span> <span class="c1"># associative</span>
-<span class="nb">print</span><span class="p">((</span><span class="n">T1</span> <span class="o">*</span> <span class="n">T2</span><span class="p">)</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">T2</span> <span class="o">*</span> <span class="n">T1</span><span class="p">,</span> <span class="mf">1e-9</span><span class="p">))</span> <span class="c1"># not commutative !!!!</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>True
-True
-True
-True
-False
-</pre></div>
-</div>
-</div>
-</div>
-<p>Finally, poses can act on points, which we can do using matrix multiplication, or using the <code class="docutils literal notranslate"><span class="pre">Pose2.transformFrom</span></code> method:</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">T01</span> <span class="o">=</span>  <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>
-<span class="n">P1</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Point2</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;P0 = </span><span class="si">{</span><span class="n">T01</span><span class="o">.</span><span class="n">matrix</span><span class="p">()</span> <span class="o">@</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># need to make P0 homogeneous</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;P0 = </span><span class="si">{</span><span class="n">T01</span><span class="o">.</span><span class="n">transformFrom</span><span class="p">(</span><span class="n">P1</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>P0 = [3.73271005 6.18715844 1.        ]
-P0 = [3.73271005 6.18715844]
-</pre></div>
-</div>
-</div>
-</div>
 </div>
 </div>
 
