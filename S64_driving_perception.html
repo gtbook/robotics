@@ -591,7 +591,7 @@
             
               <div>
                 
-  <p><a href="https://colab.research.google.com/github/gtbook/robotics/blob/main/S64_driving_perception.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a></p>
+  <p><a href="https://colab.research.google.com/github/gtbook/robotics/blob/master/S64_driving_perception.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">pip</span> install -q -U gtbook
@@ -608,6 +608,8 @@
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
 <span class="kn">import</span> <span class="nn">plotly.express</span> <span class="k">as</span> <span class="nn">px</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">google.colab</span>
@@ -616,6 +618,8 @@
     <span class="n">pio</span><span class="o">.</span><span class="n">renderers</span><span class="o">.</span><span class="n">default</span> <span class="o">=</span> <span class="s2">&quot;png&quot;</span>
 
 <span class="kn">import</span> <span class="nn">gtsam</span> 
+<span class="kn">import</span> <span class="nn">gtsam.utils.plot</span> <span class="k">as</span> <span class="nn">gtsam_plot</span>
+
 <span class="kn">from</span> <span class="nn">gtbook</span> <span class="kn">import</span> <span class="n">driving</span>
 <span class="kn">from</span> <span class="nn">gtbook.display</span> <span class="kn">import</span> <span class="n">show</span>
 </pre></div>
@@ -632,7 +636,7 @@
 <div class="cell_output docutils container">
 <div class="output text_html">
 <div align='center'>
-<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S64-Autonomous%20Vehicle%20with%20LIDAR%20and%20cameras-00.jpg?raw=1' style='height:256 width:100%'/>
+<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S64-Autonomous%20Vehicle%20with%20LIDAR%20and%20cameras-01.jpg?raw=1' style='height:256 width:100%'/>
 </div>
 </div></div>
 </div>
@@ -1014,9 +1018,7 @@ range finder, and calculate the geometric pose constraint to when it
 first visited this location. This is illustrated for poses <span class="math notranslate nohighlight">\(T_{5}\)</span>
 and <span class="math notranslate nohighlight">\(T_{2}\)</span>, and generates the (red) loop closing factor
 <span class="math notranslate nohighlight">\(f_{5}(T_{5},T_{2})\)</span>.</p>
-<p>We can optimize this factor graph, by creating an initial estimate of
-type <code class="docutils literal notranslate"><span class="pre">gtsam.Values</span></code>, and creating and running an optimizer. This is
-illustrated in the listing below:</p>
+<p>Before we can optimize, we need to create an initial estimate to start from. In GTSAM, this is done via the <code class="docutils literal notranslate"><span class="pre">gtsam.Values</span></code> type:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create the initial estimate</span>
@@ -1026,8 +1028,44 @@ illustrated in the listing below:</p>
 <span class="n">initial_estimate</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="mf">4.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span>
 <span class="n">initial_estimate</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span>
 <span class="n">initial_estimate</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="mf">2.1</span><span class="p">,</span> <span class="mf">2.1</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">initial_estimate</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Values with 5 values:
+Value 1: (gtsam::Pose2)
+(0.5, 0, 0.2)
 
-<span class="c1"># Optimize the initial values using a Gauss-Newton nonlinear optimizer</span>
+Value 2: (gtsam::Pose2)
+(2.3, 0.1, -0.2)
+
+Value 3: (gtsam::Pose2)
+(4.1, 0.1, 1.5708)
+
+Value 4: (gtsam::Pose2)
+(4, 2, 3.14159)
+
+Value 5: (gtsam::Pose2)
+(2.1, 2.1, -1.5708)
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can use this initial estimate to show the factor graph below:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">show</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">initial_estimate</span><span class="p">,</span> <span class="n">binary_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/S64_driving_perception_25_0.svg" src="_images/S64_driving_perception_25_0.svg" /></div>
+</div>
+<p>Optimization is done using non-linear minimization, as explained above. In GTSAM, this is done via a <code class="docutils literal notranslate"><span class="pre">NonlinearOptimizer</span></code> class. The specific optimizer we use below is <code class="docutils literal notranslate"><span class="pre">GaussNewtonOptimizer</span></code>, which exactly implements the pseudo-code given above, but exploiting sparsity in the factor graph to do this very efficiently. The optimizer only needs a graph and an initial estimate, both of which we already created, and hence the code below is quite simple:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Optimize the initial values using a Gauss-Newton nonlinear optimizer</span>
 <span class="n">optimizer</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">GaussNewtonOptimizer</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">initial_estimate</span><span class="p">)</span>
 <span class="n">result</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">optimize</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Final Result:</span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
@@ -1055,21 +1093,27 @@ Value 5: (gtsam::Pose2)
 </div>
 </div>
 </div>
+<p>We can also inspect the result graphically. Looking at the result as printed above only gets us so far, and more importantly: it only shows us the maximum a posteriori (MAP) solution, but not the uncertainty around it. Luckily, GTSAM can also compute the <strong>posterior marginals</strong>, which show the uncertainty on each recovered pose as a Gaussian density <span class="math notranslate nohighlight">\(P(T_i|Z)\)</span>, taking into account all the measurements <span class="math notranslate nohighlight">\(Z\)</span>.</p>
+<p>In code, we do this via the <code class="docutils literal notranslate"><span class="pre">gtsam.Marginals</span></code> object, and we can plot marginals with a special function <code class="docutils literal notranslate"><span class="pre">plot_pose2</span></code>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">show</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">DefaultKeyFormatter</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">marginals</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Marginals</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">):</span>
+    <span class="n">gtsam_plot</span><span class="o">.</span><span class="n">plot_pose2</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">atPose2</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="mf">0.5</span><span class="p">,</span>
+                          <span class="n">marginals</span><span class="o">.</span><span class="n">marginalCovariance</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">);</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/S64_driving_perception_24_0.svg" src="_images/S64_driving_perception_24_0.svg" /></div>
+<img alt="_images/S64_driving_perception_29_0.png" src="_images/S64_driving_perception_29_0.png" />
 </div>
-<p>TODO: add Figure</p>
+</div>
 <p>The result is shown graphically in Figure
 <a href="#fig:example" data-reference-type="ref" data-reference="fig:example">2</a>,
 along with covariance ellipses shown in green. These covariance ellipses
-in 2D indicate the marginal over position, over all possible
-orientations, and show the area which contain 68.26% of the probability
+in 2D indicate the marginal over position, <em>over all possible
+orientations</em>, and show the area which contain 99% of the probability
 mass (in 1D this would correspond to one standard deviation). The graph
 shows in a clear manner that the uncertainty on pose <span class="math notranslate nohighlight">\(T_{5}\)</span> is now
 much less than if there would be only odometry measurements. The pose
