@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>6.4. PoseSLAM &#8212; Introduction to Robotics and Perception</title>
+    <title>6.4. SLAM &#8212; Introduction to Robotics and Perception</title>
     
   <link href="_static/css/theme.css" rel="stylesheet">
   <link href="_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
@@ -349,7 +349,7 @@
    </li>
    <li class="toctree-l2 current active">
     <a class="current reference internal" href="#">
-     6.4. PoseSLAM
+     6.4. SLAM
     </a>
    </li>
   </ul>
@@ -481,8 +481,8 @@
   </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#slam">
-   6.4.3. SLAM
+  <a class="reference internal nav-link" href="#poseslam">
+   6.4.3. PoseSLAM
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -514,13 +514,11 @@
   <a class="reference internal nav-link" href="#slam-with-landmarks">
    6.4.9. SLAM with Landmarks
   </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#a-larger-slam-example">
-     6.4.9.1. A Larger SLAM Example
-    </a>
-   </li>
-  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#a-larger-slam-example">
+   6.4.10. A Larger SLAM Example
+  </a>
  </li>
 </ul>
 
@@ -532,7 +530,7 @@
         <div class="col-12 col-md-9 pl-md-3 pr-md-0">
             <!-- Table of contents that is only displayed when printing the page -->
             <div id="jb-print-docs-body" class="onlyprint">
-                <h1>PoseSLAM</h1>
+                <h1>SLAM</h1>
                 <!-- Table of contents -->
                 <div id="print-main-content">
                     <div id="jb-print-toc">
@@ -565,8 +563,8 @@
   </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#slam">
-   6.4.3. SLAM
+  <a class="reference internal nav-link" href="#poseslam">
+   6.4.3. PoseSLAM
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -598,13 +596,11 @@
   <a class="reference internal nav-link" href="#slam-with-landmarks">
    6.4.9. SLAM with Landmarks
   </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#a-larger-slam-example">
-     6.4.9.1. A Larger SLAM Example
-    </a>
-   </li>
-  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#a-larger-slam-example">
+   6.4.10. A Larger SLAM Example
+  </a>
  </li>
 </ul>
 
@@ -616,52 +612,17 @@
               <div>
                 
   <p><a href="https://colab.research.google.com/github/gtbook/robotics/blob/master/S64_driving_perception.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a></p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">pip</span> install -q -U gtbook
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Note: you may need to restart the kernel to use updated packages.
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">math</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-
-<span class="kn">import</span> <span class="nn">plotly.express</span> <span class="k">as</span> <span class="nn">px</span>
-<span class="kn">import</span> <span class="nn">plotly.graph_objects</span> <span class="k">as</span> <span class="nn">go</span>
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">google.colab</span>
-<span class="k">except</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">plotly.io</span> <span class="k">as</span> <span class="nn">pio</span>
-    <span class="n">pio</span><span class="o">.</span><span class="n">renderers</span><span class="o">.</span><span class="n">default</span> <span class="o">=</span> <span class="s2">&quot;png&quot;</span>
-
-<span class="kn">import</span> <span class="nn">gtsam</span> 
-<span class="kn">import</span> <span class="nn">gtsam.utils.plot</span> <span class="k">as</span> <span class="nn">gtsam_plot</span>
-
-<span class="kn">from</span> <span class="nn">gtbook</span> <span class="kn">import</span> <span class="n">driving</span>
-<span class="kn">from</span> <span class="nn">gtbook.display</span> <span class="kn">import</span> <span class="n">show</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="tex2jax_ignore mathjax_ignore section" id="poseslam">
-<h1><span class="section-number">6.4. </span>PoseSLAM<a class="headerlink" href="#poseslam" title="Permalink to this headline">¶</a></h1>
+<div class="tex2jax_ignore mathjax_ignore section" id="slam">
+<h1><span class="section-number">6.4. </span>SLAM<a class="headerlink" href="#slam" title="Permalink to this headline">¶</a></h1>
 <blockquote>
-<div><p>PoseSLAM is SLAM with pose priors and relative pose constraints only. We can derive those from Iterative Closest Points (ICP).</p>
+<div><p>SLAM is “Simultaneous Localization and Mapping”, a key capability for mobile robots.</p>
 </div></blockquote>
 <p><strong>This Section is still in draft mode and was released for adventurous spirits (and TAs) only.</strong></p>
 <div class="cell tag_remove-input docutils container">
 <div class="cell_output docutils container">
 <div class="output text_html">
 <div align='center'>
-<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S64-Autonomous%20Vehicle%20with%20LIDAR%20and%20cameras-06.jpg?raw=1' style='height:256 width:100%'/>
+<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S64-Autonomous%20Vehicle%20with%20LIDAR%20and%20cameras-01.jpg?raw=1' style='height:256 width:100%'/>
 </div>
 </div></div>
 </div>
@@ -756,10 +717,10 @@ C^a = \widehat{R^a_b} C^b + \widehat{t^a_b},
 <p>and the final relative pose estimate is given by <span class="math notranslate nohighlight">\(\widehat{T^a_b} =(\widehat{R^a_b}, \widehat{t^a_b})\)</span>. By the way, all of the above math is identical for both the 2D and 3D case.</p>
 </div>
 </div>
-<div class="section" id="slam">
-<h2><span class="section-number">6.4.3. </span>SLAM<a class="headerlink" href="#slam" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="poseslam">
+<h2><span class="section-number">6.4.3. </span>PoseSLAM<a class="headerlink" href="#poseslam" title="Permalink to this headline">¶</a></h2>
 <blockquote>
-<div><p>SLAM is Simultaneous Localization and Mapping.</p>
+<div><p>PoseSLAM is SLAM with pose priors and relative pose constraints only. We can derive those from Iterative Closest Points (ICP).</p>
 </div></blockquote>
 <p><strong>SLAM</strong> is <strong>Simultaneous Localization and Mapping</strong>.
 In the SLAM problem the goal is to localize a robot using the information coming
@@ -1224,8 +1185,9 @@ the graph to a global coordinate frame.</p>
 <img alt="_images/S64_driving_perception_40_0.png" src="_images/S64_driving_perception_40_0.png" />
 </div>
 </div>
+</div>
 <div class="section" id="a-larger-slam-example">
-<h3><span class="section-number">6.4.9.1. </span>A Larger SLAM Example<a class="headerlink" href="#a-larger-slam-example" title="Permalink to this headline">¶</a></h3>
+<h2><span class="section-number">6.4.10. </span>A Larger SLAM Example<a class="headerlink" href="#a-larger-slam-example" title="Permalink to this headline">¶</a></h2>
 <p>Below we optimize a piece of the (old) <a class="reference external" href="http://www-personal.acfr.usyd.edu.au/nebot/victoria_park.htm">Victoria park dataset</a>, which involves a truck driving through a park in Sydney, extracting the position of trees in the park from LIDAR scans, just as we discussed above. The factor graph for this example is created from file and shown below:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1271,7 +1233,6 @@ the graph to a global coordinate frame.</p>
 </div>
 <div class="cell_output docutils container">
 <img alt="_images/S64_driving_perception_47_0.png" src="_images/S64_driving_perception_47_0.png" />
-</div>
 </div>
 </div>
 </div>
