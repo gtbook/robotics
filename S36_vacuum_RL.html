@@ -38,9 +38,12 @@
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/togglebutton.js"></script>
     <script src="_static/clipboard.min.js"></script>
     <script src="_static/copybutton.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
     <script src="_static/sphinx-book-theme.d59cb220de22ca1c485ebbdc042f0030.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -355,6 +358,33 @@
    </li>
   </ul>
  </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="S70_drone_intro.html">
+   7. Autonomous Drones in 3D
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+  <label for="toctree-checkbox-7">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S71_drone_state.html">
+     7.1. Moving in Three Dimensions
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S72_drone_actions.html">
+     7.2. Multi-rotor Aircraft
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S73_drone_sensing.html">
+     7.3. Sensing for Drones
+    </a>
+   </li>
+  </ul>
+ </li>
 </ul>
 
     </div>
@@ -529,7 +559,7 @@
 <div class="cell_output docutils container">
 <div class="output text_html">
 <div align='center'>
-<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S36-iRobot%20vacuuming%20robot-07.jpg?raw=1' style='height:256 width:100%'/>
+<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S36-iRobot%20vacuuming%20robot-05.jpg?raw=1' style='height:256 width:100%'/>
 </div>
 </div></div>
 </div>
@@ -556,16 +586,16 @@
 </div>
 </div>
 </div>
-<p>Let us use it to create 499 experiences (a horizon of 5 only needs 4 experiences to get from <span class="math notranslate nohighlight">\(X_1\)</span> to $X_5), and show the first 10:</p>
+<p>Let us use it to create 499 experiences and show the first 10:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">explore_randomly</span><span class="p">(</span><span class="n">rooms</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;Living Room&quot;</span><span class="p">),</span> <span class="n">horizon</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">explore_randomly</span><span class="p">(</span><span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;Living Room&quot;</span><span class="p">),</span> <span class="n">horizon</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">[:</span><span class="mi">10</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[(0, 2, 0, 10.0), (0, 0, 0, 10.0), (0, 3, 0, 10.0), (0, 1, 1, 0.0), (1, 2, 1, 0.0), (1, 3, 4, 0.0), (4, 2, 1, 0.0), (1, 1, 1, 0.0), (1, 1, 1, 0.0), (1, 0, 0, 10.0)]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[(0, 2, 0, 10.0), (0, 2, 0, 10.0), (0, 2, 0, 10.0), (0, 0, 0, 10.0), (0, 3, 0, 10.0), (0, 2, 0, 10.0), (0, 0, 0, 10.0), (0, 3, 3, 0.0), (3, 2, 3, 0.0), (3, 0, 2, 0.0)]
 </pre></div>
 </div>
 </div>
@@ -612,11 +642,11 @@ P(x'|x,a) \approx \frac{N(x,a,x)}{N(x,a)}
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[13., 20., 27., 23.],
-       [16., 21., 23., 26.],
-       [35., 29., 24., 22.],
-       [26., 27., 27., 29.],
-       [34., 25., 22., 30.]])
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[36., 32., 25., 21.],
+       [27., 30., 34., 23.],
+       [16., 19.,  9., 12.],
+       [23., 26., 21., 32.],
+       [31., 31., 29., 22.]])
 </pre></div>
 </div>
 </div>
@@ -638,9 +668,9 @@ P(x'|x,a) \approx \frac{N(x,a,x)}{N(x,a)}
  [0.2 0.  0.  0.8 0. ]]
 estimate:
 [[1.   0.   0.   0.   0.  ]
- [0.2  0.8  0.   0.   0.  ]
+ [0.34 0.66 0.   0.   0.  ]
  [1.   0.   0.   0.   0.  ]
- [0.22 0.   0.   0.78 0.  ]]
+ [0.19 0.   0.   0.81 0.  ]]
 </pre></div>
 </div>
 </div>
@@ -661,13 +691,13 @@ estimate:
  [10.  0.  0.  0.  0.]]
 estimate:
 [[1.00000000e+001 0.00000000e+000 0.00000000e+000             nan
-              nan]
- [1.00000000e+001 0.00000000e+000 1.71898014e+161 5.22373812e+257
-  2.64521173e+185]
- [1.00000000e+001 3.17111435e+180 3.81187276e+180 0.00000000e+000
   0.00000000e+000]
- [1.00000000e+001 0.00000000e+000 1.17574872e+214 0.00000000e+000
-  0.00000000e+000]]
+ [1.00000000e+001 0.00000000e+000 0.00000000e+000 0.00000000e+000
+  7.62873016e+228]
+ [1.00000000e+001 0.00000000e+000 1.81644122e+223 4.19338336e+228
+  6.20432511e+223]
+ [1.00000000e+001 0.00000000e+000 1.97718984e+161 0.00000000e+000
+  5.03395988e+223]]
 </pre></div>
 </div>
 </div>
@@ -725,11 +755,11 @@ Q^*(x,a) \approx \frac{1}{N(x,a)} \sum_{x,a,x'} R(x,a,x') + \gamma \max_{a'} Q^*
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[74.29616602 65.31003891 78.61481977 69.78788334]
- [74.51263752 66.52105986 64.95549394 58.57436553]
- [59.85324075 67.92520341 59.37242622 58.20577045]
- [59.83393529 60.39767054 78.27745272 69.20828479]
- [69.64685902 59.71643526 64.25167611 60.28074038]]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[88.97142027 88.58549228 87.62977924 76.95891291]
+ [83.93199625 69.74305144 69.24723555 64.13765179]
+ [61.48085957 74.51454308 59.34157393 59.86383648]
+ [66.94592461 63.1937481  83.62755748 74.08825526]
+ [70.14356846 62.67774195 69.61074103 62.64408131]]
 </pre></div>
 </div>
 </div>

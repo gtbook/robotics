@@ -38,9 +38,12 @@
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/togglebutton.js"></script>
     <script src="_static/clipboard.min.js"></script>
     <script src="_static/copybutton.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
     <script src="_static/sphinx-book-theme.d59cb220de22ca1c485ebbdc042f0030.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -355,6 +358,33 @@
    </li>
   </ul>
  </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="S70_drone_intro.html">
+   7. Autonomous Drones in 3D
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+  <label for="toctree-checkbox-7">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S71_drone_state.html">
+     7.1. Moving in Three Dimensions
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S72_drone_actions.html">
+     7.2. Multi-rotor Aircraft
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S73_drone_sensing.html">
+     7.3. Sensing for Drones
+    </a>
+   </li>
+  </ul>
+ </li>
 </ul>
 
     </div>
@@ -630,7 +660,7 @@
 <div class="cell_output docutils container">
 <div class="output text_html">
 <div align='center'>
-<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S32-iRobot%20vacuuming%20robot-02.jpg?raw=1' style='height:256 width:100%'/>
+<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S32-iRobot%20vacuuming%20robot-07.jpg?raw=1' style='height:256 width:100%'/>
 </div>
 </div></div>
 </div>
@@ -704,17 +734,16 @@ Because the state space in this case involves navigation, we also call the corre
 form of a large conditional probability table:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">actions</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;L&quot;</span><span class="p">,</span><span class="s2">&quot;R&quot;</span><span class="p">,</span><span class="s2">&quot;U&quot;</span><span class="p">,</span><span class="s2">&quot;D&quot;</span><span class="p">,]</span>
-<span class="n">A</span> <span class="o">=</span> <span class="n">VARIABLES</span><span class="o">.</span><span class="n">discrete_series</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">actions</span><span class="p">)</span>
-<span class="n">X</span> <span class="o">=</span> <span class="n">VARIABLES</span><span class="o">.</span><span class="n">discrete_series</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">rooms</span><span class="p">)</span>
-<span class="n">spec</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">    1/0/0/0/0 2/8/0/0/0 1/0/0/0/0 2/0/0/8/0</span>
-<span class="s2">    8/2/0/0/0 0/1/0/0/0 0/1/0/0/0 0/2/0/0/8</span>
-<span class="s2">    0/0/1/0/0 0/0/2/8/0 0/0/1/0/0 0/0/1/0/0</span>
-<span class="s2">    0/0/8/2/0 0/0/0/2/8 8/0/0/2/0 0/0/0/1/0</span>
-<span class="s2">    0/0/0/8/2 0/0/0/0/1 0/8/0/0/2 0/0/0/0/1</span>
-<span class="s2">    &quot;&quot;&quot;</span>
-<span class="n">motion_model</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">DiscreteConditional</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">spec</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># vacuum.action_space = [&quot;L&quot;,&quot;R&quot;,&quot;U&quot;,&quot;D&quot;,]</span>
+<span class="c1"># vacuum.action_spec is a string with the transition probabilities:</span>
+<span class="c1">#  &quot;1/0/0/0/0 2/8/0/0/0 1/0/0/0/0 2/0/0/8/0</span>
+<span class="c1">#   8/2/0/0/0 0/1/0/0/0 0/1/0/0/0 0/2/0/0/8</span>
+<span class="c1">#   0/0/1/0/0 0/0/2/8/0 0/0/1/0/0 0/0/1/0/0</span>
+<span class="c1">#   0/0/8/2/0 0/0/0/2/8 8/0/0/2/0 0/0/0/1/0</span>
+<span class="c1">#   0/0/0/8/2 0/0/0/0/1 0/8/0/0/2 0/0/0/0/1&quot;</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">VARIABLES</span><span class="o">.</span><span class="n">discrete_series</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="p">)</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">VARIABLES</span><span class="o">.</span><span class="n">discrete_series</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">action_space</span><span class="p">)</span>
+<span class="n">motion_model</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">DiscreteConditional</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">action_spec</span><span class="p">)</span>
 <span class="n">pretty</span><span class="p">(</span><span class="n">motion_model</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -897,7 +926,7 @@ the probabilistic transitions between states, as shown below:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">N</span> <span class="o">=</span> <span class="mi">3</span>
-<span class="n">X</span> <span class="o">=</span> <span class="n">VARIABLES</span><span class="o">.</span><span class="n">discrete_series</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">rooms</span><span class="p">)</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">VARIABLES</span><span class="o">.</span><span class="n">discrete_series</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="p">)</span>
 <span class="n">markov_chain</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">DiscreteBayesNet</span><span class="p">()</span>
 <span class="n">markov_chain</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">state_prior</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">N</span><span class="p">):</span>
@@ -970,11 +999,11 @@ time <span class="math notranslate nohighlight">\(t\)</span>. The code below cre
 Try varying the value of <span class="math notranslate nohighlight">\(N\)</span> to see other examples.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">A</span> <span class="o">=</span> <span class="n">VARIABLES</span><span class="o">.</span><span class="n">discrete_series</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">N</span><span class="p">),</span> <span class="n">actions</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">A</span> <span class="o">=</span> <span class="n">VARIABLES</span><span class="o">.</span><span class="n">discrete_series</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">N</span><span class="p">),</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">action_space</span><span class="p">)</span>
 <span class="n">bayesNet</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">DiscreteBayesNet</span><span class="p">()</span>
 <span class="n">bayesNet</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">state_prior</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">N</span><span class="p">):</span>
-    <span class="n">bayesNet</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="n">k</span><span class="p">]],</span> <span class="n">spec</span><span class="p">)</span> <span class="c1"># add creates conditional and adds</span>
+    <span class="n">bayesNet</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="n">k</span><span class="p">]],</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">action_spec</span><span class="p">)</span> <span class="c1"># add creates conditional and adds</span>
 <span class="n">show</span><span class="p">(</span><span class="n">bayesNet</span><span class="p">,</span> <span class="n">hints</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;A&quot;</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;X&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">},</span> <span class="n">boxes</span><span class="o">=</span><span class="p">{</span><span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">A</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]})</span>
 </pre></div>
 </div>
@@ -1012,9 +1041,9 @@ histogram over the possible values of the state:</p>
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">):</span>
     <span class="n">values</span> <span class="o">=</span> <span class="n">VARIABLES</span><span class="o">.</span><span class="n">assignment</span><span class="p">({</span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span><span class="n">x1</span><span class="p">,</span> <span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="n">a1</span><span class="p">})</span>
-    <span class="n">x2</span> <span class="o">=</span> <span class="n">rooms</span><span class="p">[</span><span class="n">bayesNet</span><span class="o">.</span><span class="n">at</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">values</span><span class="p">)]</span>
+    <span class="n">x2</span> <span class="o">=</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="p">[</span><span class="n">bayesNet</span><span class="o">.</span><span class="n">at</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">values</span><span class="p">)]</span>
     <span class="n">values</span> <span class="o">=</span> <span class="n">VARIABLES</span><span class="o">.</span><span class="n">assignment</span><span class="p">({</span><span class="n">X</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span><span class="n">x2</span><span class="p">,</span> <span class="n">A</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="n">a2</span><span class="p">})</span>
-    <span class="n">x3</span> <span class="o">=</span> <span class="n">rooms</span><span class="p">[</span><span class="n">bayesNet</span><span class="o">.</span><span class="n">at</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">values</span><span class="p">)]</span>
+    <span class="n">x3</span> <span class="o">=</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="p">[</span><span class="n">bayesNet</span><span class="o">.</span><span class="n">at</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">values</span><span class="p">)]</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">x1</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x3</span><span class="p">]</span>
 
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
@@ -1165,7 +1194,7 @@ actions to factored state representations. The code below shows one way to do it
 <span class="n">factored</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">state_prior</span><span class="p">)</span>
 <span class="n">factored</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">B</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[],</span> <span class="s2">&quot;1/0/0&quot;</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">N</span><span class="p">):</span>
-    <span class="n">factored</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="n">k</span><span class="p">]],</span> <span class="n">spec</span><span class="p">)</span>
+    <span class="n">factored</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="n">k</span><span class="p">]],</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">action_spec</span><span class="p">)</span>
     <span class="n">factored</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">B</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="n">A</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">B</span><span class="p">[</span><span class="n">k</span><span class="p">]],</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">spec_b</span><span class="p">]</span><span class="o">*</span><span class="mi">4</span><span class="p">))</span>
 <span class="n">show</span><span class="p">(</span><span class="n">factored</span><span class="p">,</span> <span class="n">hints</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;A&quot;</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;X&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">},</span> <span class="n">boxes</span><span class="o">=</span><span class="p">{</span><span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">A</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]})</span>
 </pre></div>

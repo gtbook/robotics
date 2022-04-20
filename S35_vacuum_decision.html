@@ -38,9 +38,12 @@
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/togglebutton.js"></script>
     <script src="_static/clipboard.min.js"></script>
     <script src="_static/copybutton.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
     <script src="_static/sphinx-book-theme.d59cb220de22ca1c485ebbdc042f0030.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -355,6 +358,33 @@
    </li>
   </ul>
  </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="S70_drone_intro.html">
+   7. Autonomous Drones in 3D
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+  <label for="toctree-checkbox-7">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S71_drone_state.html">
+     7.1. Moving in Three Dimensions
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S72_drone_actions.html">
+     7.2. Multi-rotor Aircraft
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S73_drone_sensing.html">
+     7.3. Sensing for Drones
+    </a>
+   </li>
+  </ul>
+ </li>
 </ul>
 
     </div>
@@ -510,7 +540,7 @@
  </li>
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#computing-the-value-function">
-   3.5.8. Computing The Value Function
+   3.5.8. Computing The Value Function*
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -526,6 +556,11 @@
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#value-iteration">
    3.5.11. Value Iteration
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#summary">
+   3.5.12. Summary
   </a>
  </li>
 </ul>
@@ -599,7 +634,7 @@
  </li>
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#computing-the-value-function">
-   3.5.8. Computing The Value Function
+   3.5.8. Computing The Value Function*
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -615,6 +650,11 @@
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#value-iteration">
    3.5.11. Value Iteration
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#summary">
+   3.5.12. Summary
   </a>
  </li>
 </ul>
@@ -657,8 +697,8 @@ the concept of Markov decision processes (MDPs).</p>
 in the effects of actions. We defined the belief state <span class="math notranslate nohighlight">\(b_{t+1}\)</span> to be the posterior probability distribution
 for the state at time <span class="math notranslate nohighlight">\(t+1\)</span> given the sequence of actions <span class="math notranslate nohighlight">\(a_1 \dots a_t\)</span>.
 In every example, the sequence of actions was predetermined, and we merely calculated probabilities
-associated to performing these actions from some specified initial state (possibly described
-by a probability distribution <span class="math notranslate nohighlight">\(P(X_1)\)</span>).</p>
+associated to performing these actions from some specified initial state, possibly described
+by a probability distribution <span class="math notranslate nohighlight">\(P(X_1)\)</span>.</p>
 <p>In this chapter, we consider the problem of choosing which actions to execute.
 Making these decisions requires that we have quantitative criteria for evaluating actions and their effects.
 We encode these criteria using <em>reward functions</em>.
@@ -686,6 +726,9 @@ The recipe of which action to execute in each state is called a <em>policy</em>,
 and determining optimal policies is the main goal for this section.</p>
 <div class="section" id="reward-functions">
 <h2><span class="section-number">3.5.1. </span>Reward Functions<a class="headerlink" href="#reward-functions" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>Stochastic actions plus a reward make an MDP.</p>
+</div></blockquote>
 <p>How should our robot evaluate the effects of actions?
 One simple approach might be to specify the robot’s goal, and then determine
 how effective an action might be with respect to that goal,
@@ -746,6 +789,9 @@ It simply returns a reward of 10 upon entering the living room:</p>
 </div>
 <div class="section" id="expected-reward">
 <h2><span class="section-number">3.5.2. </span>Expected Reward<a class="headerlink" href="#expected-reward" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>Maximizing immediate expected reward leads to greedy planning.</p>
+</div></blockquote>
 <p>Because the effects of actions are uncertain,
 there is no way for the robot to know definitively the reward that will obtain
 by executing a specific action <span class="math notranslate nohighlight">\(a\)</span> in state <span class="math notranslate nohighlight">\(x\)</span>.
@@ -769,14 +815,14 @@ it can be convenient to work only with the expected reward, instead of dealing w
 which some texts do. However, below we will continue to work with the most general formulation. --><p>To <em>calculate</em> the expected reward in code, it would be nice to rely on functions that do string compares, which is not very efficient. Since states and actions are finite (and of low cardinality), we can create a multidimensional array <span class="math notranslate nohighlight">\(R(x,a,x')\)</span> that the rewards for every possible transition <span class="math notranslate nohighlight">\(x,a \rightarrow x'\)</span>. We use the handy GTSAM <code class="docutils literal notranslate"><span class="pre">enumerate</span></code> method below to do so:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">conditional</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">DiscreteConditional</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">)],</span> <span class="n">action_spec</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">conditional</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">DiscreteConditional</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">)],</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">action_spec</span><span class="p">)</span>
 <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="nb">float</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">assignment</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">conditional</span><span class="o">.</span><span class="n">enumerate</span><span class="p">():</span>
     <span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">assignment</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">assignment</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">assignment</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-    <span class="n">R</span><span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span> <span class="o">=</span> <span class="mf">10.0</span> <span class="k">if</span> <span class="n">y</span> <span class="o">==</span> <span class="n">rooms</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;Living Room&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="mf">0.0</span>
+    <span class="n">R</span><span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span> <span class="o">=</span> <span class="mf">10.0</span> <span class="k">if</span> <span class="n">y</span> <span class="o">==</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;Living Room&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="mf">0.0</span>
 
 <span class="c1"># For example, taking action &quot;L&quot; in &quot;Kitchen&quot;:</span>
-<span class="n">R</span><span class="p">[</span><span class="n">rooms</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;Kitchen&quot;</span><span class="p">),</span> <span class="n">action_space</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;L&quot;</span><span class="p">)]</span>
+<span class="n">R</span><span class="p">[</span><span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;Kitchen&quot;</span><span class="p">),</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;L&quot;</span><span class="p">)]</span>
 </pre></div>
 </div>
 </div>
@@ -797,7 +843,7 @@ arrives to the living room (index 0) the robot obtains a reward of 10, otherwise
     <span class="n">T</span><span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
 <span class="c1"># For example, taking action &quot;L&quot; in &quot;Kitchen&quot;:</span>
-<span class="n">T</span><span class="p">[</span><span class="n">rooms</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;Kitchen&quot;</span><span class="p">),</span> <span class="n">action_space</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;L&quot;</span><span class="p">)]</span>
+<span class="n">T</span><span class="p">[</span><span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;Kitchen&quot;</span><span class="p">),</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;L&quot;</span><span class="p">)]</span>
 </pre></div>
 </div>
 </div>
@@ -811,8 +857,8 @@ arrives to the living room (index 0) the robot obtains a reward of 10, otherwise
 <p>Then, finally, the expected reward becomes a simple <code class="docutils literal notranslate"><span class="pre">numpy</span></code> operation:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">rooms</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;Kitchen&quot;</span><span class="p">)</span>
-<span class="n">a</span> <span class="o">=</span> <span class="n">action_space</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;L&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;Kitchen&quot;</span><span class="p">)</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;L&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected reward (Kitchen, L) = </span><span class="si">{</span><span class="n">T</span><span class="p">[</span><span class="n">x</span><span class="p">,</span><span class="n">a</span><span class="p">]</span> <span class="o">@</span> <span class="n">R</span><span class="p">[</span><span class="n">x</span><span class="p">,</span><span class="n">a</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -837,7 +883,7 @@ prior distribution on <span class="math notranslate nohighlight">\(X_t\)</span>.
 vector would have a <span class="math notranslate nohighlight">\(1\)</span> in the entry corresponding to the current room, and zero’s for
 all other entries.
 Therefore, this form is somewhat more general than that given above.</p>
-<p>Equipped with the definition of expected reward, we can introduce a first, greedy planning algorithm:
+<p>Equipped with the definition of expected reward, we can introduce a first, <strong>greedy planning</strong> algorithm:
 Given the current belief state <span class="math notranslate nohighlight">\(b_t\)</span>, execute the action that maximizes the expected reward:</p>
 <div class="math notranslate nohighlight">
 \[ a^* = \arg  \max_{a \in {\cal A}} E[ R(X_t, a, X_{t+t})] = \arg \max_{a \in {\cal A}}\left( b_t M_{A}\right) R
@@ -845,21 +891,26 @@ Given the current belief state <span class="math notranslate nohighlight">\(b_t\
 </div>
 <div class="section" id="utility-for-a-defined-sequence-of-actions">
 <h2><span class="section-number">3.5.3. </span>Utility for a Defined Sequence of Actions<a class="headerlink" href="#utility-for-a-defined-sequence-of-actions" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>Utility is the total discounted award over finite or infinite horizons.</p>
+</div></blockquote>
 <p>The greedy strategy above focuses on the immediate benefit of applying an action.
 For our robot, and for most robots operating in the real world, it is important to perform
 effectively over a prolonged period of time, not merely for the next instant.
 In order to maximize long-term benefit, instead of considering only the next-stage reward (as the greedy strategy does)
 we could consider the sum of all rewards achieved in the future.
-There are two immediate disadvantages to a direct implementation of this approach.
-First, because the effects of actions are uncertain, it is likely that the further we look
+There are two immediate disadvantages to a direct implementation of this approach:</p>
+<ul class="simple">
+<li><p>First, because the effects of actions are uncertain, it is likely that the further we look
 into the future, the more uncertain we will be about the robot’s anticipated state.
 Therefore, it makes sense to discount our consideration of rewards that might occur far into the future,
-say at times <span class="math notranslate nohighlight">\(X_{t+T}\)</span>, for increasing values of <span class="math notranslate nohighlight">\(T\)</span>.
-Second, it is often convenient to reason with an infinite time horizon (i.e., to consider
-the case when the robot will operate forever). While this is certainly not a realistic expectation,
+say at times <span class="math notranslate nohighlight">\(X_{t+T}\)</span>, for increasing values of <span class="math notranslate nohighlight">\(T\)</span>.</p></li>
+<li><p>Second, it is often convenient to reason with an infinite time horizon, e.g., consider the case when the robot will operate forever.
+While this is certainly not a realistic expectation,
 reasoning over an infinite time horizon often simplifies the mathematical complexities of planning into the future.
-If we merely compute the sum of all future rewards, this sum will diverge to infinity as <span class="math notranslate nohighlight">\(T\)</span> approaches infinity.
-We can deal with both of these disadvantages by multiplying the reward at time <span class="math notranslate nohighlight">\(t + T\)</span> by a discounting
+If we merely compute the sum of all future rewards, this sum will diverge to infinity as <span class="math notranslate nohighlight">\(T\)</span> approaches infinity.</p></li>
+</ul>
+<p>We can deal with both of these disadvantages by multiplying the reward at time <span class="math notranslate nohighlight">\(t + T\)</span> by a discounting
 factor <span class="math notranslate nohighlight">\(\gamma^T\)</span>, with <span class="math notranslate nohighlight">\(0 &lt; \gamma \leq 1\)</span>.
 We refer to <span class="math notranslate nohighlight">\(\gamma\)</span> as the <strong>discount factor</strong>
 and to the term <span class="math notranslate nohighlight">\(\gamma^T R(x_t,a_t,x_{t+T})\)</span> as a <strong>discounted reward.</strong>
@@ -889,7 +940,7 @@ given sequence of actions,
 <span class="math notranslate nohighlight">\(E[U(a_1, \dots, a_n, X_1, \dots X_n)]\)</span>.
 We can now formulate a slightly more sophisticated version of our planning problem:</p>
 <div class="math notranslate nohighlight">
-\[ (a_1^*, \dots a_n^*) = \arg  \max_{a_1 \dots a_n \in {\cal A}^n} E[U(a_1, \dots, a_n, X_1, \dots X_{n+1})]
+\[ a_1^*, \dots a_n^* = \arg  \max_{a_1 \dots a_n \in {\cal A}^n} E[U(a_1, \dots, a_n, X_1, \dots X_{n+1})]
 \]</div>
 <p>As formulated above, this problem could be solved by merely enumerating every possible action sequence,
 and choosing the sequence that maximizes the expectation.
@@ -900,6 +951,9 @@ We can, however, approximate this optimization process using the concept of roll
 </div>
 <div class="section" id="approximating-expected-utility-using-control-tape-rollouts">
 <h2><span class="section-number">3.5.4. </span>Approximating Expected Utility Using Control Tape Rollouts<a class="headerlink" href="#approximating-expected-utility-using-control-tape-rollouts" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>Rollin’, rollin’, rollin’…</p>
+</div></blockquote>
 <p>Consider the computation required to determine the expected utility for a sequence of only two actions:</p>
 <div class="math notranslate nohighlight">
 \[
@@ -926,13 +980,13 @@ in an attempt to reach the living room.</p>
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">markovChain</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">DiscreteBayesNet</span><span class="p">()</span>
 <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">N</span><span class="p">)):</span>
-    <span class="n">markovChain</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="n">k</span><span class="p">]],</span> <span class="n">action_spec</span><span class="p">)</span>
+    <span class="n">markovChain</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="n">k</span><span class="p">]],</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">action_spec</span><span class="p">)</span>
 <span class="n">show</span><span class="p">(</span><span class="n">markovChain</span><span class="p">,</span> <span class="n">hints</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;A&quot;</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;X&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Z&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">},</span> <span class="n">boxes</span><span class="o">=</span><span class="p">{</span><span class="n">A</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">N</span><span class="p">)})</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/S35_vacuum_decision_23_0.svg" src="_images/S35_vacuum_decision_23_0.svg" /></div>
+<img alt="_images/S35_vacuum_decision_24_0.svg" src="_images/S35_vacuum_decision_24_0.svg" /></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1048,12 +1102,12 @@ If in the hallway or living room, move up.
 Note we implement policies as a simple list in python, so <code class="docutils literal notranslate"><span class="pre">pi[0]</span></code> is the the action take in state with index 0 (the Living Room):</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">RIGHT_INDEX</span> <span class="o">=</span> <span class="n">action_space</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;R&quot;</span><span class="p">)</span>
-<span class="n">LEFT_INDEX</span> <span class="o">=</span> <span class="n">action_space</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;L&quot;</span><span class="p">)</span>
-<span class="n">UP_INDEX</span> <span class="o">=</span> <span class="n">action_space</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;U&quot;</span><span class="p">)</span>
-<span class="n">DOWN_INDEX</span> <span class="o">=</span> <span class="n">action_space</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;D&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">RIGHT</span> <span class="o">=</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;R&quot;</span><span class="p">)</span>
+<span class="n">LEFT</span>  <span class="o">=</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;L&quot;</span><span class="p">)</span>
+<span class="n">UP</span>    <span class="o">=</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;U&quot;</span><span class="p">)</span>
+<span class="n">DOWN</span>  <span class="o">=</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;D&quot;</span><span class="p">)</span>
 
-<span class="n">reasonable_policy</span> <span class="o">=</span> <span class="p">[</span><span class="n">UP_INDEX</span><span class="p">,</span> <span class="n">LEFT_INDEX</span><span class="p">,</span> <span class="n">RIGHT_INDEX</span><span class="p">,</span> <span class="n">UP_INDEX</span><span class="p">,</span> <span class="n">LEFT_INDEX</span><span class="p">]</span>
+<span class="n">reasonable_policy</span> <span class="o">=</span> <span class="p">[</span><span class="n">UP</span><span class="p">,</span> <span class="n">LEFT</span><span class="p">,</span> <span class="n">RIGHT</span><span class="p">,</span> <span class="n">UP</span><span class="p">,</span> <span class="n">LEFT</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -1080,7 +1134,7 @@ In particular, at each state, instead of sampling from the distribution
     <span class="n">rollout</span><span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="n">horizon</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">x</span>
     <span class="k">return</span> <span class="n">rollout</span>
 
-<span class="n">pretty</span><span class="p">(</span><span class="n">policy_rollout</span><span class="p">(</span><span class="n">rooms</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;Office&quot;</span><span class="p">),</span> <span class="n">reasonable_policy</span><span class="p">,</span> <span class="n">horizon</span><span class="o">=</span><span class="mi">5</span><span class="p">))</span>
+<span class="n">pretty</span><span class="p">(</span><span class="n">policy_rollout</span><span class="p">(</span><span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;Office&quot;</span><span class="p">),</span> <span class="n">reasonable_policy</span><span class="p">,</span> <span class="n">horizon</span><span class="o">=</span><span class="mi">5</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -1188,6 +1242,9 @@ to apply to the state <span class="math notranslate nohighlight">\(x\)</span> at
 </div>
 <div class="section" id="approximating-the-value-function">
 <h2><span class="section-number">3.5.7. </span>Approximating the Value Function<a class="headerlink" href="#approximating-the-value-function" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>We can use rollouts to approximate the value function as well.</p>
+</div></blockquote>
 <p>Just as we approximated the expected utility of an action sequence
 using control tape rollouts,
 we can approximate the value function by sampling over a number of policy rollouts.
@@ -1229,47 +1286,55 @@ V^\pi(x) - \sum_{i=0}^{N_{\rm{ro}}}\gamma ^i R(x_i,\pi(xi), x_{i+1})\]</div>
     <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">rewards</span><span class="p">)</span><span class="o">/</span><span class="n">nr_samples</span>
 
 <span class="n">nr_samples</span><span class="o">=</span><span class="mi">10</span>
-<span class="k">for</span> <span class="n">x1</span><span class="p">,</span> <span class="n">room</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rooms</span><span class="p">):</span>
+<span class="k">for</span> <span class="n">x1</span><span class="p">,</span> <span class="n">room</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="p">):</span>
     <span class="n">V_x1</span> <span class="o">=</span> <span class="n">approximate_value_function</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">reasonable_policy</span><span class="p">,</span> <span class="n">nr_samples</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;V(</span><span class="si">{</span><span class="n">room</span><span class="si">}</span><span class="s2">) ~ </span><span class="si">{</span><span class="n">V_x1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;V(</span><span class="si">{</span><span class="n">room</span><span class="si">}</span><span class="s2">) ~ </span><span class="si">{</span><span class="n">V_x1</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Living Room) ~ 34.38999999999999
-V(Kitchen) ~ 29.679999999999996
-V(Office) ~ 20.879999999999995
-V(Hallway) ~ 27.589999999999996
-V(Dining Room) ~ 15.831
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Living Room) ~ 34.39
+V(Kitchen) ~ 29.68
+V(Office) ~ 20.88
+V(Hallway) ~ 27.59
+V(Dining Room) ~ 15.83
 </pre></div>
 </div>
 </div>
 </div>
+<p>The above calculation was done with a horizon of <span class="math notranslate nohighlight">\(N=5\)</span> and 10 samples. Of course, we can use more samples and a longer horizon to obtain a much more accurate estimate:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nr_samples</span> <span class="o">=</span> <span class="mi">100</span>
-<span class="n">horizon</span> <span class="o">=</span> <span class="mi">20</span>
-<span class="n">X</span> <span class="o">=</span> <span class="n">VARIABLES</span><span class="o">.</span><span class="n">discrete_series</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">horizon</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">rooms</span><span class="p">)</span>
-<span class="n">A</span> <span class="o">=</span> <span class="n">VARIABLES</span><span class="o">.</span><span class="n">discrete_series</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">horizon</span><span class="p">),</span> <span class="n">action_space</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">x1</span><span class="p">,</span> <span class="n">room</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rooms</span><span class="p">):</span>
+<span class="n">horizon</span> <span class="o">=</span> <span class="mi">50</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">VARIABLES</span><span class="o">.</span><span class="n">discrete_series</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">horizon</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="p">)</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">VARIABLES</span><span class="o">.</span><span class="n">discrete_series</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">horizon</span><span class="p">),</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">action_space</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">x1</span><span class="p">,</span> <span class="n">room</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="p">):</span>
     <span class="n">V_x1</span> <span class="o">=</span> <span class="n">approximate_value_function</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">reasonable_policy</span><span class="p">,</span> <span class="n">nr_samples</span><span class="p">,</span> <span class="n">horizon</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;V(</span><span class="si">{</span><span class="n">room</span><span class="si">}</span><span class="s2">) ~ </span><span class="si">{</span><span class="n">V_x1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;V(</span><span class="si">{</span><span class="n">room</span><span class="si">}</span><span class="s2">) ~ </span><span class="si">{</span><span class="n">V_x1</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Living Room) ~ 86.49148282327023
-V(Kitchen) ~ 84.31148282327024
-V(Office) ~ 71.8807828232702
-V(Hallway) ~ 84.43148282327023
-V(Dining Room) ~ 73.1947828232702
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Living Room) ~ 99.43
+V(Kitchen) ~ 97.25
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Office) ~ 84.82
+V(Hallway) ~ 97.37
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Dining Room) ~ 86.13
 </pre></div>
 </div>
 </div>
 </div>
 </div>
 <div class="section" id="computing-the-value-function">
-<h2><span class="section-number">3.5.8. </span>Computing The Value Function<a class="headerlink" href="#computing-the-value-function" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">3.5.8. </span>Computing The Value Function*<a class="headerlink" href="#computing-the-value-function" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>For any fixed policy we can <em>exactly</em> compute the value function.</p>
+</div></blockquote>
 <p>We can compute the exact value of <span class="math notranslate nohighlight">\(V^\pi\)</span> by solving a system of linear equations.
 Recall our recursive definition of the value function:</p>
 <div class="math notranslate nohighlight">
@@ -1357,7 +1422,7 @@ or can easily be computed.</p>
     <span class="sd">&quot;&quot;&quot;Calculate A, b matrix of linear system for value computation.&quot;&quot;&quot;</span>
     <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">5</span><span class="p">,),</span> <span class="nb">float</span><span class="p">)</span>
     <span class="n">AA</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span> <span class="nb">float</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">room</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rooms</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">room</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="p">):</span>
         <span class="n">a</span> <span class="o">=</span> <span class="n">pi</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="c1"># action under policy</span>
         <span class="n">b</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="n">T</span><span class="p">[</span><span class="n">x</span><span class="p">,</span><span class="n">a</span><span class="p">]</span> <span class="o">@</span> <span class="n">R</span><span class="p">[</span><span class="n">x</span><span class="p">,</span><span class="n">a</span><span class="p">]</span> <span class="c1"># expected reward under policy pi</span>
         <span class="n">AA</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">gamma</span> <span class="o">*</span> <span class="n">T</span><span class="p">[</span><span class="n">x</span><span class="p">,</span><span class="n">a</span><span class="p">]</span>
@@ -1397,18 +1462,18 @@ or can easily be computed.</p>
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">value_for_pi</span> <span class="o">=</span> <span class="n">calculate_value_function</span><span class="p">(</span><span class="n">reasonable_policy</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;V(reasonable_policy):&quot;</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">room</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rooms</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">room</span><span class="si">:</span><span class="s2">12</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">value_for_pi</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">room</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">room</span><span class="si">:</span><span class="s2">12</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">value_for_pi</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(reasonable_policy):
-  Living Room : 100.00000000000001
-  Kitchen     : 97.56097560975613
-  Office      : 85.66329565734685
-  Hallway     : 97.56097560975611
-  Dining Room : 85.66329565734685
+  Living Room : 100.00
+  Kitchen     : 97.56
+  Office      : 85.66
+  Hallway     : 97.56
+  Dining Room : 85.66
 </pre></div>
 </div>
 </div>
@@ -1416,6 +1481,9 @@ or can easily be computed.</p>
 </div>
 <div class="section" id="optimal-policy-and-value-function">
 <h2><span class="section-number">3.5.9. </span>Optimal Policy and Value Function<a class="headerlink" href="#optimal-policy-and-value-function" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>The optimal policy and optimal value function are besties.</p>
+</div></blockquote>
 <p>Now that we know how to compute the value function for an arbitrary policy <span class="math notranslate nohighlight">\(\pi\)</span>,
 we turn our attention to computing the <strong>optimal value function</strong>,
 which can be used to construct the <strong>optimal policy</strong> <span class="math notranslate nohighlight">\(\pi^*\)</span></p>
@@ -1441,8 +1509,9 @@ it always appears as <span class="math notranslate nohighlight">\(\pi(x)\)</span
 Therefore, we can write the optimization
 as a maximization with respect to the <em>action</em> applied in the <em>current state</em>, rather than as a
 maximization with respect to the entire policy <span class="math notranslate nohighlight">\(\pi\)</span>!
-This equation is known as Bellman’s equation (after Richard Bellman, the mathematician
-who discovered it), and it is one of the most important equations in all of computer science.</p>
+This equation is known as the <strong>Bellman equation</strong>.
+It is named after Richard Bellman, the mathematician
+who discovered it, and it is one of the most important equations in all of computer science.</p>
 <p>The Bellman equation has a very nice interpretation:
 the optimal value function of a state is the maximum expected reward
 <em>plus</em> the discounted expected value function when acting optimally in the future.</p>
@@ -1487,7 +1556,6 @@ ultimately converging to the optimal value function.</p>
 <blockquote>
 <div><p>By iteratively improving an estimate of the optimal policy, we eventually find <span class="math notranslate nohighlight">\(\pi^*\)</span>.</p>
 </div></blockquote>
-<p>We want the best policy. So we start with a random policy, calculate the value function, and then change the policy to reflect the optimal action in each state.</p>
 <p>One way to compute an optimal policy is to start with an initial guess
 at the optimal policy, and then iteratively improve our guess until until no futher improvements are possible.
 This is exactly the approach taken by <strong>policy iteration</strong>.
@@ -1515,7 +1583,7 @@ implemented with the following code:</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">update_policy</span><span class="p">(</span><span class="n">value_function</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Update policy given a value function&quot;&quot;&quot;</span>
     <span class="n">new_policy</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)]</span>
-    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">room</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rooms</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">room</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="p">):</span>
         <span class="n">Q_values</span> <span class="o">=</span> <span class="p">[</span><span class="n">Q_value</span><span class="p">(</span><span class="n">value_function</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)]</span>
         <span class="n">new_policy</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">Q_values</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">new_policy</span>
@@ -1546,7 +1614,7 @@ start with a zero value function
 For example, we can start with a not-so-smart <code class="docutils literal notranslate"><span class="pre">always_right</span></code> policy:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">RIGHT_INDEX</span> <span class="o">=</span> <span class="n">action_space</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;R&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">RIGHT_INDEX</span> <span class="o">=</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;R&quot;</span><span class="p">)</span>
 
 <span class="n">always_right</span> <span class="o">=</span> <span class="p">[</span><span class="n">RIGHT_INDEX</span><span class="p">,</span> <span class="n">RIGHT_INDEX</span><span class="p">,</span> <span class="n">RIGHT_INDEX</span><span class="p">,</span> <span class="n">RIGHT_INDEX</span><span class="p">,</span> <span class="n">RIGHT_INDEX</span><span class="p">]</span>
 </pre></div>
@@ -1556,7 +1624,7 @@ For example, we can start with a not-so-smart <code class="docutils literal notr
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">optimal_policy</span><span class="p">,</span> <span class="n">optimal_value_function</span> <span class="o">=</span> <span class="n">policy_iteration</span><span class="p">(</span><span class="n">always_right</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">([</span><span class="n">action_space</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">optimal_policy</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">([</span><span class="n">vacuum</span><span class="o">.</span><span class="n">action_space</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">optimal_policy</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -1575,17 +1643,17 @@ We already knew that it should be pretty good at getting to the living room as f
 <p>We also print out the optimal value function below, which shows that if we are close to the living room the value function is very high, but it is a bit lower in the office in the dining room:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">room</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rooms</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">room</span><span class="si">:</span><span class="s2">12</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">optimal_value_function</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">room</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">room</span><span class="si">:</span><span class="s2">12</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">optimal_value_function</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Living Room : 100.00000000000001
-  Kitchen     : 97.56097560975611
-  Office      : 85.66329565734684
-  Hallway     : 97.5609756097561
-  Dining Room : 85.66329565734685
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Living Room : 100.00
+  Kitchen     : 97.56
+  Office      : 85.66
+  Hallway     : 97.56
+  Dining Room : 85.66
 </pre></div>
 </div>
 </div>
@@ -1594,7 +1662,7 @@ We already knew that it should be pretty good at getting to the living room as f
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">optimal_policy</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">policy_iteration</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">([</span><span class="n">action_space</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">optimal_policy</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">([</span><span class="n">vacuum</span><span class="o">.</span><span class="n">action_space</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">optimal_policy</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -1609,28 +1677,28 @@ We already knew that it should be pretty good at getting to the living room as f
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nr_samples</span> <span class="o">=</span> <span class="mi">100</span>
 <span class="n">horizon</span> <span class="o">=</span> <span class="mi">100</span>
-<span class="n">X</span> <span class="o">=</span> <span class="n">VARIABLES</span><span class="o">.</span><span class="n">discrete_series</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">horizon</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">rooms</span><span class="p">)</span>
-<span class="n">A</span> <span class="o">=</span> <span class="n">VARIABLES</span><span class="o">.</span><span class="n">discrete_series</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">horizon</span><span class="p">),</span> <span class="n">action_space</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">x1</span><span class="p">,</span> <span class="n">room</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rooms</span><span class="p">):</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">VARIABLES</span><span class="o">.</span><span class="n">discrete_series</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">horizon</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="p">)</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">VARIABLES</span><span class="o">.</span><span class="n">discrete_series</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">horizon</span><span class="p">),</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">action_space</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">x1</span><span class="p">,</span> <span class="n">room</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="p">):</span>
     <span class="n">V_x1</span> <span class="o">=</span> <span class="n">approximate_value_function</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">optimal_policy</span><span class="p">,</span> <span class="n">nr_samples</span><span class="p">,</span> <span class="n">horizon</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;V(</span><span class="si">{</span><span class="n">room</span><span class="si">}</span><span class="s2">) ~ </span><span class="si">{</span><span class="n">V_x1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;V(</span><span class="si">{</span><span class="n">room</span><span class="si">}</span><span class="s2">) ~ </span><span class="si">{</span><span class="n">V_x1</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Living Room) ~ 99.99704873345692
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Living Room) ~ 100.00
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Kitchen) ~ 98.02704873345691
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Kitchen) ~ 98.03
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Office) ~ 84.54583873345682
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Office) ~ 84.55
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Hallway) ~ 97.4760487334569
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Hallway) ~ 97.48
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Dining Room) ~ 85.90753873345685
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Dining Room) ~ 85.91
 </pre></div>
 </div>
 </div>
@@ -1680,21 +1748,21 @@ V^{k+1}(x) \leftarrow \max_a Q(x, a; V^k).
 <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
     <span class="n">Q_k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">T</span> <span class="o">*</span> <span class="p">(</span><span class="n">R</span> <span class="o">+</span> <span class="mf">0.9</span> <span class="o">*</span> <span class="n">V_k</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="c1"># 5 x 4</span>
     <span class="n">V_k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">Q_k</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># max over actions</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">V_k</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">V_k</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[100.  98.  90.  98.  90.]
 [100.    97.64  86.76  97.64  86.76]
-[100.      97.5752  85.9176  97.5752  85.9176]
-[100.        97.563536  85.719312  97.563536  85.719312]
-[100.          97.56143648  85.67522208  97.56143648  85.67522208]
-[100.          97.56105857  85.66577424  97.56105857  85.66577424]
-[100.          97.56099054  85.66380153  97.56099054  85.66380153]
-[100.          97.5609783   85.66339747  97.5609783   85.66339747]
-[100.          97.56097609  85.66331592  97.56097609  85.66331592]
-[100.          97.5609757   85.66329965  97.5609757   85.66329965]
+[100.    97.58  85.92  97.58  85.92]
+[100.    97.56  85.72  97.56  85.72]
+[100.    97.56  85.68  97.56  85.68]
+[100.    97.56  85.67  97.56  85.67]
+[100.    97.56  85.66  97.56  85.66]
+[100.    97.56  85.66  97.56  85.66]
+[100.    97.56  85.66  97.56  85.66]
+[100.    97.56  85.66  97.56  85.66]
 </pre></div>
 </div>
 </div>
@@ -1702,12 +1770,12 @@ V^{k+1}(x) \leftarrow \max_a Q(x, a; V^k).
 <p>Compare with optimal value function:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">optimal_value_function</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">optimal_value_function</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[100.          97.56097561  85.66329566  97.56097561  85.66329566]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[100.    97.56  85.66  97.56  85.66]
 </pre></div>
 </div>
 </div>
@@ -1718,7 +1786,7 @@ V^{k+1}(x) \leftarrow \max_a Q(x, a; V^k).
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Q_k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">T</span> <span class="o">*</span> <span class="p">(</span><span class="n">R</span> <span class="o">+</span> <span class="mf">0.9</span> <span class="o">*</span> <span class="n">V_k</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 <span class="n">pi_k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">Q_k</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;policy = </span><span class="si">{</span><span class="n">pi_k</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">([</span><span class="n">action_space</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">pi_k</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">([</span><span class="n">vacuum</span><span class="o">.</span><span class="n">action_space</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">pi_k</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -1729,6 +1797,27 @@ V^{k+1}(x) \leftarrow \max_a Q(x, a; V^k).
 </div>
 </div>
 </div>
+</div>
+<div class="section" id="summary">
+<h2><span class="section-number">3.5.12. </span>Summary<a class="headerlink" href="#summary" title="Permalink to this headline">¶</a></h2>
+<p>Markov Decion Processes or MDPs are used to model decision in a stochastic environment, albeit with complete knowledge of the state. It is a rich subject, and we introduced many new concepts in this section:</p>
+<ul class="simple">
+<li><p>The reward function <span class="math notranslate nohighlight">\(R : {\cal X} \times {\cal A} \times {\cal X} \rightarrow \mathbb{R}\)</span>.</p></li>
+<li><p>The expected reward <span class="math notranslate nohighlight">\(\bar{R}(x,a)\)</span> for executing action <span class="math notranslate nohighlight">\(a\)</span> in state <span class="math notranslate nohighlight">\(x\)</span>, and the corresponding greedy planning algorithm.</p></li>
+<li><p>The utility function <span class="math notranslate nohighlight">\(U: {\cal A}^n \times {\cal X}^{n+1} \rightarrow \mathbb{R}\)</span> as the sum of discounted rewards.</p></li>
+<li><p>The notion of rollouts to approximate the expected utility of actions.</p></li>
+<li><p>The policy <span class="math notranslate nohighlight">\(\pi: {\cal X} \rightarrow {\cal A}\)</span> as a mapping from states to actions.</p></li>
+<li><p>the value function <span class="math notranslate nohighlight">\(V^\pi:{\cal X} \rightarrow \mathbb{R}\)</span> associated with a given policy <span class="math notranslate nohighlight">\(\pi\)</span>.</p></li>
+<li><p>The use of policy rollouts to approximate the value function <span class="math notranslate nohighlight">\(V^\pi\)</span>.</p></li>
+<li><p>Exact calculation of the value function for a fixed policy.</p></li>
+<li><p>The optimal policy and value function, governed by the Bellman equation.</p></li>
+<li><p>Two algorithms to compute those: policy iteration and value iteration.</p></li>
+</ul>
+<p>There are two important extensions to MDPs that are not covered in this section:</p>
+<ul class="simple">
+<li><p>Partially Observable MDPs (or POMDPS) are appropriate when we cannot directly observe the state. We will not cover these in this book.</p></li>
+<li><p>Reinforcement learning, a way to learn MDP policies from <em>data</em>. This will be covered next.</p></li>
+</ul>
 </div>
 </div>
 
