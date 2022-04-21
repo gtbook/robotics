@@ -612,7 +612,7 @@
 <div class="cell_output docutils container">
 <div class="output text_html">
 <div align='center'>
-<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S73-Autonomous%20camera%20drone-05.jpg?raw=1' style='height:256 width:100%'/>
+<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S73-Autonomous%20camera%20drone-03.jpg?raw=1' style='height:256 width:100%'/>
 </div>
 </div></div>
 </div>
@@ -626,11 +626,12 @@ A <strong>gyroscope</strong> measures <em>changes</em> in orientation around thr
 <p>We can integrate the angular velocity <span class="math notranslate nohighlight">\(\omega(t)\)</span> over time:</p>
 <div class="math notranslate nohighlight">
 \[
-R^w_b(t) = \int \omega(t) d\tau
+R^n_b(t) = R^n_b(0) \int_{\tau=0}^t \exp \hat{\omega}(\tau) d\tau
 \]</div>
+<p>Above, the exponential map <span class="math notranslate nohighlight">\(\exp \hat{\omega}(\tau)\)</span> is as defined in the previous section, where we have also shown how to numerically integrate forward in rotation space.</p>
 <p>However, because the gyroscope measurements are corrupted by random noise, this noise is also integrated over time.
 Even more damning, if we do <em>not</em> know the bias, the error grows linearly over time, proportional to the bias error.
-Both effects mean that we will gradually lose track of the correct attitude <span class="math notranslate nohighlight">\(R^w_b(t)\)</span>, a process known as “drift”.
+Both effects mean that we will gradually lose track of the correct attitude <span class="math notranslate nohighlight">\(R^n_b(t)\)</span>, a process known as “drift”.
 Good (expensive) gyroscopes are able to track the attitude for a long time, whereas cheaper (MEMS) gyroscopes as those found in drones (and phones) can drift from a usable attitude estimate in 100s or even 10s of seconds.</p>
 </div>
 <div class="section" id="accelerometers">
@@ -638,8 +639,8 @@ Good (expensive) gyroscopes are able to track the attitude for a long time, wher
 <p>An accelerometer measures the linear acceleration in 3D.</p>
 <p>The most frequent and dependable use of an accelerometer is to “aid” a gyroscope, maintaining absolute orientation over time.
 As discussed above, integrating the angular velocity <span class="math notranslate nohighlight">\(\omega(t)\)</span> over time accumulates error.
-Because gravity is such a strong signal it often dwarfs the accelerations due to maneuvering, and hence we can use it to correct our attitude estimate <span class="math notranslate nohighlight">\(\hat{R}^w_b\)</span>. This is known as “aiding” the gyroscope. Note that the attitude has <em>three</em> degrees of freedom, and the accelerometer can only correct two of them: pitch and roll. The absolute heading of the drone is still <em>unobservable</em>.</p>
-<p>In theory, we can also <em>doubly</em> integrate the measured acceleration to obtain the position <span class="math notranslate nohighlight">\(r(t)\)</span>.
+Because gravity is such a strong signal it often dwarfs the accelerations due to maneuvering, and hence we can use it to correct our attitude estimate <span class="math notranslate nohighlight">\(\hat{R}^n_b\)</span>. This is known as “aiding” the gyroscope. Note that the attitude has <em>three</em> degrees of freedom, and the accelerometer can only correct two of them: pitch and roll. The absolute heading of the drone is still <em>unobservable</em>.</p>
+<p>In theory, we can also <em>doubly</em> integrate the measured acceleration to obtain the position <span class="math notranslate nohighlight">\(r^n(t)\)</span>.
 However, because of the double integration, the effect of random noise and bias error is doubly compounded, making the use of an accelerometer for estimating a drone’s position rather tricky. It can be done, but it requires.</p>
 </div>
 <div class="section" id="magnetometers">
@@ -654,7 +655,7 @@ The magnetic field roughly points to the magnetic north, although it really is 3
 <p>The second often-used sensor for drones is a camera, or multiple cameras. Cameras are light-weight, cheap, and they provide some amazing capabilities. By tracking features in the image(s) over time, cameras can provide relative motion measurements, i.e., <strong>visual odometry</strong>. If you have a pre-existing map of the environment, you can use a camera to <strong>localize</strong>, providing absolute orientation and position even without an IMU. If an IMU is used, it is excellent the tracking high frequency <em>relative</em> motion of the drone, while the visual information provides a lower frequency but <em>absolute</em> measurement of the drones pose. In that way, IMU and camera measurements are perfectly complementary. In addition, if no map is available, cameras can be used to build a 3-D map of the environment in real time, using a paradigm called <strong>visual SLAM</strong>.</p>
 <p>In this section we will concentrate on the extrinsic calibration of cameras and camera rigs.
 We already discussed cameras as sensors in section 5.2, including their <em>intrinsic</em> calibration parameters such as focal length, image center, etc.
-However, when using cameras on a drone, it is very important to know the relative position and orientation of the camera with respect to the drone’s body frame, the so called <strong>extrinsic calibration parameters</strong>, consisting of a position and orientation of the camera in the body frame.</p>
+However, when using cameras on a drone, it is very important to know the relative position and orientation of the camera with respect to the drone’s body frame, the so called <strong>extrinsic calibration parameters</strong>, consisting of a position <span class="math notranslate nohighlight">\(t^b_c\)</span> and orientation <span class="math notranslate nohighlight">\(R^b_c\)</span> of the camera in the body frame.</p>
 <p>We first need to specify the <em>position</em> of the camera(s) on the drone.
 Recall that the drone <em>body coordinate frame</em> is forward-left-up (FLU), and hence this is how we need to think about where the camera is:
 a camera towards the front of the drone will have a positive <span class="math notranslate nohighlight">\(X\)</span> value, etc. Below is a simple example with two cameras in front and one towards the back of the drone:</p>
@@ -680,7 +681,7 @@ a camera towards the front of the drone will have a positive <span class="math n
 <img alt="_images/S73_drone_sensing_12_0.png" src="_images/S73_drone_sensing_12_0.png" />
 </div>
 </div>
-<p>To specify the <em>orientation</em> of the cameras, we need to remember that (a) the Z-axis points into the scene, and (b) the Y-axis points down. The easiest way to specify this is by using the <code class="docutils literal notranslate"><span class="pre">gtsam.Rot3</span></code> constructor that takes three column vectors:</p>
+<p>To specify the <em>orientation</em> <span class="math notranslate nohighlight">\(R^b_c\)</span> for each of the cameras, we need to remember that (a) the Z-axis points into the scene, and (b) the Y-axis points down. The easiest way to specify this is by using the <code class="docutils literal notranslate"><span class="pre">gtsam.Rot3</span></code> constructor that takes three column vectors:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">F</span><span class="p">,</span><span class="n">L</span><span class="p">,</span><span class="n">U</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
@@ -700,41 +701,41 @@ a camera towards the front of the drone will have a positive <span class="math n
 <div class="section" id="projecting-3d-points">
 <h2><span class="section-number">7.3.3. </span>Projecting 3D Points<a class="headerlink" href="#projecting-3d-points" title="Permalink to this headline">¶</a></h2>
 <blockquote>
-<div><p>Transforming from world to drone to camera.</p>
+<div><p>Transforming from navigation to drone to camera.</p>
 </div></blockquote>
-<p>We already know how to project points specified in the camera frame from chapter 5. However, for visual odometry or visual slam, an additional step is needed: we need to transform the 3-D points from the world frame into the camera frame. This does not only involve the camera extrinsics, but also the drone’s pose in the world frame itself. Let us start by reviewing the fundamental projection equation from chapter 5:</p>
+<p>We already know how to project points specified in the camera frame from chapter 5. However, for visual odometry or visual slam, an additional step is needed: we need to transform the 3-D points from the navigation frame into the camera frame. This does not only involve the camera extrinsics, but also the drone’s pose in the navigation frame itself. Let us start by reviewing the fundamental projection equation from chapter 5:</p>
 <div class="math notranslate nohighlight">
 \[
 u = u_0 + f \frac{X^c}{Z^c} ~~~~ v = v_0 + f \frac{Y^c}{Z^c}.
 \]</div>
-<p>where <span class="math notranslate nohighlight">\(u_0\)</span>, <span class="math notranslate nohighlight">\(v_0\)</span>, and <span class="math notranslate nohighlight">\(f\)</span> are the <em>intrinsic</em> camera calibration parameters, and <span class="math notranslate nohighlight">\(P^c=(X^c,Y^c,Z^c)\)</span> are the coordinates of a 3D point in the <em>camera</em> coordinate frame, hence the superscript <span class="math notranslate nohighlight">\(c\)</span>. However, what if we are given the 3D coordinates <span class="math notranslate nohighlight">\(P^w=(X^w,Y^w,Z^w)\)</span> in the ENU world frame, rather than in the camera frame? Because the camera is mounted on the drone, we have to do this in two steps:</p>
+<p>where <span class="math notranslate nohighlight">\(u_0\)</span>, <span class="math notranslate nohighlight">\(v_0\)</span>, and <span class="math notranslate nohighlight">\(f\)</span> are the <em>intrinsic</em> camera calibration parameters, and <span class="math notranslate nohighlight">\(P^c=(X^c,Y^c,Z^c)\)</span> are the coordinates of a 3D point in the <em>camera</em> coordinate frame, hence the superscript <span class="math notranslate nohighlight">\(c\)</span>. However, what if we are given the 3D coordinates <span class="math notranslate nohighlight">\(P^n=(X^n,Y^n,Z^n)\)</span> in the ENU navigation frame, rather than in the camera frame? Because the camera is mounted on the drone, we have to do this in two steps:</p>
 <ul class="simple">
-<li><p>convert from world to body frame: <span class="math notranslate nohighlight">\(P^b = R^b_w P^w + t^w_b\)</span></p></li>
-<li><p>convert from body to camera frame: <span class="math notranslate nohighlight">\(P^c = R^c_b P^w + t^b_c\)</span></p></li>
+<li><p>convert from navigation to body frame: <span class="math notranslate nohighlight">\(P^b = (R^n_b)^T (P^n - t^n_b)\)</span></p></li>
+<li><p>convert from body to camera frame: <span class="math notranslate nohighlight">\(P^c = (R^b_c)^T (P^b - t^b_c)\)</span></p></li>
 </ul>
-<p>where <span class="math notranslate nohighlight">\(T^b_w=(R^b_w,t^b_w)\)</span> is the drone’s FLU body pose with respect to the ENU world frame, and <span class="math notranslate nohighlight">\(T^c_b=(R^c_b,t^c_b)\)</span> is the camera extrinsics specified in that body frame. In case there are multiple cameras the first conversion needs to be done only once, but the second conversion will be camera specific.</p>
+<p>where <span class="math notranslate nohighlight">\(T^n_b=(R^n_b,t^n_b)\)</span> is the drone’s FLU body pose with respect to the ENU navigation frame, and <span class="math notranslate nohighlight">\(T^b_c=(R^b_c,t^b_c)\)</span> is the camera extrinsics specified in that body frame. In case there are multiple cameras the first conversion needs to be done only once, but the second conversion will be camera specific.</p>
 </div>
 <div class="section" id="a-stereo-example-in-code">
 <h2><span class="section-number">7.3.4. </span>A Stereo Example in Code<a class="headerlink" href="#a-stereo-example-in-code" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div><p>It all works, folks!</p>
 </div></blockquote>
-<p>As an example, let us assume the drone is at position <span class="math notranslate nohighlight">\(t^w_b=(100, 300, 10)\)</span>, i.e., 10 meters high, flying north:</p>
+<p>As an example, let us assume the drone is at position <span class="math notranslate nohighlight">\(t^n_b=(100, 300, 10)\)</span>, i.e., 10 meters high, flying north:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">E</span><span class="p">,</span><span class="n">N</span><span class="p">,</span><span class="n">U</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-<span class="n">wtb</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Point3</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
-<span class="n">wRb</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Rot3</span><span class="p">(</span><span class="n">N</span><span class="p">,</span><span class="o">-</span><span class="n">E</span><span class="p">,</span><span class="n">U</span><span class="p">)</span> <span class="c1"># flying north, left of drone facing west</span>
-<span class="n">wTb</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose3</span><span class="p">(</span><span class="n">wRb</span><span class="p">,</span> <span class="n">wtb</span><span class="p">)</span>
+<span class="n">ntb</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Point3</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">nRb</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Rot3</span><span class="p">(</span><span class="n">N</span><span class="p">,</span><span class="o">-</span><span class="n">E</span><span class="p">,</span><span class="n">U</span><span class="p">)</span> <span class="c1"># flying north, left of drone facing west</span>
+<span class="n">nTb</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose3</span><span class="p">(</span><span class="n">nRb</span><span class="p">,</span> <span class="n">ntb</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>Let’s project a point <span class="math notranslate nohighlight">\(P^w=(110,302,12)\)</span> 10 meters in front of the drone (check this!) into the stereo pair. We make use of the GTSAM method <code class="docutils literal notranslate"><span class="pre">Pose3.TransformTo</span></code> to convert from world to body (once) and then from body to camera (twice):</p>
+<p>Let’s project a point <span class="math notranslate nohighlight">\(P^n=(110,302,12)\)</span> 10 meters in front of the drone (check this!) into the stereo pair. We make use of the GTSAM method <code class="docutils literal notranslate"><span class="pre">Pose3.TransformTo</span></code> to convert from navigation to body (once) and then from body to camera (twice):</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">wP</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Point3</span><span class="p">(</span><span class="mi">103</span><span class="p">,</span><span class="mi">310</span><span class="p">,</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">bP</span> <span class="o">=</span> <span class="n">wTb</span><span class="o">.</span><span class="n">transformTo</span><span class="p">(</span><span class="n">wP</span><span class="p">)</span>
+<span class="n">bP</span> <span class="o">=</span> <span class="n">nTb</span><span class="o">.</span><span class="n">transformTo</span><span class="p">(</span><span class="n">wP</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;bP = </span><span class="si">{</span><span class="n">bP</span><span class="si">}</span><span class="s2"> in (F,L,U) body frame&quot;</span><span class="p">)</span>
 <span class="n">c1P</span> <span class="o">=</span> <span class="n">bTc1</span><span class="o">.</span><span class="n">transformTo</span><span class="p">(</span><span class="n">bP</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;c1P = </span><span class="si">{</span><span class="n">c1P</span><span class="si">}</span><span class="s2"> in camera frame 1&quot;</span><span class="p">)</span>
