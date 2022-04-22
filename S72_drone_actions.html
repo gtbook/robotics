@@ -663,7 +663,7 @@
 <div class="cell_output docutils container">
 <div class="output text_html">
 <div align='center'>
-<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S72-Autonomous%20camera%20drone-02.jpg?raw=1' style='height:256 width:100%'/>
+<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S72-Autonomous%20camera%20drone-06.jpg?raw=1' style='height:256 width:100%'/>
 </div>
 </div></div>
 </div>
@@ -917,7 +917,7 @@ Note that strictly speaking this approximation (unlike Rodrigues` formula) depar
     <span class="n">nTb</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose3</span><span class="p">(</span><span class="n">gtsam</span><span class="o">.</span><span class="n">Rot3</span><span class="p">(</span><span class="n">nRb</span><span class="p">[:,:,</span><span class="n">k</span><span class="p">]),</span> <span class="n">rn</span><span class="p">[:,</span><span class="n">k</span><span class="p">]);</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">add_traces</span><span class="p">(</span><span class="n">axes</span><span class="p">(</span><span class="n">nTb</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">labels</span><span class="p">))</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">margin</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">scene_aspectmode</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">scene_aspectmode</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -959,27 +959,28 @@ The inertial matrix <span class="math notranslate nohighlight">\(I\)</span> is t
 F^b_z = \sum_i f_i.
 \]</div>
 <p>Above the forces <span class="math notranslate nohighlight">\(f_i\)</span> at the rotors are all oriented along the body Z-coordinate axis (up!) and hence when we sum them we get a single force component <span class="math notranslate nohighlight">\(F^b_z\)</span> along the body Z-axis.</p>
-<p>The torque <span class="math notranslate nohighlight">\(\tau^b\)</span> in the body frame is a bit more involved, and is a function of the force vector <span class="math notranslate nohighlight">\(f\)</span> as well as the vector <span class="math notranslate nohighlight">\(\tau\)</span>, specifying the (small) torques generated around each rotor axis. The exact formula depends on the geometry of the rotors. For example, for a 4-motor “X” configuration with motor 1 forward left and numbered clockwise, we obtain</p>
+<p>The torque <span class="math notranslate nohighlight">\(\tau^b\)</span> in the body frame is a bit more involved, and is a function of the force vector <span class="math notranslate nohighlight">\(f\)</span>. The exact formula depends on the geometry of the rotors. For example, for a 4-motor “X” configuration with motor 1 forward left and numbered clockwise, we obtain</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 \tau^b = \begin{bmatrix}
-(f_{1}-f_{2}-f_{3}+f_{4})l\\
-(f_{1}+f_{2}-f_{3}-f_{4})l\\
-\sum_i\tau_{i}
+l(f_{1}-f_{2}-f_{3}+f_{4})\\
+l(f_{1}+f_{2}-f_{3}-f_{4})\\
+\kappa (f_{1}-f_{2}+f_{3}-f_{4})\\
 \end{bmatrix}
 \end{split}\]</div>
-<p>where <span class="math notranslate nohighlight">\(l\)</span> is the distance from the rotors to the center of mass.
+<p>where <span class="math notranslate nohighlight">\(l\)</span> is the distance from the rotors to the center of mass, and <span class="math notranslate nohighlight">\(\kappa\)</span> is a torque constant.
 From this equation you can see that a quadrotor is like a differential drive robot but with <em>two</em> differential axes. Controlling it is easy in principle: <em>tilt, then move</em>. A part of <span class="math notranslate nohighlight">\(F^b_z\)</span> will be used to keep the quadrotor flying, the other part will be used to overcome drag.</p>
+<p>The final piece of the puzzle is how the rotors generate the individual forces <span class="math notranslate nohighlight">\(f_i\)</span>. We will not discuss that in detail here, but suffice to say that they are well understood functions of the rotor speed. Each motor also generates a small moment <span class="math notranslate nohighlight">\(\kappa f_i\)</span> around it’s rotor axis,  proportional to the force with proportionality constant <span class="math notranslate nohighlight">\(\kappa\)</span>. The rotation direction for each rotor determines which sign to use to calculate the Z-component of the body torque <span class="math notranslate nohighlight">\(\tau^b\)</span>.</p>
 </div>
 <div class="section" id="gyroscopic-effects">
 <h2><span class="section-number">7.2.10. </span>Gyroscopic effects*<a class="headerlink" href="#gyroscopic-effects" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div><p>Dotting the I’s.</p>
 </div></blockquote>
-<p>If a quadrotor undergoes large angular velocities, we cannot ignore gyroscopic effects and we have to modify the moment dynamics equation above to</p>
+<p>If a quadrotor undergoes large angular velocities, we cannot ignore gyroscopic effects and we have to modify the rotational dynamics equation above to</p>
 <div class="math notranslate nohighlight">
 \[
-\tau = I \dot{\omega}^b - \omega^b \times I \omega^b,
+\tau^b = I \dot{\omega}^b - \omega^b \times I \omega^b,
 \]</div>
 <p>where <span class="math notranslate nohighlight">\(\times\)</span> is the cross-product. The second term is a set of quadratic components in the angular velocity <span class="math notranslate nohighlight">\(\omega^b\)</span> and that is why for small angular velocities they can be ignored. In fact, in many cases the orientation of a quadrotor is <em>actively controlled</em> to stay constant during hovering or in fast forward flight, and it is only in complicated maneuvers that large angular velocities occur.</p>
 </div>
