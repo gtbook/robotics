@@ -48,6 +48,8 @@
     <script src="_static/sphinx-book-theme.d59cb220de22ca1c485ebbdc042f0030.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script async="async" src="https://unpkg.com/thebe@0.5.1/lib/index.js"></script>
     <script>
         const thebe_selector = ".thebe"
@@ -391,6 +393,11 @@
      7.3. Sensing for Drones
     </a>
    </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S74_drone_perception.html">
+     7.4. Visual SLAM
+    </a>
+   </li>
   </ul>
  </li>
 </ul>
@@ -492,6 +499,24 @@
         <!-- Table of contents -->
         <div class="d-none d-md-block col-md-2 bd-toc show noprint">
             
+            <div class="tocsection onthispage pt-5 pb-3">
+                <i class="fas fa-list"></i> Contents
+            </div>
+            <nav id="bd-toc-nav" aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#motion-primitives">
+   6.5.1. Motion Primitives
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#planning-using-motion-primitives">
+   6.5.2. Planning using Motion Primitives
+  </a>
+ </li>
+</ul>
+
+            </nav>
         </div>
     </div>
 </div>
@@ -504,6 +529,24 @@
                 <div id="print-main-content">
                     <div id="jb-print-toc">
                         
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#motion-primitives">
+   6.5.1. Motion Primitives
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#planning-using-motion-primitives">
+   6.5.2. Planning using Motion Primitives
+  </a>
+ </li>
+</ul>
+
+                        </nav>
                     </div>
                 </div>
             </div>
@@ -514,17 +557,104 @@
 <div class="tex2jax_ignore mathjax_ignore section" id="planning-for-autonomous-driving">
 <h1><span class="section-number">6.5. </span>Planning for Autonomous Driving.<a class="headerlink" href="#planning-for-autonomous-driving" title="Permalink to this headline">¶</a></h1>
 <blockquote>
-<div><p>Mostly Motion primitives</p>
+<div><p>Motion primitives provide a computationally efficient tool for fast, local motion planning.</p>
 </div></blockquote>
 <div class="cell tag_remove-input docutils container">
 <div class="cell_output docutils container">
 <div class="output text_html">
 <div align='center'>
-<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S65-Autonomous%20Vehicle%20with%20LIDAR%20and%20cameras-01.jpg?raw=1' style='height:256 width:100%'/>
+<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S65-Autonomous%20Vehicle%20with%20LIDAR%20and%20cameras-03.jpg?raw=1' style='height:256 width:100%'/>
 </div>
 </div></div>
 </div>
-<p>Introducing <strong>motion primitives</strong>.</p>
+<p>In previous chapters, we have mainly considered two kinds of planning problems.
+For the trash sorting robot, vacuum cleaning robot, and warehouse robot, we focused
+on the problem of making the best decisions in the presence of uncertainty.
+In these problems, we used probability theory to quantify uncertainty,
+and developed policies to maximize the expected benefit (or to minimize the expected cost)
+of executing actions in a given state.
+In contrast, for the differential drive robot (DDR), we considered the purely geometric
+problem of planning collision-free paths.</p>
+<p>A common characteristic of these is that each addresses a global problem.
+For MDPs, we used value or policy iteration to establish a policy over the entire state space.
+For DDRs, we searched the entire configuration space for a collision-free path.
+Furthermore, the methods we developed for both problems were completely general.
+Our probabilistic approaches work for arbitrary probability distributions, reward functions,
+and system dynamics.
+Our geometric approaches to path planning work for arbitrary environments,
+and can easily be extended to robots with complex dynamics (e.g., we will extend RRTs to
+the case of drones in the next chapter).</p>
+<p>Methods that address global problems in broad generality often require significant computational
+resources and significant computation time.
+This can render such methods ineffective for situations in which real-time adaptivity
+is required over short time horizons, or in local regions of the state space.
+These conditions are exactly those confronted by self-driving cars,
+and for this reason, in this chapter we introduce a new approach,
+one that exploits precomputed motion primitives,
+for motion planning.</p>
+<div class="section" id="motion-primitives">
+<h2><span class="section-number">6.5.1. </span>Motion Primitives<a class="headerlink" href="#motion-primitives" title="Permalink to this headline">¶</a></h2>
+<p>To this point, we have considered two approaches for quantifying motions.
+For all of our probabilistic methods, we used a discrete time formulation and considered
+the effects of executing an action (e.g., move forward, move left) for a small duration of time, <span class="math notranslate nohighlight">\(\Delta t\)</span>.
+To plan collision-free paths, we considered artificial potential fields and RRTs, both of which
+use short straight-line paths in the configuration space to connect configurations (small gradient descent
+steps for potential fields, and steering toward <span class="math notranslate nohighlight">\(q_\mathrm{rand}\)</span> for RRTs).
+In each case, the language of path segments is very simple, and in each case,
+a full plan will consist of many sequential steps.</p>
+<p>This approach can be very inefficient for planning long trajectories that have well-defined
+properties.
+For example, consider a car traveling in reverse that wishes to suddenly change it’s orientation
+by completing a rapid 180-degree turn (a favorite maneuver for drivers like James Bond and Steve McQueen).
+This maneuver can be achieved by a predefined
+sequence of steps: after achieving a reasonable speed, remove your foot from the gas pedal;
+turn left sharply and hit the breaks; at the perfect moment, release the breaks
+and straighten the wheel.
+When stunt drivers execute this maneuver, they do not plan step-by-step what to do.
+Rather, they have pre-compiled this sequence of steps into a basic action that can be executed
+with little reasoning.
+This is the basic idea of <strong>motion primitives</strong>.</p>
+<p>Motion primitives can be defined in numerous ways.
+We could specify a geometric curve without consideration of time or dynamics
+(e.g., for a parallel parking robot, we might define an
+initial curve to move the car from the street into an empty parking spot).
+In cases where dynamics are significant (e.g., in drone flight), we might specify
+a feedback control law to be executed from an initial state until some final state is achieved.
+We might parameterize these primitives by duration, by geometric properties (e.g., angle, distance),
+or by state feedback conditions.
+This idea is illustrated in the figure below, which shows four motion primitives
+for a car.
+The primitive <span class="math notranslate nohighlight">\(P_1\)</span> corresponds to driving forward, while motion primitives <span class="math notranslate nohighlight">\(P_2\)</span>, <span class="math notranslate nohighlight">\(P_3\)</span>, and <span class="math notranslate nohighlight">\(P_4\)</span> correspond to veering
+to the left at increasingly sharp angles.</p>
+<figure>
+<img src="https://github.com/gtbook/robotics/blob/main/Figures6/motion-primitives.png?raw=1" id="fig:MotionPrimitives" style="width:18cm" alt="">
+<figcaption>Four motion primitives for a car veering to its left. </figcaption>
+</figure></div>
+<div class="section" id="planning-using-motion-primitives">
+<h2><span class="section-number">6.5.2. </span>Planning using Motion Primitives<a class="headerlink" href="#planning-using-motion-primitives" title="Permalink to this headline">¶</a></h2>
+<p>The use of motion primitives can greatly reduce the cost of planning, since the set
+of actions available at any moment in time is small and easily computed.
+For the car example above, if we assume a symmetric set of motion primitives for veering to the right,
+motion planning can be reduced to choosing from this set of seven possible actions at each moment in time.
+If, for example, there is a slow moving car just ahead, it might be advantageous to change lanes using one of
+<span class="math notranslate nohighlight">\(P_2\)</span>, <span class="math notranslate nohighlight">\(P_3\)</span>, or <span class="math notranslate nohighlight">\(P_4\)</span>.
+If there is a rapidly approaching oncoming car, it might be best to use <span class="math notranslate nohighlight">\(P_2\)</span>, to delay changing lanes
+until that car has passed by.</p>
+<p>More generally, a motion primitive typically includes a set of conditions that define when
+the primitive is applicable, and a set of possible transitions to other motion primitives.
+For example, it would be reasonable to veer left slightly and then drive straight, but it would
+not be reasonable to transition from forward motion to reverse motion without some intermediate
+maneuvering.</p>
+<p>Under these conditions, planning can be effected by a generate-and-test approach.
+At each moment in time, the planner considers the current situation, enumerates the valid
+motion primitives (using preconditions for execution and set of valid transitions), and evaluates
+the benefit of each admissible candidate motion primitive. This approach can be effective for
+problems such as highway driving, where local context is all that is necessary for making decisions.
+For example, the traffic outside the Atlanta perimeter is irrelevant when leaving the downtown on
+a trip to Chicago.
+In this case, immediate driving decisions depend on the car just ahead, and the nearby
+cars in adjacent lanes.</p>
+</div>
 </div>
 
     <script type="text/x-thebe-config">
