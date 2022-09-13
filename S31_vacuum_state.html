@@ -583,7 +583,7 @@
 <div class="cell_output docutils container">
 <div class="output text_html">
 <div align='center'>
-<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S31-iRobot%20vacuuming%20robot-07.jpg?raw=1' style='height:256 width:100%'/>
+<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S31-iRobot%20vacuuming%20robot-03.jpg?raw=1' style='height:256 width:100%'/>
 </div>
 </div></div>
 </div>
@@ -604,11 +604,11 @@ assumptions:</p>
 <li><p>The robot is equipped with low-level navigation software that will allow it to move from one room to another, through doorways, etc. (though not with 100% reliability).</p></li>
 <li><p>The robot is equipped with path planning software to clean the floor in a particular room (e.g., execute random
 motions, or follow a boustrophedon path).</p></li>
-<li><p>The robot is equipped with collion-avoidance software, so that it need not worry about the presence of obstacles (e.g., furniture, small dogs, or children).</p></li>
+<li><p>The robot is equipped with collision-avoidance software, so that it need not worry about the presence of obstacles (e.g., furniture, small dogs, or children).</p></li>
 </ul>
 <p>Taken together, these assumptions allow us to abstract away all of the geometry of the vacuum cleaning problem,
-and to define the state of the robot as the room of the house in which it is located.
-In this chapter, we will consider a simple house that
+and to <strong>define the state of the robot as the room</strong> of the house in which it is located.</p>
+<p>As a running example, we will consider a simple house that
 includes five rooms: living room, kitchen, office, hallway, and dining room.
 The floor plan is illustrated
 below, in Figure <a href="#fig:Vacuum" data-reference-type="ref" data-reference="fig:House">1</a>.</p>
@@ -617,20 +617,18 @@ below, in Figure <a href="#fig:Vacuum" data-reference-type="ref" data-reference=
 <figcaption id="fig:House" label="fig:House">The floor plan of a a house in which our hypothetical vacuum robot will operate.</figcaption>
 </figure>
 <p>As for the trash sorting robot, we define the state to be a random variable with a prior probability distribution.
-We denote the random state at time <span class="math notranslate nohighlight">\(t\)</span> by <span class="math notranslate nohighlight">\(X_t\)</span>.
-In this chapter, we will consider the case of <strong>discrete time systems</strong>.
+We denote the random state at time <span class="math notranslate nohighlight">\(t\)</span> by <span class="math notranslate nohighlight">\(X_t\)</span>.</p>
+<p>In this chapter, we will consider the case of <strong>discrete time systems</strong>.
 In particular, rather than consider <span class="math notranslate nohighlight">\(t\)</span> as a continuous variable, we will consider the system evolution
-at a set of discrete moments in time, <span class="math notranslate nohighlight">\(t \in \{ t_0, t_1, t_2 \dots \}\)</span>.
+at a set of discrete moments in time, <span class="math notranslate nohighlight">\(t \in \{ t_1, t_2 \dots \}\)</span>.
 This approach is appropriate for systems whose state changes qualitatively at distinct
 moments of time (e.g., as when the robot moves from the living room to the kitchen),
 rather than evolving continuously as time passes (e.g., the position of a robot that rolls along the floor).
 While the physical vacuum cleaning robot rolls along the floor to reach its destination,
 our representation of state includes only the room in which the robot is currently located.
-Therefore, the only interesting moments in time are when the robot traverses from one room to the next
-(or, as we will see later in this chapter, when the robot executes an action or takes a sensor measurement).
-To keep notation simple, we will let  <span class="math notranslate nohighlight">\(t \in \{ 0, 1, 2 \dots \}\)</span>, rather than using the more general <span class="math notranslate nohighlight">\(t_i\)</span>
-notation.</p>
-<!-- The concept of state is an abstraction, allowing robots to reason about what is happening to them and their environment as they act. This does not necessarily mean that we, as robot programmers, have no deeper knowledge of what is going on: we do know that a vacuuming robot operates in a two dimensional space, typically a single floor in a domestic residence. However, we might have programmed in "actions" that abstract to the notion of moving from room to room, and hence may only be interested in knowing which room the robot is in for the purposes of triggering those actions. Other actions that are useful but will not discuss further in this section might involve vacuuming the current room, terminating when it is done or when the robot is stuck. Rather, we will concentrate below on navigation actions, moving from room to room, knowing that it might be only a small part of the repertoire that a true vacuuming robot needs to be useful. --><p>Since the robot will execute a sequence of actions over time, the prior distribution will only encode knowledge about the initial state of the robot, and the probability distribution for future states must be determined using
+Therefore, the only interesting moments in time are when the robot traverses from one room to the next, or -as we will see later in this chapter- when the robot executes an action or takes a sensor measurement.
+To keep notation simple, we will let  <span class="math notranslate nohighlight">\(t \in \{ 1, 2 \dots \}\)</span>, rather than using the more general <span class="math notranslate nohighlight">\(t_i\)</span> notation.</p>
+<!-- The concept of state is an abstraction, allowing robots to reason about what is happening to them and their environment as they act. This does not necessarily mean that we, as robot programmers, have no deeper knowledge of what is going on: we do know that a vacuuming robot operates in a two dimensional space, typically a single floor in a domestic residence. However, we might have programmed in "actions" that abstract to the notion of moving from room to room, and hence may only be interested in knowing which room the robot is in for the purposes of triggering those actions. Other actions that are useful but will not discuss further in this section might involve vacuuming the current room, terminating when it is done or when the robot is stuck. Rather, we will concentrate below on navigation actions, moving from room to room, knowing that it might be only a small part of the repertoire that a true vacuuming robot needs to be useful. --><p>Since the robot will execute a sequence of actions over time, our prior distribution <span class="math notranslate nohighlight">\(P(X_1)\)</span> will only encode knowledge about the initial state <span class="math notranslate nohighlight">\(X_1\)</span> of the robot, and the probability distribution for future states must be determined using
 probabilistic inference.
 In this chapter, we will assume that the robot <em>always</em> starts out in the office, where its charging station is located,
 i.e., <span class="math notranslate nohighlight">\(P(X_1 = Office) = 1.\)</span> The following code does this:</p>
@@ -755,7 +753,7 @@ views are not so different after all.</p>
 </div>
 </div>
 </div>
-<p>When we print the results, we see that we now get a <em>list</em> of DiscreteKeys, i.e., integer tuples. However, the “Keys” now seem to be very large integers. This is because for series of variables we use the <code class="docutils literal notranslate"><span class="pre">gtsam.Symbol</span></code> type, composed of a single character and an integer index:</p>
+<p>When we print the results, we see that we now get a dictionary of DiscreteKeys, i.e., integer tuples of the form <em>(Key, cardinality)</em>. However, the “Keys” now seem to be very large integers. This is because for series of variables we use the <code class="docutils literal notranslate"><span class="pre">gtsam.Symbol</span></code> type, composed of a single character and an integer index:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">symbol</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Symbol</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
