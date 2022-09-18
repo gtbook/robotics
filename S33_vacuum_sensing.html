@@ -525,8 +525,8 @@
   </a>
   <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#exercise">
-     3.3.4.1. Exercise
+    <a class="reference internal nav-link" href="#exercises">
+     3.3.4.1. Exercises
     </a>
    </li>
   </ul>
@@ -535,6 +535,13 @@
   <a class="reference internal nav-link" href="#ancestral-sampling-with-gtsam">
    3.3.5. Ancestral Sampling with GTSAM
   </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exercise">
+     3.3.5.1. Exercise
+    </a>
+   </li>
+  </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#gtsam-101">
@@ -582,8 +589,8 @@
   </a>
   <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#exercise">
-     3.3.4.1. Exercise
+    <a class="reference internal nav-link" href="#exercises">
+     3.3.4.1. Exercises
     </a>
    </li>
   </ul>
@@ -592,6 +599,13 @@
   <a class="reference internal nav-link" href="#ancestral-sampling-with-gtsam">
    3.3.5. Ancestral Sampling with GTSAM
   </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exercise">
+     3.3.5.1. Exercise
+    </a>
+   </li>
+  </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#gtsam-101">
@@ -633,17 +647,16 @@
 <blockquote>
 <div><p>Dynamic Bayes nets replicate a Bayes net fragment over time.</p>
 </div></blockquote>
-<p><strong>This Section is still in draft mode and was released for adventurous spirits (and TAs) only.</strong></p>
 <p>The Markov chain we discussed in the previous section is an example of a <strong>Dynamic Bayes Net</strong> or <strong>DBN</strong>: a Bayes net in which  <em>Bayes net slices</em> are replicated through time, to model the evolution of states over time. Below we add observations into the mix, and show how we can simulate the complete system using a technique called <em>ancestral sampling</em>.</p>
 <div class="section" id="a-sensor-model">
 <h2><span class="section-number">3.3.1. </span>A Sensor Model<a class="headerlink" href="#a-sensor-model" title="Permalink to this headline">¶</a></h2>
-<p>First, we need to see a few things about sensing for our example system. This chapter is primarily focused on action, and hence the sensing we will consider is fairly simple. Let us conceive of a simple light sensor that gives an indication as to which room we are in. Specifically, let us assume that the living room and kitchen are on the south side, and hence have a lot of light on a typical day. The office in the dining room or on the north side, and the light sensor will typically respond with medium light levels. The hallway, on the other hand, is very dark as it has few windows. The following conditional probability distribution captures  these semantics:</p>
+<p>First, we need to see a few things about sensing for our example system. This chapter is primarily focused on action, and hence the sensing we will consider is fairly simple. Let us conceive of a simple light sensor that gives an indication as to which room we are in. Specifically, let us assume that the living room and kitchen are on the south side, and hence have a lot of light on a typical day. The office in the dining room or on the north side, and the light sensor will typically respond with medium light levels. The hallway, on the other hand, is very dark as it has few windows. The conditional probability distribution <span class="math notranslate nohighlight">\(P(Z_t|X_t)\)</span> captures these semantics, with <span class="math notranslate nohighlight">\(X_t\)</span> the state at time <span class="math notranslate nohighlight">\(t\)</span> as before, and <span class="math notranslate nohighlight">\(Z_t\in\{&quot;dark&quot;, &quot;medium&quot;, &quot;light&quot;\}\)</span> the measured light level:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># vacuum.light_levels = [&quot;dark&quot;, &quot;medium&quot;, &quot;light&quot;]</span>
-<span class="n">Z</span> <span class="o">=</span> <span class="n">VARIABLES</span><span class="o">.</span><span class="n">discrete_series</span><span class="p">(</span><span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">light_levels</span><span class="p">)</span>
+<span class="n">Z</span> <span class="o">=</span> <span class="n">VARIABLES</span><span class="o">.</span><span class="n">discrete_series</span><span class="p">(</span><span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">light_levels</span><span class="p">)</span> <span class="c1"># define variables</span>
 <span class="c1"># vacuum.sensor_spec = &quot;1/1/8 1/1/8 2/7/1 8/1/1 1/8/1&quot;</span>
-<span class="n">pretty</span><span class="p">(</span><span class="n">gtsam</span><span class="o">.</span><span class="n">DiscreteConditional</span><span class="p">(</span><span class="n">Z</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">sensor_spec</span><span class="p">))</span>
+<span class="n">pretty</span><span class="p">(</span><span class="n">gtsam</span><span class="o">.</span><span class="n">DiscreteConditional</span><span class="p">(</span><span class="n">Z</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">sensor_spec</span><span class="p">))</span> <span class="c1"># CPT on Z1 at time t=1</span>
 </pre></div>
 </div>
 </div>
@@ -664,7 +677,7 @@
 </table>
 </div></div></div>
 </div>
-<p>Single time step reasoning will fall short for our vacuuming robot, which operates in time. for example, recall from the previous chapter that given a sensor reading of, say, <code class="docutils literal notranslate"><span class="pre">medium</span></code>, the maximum likelihood estimate (MLE) for the location of the robot is <code class="docutils literal notranslate"><span class="pre">dining</span> <span class="pre">room</span></code>: it corresponds to the highest value in the <code class="docutils literal notranslate"><span class="pre">medium</span></code> column.
+<p>Single time step reasoning will fall short for our vacuuming robot, which operates in time. for example, recall from the previous chapter that given a sensor reading of, say, <span class="math notranslate nohighlight">\(Z_1\)</span>=<code class="docutils literal notranslate"><span class="pre">medium</span></code>, the maximum likelihood estimate (MLE) for the state <span class="math notranslate nohighlight">\(X_1\)</span> of the robot is <code class="docutils literal notranslate"><span class="pre">dining</span> <span class="pre">room</span></code>: it corresponds to the highest value in the <code class="docutils literal notranslate"><span class="pre">medium</span></code> column.
 Intuitively, however, we should be able to use our history to obtain a better estimate of the location of the robot. For example, if you were just in the living room, there is no way that we could have gotten to the dining room in a single step. In this section we will see how we can reason probabilistically about such things.</p>
 </div>
 <div class="section" id="id1">
@@ -672,19 +685,20 @@ Intuitively, however, we should be able to use our history to obtain a better es
 <p>Note that directed cycles are not allowed in a Bayes net, i.e., the
 graph is acyclic. Hence, one might wonder how we deal with time: if a
 robot is all about the sense-think-act cycle, would we not expect a
-cycle in the graph when describing robots? The answer is to unroll time,
+cycle in the graph when describing robots? The answer is to <em>unroll</em> time,
 as we show below.</p>
 <p>When a Bayes net is used to represent the evolution of a system or agent
 over time, we call it a <strong>dynamic Bayes net</strong> or DBN.</p>
-<p>The following piece of code builds the entire vacuuming robot dynamic Bayes net. Note we take care to add variables <em>before</em> we add any of there parents (hence the <code class="docutils literal notranslate"><span class="pre">reversed</span></code> below) for reasons that will soon become clear:</p>
+<p>The following piece of code builds the entire vacuuming robot dynamic Bayes net. Note that we take care to add CPTs of variables <em>before</em> we add the CPT on any of their parents (hence the <code class="docutils literal notranslate"><span class="pre">reversed</span></code> below) for reasons that will soon become clear:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dbn</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">DiscreteBayesNet</span><span class="p">()</span>
 <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
-    <span class="n">dbn</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Z</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="p">]],</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">sensor_spec</span><span class="p">)</span>
+    <span class="n">dbn</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Z</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="p">]],</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">sensor_spec</span><span class="p">)</span> <span class="c1"># Add measurement CPTs</span>
 <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">N</span><span class="p">)):</span>
-    <span class="n">dbn</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="n">k</span><span class="p">]],</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">action_spec</span><span class="p">)</span>
-<span class="n">dbn</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;1/1/1/1/1&quot;</span><span class="p">)</span>
+    <span class="n">dbn</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="n">k</span><span class="p">]],</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">action_spec</span><span class="p">)</span> <span class="c1"># Add transition CPTs</span>
+<span class="n">dbn</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;1/1/1/1/1&quot;</span><span class="p">)</span> <span class="c1"># Add initial state CPT</span>
+
 <span class="n">show</span><span class="p">(</span><span class="n">dbn</span><span class="p">,</span> <span class="n">hints</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;A&quot;</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;X&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Z&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">},</span> <span class="n">boxes</span><span class="o">=</span><span class="p">{</span><span class="n">A</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">N</span><span class="p">)})</span>
 </pre></div>
 </div>
@@ -740,7 +754,7 @@ over the state. We write</p></li>
 <li><p>Next, simulate the sensor reading by sampling from the sensor model</p></li>
 </ol>
 <div class="math notranslate nohighlight">
-\[o_{k} \sim P(O_{k}|X_{k}=x_{k})\]</div>
+\[z_{k} \sim P(Z_{k}|X_{k}=x_{k})\]</div>
 <ol class="simple">
 <li><p>Lastly, simulate the effect of the (given) action <span class="math notranslate nohighlight">\(a_k\)</span> by sampling the next
 state <span class="math notranslate nohighlight">\(x_{k+1}\)</span>:</p></li>
@@ -751,9 +765,12 @@ state <span class="math notranslate nohighlight">\(x_{k+1}\)</span>:</p></li>
 <li><p>Increase <span class="math notranslate nohighlight">\(k\leftarrow k+1\)</span> and return to step <span class="math notranslate nohighlight">\(2\)</span>.</p></li>
 </ol>
 <p>Note that this algorithm is generic for all robot models with this action/sensing structure.</p>
-<div class="section" id="exercise">
-<h3><span class="section-number">3.3.4.1. </span>Exercise<a class="headerlink" href="#exercise" title="Permalink to this headline">¶</a></h3>
-<p>Simulate two different realizations from the dynamic Bayes net above.</p>
+<div class="section" id="exercises">
+<h3><span class="section-number">3.3.4.1. </span>Exercises<a class="headerlink" href="#exercises" title="Permalink to this headline">¶</a></h3>
+<ol class="simple">
+<li><p>Simulate two different realizations from the dynamic Bayes net above.</p></li>
+<li><p>Think of a different way to topologically sort the graph, and the corresponding sampling algorithm.</p></li>
+</ol>
 </div>
 </div>
 <div class="section" id="ancestral-sampling-with-gtsam">
@@ -792,6 +809,10 @@ state <span class="math notranslate nohighlight">\(x_{k+1}\)</span>:</p></li>
 </div></div></div>
 </div>
 <p>The actions are included in the resulting <code class="docutils literal notranslate"><span class="pre">DiscreteValues</span></code> instance, so we have a complete picture of one sampled “world state”.</p>
+<div class="section" id="exercise">
+<h3><span class="section-number">3.3.5.1. </span>Exercise<a class="headerlink" href="#exercise" title="Permalink to this headline">¶</a></h3>
+<p>Execute the cell above multiple times and observe you <em>do</em> get different realizations (almost) every time.</p>
+</div>
 </div>
 <div class="section" id="gtsam-101">
 <h2><span class="section-number">3.3.6. </span>GTSAM 101<a class="headerlink" href="#gtsam-101" title="Permalink to this headline">¶</a></h2>

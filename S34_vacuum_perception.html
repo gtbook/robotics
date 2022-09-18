@@ -653,6 +653,11 @@
      3.4.8.2. Sum-Product in GTSAM
     </a>
    </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id1">
+     3.4.8.3. Exercise
+    </a>
+   </li>
   </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -829,6 +834,11 @@
      3.4.8.2. Sum-Product in GTSAM
     </a>
    </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id1">
+     3.4.8.3. Exercise
+    </a>
+   </li>
   </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -878,7 +888,7 @@
 <div class="cell_output docutils container">
 <div class="output text_html">
 <div align='center'>
-<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S34-iRobot%20vacuuming%20robot-07.jpg?raw=1' style='height:256 width:100%'/>
+<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S34-iRobot%20vacuuming%20robot-02.jpg?raw=1' style='height:256 width:100%'/>
 </div>
 </div></div>
 </div>
@@ -939,11 +949,11 @@ As before, let us assume that each variable can take on 10 different outcomes, a
 <tbody>
 <tr class="row-even"><td class="text-align:center"><p>1</p></td>
 <td class="text-align:center"><p>1</p></td>
-<td class="text-align:center"><p><em>P(W=2|X=1, Y=1)P(X=1\Y=1, Z=7)P(Y=1\Z=7)P(Z=7)</em></p></td>
+<td class="text-align:center"><p><em>P(W=2|X=1, Z=7)P(X=1\Y=1, Z=7)P(Y=1\Z=7)P(Z=7)</em></p></td>
 </tr>
 <tr class="row-odd"><td class="text-align:center"><p>1</p></td>
 <td class="text-align:center"><p>2</p></td>
-<td class="text-align:center"><p><em>P(W=2|X=1, Y=2)P(X=1|Y=2, Z=7)P(Y=2|Z=7)P(Z=7)</em></p></td>
+<td class="text-align:center"><p><em>P(W=2|X=1, Z=7)P(X=1|Y=2, Z=7)P(Y=2|Z=7)P(Z=7)</em></p></td>
 </tr>
 <tr class="row-even"><td class="text-align:center"><p>…</p></td>
 <td class="text-align:center"><p>…</p></td>
@@ -951,18 +961,15 @@ As before, let us assume that each variable can take on 10 different outcomes, a
 </tr>
 <tr class="row-odd"><td class="text-align:center"><p>10</p></td>
 <td class="text-align:center"><p>9</p></td>
-<td class="text-align:center"><p><em>P(W=2|X=10, Y=9)P(X=10|Y=9, Z=7)P(Y=9|Z=7)P(Z=7)</em></p></td>
+<td class="text-align:center"><p><em>P(W=2|X=10, Z=7)P(X=10|Y=9, Z=7)P(Y=9|Z=7)P(Z=7)</em></p></td>
 </tr>
 <tr class="row-even"><td class="text-align:center"><p>10</p></td>
 <td class="text-align:center"><p>10</p></td>
-<td class="text-align:center"><p><em>P(W=2|X=10, Y=10)P(X=10|Y=10, Z=7)P(Y=10|Z=7)P(Z=7)</em></p></td>
-</tr>
-<tr class="row-odd"><td class="text-align:center"><p></p></td>
-<td class="text-align:center"><p></p></td>
-<td class="text-align:center"><p><em><span class="math notranslate nohighlight">\(\sum_{x, y}\)</span>P(W=2, X=x, Y=y, Z=7)</em></p></td>
+<td class="text-align:center"><p><em>P(W=2|X=10, Z=7)P(X=10|Y=10, Z=7)P(Y=10|Z=7)P(Z=7)</em></p></td>
 </tr>
 </tbody>
 </table>
+<p>We normalize by calculating <span class="math notranslate nohighlight">\(\sum_{x, y} P(W=2, X=x, Y=y, Z=7)\)</span> by summing over all these entries, and subsequently dividing all entries by the sum.</p>
 </div>
 <div class="section" id="maximum-probably-explanation">
 <h3><span class="section-number">3.4.1.2. </span>Maximum Probably Explanation<a class="headerlink" href="#maximum-probably-explanation" title="Permalink to this headline">¶</a></h3>
@@ -1009,9 +1016,6 @@ partitioned into three sets: the variables of interest <span class="math notrans
 the nuisance variables <span class="math notranslate nohighlight">\(\mathcal{Y}\)</span>, and the observed variables
 <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span>:</p>
 <div class="math notranslate nohighlight">
-\[x^*_{MAP} = \arg \max_x P(x|o) = \arg \max_x L(x; o) P(X)\]</div>
-<p>We have</p>
-<div class="math notranslate nohighlight">
 \[
 P(\mathcal{X}|\mathcal{Z}=\mathfrak{z})=\sum_{\mathfrak{y}}P(\mathcal{X}, \mathcal{Y}=\mathfrak{y}|\mathcal{Z}=\mathfrak{z})\propto\sum_{\mathfrak{y}}P(\mathcal{X}, \mathcal{Y}=\mathfrak{y}, \mathcal{Z}=\mathfrak{z}).
 \]</div>
@@ -1027,13 +1031,13 @@ fundamentally more expensive even in that case.</p>
 <div class="section" id="exercises">
 <h3><span class="section-number">3.4.1.5. </span>Exercises<a class="headerlink" href="#exercises" title="Permalink to this headline">¶</a></h3>
 <ol class="simple">
-<li><p>Show that in the example above, if we condition on known values for <span class="math notranslate nohighlight">\(\mathcal{Z}=(X,Y)\)</span>, the
+<li><p>Show that in the example above, if we condition on known values for <span class="math notranslate nohighlight">\(\mathcal{Z}=(X,Z)\)</span>, the
 posterior <span class="math notranslate nohighlight">\(P(W,Z|X,Y)\)</span> factors, and as a consequence we only have to
 enumerate two tables of length 10, instead of a large table of
 size 100.</p></li>
 <li><p>Calculate the size of the table needed to enumerate the posterior
 over the states <span class="math notranslate nohighlight">\(S\)</span> the robot dynamic Bayes net from the previous section,
-given the value of all observations <span class="math notranslate nohighlight">\(O\)</span> and actions <span class="math notranslate nohighlight">\(A\)</span>.</p></li>
+given the value of all observations <span class="math notranslate nohighlight">\(Z\)</span> and actions <span class="math notranslate nohighlight">\(A\)</span>.</p></li>
 <li><p>Show that if we are given the states, inferring the actions is
 actually quite efficient, even with the brute force enumeration.
 Hint: this is similar to the first exercise above.</p></li>
@@ -1045,7 +1049,7 @@ Hint: this is similar to the first exercise above.</p></li>
 <blockquote>
 <div><p>HMMs are a general framework for perception over time.</p>
 </div></blockquote>
-<p>Here we will generalize from robots to arbitrary state and observation spaces. In the previous section we discussed dynamic Bayes networks to model how a robot state evolves over time by taking actions, and how measurements result in a particular state. In this section we will ask <em>how we can recover the state of the robot given only the observations</em>, i.e. without knowing the states: the state is “hidden”. Here we will consider a general framework to anser this question.</p>
+<p>Here we will generalize from robots to arbitrary state and observation spaces. In the previous section we discussed dynamic Bayes networks to model how a robot state evolves over time by taking actions, and how measurements result in a particular state. In this section we will ask <em>how we can recover the state of the robot given only the observations</em>, i.e. without knowing the states: the state is “hidden”. Here we will consider a general framework to answer this question.</p>
 <p>A <strong>hidden Markov model</strong> or HMM is a dynamic Bayes net that has two
 types of variables: states <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> and measurements <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span>.
 The states <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> are connected sequentially and satisfy the what
@@ -1119,7 +1123,7 @@ P(\mathcal{X}|\mathcal{Z}) &amp; \propto P(\mathcal{Z}=\mathfrak{z}|\mathcal{X})
 \end{split}\]</div>
 <p>where <span class="math notranslate nohighlight">\(P(\mathcal{X})\)</span> is the trajectory prior
 and the <strong>likelihood</strong> <span class="math notranslate nohighlight">\(L(\mathcal{X}; \mathcal{Z}=\mathfrak{z})\)</span> of
-<span class="math notranslate nohighlight">\(\mathcal{X}\)</span> given <span class="math notranslate nohighlight">\(\mathcal{Z}=\mathfrak{z}\)</span> is defined as beforeas a  function of <span class="math notranslate nohighlight">\(\mathcal{X}\)</span>:</p>
+<span class="math notranslate nohighlight">\(\mathcal{X}\)</span> given <span class="math notranslate nohighlight">\(\mathcal{Z}=\mathfrak{z}\)</span> is defined as before as a function of <span class="math notranslate nohighlight">\(\mathcal{X}\)</span>:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 \begin{aligned}
@@ -1269,11 +1273,11 @@ parameter in the corresponding factor.</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">graph</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">DiscreteFactorGraph</span><span class="p">()</span>
 <span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;1 1 1 1 1&quot;</span><span class="p">)</span>  <span class="c1"># \phi(X_1) = P(X_1)</span>
 <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">N</span><span class="p">):</span>
-    <span class="n">conditional</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">DiscreteConditional</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="n">k</span><span class="p">]],</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">action_spec</span><span class="p">)</span>
+    <span class="n">conditional</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">DiscreteConditional</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="n">k</span><span class="p">]],</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">action_spec</span><span class="p">)</span>
     <span class="n">conditional_a_k</span> <span class="o">=</span> <span class="n">conditional</span><span class="o">.</span><span class="n">choose</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span>  <span class="c1"># \phi(X,X+) = P(X+|X,A=a)</span>
     <span class="n">graph</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">conditional_a_k</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">measurement</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">measurements</span><span class="p">):</span>
-    <span class="n">k</span> <span class="o">=</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
     <span class="n">conditional</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">DiscreteConditional</span><span class="p">(</span><span class="n">Z</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="p">]],</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">sensor_spec</span><span class="p">)</span>
     <span class="n">z_k</span> <span class="o">=</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">light_levels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">measurement</span><span class="p">)</span>
     <span class="n">factor</span> <span class="o">=</span> <span class="n">conditional</span><span class="o">.</span><span class="n">likelihood</span><span class="p">(</span><span class="n">z_k</span><span class="p">)</span>  <span class="c1"># \phi(X) = P(Z=z|X)</span>
@@ -1285,7 +1289,7 @@ parameter in the corresponding factor.</p>
 <div class="cell_output docutils container">
 <img alt="_images/S34_vacuum_perception_28_0.svg" src="_images/S34_vacuum_perception_28_0.svg" /></div>
 </div>
-<p>Note that discrete distributions and conditionals, like <span class="math notranslate nohighlight">\(P(X_0)\)</span> above, are perfectly fine factors, and in fact <em>derive</em> from the factor type in GTSAM. This is what allows us to add them directly the graph as is. Note that in a real implementation we might not take the detour to first construct the conditionals as above: we did so because they were conveniently available here, but typically we would construct factors directly.</p>
+<p>Note that discrete distributions and conditionals, like <span class="math notranslate nohighlight">\(P(X_1)\)</span> above, are perfectly fine factors, and in fact <em>derive</em> from the factor type in GTSAM. This is what allows us to add them directly the graph as is. Note that in a real implementation we might not take the detour to first construct the conditionals as above: we did so because they were conveniently available here, but typically we would construct factors directly.</p>
 </div>
 </div>
 <div class="section" id="computing-with-factor-graphs">
@@ -1326,7 +1330,7 @@ incremental inference, and lead naturally to distributed and/or parallel
 versions of robotics.</p>
 <div class="section" id="naive-mpe-with-gtsam">
 <h3><span class="section-number">3.4.6.1. </span>Naive MPE with GTSAM<a class="headerlink" href="#naive-mpe-with-gtsam" title="Permalink to this headline">¶</a></h3>
-<p>Because our factor graph is so small, it does not hurt to show off how easy it is to implement the naive algorithm. We just loop over all possible state trajectories, keep track of the</p>
+<p>Because our factor graph is so small, it does not hurt to show off how easy it is to implement the naive algorithm. We just loop over all possible state trajectories, and keep track of the one with the highest value:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mpe_value</span> <span class="o">=</span> <span class="mi">0</span>
@@ -1361,6 +1365,7 @@ versions of robotics.</p>
 </table>
 </div></div></div>
 </div>
+<p>Remember that this MPE is <em>for a given action and measurement sequence</em>. All those fixed values are implicit in the factors that we have added to the factor graph in <code class="docutils literal notranslate"><span class="pre">graph</span></code> above.</p>
 </div>
 </div>
 <div class="section" id="the-max-product-algorithm-for-hmms">
@@ -1378,7 +1383,7 @@ to give the intuition. To find the MPE for <span class="math notranslate nohighl
 <div class="math notranslate nohighlight">
 \[\phi(X_1, X_2, X_3)=\prod\phi_{i}(\mathcal{X}_{i})\]</div>
 <p>i.e., the <strong>value</strong> of the factor graph.</p>
-<p>Because the value of the factor graph is a product of factor values, we can compute its maximum recursively, dynamic programming style:</p>
+<p>Because the value of the factor graph is a product of factor values, we can compute its maximum recursively, dynamic programming style. We start by first looking at ll factors connected to <span class="math notranslate nohighlight">\(X_1\)</span>:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 \begin{align*}
@@ -1388,13 +1393,14 @@ to give the intuition. To find the MPE for <span class="math notranslate nohighl
 \\ &amp;= \max_{X_2, X_3} ~~~\tau(X_2) &amp;\phi_4(X_2)\phi_5(X_2, X_{3})\phi_6(X_3)
 \end{align*}
 \end{split}\]</div>
-<p>where <span class="math notranslate nohighlight">\(\tau(X_2)\doteq \max_{X_1} \phi_1(X_1)\phi_2(X_1)\phi_3(X_1, X_2)\)</span>. After we  recursively find the optimal values for <span class="math notranslate nohighlight">\(X_2\)</span> and <span class="math notranslate nohighlight">\(X_3\)</span>, we can recover <span class="math notranslate nohighlight">\(X_1\)</span> by</p>
+<p>Above <span class="math notranslate nohighlight">\(\tau(X_2)\doteq \max_{X_1} \phi_1(X_1)\phi_2(X_1)\phi_3(X_1, X_2)\)</span> records the maximum value resulting from <em>only</em> maximizing <span class="math notranslate nohighlight">\(X_1\)</span>, but this depends on the value of <span class="math notranslate nohighlight">\(X_2\)</span>. After we recursively find the optimal values for <span class="math notranslate nohighlight">\(X_2\)</span> and <span class="math notranslate nohighlight">\(X_3\)</span>, we can recover <span class="math notranslate nohighlight">\(X_1\)</span> by</p>
 <div class="math notranslate nohighlight">
 \[
 g_1(X_2) = \arg \max_{X_1} \phi_1(X_1)\phi_2(X_1)\phi_3(X_1, X_2)
 \]</div>
 <p>where the <em>lookup table</em> can be created at the same time that we compute <span class="math notranslate nohighlight">\(\tau(X_2)\)</span>.</p>
-<p>Below we use the factor graph to illustrate how the max-product algorithm
+<p>The above shows the general principle for max-product by concentrating on <span class="math notranslate nohighlight">\(X_1\)</span>, but we must do the same computation for all other variables as well.
+Below we use the factor graph to illustrate how the max-product algorithm
 proceeds one variable at a time, using “Bayes-net-style” directed edges to represent the lookup tables <span class="math notranslate nohighlight">\(g_k(X_{k+1})\)</span>, and factors to represent the <span class="math notranslate nohighlight">\(\tau(.)\)</span> functions, as indeed they <em>are</em> factors. Because at every step, one variable is <em>eliminated</em> from the maximization, the max-product algorithm is in fact an instance of the <strong>elimination algorithm</strong>, which we will see pop up in many different guises.</p>
 <p>We proceed from left to right, i.e. we start with state <span class="math notranslate nohighlight">\(X_1\)</span> and proceed until we
 processed all states. We will tackle the three steps one by one in ths subsections below:</p>
@@ -1433,7 +1439,7 @@ choice:</p>
 \[
 \tau(X_2)=\max_{x_1}\phi(x_1, X_2).
 \]</div>
-<p>In practice both steps can be implemented in a single function.
+<p>In practice both steps can be implemented in a single “eliminate” function.
 We then put this new factor <span class="math notranslate nohighlight">\(\tau(X_2)\)</span> back into the graph, essentially
 summarizing the result of eliminating <span class="math notranslate nohighlight">\(X_1\)</span> from the problem entirely,
 obtaining the <strong>reduced graph</strong></p>
@@ -1554,8 +1560,9 @@ recover the MPE in reverse elimination order.</p>
 <li><p>Add new factor <span class="math notranslate nohighlight">\(\tau(X_{j+1})\)</span> back into the graph <span class="math notranslate nohighlight">\(\Phi_{j+1:n}\)</span></p></li>
 <li><p>return <span class="math notranslate nohighlight">\(g_{j}(X_{j+1}), \Phi_{j+1:n}\)</span></p></li>
 </ul>
-</div>
 <hr class="docutils" />
+<p>In the HMM literature, the max-product algorithm is known as the <em>Viterbi</em> algorithm. However, we will see that max-product (and sum-product below) can be applied in more general settings than the linear chains one finds in HMMs.</p>
+</div>
 <div class="section" id="complexity">
 <h3><span class="section-number">3.4.7.6. </span>Complexity<a class="headerlink" href="#complexity" title="Permalink to this headline">¶</a></h3>
 <p>The complexity of max-product is <em>linear</em> in the number of nodes, which is a nice improvement over exponential. The complexity of every elimination step is quadratic in the number of states, because we have to form the product factors and then maximize over them.</p>
@@ -1604,7 +1611,7 @@ satisfying, because as we saw that is an economical representation of a
 probability distribution.</p>
 <p>One might wonder about the wisdom of all this: we started with a Bayes
 net, converted to a factor graph, and now end up with a Bayes net again?
-Indeed, but there are two important differences: the first Bayes net
+There are two important differences: the first Bayes net
 represents the joint distribution <span class="math notranslate nohighlight">\(P(\mathcal{X}, \mathcal{Z})\)</span> and is
 very useful for modeling. However, the second Bayes represents the
 posterior <span class="math notranslate nohighlight">\(P(\mathcal{X}|\mathcal{Z})\)</span>, and only has nodes for the
@@ -1622,7 +1629,8 @@ P(\mathcal{X}|\mathcal{Z}) &amp;\propto \prod\phi_{i}(\mathcal{X}_{i})
 \\ &amp;= P(X_1|X_2, \mathcal{Z}) ~~ P(X_2, X_3|\mathcal{Z})
 \end{align*}
 \end{split}\]</div>
-<p>where the last equality invoked recursion to calculate the posterior <span class="math notranslate nohighlight">\(P(X_2, X_3|\mathcal{Z})\)</span> on the remaining variables from the remain factors. Above we defined the factor <span class="math notranslate nohighlight">\(\tau\)</span> obtained by summing</p>
+<p>where the last equality invoked recursion to calculate the posterior <span class="math notranslate nohighlight">\(P(X_2, X_3|\mathcal{Z})\)</span> on the remaining variables from the remain factors. Below we assume the dependence on the given measurements <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span> (and actions, if appropriate) as implied, and drop <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span> from the equations.</p>
+<p>In contrast to max-product, we now define the factor <span class="math notranslate nohighlight">\(\tau\)</span> obtained by <em>summing</em> over the variable that is being eliminated</p>
 <div class="math notranslate nohighlight">
 \[
 \tau(X_2)\doteq \sum_{X_1} \phi_1(X_1)\phi_2(X_1)\phi_3(X_1, X_2)
@@ -1630,7 +1638,7 @@ P(\mathcal{X}|\mathcal{Z}) &amp;\propto \prod\phi_{i}(\mathcal{X}_{i})
 <p>and, from the definition of conditional probability:</p>
 <div class="math notranslate nohighlight">
 \[
-P(X_1|X_2, \mathcal{Z}) = \frac{\phi_1(X_1)\phi_2(X_1)\phi_3(X_1, X_2)}{\tau(X_2)}.
+P(X_1|X_2) = \frac{\phi_1(X_1)\phi_2(X_1)\phi_3(X_1, X_2)}{\tau(X_2)}.
 \]</div>
 <p>Hence, the only tweak necessary to the max-product is to replace the maximization and <span class="math notranslate nohighlight">\(\arg \max\)</span> in the elimination step with the chain rule.
 Indeed, we factor each product
@@ -1707,7 +1715,7 @@ MPE, as they average over the entire probability distribution.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/S34_vacuum_perception_48_0.svg" src="_images/S34_vacuum_perception_48_0.svg" /></div>
+<img alt="_images/S34_vacuum_perception_50_0.svg" src="_images/S34_vacuum_perception_50_0.svg" /></div>
 </div>
 <p>We can then sample from it, and calculate approximate marginals for <span class="math notranslate nohighlight">\(X_1\)</span>, <span class="math notranslate nohighlight">\(X_2\)</span>, and <span class="math notranslate nohighlight">\(X_3\)</span>:</p>
 <div class="cell docutils container">
@@ -1780,6 +1788,10 @@ MPE, as they average over the entire probability distribution.</p>
 </div></div></div>
 </div>
 <p>The marginals say how probable it is that the robot was in a particular room at a partical time step. This is much richer information that what is available in the MPE, which is just a point estimate for the trajectory.</p>
+</div>
+<div class="section" id="id1">
+<h3><span class="section-number">3.4.8.3. </span>Exercise<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>Execute the cell above multiple times and observe you <em>do</em> get different realizations (almost) every time.</p>
 </div>
 </div>
 <div class="section" id="gtsam-101">
