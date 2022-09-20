@@ -704,7 +704,7 @@ the concept of Markov decision processes (MDPs).</p>
 <div class="cell_output docutils container">
 <div class="output text_html">
 <div align='center'>
-<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S35-iRobot%20vacuuming%20robot-03.jpg?raw=1' style='height:256 width:100%'/>
+<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S35-iRobot%20vacuuming%20robot-05.jpg?raw=1' style='height:256 width:100%'/>
 </div>
 </div></div>
 </div>
@@ -885,24 +885,45 @@ arrives to the living room (index 0) the robot obtains a reward of 10, otherwise
 </div>
 </div>
 <p>This makes total sense: if we stay in the kitchen, we get zero reward, but <em>if</em> we succeed to move to the living room, we receive a reward of 10. This happens only in 80% of the cases, though, so the <em>expected reward</em> is only 8.</p>
-<p>Note that this computation can also be realized using belief states.  In
+<!-- Note that this computation can also be realized using belief states.  In
 particular, if encode the reward function as a vector (as above),
-say <span class="math notranslate nohighlight">\(R = [10, 0, 0, 0, 0]^T\)</span>,
-the the expected reward at time <span class="math notranslate nohighlight">\(t+1\)</span> is given by</p>
-<div class="math notranslate nohighlight">
-\[E[ R(X_t, a, X_{t+t})] = b_{t+1} R = \left( b_t M_{a}\right) R
-\]</div>
-<p>in which <span class="math notranslate nohighlight">\(M_{a}\)</span> denotes the transition probability matrix associated
-to action <span class="math notranslate nohighlight">\( a\)</span>. Note that in this case, we the expected reward is computed for a given
-prior distribution on <span class="math notranslate nohighlight">\(X_t\)</span>. If we know with certainty that <span class="math notranslate nohighlight">\(X_t =x\)</span>, the belief
-vector would have a <span class="math notranslate nohighlight">\(1\)</span> in the entry corresponding to the current room, and zero’s for
+say $R = [10, 0, 0, 0, 0]^T$,
+the the expected reward at time $t+1$ is given by
+
+$$E[ R(X_t, a, X_{t+t})] = b_{t+1} R = \left( b_t M_{a}\right) R
+$$
+
+in which $M_{a}$ denotes the transition probability matrix associated
+to action $ a$. Note that in this case, we the expected reward is computed for a given
+prior distribution on $X_t$. If we know with certainty that $X_t =x$, the belief
+vector would have a $1$ in the entry corresponding to the current room, and zero's for
 all other entries.
-Therefore, this form is somewhat more general than that given above.</p>
+Therefore, this form is somewhat more general than that given above. -->
 <p>Equipped with the definition of expected reward, we can introduce a first, <strong>greedy planning</strong> algorithm:
 Given the current belief state <span class="math notranslate nohighlight">\(b_t\)</span>, execute the action that maximizes the expected reward:</p>
 <div class="math notranslate nohighlight">
-\[ a^* = \arg  \max_{a \in {\cal A}} E[ R(X_t, a, X_{t+t})] = \arg \max_{a \in {\cal A}}\left( b_t M_{A}\right) R
+\[
+a^* = \arg  \max_{a \in {\cal A}} E[ R(X_t, a, X_{t+t})]
 \]</div>
+ <!-- = \arg \max_{a \in {\cal A}}\left( b_t M_{A}\right) R --><p>For example, in the “Kitchen”, we can calculate the expected award for all actions:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;Kitchen&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected reward (</span><span class="si">{</span><span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">vacuum</span><span class="o">.</span><span class="n">action_space</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="si">}</span><span class="s2">) = </span><span class="si">{</span><span class="n">T</span><span class="p">[</span><span class="n">x</span><span class="p">,</span><span class="n">a</span><span class="p">]</span> <span class="o">@</span> <span class="n">R</span><span class="p">[</span><span class="n">x</span><span class="p">,</span><span class="n">a</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Expected reward (Kitchen, L) = 8.0
+Expected reward (Kitchen, R) = 0.0
+Expected reward (Kitchen, U) = 0.0
+Expected reward (Kitchen, D) = 0.0
+</pre></div>
+</div>
+</div>
+</div>
+<p>It turns out that <span class="math notranslate nohighlight">\(8.0\)</span> is the best we can do, as the expected <em>immediate</em> reward for any other action is zero. Hence, whenever we find ourselves in the Kitchen, a good course of action is to always go left!</p>
 </div>
 <div class="section" id="utility-for-a-defined-sequence-of-actions">
 <h2><span class="section-number">3.5.3. </span>Utility for a Defined Sequence of Actions<a class="headerlink" href="#utility-for-a-defined-sequence-of-actions" title="Permalink to this headline">¶</a></h2>
@@ -1001,7 +1022,7 @@ in an attempt to reach the living room.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/S35_vacuum_decision_24_0.svg" src="_images/S35_vacuum_decision_24_0.svg" /></div>
+<img alt="_images/S35_vacuum_decision_27_0.svg" src="_images/S35_vacuum_decision_27_0.svg" /></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1335,7 +1356,12 @@ V(Dining Room) ~ 15.83
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Kitchen) ~ 97.25
-V(Office) ~ 84.82
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Office) ~ 84.82
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Hallway) ~ 97.37
