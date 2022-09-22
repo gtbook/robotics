@@ -525,8 +525,8 @@
   </a>
   <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#exercise">
-     3.5.4.1. Exercise:
+    <a class="reference internal nav-link" href="#exercises">
+     3.5.4.1. Exercises:
     </a>
    </li>
   </ul>
@@ -557,6 +557,13 @@
   <a class="reference internal nav-link" href="#computing-the-value-function">
    3.5.8. Computing The Value Function*
   </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exercise">
+     3.5.8.1. Exercise
+    </a>
+   </li>
+  </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#optimal-policy-and-value-function">
@@ -619,8 +626,8 @@
   </a>
   <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#exercise">
-     3.5.4.1. Exercise:
+    <a class="reference internal nav-link" href="#exercises">
+     3.5.4.1. Exercises:
     </a>
    </li>
   </ul>
@@ -651,6 +658,13 @@
   <a class="reference internal nav-link" href="#computing-the-value-function">
    3.5.8. Computing The Value Function*
   </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exercise">
+     3.5.8.1. Exercise
+    </a>
+   </li>
+  </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#optimal-policy-and-value-function">
@@ -704,7 +718,7 @@ the concept of Markov decision processes (MDPs).</p>
 <div class="cell_output docutils container">
 <div class="output text_html">
 <div align='center'>
-<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S35-iRobot%20vacuuming%20robot-04.jpg?raw=1' style='height:256 width:100%'/>
+<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S35-iRobot%20vacuuming%20robot-03.jpg?raw=1' style='height:256 width:100%'/>
 </div>
 </div></div>
 </div>
@@ -712,7 +726,7 @@ the concept of Markov decision processes (MDPs).</p>
 in the effects of actions. We defined the belief state <span class="math notranslate nohighlight">\(b_{t+1}\)</span> to be the posterior probability distribution
 for the state at time <span class="math notranslate nohighlight">\(t+1\)</span> given the sequence of actions <span class="math notranslate nohighlight">\(a_1 \dots a_t\)</span>.
 In every example, the sequence of actions was predetermined, and we merely calculated probabilities
-associated to performing these actions from some specified initial state, possibly described
+associated with performing these actions from some specified initial state, described
 by a probability distribution <span class="math notranslate nohighlight">\(P(X_1)\)</span>.</p>
 <p>In this chapter, we consider the problem of choosing which actions to execute.
 Making these decisions requires that we have quantitative criteria for evaluating actions and their effects.
@@ -727,13 +741,13 @@ Because it is not possible to know how many times we should execute the move rig
 to arrive to the hallway, we might construct a sequence of actions
 to move right many times (to increase the probability of arriving to the dining room),
 then move up many times (to increase the probability of arriving to the kitchen),
-then move left many times (to increase the probability of arriving to the living room).
-This kind of plan might make sense if the robot is unable to know its current location.
+then move left many times (to increase the probability of arriving to the living room).</p>
+<p>This kind of plan might make sense if the robot is unable to know its current location.
 For example, moving for a long time to the right should eventually bring the robot to the dining room with
 high probability,
 but if the robot moves to the right for a short time, it could remain in the office,
-arrive to the hallway, or arrive to the dining room.
-In contrast, if the robot is able to know its location (using perception), it can act
+arrive to the hallway, or arrive to the dining room.</p>
+<p>In contrast, if the robot is able to know its location (using perception), it can act
 opportunistically when it reaches the hallway, and immediately move up.
 The key idea here is that the optimal action at any moment in time depends
 on the state in which the action is executed.
@@ -749,8 +763,8 @@ One simple approach might be to specify the robot’s goal, and then determine
 how effective an action might be with respect to that goal,
 e.g., by using the conditional probability tables for the various actions.
 If, for example, the goal is to arrive to the living room, we could evaluate
-the probability that a particular action would achieve the goal.
-This approach has several limitations.  First, if the robot is not currently in a room
+the probability that a particular action would achieve the goal.</p>
+<p>The approach above has several limitations.  First, if the robot is not currently in a room
 that is adjacent to the living room, it is not clear how to measure the possible progress
 toward the living room for a specific action.
 If, for example, the robot is in the dining room, would it be better to move
@@ -770,10 +784,10 @@ Let <span class="math notranslate nohighlight">\(\cal X\)</span> denote the set 
 The reward function, <span class="math notranslate nohighlight">\(R : {\cal X} \times {\cal A} \times {\cal X} \rightarrow \mathbb{R}\)</span>,
 assigns a numeric reward to specific state transitions under specific actions.
 In particular, <span class="math notranslate nohighlight">\(R(x_t, a_t, x_{t+1})\)</span> is the reward obtained by arriving to state
-<span class="math notranslate nohighlight">\(x_{t+1}\)</span> from state <span class="math notranslate nohighlight">\(x_t\)</span> as a result of executing action <span class="math notranslate nohighlight">\(a_t\)</span>.
-We will assume that the reward function is time-invariant (the benefit of moving up from
-the hallway to the living room does not change as time passes),
-and use the more compact notation
+<span class="math notranslate nohighlight">\(x_{t+1}\)</span> from state <span class="math notranslate nohighlight">\(x_t\)</span> as a result of executing action <span class="math notranslate nohighlight">\(a_t\)</span>.</p>
+<p>In what follows we assume that the reward function is time-invariant, i.e., the benefit of moving up from
+the hallway to the living room does not change as time passes.
+This allows us to use the more compact notation
 <span class="math notranslate nohighlight">\(R(x, a, x')\)</span> to represent the award obtained by arriving to (the next) state <span class="math notranslate nohighlight">\(x'\)</span>
 by executing action <span class="math notranslate nohighlight">\(a\)</span> in state <span class="math notranslate nohighlight">\(x\)</span>. We will frequently use this notation in the remainder of the section.</p>
 <p>This form for the reward function is very general, allowing us to encode context dependent rewards
@@ -808,7 +822,7 @@ It simply returns a reward of 10 upon entering the living room:</p>
 <div><p>Maximizing immediate expected reward leads to greedy planning.</p>
 </div></blockquote>
 <p>Because the effects of actions are uncertain,
-there is no way for the robot to know definitively the reward that will obtain
+there is no way for the robot to know definitively the reward that it will obtain
 by executing a specific action <span class="math notranslate nohighlight">\(a\)</span> in state <span class="math notranslate nohighlight">\(x\)</span>.
 In this case, we can use the <strong>expected reward</strong> as a surrogate.
 As we have seen in the previous chapter, this expectation will provide a good
@@ -832,7 +846,7 @@ which some texts do. However, below we will continue to work with the most gener
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">conditional</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">DiscreteConditional</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">)],</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">action_spec</span><span class="p">)</span>
 <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="nb">float</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">assignment</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">conditional</span><span class="o">.</span><span class="n">enumerate</span><span class="p">():</span>
+<span class="k">for</span> <span class="n">assignment</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">conditional</span><span class="o">.</span><span class="n">enumerate</span><span class="p">():</span>
     <span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">assignment</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">assignment</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">assignment</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
     <span class="n">R</span><span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span> <span class="o">=</span> <span class="mf">10.0</span> <span class="k">if</span> <span class="n">y</span> <span class="o">==</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;Living Room&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="mf">0.0</span>
 
@@ -849,13 +863,14 @@ which some texts do. However, below we will continue to work with the most gener
 </div>
 <p>The result above is simple to interpret: if the robot
 arrives to the living room (index 0) the robot obtains a reward of 10, otherwise 0.</p>
-<p>We can do the same with the transition probabilities.</p>
+<p>Note that <span class="math notranslate nohighlight">\(R\)</span> is a <em>multidimensional</em> array, with shape <span class="math notranslate nohighlight">\((5, 4, 5)\)</span>, corresponding to the dimensionality of the arguments of the reward function <span class="math notranslate nohighlight">\(R(x,a,x')\)</span>.
+We can do the same with the transition probabilities, creating a multidimensional array <span class="math notranslate nohighlight">\(T\)</span> with an entry for every possible transition <span class="math notranslate nohighlight">\(x \rightarrow a \rightarrow x'\)</span> with probability <span class="math notranslate nohighlight">\(P(x'|a,x)\)</span>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="nb">float</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">assignment</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">conditional</span><span class="o">.</span><span class="n">enumerate</span><span class="p">():</span>
+<span class="k">for</span> <span class="n">assignment</span><span class="p">,</span> <span class="n">P_y_given_ax</span> <span class="ow">in</span> <span class="n">conditional</span><span class="o">.</span><span class="n">enumerate</span><span class="p">():</span>
     <span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">assignment</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">assignment</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">assignment</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-    <span class="n">T</span><span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="n">T</span><span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span> <span class="o">=</span> <span class="n">P_y_given_ax</span>
 
 <span class="c1"># For example, taking action &quot;L&quot; in &quot;Kitchen&quot;:</span>
 <span class="n">T</span><span class="p">[</span><span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;Kitchen&quot;</span><span class="p">),</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;L&quot;</span><span class="p">)]</span>
@@ -869,12 +884,11 @@ arrives to the living room (index 0) the robot obtains a reward of 10, otherwise
 </div>
 </div>
 <p>As expected, we end up in the living room with 80% chance, while staying in place (the Kitchen) 20% of the time.</p>
-<p>Then, finally, the expected reward becomes a simple <code class="docutils literal notranslate"><span class="pre">numpy</span></code> operation:</p>
+<p>Then, finally, calculating the expected reward <span class="math notranslate nohighlight">\(\bar{R}(x,a)\)</span> for a particular state-action pair <span class="math notranslate nohighlight">\((x,a)\)</span> becomes a simple dot product:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;Kitchen&quot;</span><span class="p">)</span>
-<span class="n">a</span> <span class="o">=</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;L&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected reward (Kitchen, L) = </span><span class="si">{</span><span class="n">T</span><span class="p">[</span><span class="n">x</span><span class="p">,</span><span class="n">a</span><span class="p">]</span> <span class="o">@</span> <span class="n">R</span><span class="p">[</span><span class="n">x</span><span class="p">,</span><span class="n">a</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="p">,</span> <span class="n">a</span> <span class="o">=</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;Kitchen&quot;</span><span class="p">),</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;L&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected reward (Kitchen, L) = </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">T</span><span class="p">[</span><span class="n">x</span><span class="p">,</span><span class="n">a</span><span class="p">],</span> <span class="n">R</span><span class="p">[</span><span class="n">x</span><span class="p">,</span><span class="n">a</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -910,7 +924,7 @@ a^* = \arg  \max_{a \in {\cal A}} E[ R(X_t, a, X_{t+t})]
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;Kitchen&quot;</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected reward (</span><span class="si">{</span><span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">vacuum</span><span class="o">.</span><span class="n">action_space</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="si">}</span><span class="s2">) = </span><span class="si">{</span><span class="n">T</span><span class="p">[</span><span class="n">x</span><span class="p">,</span><span class="n">a</span><span class="p">]</span> <span class="o">@</span> <span class="n">R</span><span class="p">[</span><span class="n">x</span><span class="p">,</span><span class="n">a</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected reward (</span><span class="si">{</span><span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">vacuum</span><span class="o">.</span><span class="n">action_space</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="si">}</span><span class="s2">) = </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">T</span><span class="p">[</span><span class="n">x</span><span class="p">,</span><span class="n">a</span><span class="p">],</span> <span class="n">R</span><span class="p">[</span><span class="n">x</span><span class="p">,</span><span class="n">a</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -923,7 +937,7 @@ Expected reward (Kitchen, D) = 0.0
 </div>
 </div>
 </div>
-<p>It turns out that <span class="math notranslate nohighlight">\(8.0\)</span> is the best we can do, as the expected <em>immediate</em> reward for any other action is zero. Hence, whenever we find ourselves in the Kitchen, a good course of action is to always go left!</p>
+<p>It turns out that <span class="math notranslate nohighlight">\(8.0\)</span> is the best we can do by greedily choosing a single action, as the expected <em>immediate</em> reward for any other action is zero. Hence, whenever we find ourselves in the Kitchen, a good course of action is to always go left!</p>
 </div>
 <div class="section" id="utility-for-a-defined-sequence-of-actions">
 <h2><span class="section-number">3.5.3. </span>Utility for a Defined Sequence of Actions<a class="headerlink" href="#utility-for-a-defined-sequence-of-actions" title="Permalink to this headline">¶</a></h2>
@@ -1002,9 +1016,13 @@ the expected value for a probability distribution and the average value over
 many realizations of the underlying random process.
 Namely, as we have seen before, the expected of a random variable (in this case the value of the utility function)
 corresponds to what we expect to observe as the average of that random variable over many trials.
-This immediately suggests an approximation algorithm: Generate many sample trajectories
-for the action sequence <span class="math notranslate nohighlight">\(a_1, \dots, a_n\)</span>, and compute the average of the discounted rewards over
-these sample trajectories.</p>
+This immediately suggests an approximation algorithm:</p>
+<ul class="simple">
+<li><p>Generate many sample trajectories
+for the action sequence <span class="math notranslate nohighlight">\(a_1, \dots, a_n\)</span>;</p></li>
+<li><p>compute the average of the discounted rewards over
+these sample trajectories.</p></li>
+</ul>
 <p>A specific sequence of actions, <span class="math notranslate nohighlight">\(a_1, \dots, a_n\)</span> is sometimes called a <strong>control tape</strong>.
 The process of evaluating the discounted reward for such a sequence is called a <strong>rollout</strong> for the control tape.
 Each rollout produces one sample trajectory, and one corresponding discounted reward.
@@ -1113,9 +1131,25 @@ This is because each of the first two actions have a 0.2 probability of failure,
 </div>
 </div>
 </div>
-<div class="section" id="exercise">
-<h3><span class="section-number">3.5.4.1. </span>Exercise:<a class="headerlink" href="#exercise" title="Permalink to this headline">¶</a></h3>
-<p>The reward seems to be either zero or 30 above. Why is that?</p>
+<p>Finally, the expected utility of the action sequence R,U,L,L simply averages over all 20 rollouts:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="n">control_tape_reward</span><span class="p">(</span><span class="s2">&quot;Office&quot;</span><span class="p">,</span> <span class="n">actions</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">)])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>19.5
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="exercises">
+<h3><span class="section-number">3.5.4.1. </span>Exercises:<a class="headerlink" href="#exercises" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Execute both cells above multiple times and observe the effect.</p></li>
+<li><p>The rewards above seems to be always either zero or 30. Why is that?</p></li>
+</ul>
 </div>
 </div>
 <div class="section" id="policies">
@@ -1198,12 +1232,12 @@ In particular, at each state, instead of sampling from the distribution
 a greedy approach that maximizes the expected reward for executing a single action,
 and an optimization-based method that chooses a fixed action sequence to maximize the
 expected utility of the action sequence.
-We described how to implement the computations required for the latter approach using control tape rollouts.
-With the introduction of policies, planning is reduced to the search for an appropriate
+We described how to implement the computations required for the latter approach using control tape rollouts.</p>
+<p>With the introduction of policies, planning is reduced to the search for an appropriate
 policy.
 In the best case, this policy would maximize the expected utility with respect to the policy.
 Because policies are state-dependent, the combinatorics of enumerating all possible
-policies preclude any approach that attempts to explicitly enumerate candidate policies.
+policies precludes any approach that attempts to explicitly enumerate candidate policies.
 Instead, we will focus on methods that explore the utility associated to
 a policy.
 As we will now see, this is somewhat more complicated than exploring the utility
@@ -1330,10 +1364,10 @@ V^\pi(x) - \sum_{i=0}^{N_{\rm{ro}}}\gamma ^i R(x_i,\pi(xi), x_{i+1})\]</div>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Living Room) ~ 34.39
-V(Kitchen) ~ 29.68
-V(Office) ~ 20.88
-V(Hallway) ~ 27.59
-V(Dining Room) ~ 15.83
+V(Kitchen) ~ 29.49
+V(Office) ~ 16.00
+V(Hallway) ~ 32.39
+V(Dining Room) ~ 19.25
 </pre></div>
 </div>
 </div>
@@ -1355,17 +1389,14 @@ V(Dining Room) ~ 15.83
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Living Room) ~ 99.43
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Kitchen) ~ 97.25
-V(Office) ~ 84.82
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Kitchen) ~ 97.64
+V(Office) ~ 84.74
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Hallway) ~ 97.37
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Dining Room) ~ 86.13
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Dining Room) ~ 85.89
 </pre></div>
 </div>
 </div>
@@ -1482,18 +1513,19 @@ or can easily be computed.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">AA</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">calculate_value_system</span><span class="p">(</span><span class="n">reasonable_policy</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">AA</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;A =</span><span class="se">\n</span><span class="si">{</span><span class="n">AA</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;b = </span><span class="si">{</span><span class="n">b</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[ 0.1  -0.   -0.   -0.   -0.  ]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>A =
+[[ 0.1  -0.   -0.   -0.   -0.  ]
  [-0.72  0.82 -0.   -0.   -0.  ]
  [-0.   -0.    0.82 -0.72 -0.  ]
  [-0.72 -0.   -0.    0.82 -0.  ]
  [-0.   -0.   -0.   -0.72  0.82]]
-[10.  8.  0.  8.  0.]
+b = [10.  8.  0.  8.  0.]
 </pre></div>
 </div>
 </div>
@@ -1518,6 +1550,10 @@ or can easily be computed.</p>
 </pre></div>
 </div>
 </div>
+</div>
+<div class="section" id="exercise">
+<h3><span class="section-number">3.5.8.1. </span>Exercise<a class="headerlink" href="#exercise" title="Permalink to this headline">¶</a></h3>
+<p>Why is the value function in the living room <span class="math notranslate nohighlight">\(100\)</span> and not the immediate reward <span class="math notranslate nohighlight">\(10\)</span>?</p>
 </div>
 </div>
 <div class="section" id="optimal-policy-and-value-function">
@@ -1610,7 +1646,7 @@ The can be achieved with the following algorithm:</p>
 <p>Start with a random policy <span class="math notranslate nohighlight">\(\pi^0\)</span>, and repeat until convergence:</p>
 <ol class="simple">
 <li><p>Compute the value function <span class="math notranslate nohighlight">\(V^{\pi^k}\)</span></p></li>
-<li><p>Improve the policy for each state <span class="math notranslate nohighlight">\(x \in {\cal X}\)</span> using the updating rule:
+<li><p>Improve the policy for each state <span class="math notranslate nohighlight">\(x \in {\cal X}\)</span> using the update rule:
 <span class="math notranslate nohighlight">\(\pi^{k+1}(x) \leftarrow\arg \max_a \sum_{x'} \{P(x'|x, a) \{R(x, a, x') + \gamma V^k(x')\}\)</span></p></li>
 </ol>
 <p>Notice that this algorithm has the side benefit of computing
@@ -1645,7 +1681,7 @@ start with a zero value function
         <span class="k">if</span> <span class="n">new_policy</span> <span class="o">==</span> <span class="n">pi</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">pi</span><span class="p">,</span> <span class="n">value_for_pi</span>
         <span class="n">pi</span> <span class="o">=</span> <span class="n">new_policy</span>
-    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;No stable policy found after </span><span class="si">{max_iterations}</span><span class="s2"> iterations&quot;</span><span class="p">)</span>    
+    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;No stable policy found after </span><span class="si">{max_iterations}</span><span class="s2"> iterations&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1655,9 +1691,9 @@ start with a zero value function
 For example, we can start with a not-so-smart <code class="docutils literal notranslate"><span class="pre">always_right</span></code> policy:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">RIGHT_INDEX</span> <span class="o">=</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;R&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">RIGHT</span> <span class="o">=</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;R&quot;</span><span class="p">)</span>
 
-<span class="n">always_right</span> <span class="o">=</span> <span class="p">[</span><span class="n">RIGHT_INDEX</span><span class="p">,</span> <span class="n">RIGHT_INDEX</span><span class="p">,</span> <span class="n">RIGHT_INDEX</span><span class="p">,</span> <span class="n">RIGHT_INDEX</span><span class="p">,</span> <span class="n">RIGHT_INDEX</span><span class="p">]</span>
+<span class="n">always_right</span> <span class="o">=</span> <span class="p">[</span><span class="n">RIGHT</span><span class="p">,</span> <span class="n">RIGHT</span><span class="p">,</span> <span class="n">RIGHT</span><span class="p">,</span> <span class="n">RIGHT</span><span class="p">,</span> <span class="n">RIGHT</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -1730,16 +1766,16 @@ We already knew that it should be pretty good at getting to the living room as f
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Living Room) ~ 100.00
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Kitchen) ~ 98.03
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Kitchen) ~ 97.93
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Office) ~ 84.55
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Office) ~ 83.87
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Hallway) ~ 97.48
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Hallway) ~ 97.93
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Dining Room) ~ 85.91
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Dining Room) ~ 85.84
 </pre></div>
 </div>
 </div>
