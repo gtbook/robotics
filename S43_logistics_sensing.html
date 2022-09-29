@@ -621,17 +621,16 @@
 <div class="cell_output docutils container">
 <div class="output text_html">
 <div align='center'>
-<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S43-Warehouse%20robots-04.jpg?raw=1' style='height:256 width:100%'/>
+<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S43-Warehouse%20robots-01.jpg?raw=1' style='height:256 width:100%'/>
 </div>
 </div></div>
 </div>
 <p>In the previous chapters, we have used sensors that could be characterized using fairly simple probabilistic
-models, either discrete conditional probability distributions (e.g., conductivity for the trash sorting robot
-and light sensing for the vacuum cleaning robot), or one-dimensional Gaussian distributions (as for the trash
-sorting robot’s weight sensor).  In this section we introduce three more realistic sensors,
+models, either discrete conditional probability distributions (e.g., conductivity for the trash-sorting robot
+and light sensing for the vacuum cleaning robot), or one-dimensional Gaussian distributions (as for the trash-sorting robot’s weight sensor).  In this section we introduce three more realistic sensors,
 each of which are similar to sensors that are frequently used in modern robotic systems:</p>
 <ul class="simple">
-<li><p>a proximity sensor;</p></li>
+<li><p>a proximity sensor</p></li>
 <li><p>an RFID range sensor, which has a non-linear measurement prediction model</p></li>
 <li><p>a GPS-like location sensor, which uses a linear-Gaussian conditional density</p></li>
 </ul>
@@ -693,7 +692,7 @@ P(z_k=\text{ON}|x_k)
 \end{array}
 \right.
 \end{split}\]</div>
-<p>where the value of <span class="math notranslate nohighlight">\(\alpha\)</span> determines how rapidly the probability decreases.
+<p>where the value of <span class="math notranslate nohighlight">\(\alpha &gt; 0\)</span> determines how rapidly the probability decreases.
 Because the conditional probability <span class="math notranslate nohighlight">\(P(\cdot | x_k)\)</span> is a valid probability distribution,
 we can immediately conclude that
 <span class="math notranslate nohighlight">\(P(z_k=\text{OFF}|x_k) = 1 - P(z_k=\text{ON}|x_k)\)</span>.</p>
@@ -720,7 +719,7 @@ P(z_k=\text{ON}|x_k)
 <img alt="_images/S43_logistics_sensing_12_0.png" src="_images/S43_logistics_sensing_12_0.png" />
 </div>
 </div>
-<p>Note that we denote a likelihood over a continuous variable with lowercase <span class="math notranslate nohighlight">\(l()\)</span>, in analogy to the lowercase <span class="math notranslate nohighlight">\(p()\)</span> we use for densities. At any location, the likelihood <span class="math notranslate nohighlight">\(l(x_k;z_k=\text{OFF})\)</span> of <span class="math notranslate nohighlight">\(x_k\)</span> given that the sensor is OFF will be the mirror image of the map above:</p>
+<p>Note that we denote a likelihood over a continuous variable with lowercase <span class="math notranslate nohighlight">\(l()\)</span>, in analogy to the lowercase <span class="math notranslate nohighlight">\(p()\)</span> we use for densities. For this specific sensor model, at any location, the likelihood <span class="math notranslate nohighlight">\(l(x_k;z_k=\text{OFF})\)</span> of <span class="math notranslate nohighlight">\(x_k\)</span> given that the sensor is OFF will be the mirror image of the map above:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">logistics</span><span class="o">.</span><span class="n">show_map</span><span class="p">(</span><span class="n">logistics</span><span class="o">.</span><span class="n">proximity_map_off</span><span class="p">)</span>
@@ -880,9 +879,9 @@ an actual range, <em>not</em> infinity. This in turn tells us that the robot mus
 </div></blockquote>
 <p>The last sensor we will consider, a GPS-like location sensor, is a bit of a cheat. In fact, there are no great indoor GPS-like sensors.
 People have tried all kinds of things, like triangulating WiFi signals etc., but in fact a cheap and reliable GPS-like sensor that works indoors is still not available at the time of writing.
-However, it is a good straw man to introduce a simple, conditionally Gaussian measurement.
+However, it is a good illustrative example to introduce a simple, conditionally Gaussian measurement.
 Also, it can be a good way to model a more complicated sensor, e.g., a camera-based localization system that uses some type of map.</p>
-<p>The <strong>measurement model</strong> <span class="math notranslate nohighlight">\(h(x_k)\)</span>, which predicts the measurement <span class="math notranslate nohighlight">\(z_k\)</span> given the state <span class="math notranslate nohighlight">\(x_k\)</span>, will again be a conditional Gaussian. In this example, let us assume the measurement is simply the location of the robot, but measured in <em>cm</em>. The measurement model in this case is <em>linear</em>, and we again assume additive noise:</p>
+<p>The <strong>measurement model</strong> <span class="math notranslate nohighlight">\(h(x_k)\)</span>, that predicts the measurement <span class="math notranslate nohighlight">\(z_k\)</span> given the state <span class="math notranslate nohighlight">\(x_k\)</span>, will again be a conditional Gaussian. In this example, let us assume the measurement is simply the location of the robot, but with coordinates measured in <em>cm</em>. The measurement model in this case is <em>linear</em>, and we again assume additive noise:</p>
 <div class="math notranslate nohighlight">
 \[
 {z}_k = h(x_k) + w_k = C x_k + w_k
@@ -898,17 +897,18 @@ Under the assumption that <span class="math notranslate nohighlight">\(w_k\)</sp
 \[\begin{split}
 \begin{align*}
 p(z_k|x_k) &amp;= \mathcal{N}(z_k;\mu=C x_k, \Sigma=R) \\
-&amp;= \frac{1}{\sqrt{|2\pi R|}} \exp\{-0.5 (z_k-C x_k)^TR^{-1}(z_k-C x_k)\}
+&amp;= \frac{1}{\sqrt{2\pi  |R|}} \exp\{-0.5 (z_k-C x_k)^TR^{-1}(z_k-C x_k)\}
 \end{align*}
 \end{split}\]</div>
-<p>where <span class="math notranslate nohighlight">\(R\)</span> is the traditional symbol used for measurement model covariance. Assuming a fairly inaccurate sensor, with 30cm standard deviation, we have <span class="math notranslate nohighlight">\(R=\text{diag}(30^2,30^2)\)</span>. Note that the <span class="math notranslate nohighlight">\(2\times 2\)</span> measurement covariance matrix <span class="math notranslate nohighlight">\(R\)</span> is expressed in the units of the measurement, i.e., centimeters, <em>not</em> the units of the state.</p>
+<p>where <span class="math notranslate nohighlight">\(R\)</span> is the traditional symbol used for measurement model covariance,
+and <span class="math notranslate nohighlight">\(|R|\)</span> in the denominator denotes the determinant of <span class="math notranslate nohighlight">\(R\)</span>. Assuming a fairly inaccurate sensor, with 30cm standard deviation, we have <span class="math notranslate nohighlight">\(R=\text{diag}(30^2,30^2)\)</span>. Note that the <span class="math notranslate nohighlight">\(2\times 2\)</span> measurement covariance matrix <span class="math notranslate nohighlight">\(R\)</span> is expressed in the units of the measurement, i.e., centimeters, <em>not</em> the units of the state.</p>
 </div>
 <div class="section" id="simulating-states-and-measurements">
 <h2><span class="section-number">4.3.5. </span>Simulating States <em>and</em> Measurements<a class="headerlink" href="#simulating-states-and-measurements" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div><p>Dynamic Bayes nets to the rescue, again!</p>
 </div></blockquote>
-<p>We can now extend the Gaussian DBN from the previous section to include the measurements, so that we can
+<p>We can now extend the Gaussian DBN from the previous section to include  measurements, so that we can
 encode the joint density <span class="math notranslate nohighlight">\(p(X,Z|U)\)</span> on states <span class="math notranslate nohighlight">\(X\)</span> <em>and</em> measurements <span class="math notranslate nohighlight">\(Z\)</span>, given the controls <span class="math notranslate nohighlight">\(U\)</span>:</p>
 <div class="math notranslate nohighlight">
 \[
