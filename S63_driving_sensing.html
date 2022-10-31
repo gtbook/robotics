@@ -534,6 +534,28 @@
    6.3.6. Creating 3D Maps
   </a>
  </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#gtsam-101">
+   6.3.7. GTSAM 101
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#d-and-3d-points">
+     6.3.7.1. 2D and 3D Points
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#d-and-3d-rotations">
+     6.3.7.2. 2D and 3D Rotations
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#reading-and-visualizing-lidar-clouds">
+     6.3.7.3. Reading and Visualizing LIDAR clouds
+    </a>
+   </li>
+  </ul>
+ </li>
 </ul>
 
             </nav>
@@ -584,6 +606,28 @@
    6.3.6. Creating 3D Maps
   </a>
  </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#gtsam-101">
+   6.3.7. GTSAM 101
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#d-and-3d-points">
+     6.3.7.1. 2D and 3D Points
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#d-and-3d-rotations">
+     6.3.7.2. 2D and 3D Rotations
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#reading-and-visualizing-lidar-clouds">
+     6.3.7.3. Reading and Visualizing LIDAR clouds
+    </a>
+   </li>
+  </ul>
+ </li>
 </ul>
 
                         </nav>
@@ -604,7 +648,7 @@
 <div class="cell_output docutils container">
 <div class="output text_html">
 <div align='center'>
-<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S63-Autonomous%20Vehicle%20with%20LIDAR%20and%20cameras-04.jpg?raw=1' style='height:256 width:100%'/>
+<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S63-Autonomous%20Vehicle%20with%20LIDAR%20and%20cameras-00.jpg?raw=1' style='height:256 width:100%'/>
 </div>
 </div></div>
 </div>
@@ -890,6 +934,150 @@ P^w = \phi(T^w_b, P^b)
 </div>
 </div>
 <p>We will use this capability in the next section to produce large scale sparse point cloud maps of the environment around an autonomous vehicle.</p>
+</div>
+<div class="section" id="gtsam-101">
+<h2><span class="section-number">6.3.7. </span>GTSAM 101<a class="headerlink" href="#gtsam-101" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>A deeper dive in the GTSAM concepts used above.</p>
+</div></blockquote>
+<div class="section" id="d-and-3d-points">
+<h3><span class="section-number">6.3.7.1. </span>2D and 3D Points<a class="headerlink" href="#d-and-3d-points" title="Permalink to this headline">¶</a></h3>
+<p>In GTSAM <code class="docutils literal notranslate"><span class="pre">Point2</span></code> and <code class="docutils literal notranslate"><span class="pre">Point3</span></code> are simply functions that return 2D and 3D numpy vectors, respectively:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">p</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Point2</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">P</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Point3</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">p</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">P</span><span class="p">),</span> <span class="n">P</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;class &#39;numpy.ndarray&#39;&gt; [3. 4.]
+&lt;class &#39;numpy.ndarray&#39;&gt; [5. 6. 7.]
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="d-and-3d-rotations">
+<h3><span class="section-number">6.3.7.2. </span>2D and 3D Rotations<a class="headerlink" href="#d-and-3d-rotations" title="Permalink to this headline">¶</a></h3>
+<p>2D and 3D rotations are represented internally by <span class="math notranslate nohighlight">\(2 \times 2\)</span> matrices and <span class="math notranslate nohighlight">\(3 \times 3\)</span> matrices, respectively, but these are wrapped into the classes <code class="docutils literal notranslate"><span class="pre">Rot2</span></code> and <code class="docutils literal notranslate"><span class="pre">Rot3</span></code>. We can print them, and get the rotation matrix via the <code class="docutils literal notranslate"><span class="pre">matrix()</span></code> method:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">R1</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Rot2</span><span class="p">(</span><span class="mi">20</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span> <span class="c1"># 20 degrees rotation</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">R1</span><span class="p">,</span> <span class="n">R1</span><span class="o">.</span><span class="n">matrix</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>theta: 0.349066
+ [[ 0.93969262 -0.34202014]
+ [ 0.34202014  0.93969262]]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">R2</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Rot3</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">R2</span><span class="p">,</span> <span class="n">R2</span><span class="o">.</span><span class="n">matrix</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>R: [
+	1, 0, 0;
+	0, 1, 0;
+	0, 0, 1
+]
+ [[1. 0. 0.]
+ [0. 1. 0.]
+ [0. 0. 1.]]
+</pre></div>
+</div>
+</div>
+</div>
+<p>While there are various methods to create 3D rotation matrices (use help!) above we only use the named constructor <code class="docutils literal notranslate"><span class="pre">Yaw</span></code> , which is a rotation around the Z-axis. Below is an example, which you can compare with the 2D rotation example above…</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">R3</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Rot3</span><span class="o">.</span><span class="n">Yaw</span><span class="p">(</span><span class="mi">20</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span> <span class="c1"># 20 degrees rotation around Z</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">R3</span><span class="p">,</span> <span class="n">R3</span><span class="o">.</span><span class="n">matrix</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>R: [
+	0.939693, -0.34202, 0;
+	0.34202, 0.939693, 0;
+	0, 0, 1
+]
+ [[ 0.93969262 -0.34202014  0.        ]
+ [ 0.34202014  0.93969262  0.        ]
+ [ 0.          0.          1.        ]]
+</pre></div>
+</div>
+</div>
+</div>
+<p>We will look at 3D rotations in much more detail in Chapter 7, when we look at drones.</p>
+</div>
+<div class="section" id="reading-and-visualizing-lidar-clouds">
+<h3><span class="section-number">6.3.7.3. </span>Reading and Visualizing LIDAR clouds<a class="headerlink" href="#reading-and-visualizing-lidar-clouds" title="Permalink to this headline">¶</a></h3>
+<p>The utility functions <code class="docutils literal notranslate"><span class="pre">read_lidar_points</span></code> and <code class="docutils literal notranslate"><span class="pre">visualize_clouds</span></code> are not part of GTSAM, but are part of the gtbook library that accompanies this book. On the <a class="reference external" href="https://gtbook.github.io/gtbook/driving.html">gtbook website</a> you can find much more detailed documentation as well as the source code, but <code class="docutils literal notranslate"><span class="pre">help</span></code> is very comprehensive for those functions:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="n">driving</span><span class="o">.</span><span class="n">read_lidar_points</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Help on function read_lidar_points in module gtbook.driving:
+
+read_lidar_points(filename: str)
+    Read 3D points in LIDAR scan stored as a binary_little_endian .ply file.
+    
+    Parameters:
+        filename: of ply file
+    
+    Returns:
+        A tuple (3,N) numpy array.
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="n">driving</span><span class="o">.</span><span class="n">visualize_clouds</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Help on function visualize_clouds in module gtbook.driving:
+
+visualize_clouds(clouds: list, show_grid_lines: bool = False, cloud_colors=None, marker_size: int = 1, do_subsampling: bool = True)
+    Visualizes cloud(s) in a iterative 3D plot.
+        Adapted from code by 3630 TAs Binit Shah and Jerred Chen
+    
+    Due to browser limitations, rendering above 5 frames requires
+    subsampling of the point clouds, which is done automatically.
+    
+    Example input of arg:
+    clouds = [clouda, cloudb, cloudc]
+    where each cloud is a numpy array of shape (3, num_points).
+    cloud[0] are the x coordinates, cloud[1] is y, and cloud[2] is z.
+    
+    Args:
+        clouds (list):          ordered series of point clouds
+        show_grid_lines (bool): plots gridlines
+        cloud_colors (list):    colors for each cloud in the visualization
+        marker_size (int):      size of each marker
+        do_subsampling (bool):  whether or not subsampling occurs
+</pre></div>
+</div>
+</div>
+</div>
+<p>While the visualization code is statically rendered in the book, when you open the Colab they should be rendered as interactive plotly scatter plots. Try it!</p>
+</div>
 </div>
 </div>
 
