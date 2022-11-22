@@ -533,6 +533,23 @@
   <a class="reference internal nav-link" href="#full-rigid-body-kinematics">
    7.2.6. Full Rigid-Body Kinematics
   </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#positional-kinematics">
+     7.2.6.1. Positional Kinematics
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#angular-velocity">
+     7.2.6.2. Angular Velocity
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#rotational-kinematics">
+     7.2.6.3. Rotational Kinematics
+    </a>
+   </li>
+  </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#simulation-aka-forward-integrating">
@@ -615,6 +632,23 @@
   <a class="reference internal nav-link" href="#full-rigid-body-kinematics">
    7.2.6. Full Rigid-Body Kinematics
   </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#positional-kinematics">
+     7.2.6.1. Positional Kinematics
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#angular-velocity">
+     7.2.6.2. Angular Velocity
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#rotational-kinematics">
+     7.2.6.3. Rotational Kinematics
+    </a>
+   </li>
+  </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#simulation-aka-forward-integrating">
@@ -663,27 +697,30 @@
 <blockquote>
 <div><p>An amazing way to fly in 3D.</p>
 </div></blockquote>
-<p><strong>This Section is still in draft mode and was released for adventurous spirits (and TAs) only.</strong></p>
 <div class="cell tag_remove-input docutils container">
 <div class="cell_output docutils container">
 <div class="output text_html">
 <div align='center'>
-<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S72-Autonomous%20camera%20drone-05.jpg?raw=1' style='height:256 width:100%'/>
+<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S72-Autonomous%20camera%20drone-07.jpg?raw=1' style='height:256 width:100%'/>
 </div>
 </div></div>
 </div>
-<p>The kinematics of quadrotors and multicopters are those of simple rigid 3D bodies. Many different coordinate frame conventions are used in the literature. I introduce one good choice below, and convert equations from the literature to this convention where needed.</p>
-<p>The kinematics equations are most useful for navigation and control when expressed in the navigation frame <span class="math notranslate nohighlight">\(\mathcal{N}\)</span>, which for MAV applications is almost universally assumed to be non-rotating and aligned with gravity, but can otherwise be defined arbitrarily, e.g., <strong>East-North-Up (ENU)</strong>. The origin of the navigation frame is often chosen as the take-off point, but does not have to be.</p>
-<p>We also define a body frame <span class="math notranslate nohighlight">\(\mathcal{B}\)</span> as having its origin at the center of mass of the vehicle. Following convention in aerospace applications, we fix the x-axis as pointing to the front of the vehicle (not always the direction of travel), the y-axis as pointing to the left, and the z-axis pointing up, the so-called <strong>FLU convention</strong>.</p>
+<p>The kinematics of quadrotors and multirotor aircraft are those of simple rigid 3D bodies. Many different coordinate frame conventions are used in the literature. I introduce one good choice below, and convert equations from the literature to this convention where needed.</p>
+<p>The kinematics equations are most useful for navigation and control when expressed in a local <strong>navigation frame</strong> <span class="math notranslate nohighlight">\(\mathcal{N}\)</span>, which for MAV applications is almost always assumed to be non-rotating and aligned with gravity, but can otherwise be defined arbitrarily, e.g., <strong>East-North-Up (ENU)</strong>. The origin of the navigation frame is often chosen as the take-off point, but does not have to be. Another frequent choice is the UTM (Universal Transverse Mercator) coordinate system, which defines 60 locally flat coordinate frames on earth.</p>
+<p>We also define a <strong>body frame</strong> <span class="math notranslate nohighlight">\(\mathcal{B}\)</span> as having its origin at the center of mass of the vehicle. Following convention in aerospace applications, we fix the x-axis as pointing to the front of the vehicle (not always the direction of travel), the y-axis as pointing to the left, and the z-axis pointing up, the so-called <strong>FLU convention</strong>.</p>
 <p>We then define, respectively,</p>
 <p>• the vehicle’s position <span class="math notranslate nohighlight">\(r^{n}\doteq[x,y,z]^{T}\)</span>,</p>
 <p>• its linear velocity <span class="math notranslate nohighlight">\(v^n=\dot{r^{n}}\doteq[u,v,w]^{T}\)</span>,</p>
-<p>• the attitude <span class="math notranslate nohighlight">\(R^n_b\doteq[i^b,j^b,k^b]\in SO(3)\)</span>, a <span class="math notranslate nohighlight">\(3\times 3\)</span> rotation matrix from <span class="math notranslate nohighlight">\(\mathcal{B}\)</span> to <span class="math notranslate nohighlight">\(\mathcal{N}\)</span>,</p>
+<p>• the attitude <span class="math notranslate nohighlight">\(R^n_b\doteq[i^b,j^b,k^b]\in SO(3)\)</span>, a <span class="math notranslate nohighlight">\(3\times 3\)</span> rotation matrix with the columns of the body frame <span class="math notranslate nohighlight">\(\mathcal{B}\)</span> expressed in the navigation frame <span class="math notranslate nohighlight">\(\mathcal{N}\)</span>,</p>
 <p>• the body angular velocity <span class="math notranslate nohighlight">\(\omega^b\doteq[p,q,r]^{T}\)</span>.</p>
 <p>Above the superscript <span class="math notranslate nohighlight">\(n\)</span> and <span class="math notranslate nohighlight">\(b\)</span> denote quantities expressed in the <em>navigation</em> and <em>body</em> frame, respectively.</p>
 <div class="section" id="drone-dynamics">
 <h2><span class="section-number">7.2.1. </span>Drone Dynamics<a class="headerlink" href="#drone-dynamics" title="Permalink to this headline">¶</a></h2>
-<p>Let us take the <a class="reference external" href="https://www.skydio.com/skydio-2-plus">Skydio 2+</a> as a prototypical and relevant example. Its mass, with battery, is <span class="math notranslate nohighlight">\(800g\)</span>, but let’s just say <span class="math notranslate nohighlight">\(1kg\)</span> to make the calculations easier. Its dimensions are <span class="math notranslate nohighlight">\(229mm \times 274mm\)</span>, but let’s assume the motors are at <span class="math notranslate nohighlight">\((+/- 0.10m, +/- 0.10m)\)</span>, which is not too far off.</p>
+<figure>
+<img src="https://github.com/gtbook/robotics/blob/main/Figures7/Skydio2axes.png?raw=1" id="fig:Skydio" style="width:18cm" alt="">
+<figcaption>Skydio 2 drone with *Front-Left-Up* coordinate frame, and rotors labeled with coordinates. </figcaption>
+</figure>
+<p>Let us take the <a class="reference external" href="https://www.skydio.com/skydio-2-plus">Skydio 2+</a> as a prototypical and relevant example. Its mass, with battery, is <span class="math notranslate nohighlight">\(800g\)</span>, but let’s just say <span class="math notranslate nohighlight">\(1kg\)</span> to make the calculations easier. Its dimensions are <span class="math notranslate nohighlight">\(229mm \times 274mm\)</span>, but let’s assume the motors are at <span class="math notranslate nohighlight">\((+/- 0.10m, +/- 0.10m)\)</span>, which is not too far off. The figure above shows the setup.</p>
 </div>
 <div class="section" id="hover">
 <h2><span class="section-number">7.2.2. </span>Hover<a class="headerlink" href="#hover" title="Permalink to this headline">¶</a></h2>
@@ -696,26 +733,31 @@
 <p>In general, the force <span class="math notranslate nohighlight">\(F^b_z\)</span> aligned with the body Z-axis will be</p>
 <div class="math notranslate nohighlight">
 \[
-F^b_z = \sum_{i=1}^4 f_i
+F^b_z = \sum_{i=1}^4 f_i.
 \]</div>
+<p>As long as the drone is level, and hence the body Z-axis is aligned with gravity, we can only accelerate up or down. Below we will look at how to change orientation.</p>
 </div>
 <div class="section" id="forward-flight">
 <h2><span class="section-number">7.2.3. </span>Forward Flight<a class="headerlink" href="#forward-flight" title="Permalink to this headline">¶</a></h2>
-<p>Of course, when we <em>tilt</em> the quadrotor forwards, we will direct some of that thrust towards generating horizontal acceleration. To get a handle on this, we need to calculate the thrust in the <em>navigation</em> frame, but this is just a matter of multiplying with the rotation matrix <span class="math notranslate nohighlight">\(R^n_b\)</span>:</p>
+<p>Of course, when we <em>tilt</em> the quadrotor forwards, we will direct some of the thrust delivered by the rotors towards generating horizontal acceleration. To get a handle on this, we need to calculate the thrust in the <em>navigation</em> frame. To do this, we need to be multiplying with the rotation matrix <span class="math notranslate nohighlight">\(R^n_b\)</span>:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 F^n = R^n_b \begin{bmatrix}0 \\ 0 \\ F^b_z\end{bmatrix} = \hat{z}^n_b F^b_z
 \end{split}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\hat{z}^n_b\)</span> is the third column of <span class="math notranslate nohighlight">\(R^n_b\)</span>, i.e., this is simply the Z-axis <span class="math notranslate nohighlight">\(\hat{z}\)</span> of the body frame, expressed in the navigation frame. <em>In other words, the thrust in the navigation frame is always aligned with the body’s Z-axis, and hence by rotating the quadrotor appropriately we can achieve any thrust direction we desire</em>.</p>
-<p>Let us assume that the FLU body frame is currently oriented along the Y-axis of the ENU navigation frame, i.e., we are flying NORTH, then if we tilt forward with an angle of <span class="math notranslate nohighlight">\(\theta\)</span> with respect to vertical, we obtain</p>
+<p>Let us assume that the x-axis of the FLU body frame is currently oriented along the Y-axis of the ENU navigation frame, i.e., we are flying NORTH. Then, if we tilt forward with an angle of <span class="math notranslate nohighlight">\(\theta\)</span> with respect to vertical, the body Z-axis will have a <span class="math notranslate nohighlight">\(\sin \theta\)</span> contribution towards the north (ENU y-axis), and a <span class="math notranslate nohighlight">\(\cos \theta\)</span> up (ENU z-axis):</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
-F^n = \begin{bmatrix}0 \\ \sin \theta \\ \cos \theta\end{bmatrix} F^b_z
+\hat{z}^n_b = \begin{bmatrix}0 \\ \sin \theta \\ \cos \theta\end{bmatrix}.
 \end{split}\]</div>
-<p>and hence if we want to maintain level flight, we need to keep compensating for gravity by maintaining</p>
+<p>The thrust vector <span class="math notranslate nohighlight">\(F^n\)</span> in the navigation frame is then obtained by multiplying with the total force <span class="math notranslate nohighlight">\(F^b_z\)</span>:
+$<span class="math notranslate nohighlight">\(
+F^n = \begin{bmatrix}0 \\ \sin \theta \\ \cos \theta\end{bmatrix} F^b_z.
+\)</span>$</p>
+<p>The <span class="math notranslate nohighlight">\(\cos \theta\)</span> factor is potentially problematic: if we want to maintain level flight (not fall out of the sky!) we need to compensate for gravity by maintaining the constraint</p>
 <div class="math notranslate nohighlight">
 \[
-\cos \theta F^b_z = 10N.
+\cos \theta F^b_z == 10N.
 \]</div>
 <p>That in turn means that the forward trust (along the navigation Y-axis) will be</p>
 <div class="math notranslate nohighlight">
@@ -735,26 +777,28 @@ F^b_z = \frac{10N}{\cos \theta} \leq 20N \rightarrow \cos \theta \geq 0.5 \right
 \[
 F^n_y = \tan \theta_{\max} \cdot 10N \approx 17N 
 \]</div>
-<p>So, we are limited to <span class="math notranslate nohighlight">\(17N\)</span> of forward thrust, and this when tilting very aggressively at 60 degrees. If we tilt more, we can improve thrust even more (up to 20N) but the drone will start falling out of the sky.</p>
+<p>So, we are limited to <span class="math notranslate nohighlight">\(17N\)</span> of forward thrust, and this when tilting very aggressively at 60 degrees. If we tilt more, we can improve thrust even more (up to 20N) but the drone will lose altitude fast.</p>
 </div>
 <div class="section" id="drag-and-maximum-velocity">
 <h2><span class="section-number">7.2.5. </span>Drag and Maximum Velocity<a class="headerlink" href="#drag-and-maximum-velocity" title="Permalink to this headline">¶</a></h2>
-<p>Importantly, constant forward thrust does <em>not</em> mean that the drone will continue accelerating, because of <em>drag</em>. In fact, from the spec-sheet of the Skydio-2 we see that the top speed (in autonomous mode) is 36Mph, which is about <span class="math notranslate nohighlight">\(16m/s\)</span>, and the theoretical top speed is probably more like <span class="math notranslate nohighlight">\(20m/s\)</span>. Since drag increases <em>quadratically</em> with velocity, we can calculate the corresponding drag coefficient as the drag force has to exactly balance the maximum forward thrust at the top speed:</p>
+<p>Because of <em>drag</em>, constant forward thrust does <em>not</em> mean that the drone will continue accelerating. From the spec-sheet of the Skydio 2 drone we see that the top speed in autonomous mode is 36Mph, which is about <span class="math notranslate nohighlight">\(16m/s\)</span>, and the theoretical top speed is probably more like <span class="math notranslate nohighlight">\(20m/s\)</span>. Since drag increases <em>quadratically</em> with velocity, we can calculate the corresponding drag coefficient. Indeed, the drag force has to exactly balance the maximum forward thrust at the top speed:</p>
 <div class="math notranslate nohighlight">
 \[
 17N = k_d v_{top}^2 = k_d 20^2 m^2/s^2 \rightarrow k_d = 0.0425
 \]</div>
-<p>Now that we have the drag coefficient <span class="math notranslate nohighlight">\(k_d\)</span>, we can calculate a simple mapping from tilt angle <span class="math notranslate nohighlight">\(\theta\)</span> to forward velocity. Indeed, given tilt <span class="math notranslate nohighlight">\(\theta\)</span>, can calculate the forward thrust <span class="math notranslate nohighlight">\(F^n_y\)</span> in the navigation frame, and the velocity can be obtained by equating that to the drag force <span class="math notranslate nohighlight">\(k^d v^2\)</span>:</p>
+<p>Now that we have the drag coefficient <span class="math notranslate nohighlight">\(k_d\)</span>, we can calculate a simple mapping from tilt angle <span class="math notranslate nohighlight">\(\theta\)</span> to the terminal forward velocity. Given the tilt <span class="math notranslate nohighlight">\(\theta\)</span> we first calculate the forward thrust <span class="math notranslate nohighlight">\(F^n_y\)</span> in the navigation frame, after which the velocity can be obtained by equating that to the drag force <span class="math notranslate nohighlight">\(k^d v^2\)</span>:</p>
 <div class="math notranslate nohighlight">
 \[
 F^n_y = \tan \theta \cdot 10N = k_d v^2 \rightarrow v = \sqrt{\frac{\tan \theta \cdot 10}{k_d}} = \sqrt{\frac{10}{k_d}} \sqrt{\tan \theta} \approx 15 \sqrt{\tan \theta}
 \]</div>
+<p>With a smidgen of code we can build a lookup table <code class="docutils literal notranslate"><span class="pre">vmap</span></code>…</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">vmap</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="k">for</span> <span class="n">theta</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">50</span><span class="p">]:</span>
-  <span class="n">vmap</span><span class="p">[</span><span class="n">theta</span><span class="p">]</span> <span class="o">=</span> <span class="mi">15</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">theta</span><span class="p">)))</span>
-  <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;v(</span><span class="si">{</span><span class="n">theta</span><span class="si">}</span><span class="s2">) ~ </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">vmap</span><span class="p">[</span><span class="n">theta</span><span class="p">])</span><span class="si">}</span><span class="s2"> m/s&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">theta_deg</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span> <span class="mi">60</span><span class="p">]:</span>
+  <span class="n">theta_rad</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">theta_deg</span><span class="p">)</span>
+  <span class="n">vmap</span><span class="p">[</span><span class="n">theta_deg</span><span class="p">]</span> <span class="o">=</span> <span class="mf">15.</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">theta_rad</span><span class="p">))</span>
+  <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;v(</span><span class="si">{</span><span class="n">theta_deg</span><span class="si">}</span><span class="s2">) ~ </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">vmap</span><span class="p">[</span><span class="n">theta_deg</span><span class="p">])</span><span class="si">}</span><span class="s2"> m/s&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -768,33 +812,52 @@ v(20) ~ 9 m/s
 v(30) ~ 11 m/s
 v(40) ~ 14 m/s
 v(50) ~ 16 m/s
+v(60) ~ 20 m/s
 </pre></div>
 </div>
 </div>
 </div>
+<p>…and plot it below:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">px</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">vmap</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="n">y</span><span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">vmap</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">px</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">vmap</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="n">y</span><span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">vmap</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Velocity vs. Pitch Angle&quot;</span><span class="p">,</span> 
+        <span class="n">labels</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span><span class="s2">&quot;Pitch Angle (deg)&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span><span class="s2">&quot;Velocity (m/s)&quot;</span><span class="p">})</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/S72_drone_actions_12_0.png" src="_images/S72_drone_actions_12_0.png" />
+<img alt="_images/S72_drone_actions_13_0.png" src="_images/S72_drone_actions_13_0.png" />
 </div>
 </div>
 </div>
 <div class="section" id="full-rigid-body-kinematics">
 <h2><span class="section-number">7.2.6. </span>Full Rigid-Body Kinematics<a class="headerlink" href="#full-rigid-body-kinematics" title="Permalink to this headline">¶</a></h2>
-<p>Below I develop all attitude kinematics and dynamics directly on <span class="math notranslate nohighlight">\(SO(3)\)</span>, following Murray et al. (1994).
-In particular, the vehicle’s kinematics are given by</p>
+<p>The <strong>kinematics</strong> of the drone deal exclusively with velocities, not the forces and accelerations involved to obtain those velocities. Kinematics should be contrasted with <strong>statics</strong> or steady-state force reasoning as we did above, and <strong>dynamics</strong> which describes the changing forces and accelerations over time.
+Below we develop all attitude kinematics directly on the group <span class="math notranslate nohighlight">\(SO(3)\)</span> of 3D rotations.</p>
+<div class="section" id="positional-kinematics">
+<h3><span class="section-number">7.2.6.1. </span>Positional Kinematics<a class="headerlink" href="#positional-kinematics" title="Permalink to this headline">¶</a></h3>
+<p>For position, the vehicle’s kinematics are given by stating that the time derivative <span class="math notranslate nohighlight">\(\dot{r}^{n}\)</span> of position <span class="math notranslate nohighlight">\(r^n\)</span> in the navigation frame is equal to the <strong>linear velocity</strong> <span class="math notranslate nohighlight">\(v^n\)</span>, also in the navigation frame:</p>
+<div class="math notranslate nohighlight">
+\[
+\dot{r}^{n}	= v^n.
+\]</div>
+</div>
+<div class="section" id="angular-velocity">
+<h3><span class="section-number">7.2.6.2. </span>Angular Velocity<a class="headerlink" href="#angular-velocity" title="Permalink to this headline">¶</a></h3>
+<p>Just as we have a linear velocity <span class="math notranslate nohighlight">\(v^n\)</span>, a three-vector, we also have a 3-dimensional <strong>angular velocity</strong> <span class="math notranslate nohighlight">\(\omega\)</span>, but it is typically given <em>in the body frame</em> as <span class="math notranslate nohighlight">\(\omega^b\)</span>, because each of the components corresponds to angular velocities around the respective body axes. This angular velocity vector has a very intuitive interpretation as an angle-axis interpretation: the vector can be viewed as a rotation axis in 3D, centered at the body coordinate frame, and its norm <span class="math notranslate nohighlight">\(\|\omega^b\|\)</span> is the instantaneous angular velocity around that axis. For example, if the drone is steadily pitching downward by 10 degrees/second, this is a positive rotation around the body Y-axis and the corresponding angular velocity is</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
-\begin{align}
-\dot{r}^{n}	&amp;= v^n \\
-\dot{R}^n_b	&amp;= R^n_b\hat{\omega}^b
-\end{align}
+\omega^b = \begin{bmatrix}0 \\ 1 \\ 0\end{bmatrix} 10 \frac{\pi}{180}.
 \end{split}\]</div>
-<p>where the <span class="math notranslate nohighlight">\(3\times 3\)</span> skew-symmetric matrix <span class="math notranslate nohighlight">\(\hat{\omega}^b\doteq (R^n_b)^{T}\dot{R}^n_b\)</span> is obtained from the 3-vector <span class="math notranslate nohighlight">\(\omega^b\)</span> as follows:</p>
+</div>
+<div class="section" id="rotational-kinematics">
+<h3><span class="section-number">7.2.6.3. </span>Rotational Kinematics<a class="headerlink" href="#rotational-kinematics" title="Permalink to this headline">¶</a></h3>
+<p>Given the angular velocity <span class="math notranslate nohighlight">\(\omega^b\)</span> in the body frame, the time derivative <span class="math notranslate nohighlight">\(\dot{R}^n_b\)</span> of the vehicle’s attitude <span class="math notranslate nohighlight">\(R^n_b\)</span> is a bit more complicated, and is given by</p>
+<div class="math notranslate nohighlight">
+\[
+\dot{R}^n_b	= R^n_b\hat{\omega}^b.
+\]</div>
+<p>Above the quantity <span class="math notranslate nohighlight">\(\hat{\omega}^b\)</span> is a <span class="math notranslate nohighlight">\(3\times 3\)</span> skew-symmetric matrix, obtained from the angular velocity <span class="math notranslate nohighlight">\(\omega^b\)</span> as follows:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 \hat{\omega}^b\doteq\begin{bmatrix}
@@ -803,13 +866,15 @@ In particular, the vehicle’s kinematics are given by</p>
 -\omega^b_{y} &amp; \omega^b_{x}
 \end{bmatrix}.
 \end{split}\]</div>
-<p>Note <span class="math notranslate nohighlight">\(\hat{\omega}^b\in so(3)\)</span>, the Lie algebra associated with the 3D rotation group <span class="math notranslate nohighlight">\(SO(3)\)</span>.
-Also, the kinematics can also expressed using the spatial angular velocity <span class="math notranslate nohighlight">\(\omega^n\doteq R^n_b\omega^b\)</span>, i.e.,</p>
+<p>Note <span class="math notranslate nohighlight">\(\hat{\omega}^b\in \mathfrak{so}(3)\)</span>, the Lie algebra associated with the 3D rotation group <span class="math notranslate nohighlight">\(SO(3)\)</span>.</p>
+<p>While it is much easier to visualize and calculate the angular velocity in the body frame,
+the rotational kinematics can also expressed using the angular velocity <span class="math notranslate nohighlight">\(\omega^n\doteq R^n_b\omega^b\)</span> expressed in the navigation frame, by</p>
 <div class="math notranslate nohighlight">
 \[
-\dot{R}^n_b	= \hat{\omega}^n R^n_b
+\dot{R}^n_b	= \hat{\omega}^n R^n_b.
 \]</div>
-<p>However, it is much easier to visualize and calculate the angular velocity in the body frame.</p>
+<p>Regardless of which of these two expressions we use, the time derivative <span class="math notranslate nohighlight">\(\dot{R}^n_b\)</span> of the <span class="math notranslate nohighlight">\(3\times 3\)</span> attitude (rotation matrix) <span class="math notranslate nohighlight">\(R^n_b\)</span> is not very intuitive, and in the next section we show how to integrate it over time to simulate or calculate the trajectory of the drone over time.</p>
+</div>
 </div>
 <div class="section" id="simulation-aka-forward-integrating">
 <h2><span class="section-number">7.2.7. </span>Simulation aka Forward Integrating<a class="headerlink" href="#simulation-aka-forward-integrating" title="Permalink to this headline">¶</a></h2>
@@ -860,7 +925,7 @@ R^k_{k+1}[\omega^b(t), \Delta t] \approx I + \sin\theta K \approx I + \hat{\omeg
 \end{bmatrix}
 \end{split}\]</div>
 <p>where we also used the small angle approximation <span class="math notranslate nohighlight">\(\sin \theta \approx \theta\)</span>.
-Note that strictly speaking this approximation (unlike Rodrigues` formula) departs the rotation manifold and we need to periodically re-normalize to ensure that <span class="math notranslate nohighlight">\(R^n_b\in SO(3)\)</span>.</p>
+Note that strictly speaking this approximation (unlike Rodrigues` formula) departs the rotation manifold and we need to re-normalize to ensure that the attitude <span class="math notranslate nohighlight">\(R^n_b\)</span> remains a proper orthonormal rotation matrix, i.e., <span class="math notranslate nohighlight">\(R^n_b\in SO(3)\)</span>.</p>
 </div>
 </div>
 <div class="section" id="an-example-in-code">
@@ -881,16 +946,17 @@ Note that strictly speaking this approximation (unlike Rodrigues` formula) depar
 </div>
 </div>
 </div>
-<p>Note that the forward X-axis (first column) is pointed slightly down, the Y-axis is level, and the Z-axis is pointed up but slightly forward. We have calculated before that the velocity at this angle is <span class="math notranslate nohighlight">\(6~m/s\)</span>, and let us also assume that the 4 rotors conspire to create a small angular velocity around the vertical body axis:</p>
+<p>Note that the forward X-axis (first column) is pointed slightly down, the Y-axis is level, and the Z-axis is pointed up but slightly forward. This time we are flying in the direction of the navigation X-axis, i.e., eastward in the ENU convention.</p>
+<p>We have calculated before that the velocity at this angle is <span class="math notranslate nohighlight">\(6~m/s\)</span>, and let us also assume that the 4 rotors conspire to create an angular velocity <span class="math notranslate nohighlight">\(\omega^b\)</span> around the vertical body axis of 10 degrees/second:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">vb</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Point3</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">wb</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Point3</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span> <span class="c1"># 10 degrees per second</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">vb</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Point3</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>                <span class="c1"># body velocity</span>
+<span class="n">wb</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Point3</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span> <span class="c1"># angular velocity, 10 degrees per second around up axis</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>We can now integrate these, taking care to convert the body velocity to the navigation frame at each time step:</p>
+<p>We can now integrate these, <em>taking care to convert the body velocity to the navigation frame at each time step</em>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">delta_t</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1"># in seconds</span>
@@ -904,15 +970,16 @@ Note that strictly speaking this approximation (unlike Rodrigues` formula) depar
 
 <span class="c1"># integrate forward</span>
 <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">K</span><span class="p">):</span>
-    <span class="n">vn</span> <span class="o">=</span> <span class="n">nRb</span><span class="p">[:,:,</span><span class="n">k</span><span class="p">]</span> <span class="o">@</span> <span class="n">vb</span>
-    <span class="n">vn</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># we assume gravity is compensated for</span>
-    <span class="n">rn</span><span class="p">[:,</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">rn</span><span class="p">[:,</span><span class="n">k</span><span class="p">]</span> <span class="o">+</span> <span class="n">vn</span> <span class="o">*</span> <span class="n">delta_t</span>
-    <span class="n">delta_R</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Rot3</span><span class="o">.</span><span class="n">Expmap</span><span class="p">(</span><span class="n">wb</span> <span class="o">*</span> <span class="n">delta_t</span><span class="p">)</span>
-    <span class="n">nRb</span><span class="p">[:,:,</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">nRb</span><span class="p">[:,:,</span><span class="n">k</span><span class="p">]</span> <span class="o">@</span> <span class="n">delta_R</span><span class="o">.</span><span class="n">matrix</span><span class="p">()</span>
+    <span class="n">vn</span> <span class="o">=</span> <span class="n">nRb</span><span class="p">[:,:,</span><span class="n">k</span><span class="p">]</span> <span class="o">@</span> <span class="n">vb</span>                          <span class="c1"># velocity in navigation frame</span>
+    <span class="n">vn</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>                                     <span class="c1"># we assume gravity is compensated for</span>
+    <span class="n">rn</span><span class="p">[:,</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">rn</span><span class="p">[:,</span><span class="n">k</span><span class="p">]</span> <span class="o">+</span> <span class="n">vn</span> <span class="o">*</span> <span class="n">delta_t</span>            <span class="c1"># integrate position</span>
+    <span class="n">delta_R</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Rot3</span><span class="o">.</span><span class="n">Expmap</span><span class="p">(</span><span class="n">wb</span> <span class="o">*</span> <span class="n">delta_t</span><span class="p">)</span>     <span class="c1"># calculate incremental rotation matrix</span>
+    <span class="n">nRb</span><span class="p">[:,:,</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">nRb</span><span class="p">[:,:,</span><span class="n">k</span><span class="p">]</span> <span class="o">@</span> <span class="n">delta_R</span><span class="o">.</span><span class="n">matrix</span><span class="p">()</span>  <span class="c1"># integrate attitude</span>
 </pre></div>
 </div>
 </div>
 </div>
+<p>Above, the <code class="docutils literal notranslate"><span class="pre">Rot3.Expmap</span></code>, for “exponential map”, implements Rodrigues’ formula exactly. Note also that we need to use the <code class="docutils literal notranslate"><span class="pre">&#64;</span></code> symbol for matrix multiplication in the attitude integration part.</p>
 <p>The plotting code is almost as verbose, and this is using the <code class="docutils literal notranslate"><span class="pre">gtbook.drone.axes</span></code> method, which hides more magic to create the axes:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -928,15 +995,15 @@ Note that strictly speaking this approximation (unlike Rodrigues` formula) depar
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/S72_drone_actions_24_0.png" src="_images/S72_drone_actions_24_0.png" />
+<img alt="_images/S72_drone_actions_26_0.png" src="_images/S72_drone_actions_26_0.png" />
 </div>
 </div>
 <p>You can see that the drone takes off in the positive X-direction, which is East in the ENU convention, and then gradually turns towards the North.</p>
 <p><strong>Exercises</strong></p>
 <ul class="simple">
-<li><p>Change the initial forward orientation to be the <em>northern</em> direction.</p></li>
 <li><p>Change the direction of the turn to the other side.</p></li>
 <li><p>Change the code to use different values for <span class="math notranslate nohighlight">\(\Delta t\)</span> and observe the results.</p></li>
+<li><p>Change the initial forward orientation to be the <em>northern</em> direction.</p></li>
 </ul>
 </div>
 <div class="section" id="full-rigid-body-dynamics">
