@@ -527,8 +527,8 @@
   </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#camera-extrinsics">
-   7.3.2. Camera Extrinsics
+  <a class="reference internal nav-link" href="#cameras">
+   7.3.2. Cameras
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -584,8 +584,8 @@
   </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#camera-extrinsics">
-   7.3.2. Camera Extrinsics
+  <a class="reference internal nav-link" href="#cameras">
+   7.3.2. Cameras
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -613,7 +613,6 @@
 <blockquote>
 <div><p>Drones like inertial sensing and cameras.</p>
 </div></blockquote>
-<p><strong>This Section is still in draft mode and was released for adventurous spirits (and TAs) only.</strong></p>
 <div class="cell tag_remove-input docutils container">
 <div class="cell_output docutils container">
 <div class="output text_html">
@@ -624,41 +623,40 @@
 </div>
 <div class="section" id="inertial-measurement-units">
 <h2><span class="section-number">7.3.1. </span>Inertial Measurement Units<a class="headerlink" href="#inertial-measurement-units" title="Permalink to this headline">¶</a></h2>
-<p>Inertial measurement units (IMUs) often bundle the following three sensors: gyroscopes, accelerometers, and magnetometers.</p>
+<p>Inertial measurement units (IMUs) measure how a rigid body moves through space, and have undergone revolutionary transformations in the last century. Whereas they were initially developed for military and later civilian navigation purposes, miniaturized (MEMS) versions of them are now built into most of the mobile computing devices people use every day. IMUs often bundle the following three sensors: gyroscopes, accelerometers, and magnetometers, which we discuss in turn below.</p>
 <div class="section" id="gyroscopes">
 <h3><span class="section-number">7.3.1.1. </span>Gyroscopes<a class="headerlink" href="#gyroscopes" title="Permalink to this headline">¶</a></h3>
-<p>Drones fly in 3D, and have to carefully control their attitude.
-A <strong>gyroscope</strong> measures <em>changes</em> in orientation around three orthogonal axes, i.e., an angular velocity <span class="math notranslate nohighlight">\(\omega\)</span>.</p>
-<p>We can integrate the angular velocity <span class="math notranslate nohighlight">\(\omega(t)\)</span> over time:</p>
+<p>A <strong>gyroscope</strong> measures <em>changes</em> in orientation around three orthogonal axes, i.e., an angular velocity <span class="math notranslate nohighlight">\(\omega\)</span>.
+This is useful for drones, as they fly in 3D space and have to carefully control and hence measure their attitude <span class="math notranslate nohighlight">\(R^n_b\)</span>. Gyroscopes do not directly measure attitude however, only the rate of change in orientation, and hence we need to integrate the angular velocity <span class="math notranslate nohighlight">\(\omega(t)\)</span> over time:</p>
 <div class="math notranslate nohighlight">
 \[
 R^n_b(t) = R^n_b(0) \int_{\tau=0}^t \exp \hat{\omega}(\tau) d\tau
 \]</div>
 <p>Above, the exponential map <span class="math notranslate nohighlight">\(\exp \hat{\omega}(\tau)\)</span> is as defined in the previous section, where we have also shown how to numerically integrate forward in rotation space.</p>
-<p>However, because the gyroscope measurements are corrupted by random noise, this noise is also integrated over time.
-Even more damning, if we do <em>not</em> know the bias, the error grows linearly over time, proportional to the bias error.
-Both effects mean that we will gradually lose track of the correct attitude <span class="math notranslate nohighlight">\(R^n_b(t)\)</span>, a process known as “drift”.
-Good (expensive) gyroscopes are able to track the attitude for a long time, whereas cheaper (MEMS) gyroscopes as those found in drones (and phones) can drift from a usable attitude estimate in 100s or even 10s of seconds.</p>
+<p>Unfortunately, when the gyroscope measurements are corrupted by random noise, this noise is also integrated over time. In addition, gyroscopes also suffer from <strong>bias</strong>, a non-zero offset of the measurements that changes slowly over time. If we know this bias, e.g., by estimating it, then we can subtract it first. However, if we do <em>not</em> know the bias, the resulting error grows linearly over time when it is integrated.</p>
+<p>Both effects mean that we will gradually lose track of the correct attitude <span class="math notranslate nohighlight">\(R^n_b(t)\)</span>, a process known as “drift”.
+Good (expensive) gyroscopes are able to track the attitude for a long time, whereas cheaper (MEMS) gyroscopes as those found in drones (and phones) can drift away from a usable attitude estimate in 100s or even 10s of seconds.</p>
 </div>
 <div class="section" id="accelerometers">
 <h3><span class="section-number">7.3.1.2. </span>Accelerometers<a class="headerlink" href="#accelerometers" title="Permalink to this headline">¶</a></h3>
-<p>An accelerometer measures the linear acceleration in 3D.</p>
-<p>The most frequent and dependable use of an accelerometer is to “aid” a gyroscope, maintaining absolute orientation over time.
+<p>An <strong>accelerometer</strong> measures the linear acceleration in 3D. While GPS, provided one is outdoors and in an open area, can provide a measurement of the absolute position <span class="math notranslate nohighlight">\(r^n(t)\)</span> of a drone, the errors associated with GPS are often large. Accelerometers are much more precise, but unfortunately do not provide absolute position: because they measure <em>forces</em> exerted upon them, any measurement they provide is essentially an acceleration, i.e., the second derivative of position. Hence, of course, the name “accelerometer”.</p>
+<p>In theory, we can <em>doubly</em> integrate the measured acceleration to obtain the position <span class="math notranslate nohighlight">\(r^n(t)\)</span>.
+However, because of the double integration, the effect of random noise and bias error is doubly compounded, making the use of an accelerometer for estimating a drone’s position rather tricky. It can be done, but it requires great care and careful initialization of the biases. In fact, aircraft equipped with <em>inertial navigation systems</em> typically have an “INS alignment procedure” where the aircraft remains stationary on the taxi-way for a short period prior to take-off. Even then, unless the accelerometer can be augmented with absolute sources of position, such as GPS, an INS is bound to diverge sooner or later.</p>
+<p>One of the most frequent and dependable uses of an accelerometer is to “aid” a gyroscope, maintaining absolute orientation over time.
 As discussed above, integrating the angular velocity <span class="math notranslate nohighlight">\(\omega(t)\)</span> over time accumulates error.
 Because gravity is such a strong signal it often dwarfs the accelerations due to maneuvering, and hence we can use it to correct our attitude estimate <span class="math notranslate nohighlight">\(\hat{R}^n_b\)</span>. This is known as “aiding” the gyroscope. Note that the attitude has <em>three</em> degrees of freedom, and the accelerometer can only correct two of them: pitch and roll. The absolute heading of the drone is still <em>unobservable</em>.</p>
-<p>In theory, we can also <em>doubly</em> integrate the measured acceleration to obtain the position <span class="math notranslate nohighlight">\(r^n(t)\)</span>.
-However, because of the double integration, the effect of random noise and bias error is doubly compounded, making the use of an accelerometer for estimating a drone’s position rather tricky. It can be done, but it requires great care and careful initialization of the biases. In fact, aircraft equipped with <em>inertial navigation systems</em> typically have an “INS alignment procedure” where the aircraft remains stationary on the taxi-way for a short period prior to take-off. Even then, unless the accelerometer can be aided using absolute sources of position, such as GPS, an INS is bound to diverge sooner or later.</p>
 </div>
 <div class="section" id="magnetometers">
 <h3><span class="section-number">7.3.1.3. </span>Magnetometers<a class="headerlink" href="#magnetometers" title="Permalink to this headline">¶</a></h3>
 <p>A magnetometer measures a 3D vector that points along Earth’s local magnetic field.
-The magnetic field roughly points to the magnetic north, although it really is 3-dimensional.</p>
-<p>A magnetometer is really like a sophisticated compass, and hence its main use is to “aid” the gyroscope, providing a measurement on the absolute heading, i.e., the last remaining degree of freedom.</p>
+The magnetic field roughly points to the magnetic north, although it really is 3-dimensional, and magnetometers measure the strength of these field in all three axes. For drones, it is often a noisy and rather unreliable sensor, especially indoors or in the presence of large metal structures. One drone application is inspecting bridges, and one can see that in such cases a magnetometer’s usefulness will be rather limited.</p>
+<p>Still, as a magnetometer functions like a sophisticated compass, its main use is to “aid” the gyroscope, providing a measurement on the absolute heading, i.e., the last remaining degree of freedom. While noisy, over time it can provide enough signal to recover and maintain the heading of the drone.</p>
 </div>
 </div>
-<div class="section" id="camera-extrinsics">
-<h2><span class="section-number">7.3.2. </span>Camera Extrinsics<a class="headerlink" href="#camera-extrinsics" title="Permalink to this headline">¶</a></h2>
-<p>The second frequently used sensor for drones is a camera, or multiple cameras. Cameras are light-weight, cheap, and they provide some amazing capabilities. By tracking features in the image(s) over time, cameras can provide relative motion measurements, i.e., <strong>visual odometry</strong>. If you have a pre-existing map of the environment, you can use a camera to <strong>localize</strong>, providing absolute orientation and position even without an IMU. <em>If</em> an IMU is available it can be used to track the high frequency <em>relative</em> motion of the drone, while the visual information provides a lower frequency but <em>absolute</em> measurement of the drone’s pose. In that way, IMU and camera measurements are perfectly complementary. In addition, if no map is available, cameras can be used to build a 3-D map of the environment in real time, using a paradigm called <strong>visual SLAM</strong>.</p>
+<div class="section" id="cameras">
+<h2><span class="section-number">7.3.2. </span>Cameras<a class="headerlink" href="#cameras" title="Permalink to this headline">¶</a></h2>
+<p>The second frequently used sensor for drones is a camera, or multiple cameras. Cameras are light-weight, cheap, and they provide some amazing capabilities, which we will discuss below and in the next section. They are also <em>passive</em>, in that unlike LIDARs, they do not send out energy into the environment. This has obvious benefits in terms of stealth, important in some applications, but also is less power-hungry. In drones, battery autonomy is one of the key design constraints and hence cameras are a very popular sensor for that reason alone.</p>
+<p>By tracking features in the image(s) over time, cameras can provide relative motion measurements, i.e., <strong>visual odometry</strong>. If you have a pre-existing map of the environment, you can use a camera to <strong>localize</strong>, providing absolute orientation and position even without an IMU. <em>If</em> an IMU is available it can be used to track the high frequency <em>relative</em> motion of the drone, while the visual information provides a lower frequency but <em>absolute</em> measurement of the drone’s pose. In that way, IMU and camera measurements are perfectly complementary. In addition, if no map is available, cameras can be used to build a 3-D map of the environment in real time, using a paradigm called <strong>visual SLAM</strong>.</p>
 <p>In this section we will concentrate on the extrinsic calibration of cameras and camera rigs.
 We already discussed cameras as sensors in section 5.2, including their <em>intrinsic</em> calibration parameters such as focal length, image center, etc.
 However, when using cameras on a drone, it is very important to know the relative position and orientation of the camera with respect to the drone’s body frame, the so called <strong>extrinsic calibration parameters</strong>, consisting of a position <span class="math notranslate nohighlight">\(t^b_c\)</span> and orientation <span class="math notranslate nohighlight">\(R^b_c\)</span> of the camera in the body frame.</p>
@@ -691,15 +689,25 @@ a camera towards the front of the drone will have a positive <span class="math n
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">F</span><span class="p">,</span><span class="n">L</span><span class="p">,</span><span class="n">U</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-<span class="n">bTc1</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose3</span><span class="p">(</span><span class="n">gtsam</span><span class="o">.</span><span class="n">Rot3</span><span class="p">(</span><span class="o">-</span><span class="n">L</span><span class="p">,</span><span class="o">-</span><span class="n">U</span><span class="p">,</span><span class="n">F</span><span class="p">),</span> <span class="n">t1</span><span class="p">);</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_traces</span><span class="p">(</span><span class="n">axes</span><span class="p">(</span><span class="n">bTc1</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;X1&quot;</span><span class="p">,</span><span class="s2">&quot;Y1&quot;</span><span class="p">,</span><span class="s2">&quot;Z1&quot;</span><span class="p">]))</span>
-<span class="n">bTc2</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose3</span><span class="p">(</span><span class="n">gtsam</span><span class="o">.</span><span class="n">Rot3</span><span class="p">(</span><span class="o">-</span><span class="n">L</span><span class="p">,</span><span class="o">-</span><span class="n">U</span><span class="p">,</span><span class="n">F</span><span class="p">),</span> <span class="n">t2</span><span class="p">);</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_traces</span><span class="p">(</span><span class="n">axes</span><span class="p">(</span><span class="n">bTc2</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;X2&quot;</span><span class="p">,</span><span class="s2">&quot;Y2&quot;</span><span class="p">,</span><span class="s2">&quot;Z2&quot;</span><span class="p">]))</span>
-<span class="n">bTc3</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose3</span><span class="p">(</span><span class="n">gtsam</span><span class="o">.</span><span class="n">Rot3</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="o">-</span><span class="n">U</span><span class="p">,</span><span class="o">-</span><span class="n">F</span><span class="p">),</span> <span class="n">t3</span><span class="p">);</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_traces</span><span class="p">(</span><span class="n">axes</span><span class="p">(</span><span class="n">bTc3</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;X3&quot;</span><span class="p">,</span><span class="s2">&quot;Y3&quot;</span><span class="p">,</span><span class="s2">&quot;Z3&quot;</span><span class="p">]))</span>
+<span class="n">bTc1</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose3</span><span class="p">(</span><span class="n">gtsam</span><span class="o">.</span><span class="n">Rot3</span><span class="p">(</span><span class="o">-</span><span class="n">L</span><span class="p">,</span><span class="o">-</span><span class="n">U</span><span class="p">,</span><span class="n">F</span><span class="p">),</span> <span class="n">t1</span><span class="p">)</span>
+<span class="n">bTc2</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose3</span><span class="p">(</span><span class="n">gtsam</span><span class="o">.</span><span class="n">Rot3</span><span class="p">(</span><span class="o">-</span><span class="n">L</span><span class="p">,</span><span class="o">-</span><span class="n">U</span><span class="p">,</span><span class="n">F</span><span class="p">),</span> <span class="n">t2</span><span class="p">)</span>
+<span class="n">bTc3</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose3</span><span class="p">(</span><span class="n">gtsam</span><span class="o">.</span><span class="n">Rot3</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="o">-</span><span class="n">U</span><span class="p">,</span><span class="o">-</span><span class="n">F</span><span class="p">),</span> <span class="n">t3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can again use the <code class="docutils literal notranslate"><span class="pre">gtbook.drones.axes</span></code> function to ease displaying this with plotly:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="o">.</span><span class="n">add_traces</span><span class="p">(</span><span class="n">axes</span><span class="p">(</span><span class="n">bTc1</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;X1&quot;</span><span class="p">,</span><span class="s2">&quot;Y1&quot;</span><span class="p">,</span><span class="s2">&quot;Z1&quot;</span><span class="p">]))</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">add_traces</span><span class="p">(</span><span class="n">axes</span><span class="p">(</span><span class="n">bTc2</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;X2&quot;</span><span class="p">,</span><span class="s2">&quot;Y2&quot;</span><span class="p">,</span><span class="s2">&quot;Z2&quot;</span><span class="p">]))</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">add_traces</span><span class="p">(</span><span class="n">axes</span><span class="p">(</span><span class="n">bTc3</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;X3&quot;</span><span class="p">,</span><span class="s2">&quot;Y3&quot;</span><span class="p">,</span><span class="s2">&quot;Z3&quot;</span><span class="p">]))</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/S73_drone_sensing_14_0.png" src="_images/S73_drone_sensing_14_0.png" />
+<img alt="_images/S73_drone_sensing_16_0.png" src="_images/S73_drone_sensing_16_0.png" />
 </div>
 </div>
 <p>Try to understand the code above, which made camera 1 and 2 look forward (<span class="math notranslate nohighlight">\(F\)</span>), creating a <em>forward-looking stereo pair</em>, and camera 3 look backwards (<span class="math notranslate nohighlight">\(-F\)</span>). Especially for visual odometry, which we will cover in the next section, having both forward and backward looking cameras is a good idea, yielding high quality estimates of the drone’s rotation. Cameras pointed to the side will often suffer from motion blur in forward flight mode, especially with close obstacles at high speed.</p>
