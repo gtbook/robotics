@@ -398,6 +398,11 @@
      7.4. Visual SLAM
     </a>
    </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S75_drone_planning.html">
+     7.5. Trajectory Optimization
+    </a>
+   </li>
   </ul>
  </li>
 </ul>
@@ -643,11 +648,11 @@
 </div>
 </div></div>
 </div>
-<p>In this section, we saw that the configuration space for the differential drive robot
-was  <span class="math notranslate nohighlight">\({\cal Q} = \mathbb{R}^2 \times [0, 2\pi),\)</span>
-and we used <span class="math notranslate nohighlight">\(q = (x,y,\theta)\)</span> to parameterize the configuration space.
+<p>In the previous chapter, we saw that the configuration space for a differential drive robot
+is  <span class="math notranslate nohighlight">\({\cal Q} = \mathbb{R}^2 \times [0, 2\pi),\)</span>
+and we used <span class="math notranslate nohighlight">\(q = (x,y,\theta)\)</span> to parameterize this configuration space.
 This choice of parameterization has the nice property of being minimal:
-<span class="math notranslate nohighlight">\({\cal Q}\)</span> is a three-dimensional object, and at least three
+<span class="math notranslate nohighlight">\({\cal Q}\)</span> is a three-dimensional object, and therefore at least three
 parameters are required to represent arbitrary configurations.
 Unfortunately, this choice of parameterization doesn’t help much when reasoning
 about the geometry of the robot and its motion.
@@ -666,27 +671,28 @@ sample points along a continuous trajectory in <span class="math notranslate noh
 <p>In the previous chapter, we represented the orientation of the robot simply by <span class="math notranslate nohighlight">\(\theta \in [0,2\pi)\)</span>.
 There are two main drawbacks to this choice.
 First, the mapping from the robot’s orientation to the parameter <span class="math notranslate nohighlight">\(\theta\)</span> is not continuous.
-If the robot’s orientation is <span class="math notranslate nohighlight">\(\theta = 2\pi - \epsilon\)</span>, for example, and we rotate the robot clockwise
+If the robot’s orientation is <span class="math notranslate nohighlight">\(\theta = 2\pi - \epsilon\)</span>, for example, and we rotate the robot counterclockwise
 (decreasing <span class="math notranslate nohighlight">\(\epsilon\)</span> to zero), we will encounter a discontinuity when <span class="math notranslate nohighlight">\(\theta\)</span> goes from very nearly <span class="math notranslate nohighlight">\(2\pi\)</span> to zero.  This will occur regardless of the initial
 value we choose for <span class="math notranslate nohighlight">\(\epsilon\)</span>: when <span class="math notranslate nohighlight">\(\epsilon\)</span> reaches zero, there will be a jump in the value of <span class="math notranslate nohighlight">\(\theta\)</span>.
 We call this jump a <span class="math notranslate nohighlight">\(singularity\)</span>.
 The second drawback is that parameterizing orientation by a single angle <span class="math notranslate nohighlight">\(\theta\)</span> does not generalize in a straightforward way to representing orientation in 3D.
 Further, even if we go to the effort to make this generalization work, the problems with singularities
-are complex, and can cause serious problems if not handled properly.</p>
+are complex for 3-dimensional rotations, and can cause serious problems if not handled properly.</p>
 <figure>
 <img src="https://github.com/gtbook/robotics/blob/main/Figures6/2D-rotation.PNG?raw=1" id="fig:2drotation" style="width:10cm" alt="">
 <figcaption>Two coordinate frames that share a common origin.</figcaption>
 </figure><p>Both difficulties above stem from the use of a minimal representation of orientation.
 To solve these problems, we’ll introduce a somewhat redundant representation that explicity
-encodes the orientation of the axes of a target frame relative to a reference frame.
+encodes the orientation of the axes of a target coordinate frame relative to a reference coordinate frame.
 Consider the two coordinate frames shown in the figure above.
 These two frames share a common origin, and Frame 1 is obtained by rotating by an angle <span class="math notranslate nohighlight">\(\theta\)</span> w.r.t.
 frame 0.
 We can express the <span class="math notranslate nohighlight">\(x\)</span>-axis of Frame 1 in coordinates relative to Frame 0
-by projecting <span class="math notranslate nohighlight">\(x_1\)</span> onto <span class="math notranslate nohighlight">\(x_0\)</span> and <span class="math notranslate nohighlight">\(y_0\)</span> (note that these are coordinate free representations
+by projecting <span class="math notranslate nohighlight">\(x_1\)</span> onto <span class="math notranslate nohighlight">\(x_0\)</span> and <span class="math notranslate nohighlight">\(y_0\)</span>
+(note that these are coordinate free representations
 of these vectors).
 Likewise,
-we can express the   <span class="math notranslate nohighlight">\(y\)</span>-axis of Frame 1 w.r.t. Frame 0
+we can express the <span class="math notranslate nohighlight">\(y\)</span>-axis of Frame 1 w.r.t. Frame 0
 by projecting <span class="math notranslate nohighlight">\(y_1\)</span> onto <span class="math notranslate nohighlight">\(x_0\)</span> and <span class="math notranslate nohighlight">\(y_0\)</span>.
 Because all of these vectors are unit vectors,
 the projections can be achieved using the dot product.</p>
@@ -713,10 +719,9 @@ y_1 \cdot y_0
 \end{bmatrix}
 \end{split}\]</div>
 <p>Above, we adopt the notational convention that a subscript indicates the target
-frame, and the superscript indicates the reference frame.  In well-formed equations, subscripts on
-one symbol match the superscript of the next symbol.
+frame, and the superscript indicates the reference frame.
 Thus, <span class="math notranslate nohighlight">\(x_1^0\)</span> denotes the <span class="math notranslate nohighlight">\(x\)</span>-axis of Frame 1, expressed in coordinates relative to Frame 0.</p>
-<p>We can group these two vectors into a a <strong>rotation matrix</strong></p>
+<p>We can group these two vectors into a <strong>rotation matrix</strong></p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 R_{1}^{0}
@@ -873,11 +878,11 @@ all <span class="math notranslate nohighlight">\(R\in SO(2)\)</span> we have <sp
 </div>
 </div>
 </div>
-<p>Rotations form a <em>commutative</em> group, as demonstrated here in code:</p>
+<p>Rotations in 2D form a <em>commutative</em> group, as demonstrated here in code:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">R</span> <span class="o">*</span> <span class="n">R</span><span class="p">,</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Rot2</span><span class="p">))</span> <span class="c1"># closure</span>
-<span class="n">I2</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Rot2</span><span class="o">.</span><span class="n">identity</span><span class="p">()</span>
+<span class="n">I2</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Rot2</span><span class="o">.</span><span class="n">Identity</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">R</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">R</span> <span class="o">*</span> <span class="n">I2</span><span class="p">,</span> <span class="mf">1e-9</span><span class="p">))</span> <span class="c1"># identity</span>
 <span class="nb">print</span><span class="p">((</span><span class="n">R</span> <span class="o">*</span> <span class="n">R</span><span class="o">.</span><span class="n">inverse</span><span class="p">())</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">I2</span><span class="p">,</span> <span class="mf">1e-9</span><span class="p">))</span> <span class="c1"># inverse</span>
 <span class="n">R1</span><span class="p">,</span> <span class="n">R2</span><span class="p">,</span> <span class="n">R3</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Rot2</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Rot2</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Rot2</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
@@ -901,7 +906,7 @@ True
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">R01</span> <span class="o">=</span>  <span class="n">gtsam</span><span class="o">.</span><span class="n">Rot2</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>
 <span class="n">P1</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Point2</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;P0 = </span><span class="si">{</span><span class="n">R01</span><span class="o">.</span><span class="n">matrix</span><span class="p">()</span> <span class="o">@</span> <span class="n">P1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;P0 = </span><span class="si">{</span><span class="n">R01</span><span class="o">.</span><span class="n">matrix</span><span class="p">()</span><span class="w"> </span><span class="o">@</span><span class="w"> </span><span class="n">P1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;P0 = </span><span class="si">{</span><span class="n">R01</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">P1</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -920,8 +925,8 @@ P0 = [2.73271005 4.18715844]
 <div><p>From <span class="math notranslate nohighlight">\(SO(2)\)</span> to <span class="math notranslate nohighlight">\(SE(2)\)</span>.</p>
 </div></blockquote>
 <p><strong>2D rigid transforms</strong> combine rotation with translation, and are used in two <em>different</em> ways in robotics:</p>
-<p>– to specify the <strong>pose</strong> of a robot, which consists of a translation and an orientation</p>
 <ul class="simple">
+<li><p>to specify the <strong>pose</strong> of a robot, which consists of a translation and an orientation</p></li>
 <li><p>to talk about relative pose or the <strong>transformation</strong> between two different robot poses</p></li>
 </ul>
 <p>We can use the same mathematical object for both use cases, i.e., 2D rigid transforms <span class="math notranslate nohighlight">\(T\in SE(2)\)</span>, which combine translation and orientation in a <span class="math notranslate nohighlight">\(3 \times 3\)</span> matrix, as explained below.</p>
@@ -931,7 +936,7 @@ P0 = [2.73271005 4.18715844]
 </figure>
 <p>Let us start by assuming as before that the point <span class="math notranslate nohighlight">\(P\)</span> is rigidly attached to a frame that is rotated
 by angle <span class="math notranslate nohighlight">\(\theta\)</span> w.r.t. Frame 0.
-If we now translate that frame, as shown in the figure above, the point <span class="math notranslate nohighlight">\(P\)</span> undergoes
+If we now translate that frame according to a vector <span class="math notranslate nohighlight">\(d\)</span>, as shown in the figure above, the point <span class="math notranslate nohighlight">\(P\)</span> undergoes
 the same translation as the frame.
 To calculate the coordinates of <span class="math notranslate nohighlight">\(P\)</span> relative to Frame 0, we merely
 perform the rotational coordinate transformation as above,
@@ -1002,7 +1007,7 @@ the <strong>special Euclidean group of order 2</strong>, denoted by SE(2).</p>
 only the individual motions in the sequence?
 The answer is suprisingly simple.
 Suppose the point <span class="math notranslate nohighlight">\(P\)</span> is rigidly attached to the robot.
-Using the coordinate transformation equation above, we have the following:</p>
+Using the coordinate transformation equation <span class="math notranslate nohighlight">\(\tilde{P}^i = T^i_j \tilde{P}^j\)</span>, we have the following:</p>
 <div class="math notranslate nohighlight">
 \[\tilde{P}^0 = T^0_1 \tilde{P}^1, ~~~~~ \tilde{P}^1 = T^1_2 \tilde{P}^2, ~~~~~ \tilde{P}^0 = T^0_2 \tilde{P}^2\]</div>
 <p>Combining the first two of these gives</p>
@@ -1059,7 +1064,7 @@ corresponding to transformation matrix:
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">T</span> <span class="o">*</span> <span class="n">T</span><span class="p">,</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">))</span> <span class="c1"># closure</span>
-<span class="n">I3</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="o">.</span><span class="n">identity</span><span class="p">()</span>
+<span class="n">I3</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="o">.</span><span class="n">Identity</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">T</span> <span class="o">*</span> <span class="n">I3</span><span class="p">,</span> <span class="mf">1e-9</span><span class="p">))</span> <span class="c1"># identity</span>
 <span class="nb">print</span><span class="p">((</span><span class="n">T</span> <span class="o">*</span> <span class="n">T</span><span class="o">.</span><span class="n">inverse</span><span class="p">())</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">I3</span><span class="p">,</span> <span class="mf">1e-9</span><span class="p">))</span> <span class="c1"># inverse</span>
 <span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">,</span> <span class="n">T3</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">),</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">)</span>
@@ -1083,7 +1088,7 @@ False
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">T01</span> <span class="o">=</span>  <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>
 <span class="n">P1</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Point2</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;P0 = </span><span class="si">{</span><span class="n">T01</span><span class="o">.</span><span class="n">matrix</span><span class="p">()</span> <span class="o">@</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># need to make P0 homogeneous</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;P0 = </span><span class="si">{</span><span class="n">T01</span><span class="o">.</span><span class="n">matrix</span><span class="p">()</span><span class="w"> </span><span class="o">@</span><span class="w"> </span><span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># need to make P0 homogeneous</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;P0 = </span><span class="si">{</span><span class="n">T01</span><span class="o">.</span><span class="n">transformFrom</span><span class="p">(</span><span class="n">P1</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1109,7 +1114,7 @@ In the present case, <span class="math notranslate nohighlight">\(SO(2)\)</span>
 the easiest way to understand this is to note that <span class="math notranslate nohighlight">\(SO(2)\)</span> can be parameterized by the angle <span class="math notranslate nohighlight">\(\theta \in [0,2\pi) \subset \mathbb{R}^1\)</span>.
 This parameterization is local (and not global) because it breaks down in a neighborhood of <span class="math notranslate nohighlight">\(\theta = 2\pi\)</span> (as described above).
 This is not a problem, however, since in that case, we can simply
-choose to use <span class="math notranslate nohighlight">\(\theta \in [-\pi, pi)\)</span> instead of <span class="math notranslate nohighlight">\(\theta \in [0,2\pi)\)</span>.
+choose to use <span class="math notranslate nohighlight">\(\theta \in [-\pi, \pi)\)</span> instead of <span class="math notranslate nohighlight">\(\theta \in [0,2\pi)\)</span>.
 We can completely <em>cover</em> <span class="math notranslate nohighlight">\(SO(2)\)</span> using two parameterizations: one for cases when <span class="math notranslate nohighlight">\(\theta\)</span> is near <span class="math notranslate nohighlight">\(2\pi\)</span>,
 and a second for when <span class="math notranslate nohighlight">\(\theta\)</span> is near <span class="math notranslate nohighlight">\(\pi\)</span>.</p>
 <p>For the case of <span class="math notranslate nohighlight">\(SE(2)\)</span>, we merely use the two parameterizations <span class="math notranslate nohighlight">\((x,y,\theta) \in \mathbb{R}^2 \times [0,2\pi) \subset \mathbb{R}^3\)</span>

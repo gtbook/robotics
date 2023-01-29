@@ -398,6 +398,11 @@
      7.4. Visual SLAM
     </a>
    </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S75_drone_planning.html">
+     7.5. Trajectory Optimization
+    </a>
+   </li>
   </ul>
  </li>
 </ul>
@@ -603,7 +608,7 @@
 <div class="cell_output docutils container">
 <div class="output text_html">
 <div align='center'>
-<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S41-Warehouse%20robots-07.jpg?raw=1' style='height:256 width:100%'/>
+<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S41-Warehouse%20robots-05.jpg?raw=1' style='height:256 width:100%'/>
 </div>
 </div></div>
 </div>
@@ -705,7 +710,7 @@ which is why there are so many ellipses in the figures below.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">gaussian</span><span class="p">(</span><span class="n">x</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,)),</span> <span class="n">cov</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">)):</span>
-    <span class="sd">&quot;&quot;&quot;Evaluate multivariate Gaussian at x of shape(m,n), yields (m,) vector.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Evaluate multivariate Gaussian at x of shape(m,n), yields (m,) vector.&quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">==</span><span class="mi">2</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;error: x has shape </span><span class="si">{</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
     <span class="n">k</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">cov</span><span class="p">))</span>
     <span class="n">e</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">mean</span>
@@ -777,7 +782,43 @@ increases.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/S41_logistics_state_18_0.png" src="_images/S41_logistics_state_18_0.png" />
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/share/miniconda/envs/gtbook/lib/python3.8/site-packages/plotly/express/_imshow.py:354: FutureWarning:
+
+In the future `np.bool` will be defined as the corresponding NumPy scalar.  (This may have returned Python scalars in past versions.
+</pre></div>
+</div>
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">AttributeError</span><span class="g g-Whitespace">                            </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span> <span class="n">line</span> <span class="mi">4</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="k">for</span> <span class="n">mean</span><span class="p">,</span><span class="n">cov</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">means</span><span class="p">,</span><span class="n">covariances</span><span class="p">):</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span>     <span class="n">probabilities</span> <span class="o">+=</span> <span class="n">gaussian</span><span class="p">(</span><span class="n">logistics</span><span class="o">.</span><span class="n">map_coords</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">cov</span><span class="p">)</span>
+<span class="ne">----&gt; </span><span class="mi">4</span> <span class="n">logistics</span><span class="o">.</span><span class="n">show_map</span><span class="p">(</span><span class="n">probabilities</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">probabilities</span><span class="p">))</span>
+
+<span class="nn">File /usr/share/miniconda/envs/gtbook/lib/python3.8/site-packages/gtbook/logistics.py:31,</span> in <span class="ni">show_map</span><span class="nt">(image, markers, file, marker)</span>
+<span class="g g-Whitespace">     </span><span class="mi">29</span> <span class="k">def</span> <span class="nf">show_map</span><span class="p">(</span><span class="n">image</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">markers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="p">{}):</span>
+<span class="g g-Whitespace">     </span><span class="mi">30</span><span class="w">     </span><span class="sd">&quot;&quot;&quot;Show image on warehouse map, possibly with markers&quot;&quot;&quot;</span>
+<span class="ne">---&gt; </span><span class="mi">31</span>     <span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">color_continuous_scale</span><span class="o">=</span><span class="s1">&#39;Oranges&#39;</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">32</span>                     <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="s1">&#39;equal&#39;</span><span class="p">,</span> <span class="n">range_color</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="g g-Whitespace">     </span><span class="mi">33</span>     <span class="k">if</span> <span class="n">markers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+<span class="g g-Whitespace">     </span><span class="mi">34</span>         <span class="n">fig</span><span class="o">.</span><span class="n">add_scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">markers</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="n">markers</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>
+<span class="g g-Whitespace">     </span><span class="mi">35</span>                         <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;markers&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="n">marker</span><span class="p">)</span>
+
+<span class="nn">File /usr/share/miniconda/envs/gtbook/lib/python3.8/site-packages/plotly/express/_imshow.py:354,</span> in <span class="ni">imshow</span><span class="nt">(img, zmin, zmax, origin, labels, x, y, animation_frame, facet_col, facet_col_wrap, facet_col_spacing, facet_row_spacing, color_continuous_scale, color_continuous_midpoint, range_color, title, template, width, height, aspect, contrast_rescaling, binary_string, binary_backend, binary_compression_level, binary_format, text_auto)</span>
+<span class="g g-Whitespace">    </span><span class="mi">351</span>     <span class="n">binary_string</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">3</span> <span class="o">+</span> <span class="n">slice_dimensions</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_dataframe</span>
+<span class="g g-Whitespace">    </span><span class="mi">353</span> <span class="c1"># Cast bools to uint8 (also one byte)</span>
+<span class="ne">--&gt; </span><span class="mi">354</span> <span class="k">if</span> <span class="n">img</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">355</span>     <span class="n">img</span> <span class="o">=</span> <span class="mi">255</span> <span class="o">*</span> <span class="n">img</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">357</span> <span class="k">if</span> <span class="n">range_color</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+<span class="nn">File /usr/share/miniconda/envs/gtbook/lib/python3.8/site-packages/numpy/__init__.py:284,</span> in <span class="ni">__getattr__</span><span class="nt">(attr)</span>
+<span class="g g-Whitespace">    </span><span class="mi">281</span>     <span class="kn">from</span> <span class="nn">.testing</span> <span class="kn">import</span> <span class="n">Tester</span>
+<span class="g g-Whitespace">    </span><span class="mi">282</span>     <span class="k">return</span> <span class="n">Tester</span>
+<span class="ne">--&gt; </span><span class="mi">284</span> <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;module </span><span class="si">{!r}</span><span class="s2"> has no attribute &quot;</span>
+<span class="g g-Whitespace">    </span><span class="mi">285</span>                      <span class="s2">&quot;</span><span class="si">{!r}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">attr</span><span class="p">))</span>
+
+<span class="ne">AttributeError</span>: module &#39;numpy&#39; has no attribute &#39;bool&#39;
+</pre></div>
+</div>
 </div>
 </div>
 </div>

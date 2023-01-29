@@ -398,6 +398,11 @@
      7.4. Visual SLAM
     </a>
    </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S75_drone_planning.html">
+     7.5. Trajectory Optimization
+    </a>
+   </li>
   </ul>
  </li>
 </ul>
@@ -641,9 +646,8 @@
 <div class="tex2jax_ignore mathjax_ignore section" id="sensing-for-autonomous-vehicles">
 <h1><span class="section-number">6.3. </span>Sensing for Autonomous Vehicles<a class="headerlink" href="#sensing-for-autonomous-vehicles" title="Permalink to this headline">¶</a></h1>
 <blockquote>
-<div><p>LIDAR once, LIDAR twice…</p>
+<div><p>LIDAR, a sensor found in most autonomous cars, can be used to construct a 3D representation of the robot’s environment in real time.</p>
 </div></blockquote>
-<p><strong>This Section is still in draft mode and was released for adventurous spirits (and TAs) only.</strong></p>
 <div class="cell tag_remove-input docutils container">
 <div class="cell_output docutils container">
 <div class="output text_html">
@@ -654,7 +658,7 @@
 </div>
 <div class="section" id="lidar">
 <h2><span class="section-number">6.3.1. </span>LIDAR<a class="headerlink" href="#lidar" title="Permalink to this headline">¶</a></h2>
-<p>LIDAR (LIght raDAR) is a technology that measures distance to an object by using laser light and the “Time of Flight” or <strong>ToF</strong> principle. There are several variants in use, and the simplest to explain is the <strong>direct ToF</strong> sensor, which sends out a short pulse and measures the elapsed time <span class="math notranslate nohighlight">\(\Delta t\)</span> for the light to bounce off an abject and return to a detector collocated with the laser pulse emitter. If the object is situated at a distance <span class="math notranslate nohighlight">\(d\)</span>, we then have</p>
+<p>LIDAR (LIght raDAR) is a technology that measures distance to an object by using laser light and the “Time of Flight” or <strong>ToF</strong> principle. There are several variants in use, and the simplest to explain is the <strong>direct ToF</strong> sensor, which sends out a short pulse and measures the elapsed time <span class="math notranslate nohighlight">\(\Delta t\)</span> for the light to bounce off an object and return to a detector collocated with the laser pulse emitter. If the object is situated at a distance <span class="math notranslate nohighlight">\(d\)</span> from the emitter-detector pair, we have</p>
 <div class="math notranslate nohighlight">
 \[
 \Delta t = \frac{2 d}{c} 
@@ -670,8 +674,9 @@
 d= c\frac{\Delta t}{2}
 \]</div>
 <p>In a <em>scanning LIDAR</em>, there is typically one detector, whereas in a <em>flash LIDAR</em> a single pulse is emitted in a wide field of view, and an <em>array</em> of detectors, akin to a CCD sensor, is used to detect the returning light pulses in multiple directions at once.</p>
-<p>However, <em>indirect</em> time of flight sensors are more prevalent in robotics and autonomous driving applications. Unfortunately, measuring elapsed times at the nano-second scale is difficult and expensive, and the amount of light energy that needs to be emitted for direct ToF can also be a problem from an eye-safety perspective. Hence, a more widely used principle is <strong>indirect ToF</strong>, where the light is emitted with a waveform, e.g., a sine wave, and the returned light is correlated with the amplitude of the emitted light to calculate a phase-shift. The elapsed time <span class="math notranslate nohighlight">\(\Delta t\)</span> and distance <span class="math notranslate nohighlight">\(d\)</span> can then be calculated from the phase-shift.</p>
-<p>Two common scanning LIDAR technologies are in use for robotics: <strong>2D LIDAR</strong>, which consists of a single laser beam that is rotated around a fixed axis, and <strong>3D LIDAR</strong>, which has multiple laser/detector pairs rotated at different inclinations. 2D LIDARs are also often deployed on aircraft to create highly detailed digital elevation maps (DEMs), where the 3D dimension is provided by the aircraft’s forward motion. Finally, LIDAR altimeters are even deployed from satellites in orbit around Earth or <a class="reference external" href="https://pgda.gsfc.nasa.gov/products/62">other planets</a>.</p>
+<p>In practice, <em>indirect</em> time of flight sensors are more prevalent in robotics and autonomous driving applicationsthan direct ToF sensors. There are multiple reasons for this: measuring elapsed times at the nano-second scale is difficult and expensive, and the amount of light energy that needs to be emitted for direct ToF can also be a problem from an eye-safety perspective.
+<strong>Indirect ToF</strong> is an attractive alternative, where the light is emitted with a waveform, e.g., a sine wave, and the returned light is correlated with the amplitude of the emitted light to calculate a phase-shift. The elapsed time <span class="math notranslate nohighlight">\(\Delta t\)</span> and distance <span class="math notranslate nohighlight">\(d\)</span> can then be calculated from the phase-shift.</p>
+<p>Two common scanning LIDAR technologies are in use for robotics: <strong>2D LIDAR</strong>, which consists of a single laser beam that is rotated around a fixed axis, and <strong>3D LIDAR</strong>, which has multiple laser/detector pairs rotated at different inclinations. 2D LIDARs are also often deployed on aircraft to create highly detailed digital elevation maps (DEMs), where the third dimension is provided by the aircraft’s forward motion. LIDAR altimeters are even deployed from satellites in orbit around Earth or <a class="reference external" href="https://pgda.gsfc.nasa.gov/products/62">other planets</a>.</p>
 </div>
 <div class="section" id="ray-intersection">
 <h2><span class="section-number">6.3.2. </span>Ray Intersection<a class="headerlink" href="#ray-intersection" title="Permalink to this headline">¶</a></h2>
@@ -698,7 +703,7 @@ s = \frac{d}{\hat{n} \cdot \hat{r}}.
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">intersect</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Intersect line/plane (n,d) with ray given by direction r.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Intersect line/plane (n,d) with ray given by direction r.&quot;&quot;&quot;</span>
     <span class="n">cos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">r</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">d</span> <span class="o">/</span> <span class="n">cos</span> <span class="k">if</span> <span class="n">cos</span><span class="o">&gt;</span><span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">)</span>
 
@@ -721,7 +726,7 @@ s = \frac{d}{\hat{n} \cdot \hat{r}}.
 <blockquote>
 <div><p>Use the intersection, Luke!</p>
 </div></blockquote>
-<p>We now put the above to work to simulate a 2D LIDAR sensor situated at the origin. A relatively low-cost 2D LIDAR sensor is a SICK Tim1xx, which has a field of view of 200 degrees and a resolution of one beam per degree. Hence, we expect to simulate 200 measurements.</p>
+<p>We now put the above to work to simulate a 2D LIDAR sensor situated at the origin. The <em>SICK Tim1xx</em> is a relatively low-cost 2D LIDAR sensor, which has a field of view of 200 degrees and a resolution of one beam per degree. Hence, we expect to simulate 200 measurements.</p>
 <p>In our simple simulation code below, we create an environment from infinite lines. A more powerful simulator would allow for line <em>segments</em>, but infinite lines are enough to illustrate the principle. We create a corridor-like environment with three sides:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -771,7 +776,7 @@ s = \frac{d}{\hat{n} \cdot \hat{r}}.
 <img alt="_images/S63_driving_sensing_16_0.png" src="_images/S63_driving_sensing_16_0.png" />
 </div>
 </div>
-<p>As you can see, the resulting scan of this corridor-like environment does not yield in a uniform sampling on the walls. Because the rays are distributed uniformly in <em>angle</em> space, they graze the walls at increasingly shallow angles, and the distance between successive intersection points increases. Of course, that depends on the angle that the wall makes with the rays: the end of the corridor is far away and hence is sampled fairly uniformly. This is a typical pattern when working with LiDAR scanners.</p>
+<p>As you can see, the resulting scan of this corridor-like environment does not produce a uniform sampling on the walls. Because the rays are distributed uniformly in <em>angle</em> space, they graze the walls at increasingly shallow angles, and the distance between successive intersection points increases. Of course, that depends on the angle that the wall makes with the rays: the end of the corridor is far away and hence is sampled fairly uniformly. This is a typical pattern when working with LiDAR scanners.</p>
 </div>
 <div class="section" id="geometry-of-a-moving-lidar">
 <h2><span class="section-number">6.3.4. </span>Geometry of a Moving LIDAR<a class="headerlink" href="#geometry-of-a-moving-lidar" title="Permalink to this headline">¶</a></h2>
@@ -784,7 +789,7 @@ s = \frac{d}{\hat{n} \cdot \hat{r}}.
 (R^w_b)^T \hat{n}^w \cdot p^b &amp;= d^w - \hat{n}^w \cdot t^w_b.
 \end{align*}
 \end{split}\]</div>
-<p>Hence, we obtained a new plane equation in the body frame as
+<p>Hence, we obtain a new plane equation in the body frame as
 $<span class="math notranslate nohighlight">\(
 \hat{n}^b \cdot p^b = d^b
 \)</span>$</p>
@@ -793,7 +798,7 @@ $<span class="math notranslate nohighlight">\(
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">transform_to</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">wTb</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Transform line/plane (n,d) to body coordinate frame&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Transform line/plane (n,d) to body coordinate frame&quot;&quot;&quot;</span>
     <span class="n">wRb</span> <span class="o">=</span> <span class="n">wTb</span><span class="o">.</span><span class="n">rotation</span><span class="p">()</span>
     <span class="n">wtb</span> <span class="o">=</span> <span class="n">wTb</span><span class="o">.</span><span class="n">translation</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">wRb</span><span class="o">.</span><span class="n">matrix</span><span class="p">()</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">n</span><span class="p">,</span> <span class="n">d</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">wtb</span><span class="p">)</span>
@@ -863,13 +868,13 @@ $<span class="math notranslate nohighlight">\(
 <div><p>From theory to practice.</p>
 </div></blockquote>
 <p>3D LIDAR sensors are used in many autonomous driving efforts, e.g., by Waymo, Cruise, Argo, etc. Below we explore some real scans from the <a class="reference external" href="https://www.argoverse.org/av2.html">Argoverse 2 Lidar Dataset</a>.</p>
-<p>First, let us look at a single scan, which was acquired using a <a class="reference external" href="https://velodynelidar.com/products/ultra-puck/">Velodyne</a> VLP-32C LIDAR sensor. If you follow the link you see some cool animations of sensor in action, in real traffic. The <code class="docutils literal notranslate"><span class="pre">32</span></code> in the model name reflects the fact for this particular sensor used by Argo, there are 32 separate laser beams at different inclinations, that spin around for a full 360 degree field of view. In this case, the inclination angles are uniformly sampled between -25 and +15 degrees with respect to horizontal, but of course this depends on the application/sensor model.</p>
+<p>First, let us look at a single scan, which was acquired using a <a class="reference external" href="https://velodynelidar.com/products/ultra-puck/">Velodyne</a> VLP-32C LIDAR sensor. If you follow the link you see some cool animations of sensors in action, in real traffic. The <code class="docutils literal notranslate"><span class="pre">32</span></code> in the model name reflects the fact that, for this particular sensor used by Argo, there are 32 separate laser beams at different inclinations, that spin around for a full 360 degree field of view. In this case, the inclination angles are uniformly sampled between -25 and +15 degrees with respect to horizontal, but of course this depends on the application/sensor model.</p>
 <p>Several things worth noting when looking at the single scan below, taken when the Argo test car is turning at an intersection:</p>
 <ul class="simple">
-<li><p>the location of the car (at the origin) is marked by concentric circles formed by the lowest beams.</p></li>
-<li><p>the range is approximately 200m, so we can see fairly far down the cross streets.</p></li>
-<li><p>occlusion is significant: objects close to the car throw “occlusion shadows”.</p></li>
-<li><p>everything is in <em>body coordinates</em>, and the fact that the streets appear rotated betrays that the car is actually turning.</p></li>
+<li><p>The location of the car (at the origin) is marked by concentric circles formed by the lowest beams.</p></li>
+<li><p>The range is approximately 200m, so we can see fairly far down the cross streets.</p></li>
+<li><p>Occlusion is significant: objects close to the car throw “occlusion shadows.”</p></li>
+<li><p>Everything is in <em>body coordinates</em>, and the fact that the streets appear rotated betrays that the car is actually turning.</p></li>
 </ul>
 <div class="cell docutils container">
 <div class="cell_input docutils container">

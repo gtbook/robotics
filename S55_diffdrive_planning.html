@@ -398,6 +398,11 @@
      7.4. Visual SLAM
     </a>
    </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S75_drone_planning.html">
+     7.5. Trajectory Optimization
+    </a>
+   </li>
   </ul>
  </li>
 </ul>
@@ -604,7 +609,7 @@
 <div class="cell_output docutils container">
 <div class="output text_html">
 <div align='center'>
-<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S55-Two-wheeled%20Toy%20Robot-03.jpg?raw=1' style='height:256 width:100%'/>
+<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S55-Two-wheeled%20Toy%20Robot-06.jpg?raw=1' style='height:256 width:100%'/>
 </div>
 </div></div>
 </div>
@@ -823,17 +828,17 @@ Because the DDR can turn in place, we have to only build an RRT on the <em>posit
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">generate_random_node</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Point2</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Generate a random node in a square around the origin.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a random node in a square around the origin.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,))</span>
 
 
 <span class="k">def</span> <span class="nf">distance</span><span class="p">(</span><span class="n">p1</span><span class="p">:</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Point2</span><span class="p">,</span> <span class="n">p2</span><span class="p">:</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Point2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-  <span class="sd">&quot;&quot;&quot;Calculate the distance between 2 nodes.&quot;&quot;&quot;</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Calculate the distance between 2 nodes.&quot;&quot;&quot;</span>
   <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">p2</span> <span class="o">-</span> <span class="n">p1</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">find_nearest_node</span><span class="p">(</span><span class="n">rrt</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">gtsam</span><span class="o">.</span><span class="n">Point2</span><span class="p">],</span> <span class="n">node</span><span class="p">:</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Point2</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Find nearest point in RRT to given node (linear time).&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find nearest point in RRT to given node (linear time).&quot;&quot;&quot;</span>
     <span class="n">distances</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rrt</span><span class="p">)</span> <span class="o">-</span> <span class="n">node</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">rrt</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">i</span>
@@ -846,7 +851,7 @@ We adopt a rather simple strategy: turn towards the target, and drive some fract
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">steer</span><span class="p">(</span><span class="n">parent</span><span class="p">:</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Point2</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Point2</span><span class="p">,</span> <span class="n">fraction</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;Steer towards the target point, going a fraction of the displacement.&quot;&quot;&quot;</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Steer towards the target point, going a fraction of the displacement.&quot;&quot;&quot;</span>
   <span class="n">displacement</span> <span class="o">=</span> <span class="n">target</span> <span class="o">-</span> <span class="n">parent</span>
   <span class="k">return</span> <span class="n">parent</span> <span class="o">+</span> <span class="n">displacement</span> <span class="o">*</span> <span class="n">fraction</span>
 </pre></div>
@@ -857,7 +862,7 @@ We adopt a rather simple strategy: turn towards the target, and drive some fract
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">rapidly_exploring_random_tree</span><span class="p">(</span><span class="n">start</span><span class="p">:</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Point2</span><span class="p">,</span> <span class="n">goal</span><span class="p">:</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Point2</span><span class="p">,</span> <span class="n">max_nodes</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">fraction</span><span class="o">=</span><span class="mf">0.2</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Build the RRT from `start` to `goal`&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build the RRT from `start` to `goal`&quot;&quot;&quot;</span>
     <span class="n">rrt</span> <span class="o">=</span> <span class="p">[</span><span class="n">start</span><span class="p">]</span>
     <span class="n">parents</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_nodes</span><span class="p">):</span>
@@ -886,9 +891,6 @@ We adopt a rather simple strategy: turn towards the target, and drive some fract
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[0. 0.] [9. 9.]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Found motion.
 </pre></div>
 </div>
 </div>

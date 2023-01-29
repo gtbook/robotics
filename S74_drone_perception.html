@@ -60,6 +60,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="7.5. Trajectory Optimization" href="S75_drone_planning.html" />
     <link rel="prev" title="7.3. Sensing for Drones" href="S73_drone_sensing.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
@@ -397,6 +398,11 @@
      7.4. Visual SLAM
     </a>
    </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S75_drone_planning.html">
+     7.5. Trajectory Optimization
+    </a>
+   </li>
   </ul>
  </li>
 </ul>
@@ -582,18 +588,17 @@
 <blockquote>
 <div><p>When we do SLAM with cameras, we call it visual SLAM.</p>
 </div></blockquote>
-<p><strong>This Section is still in draft mode and was released for adventurous spirits (and TAs) only.</strong></p>
 <div class="cell tag_remove-input docutils container">
 <div class="cell_output docutils container">
 <div class="output text_html">
 <div align='center'>
-<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S74-Autonomous%20camera%20drone-00.jpg?raw=1' style='height:256 width:100%'/>
+<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S74-Autonomous%20camera%20drone-04.jpg?raw=1' style='height:256 width:100%'/>
 </div>
 </div></div>
 </div>
 <div class="section" id="id1">
 <h2><span class="section-number">7.4.1. </span>Visual SLAM<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
-<p>Visual SLAM is <em>almost</em> the same problem as SLAM, but we use 3D poses and 3D points. This is a typical pipeline on drones, phones, etc, everything with an IMU.</p>
+<p>Visual SLAM <em>almost</em> the same problem as the “SLAM with Landmarks” problem from Section 6.4, but we will now use 3D poses and 3D points, and we will use the inertial measurements from the IMU to inform us about the movement of the platform. This is a typical pipeline on drones, phones, etc, everything with an IMU.</p>
 <div class="section" id="integrating-the-imu">
 <h3><span class="section-number">7.4.1.1. </span>Integrating the IMU<a class="headerlink" href="#integrating-the-imu" title="Permalink to this headline">¶</a></h3>
 <p>We start off by encoding the information provided by the inertial measurement unit (IMU) in a factor graph.</p>
@@ -601,11 +606,12 @@
 with angular velocity 30 degree/sec (negative in FLU). We set up a simulation using a class called the <code class="docutils literal notranslate"><span class="pre">ScenarioRunner</span></code>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">W</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">30</span><span class="p">),</span> <span class="mi">0</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set up the scenario with a constant velocity model, both angular (W) and linear (V)</span>
+<span class="n">W</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">30</span><span class="p">),</span> <span class="mi">0</span><span class="p">])</span>
 <span class="n">V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
 <span class="n">scenario</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">ConstantTwistScenario</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
 
-<span class="c1"># Create params</span>
+<span class="c1"># Create noise parameters</span>
 <span class="n">params</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">PreintegrationParams</span><span class="o">.</span><span class="n">MakeSharedU</span><span class="p">(</span><span class="mf">9.8</span><span class="p">)</span>
 <span class="n">kGyroSigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span> <span class="o">/</span> <span class="mi">60</span>  <span class="c1"># 0.5 degree ARW</span>
 <span class="n">kAccelSigma</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="o">/</span> <span class="mi">60</span>  <span class="c1"># 10 cm VRW</span>
@@ -614,17 +620,19 @@ with angular velocity 30 degree/sec (negative in FLU). We set up a simulation us
                                     <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span>
 <span class="n">params</span><span class="o">.</span><span class="n">setIntegrationCovariance</span><span class="p">(</span><span class="mf">0.0000001</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span>
 
-<span class="c1"># Create IMU simulation</span>
-<span class="n">dt</span> <span class="o">=</span> <span class="mf">0.1</span>
-<span class="n">accBias</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
-<span class="n">gyroBias</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="c1"># Create bias parameters</span>
+<span class="n">accBias</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span> <span class="c1"># bias in accelerometer</span>
+<span class="n">gyroBias</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span> <span class="c1"># bias in gyroscope</span>
 <span class="n">bias</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">imuBias</span><span class="o">.</span><span class="n">ConstantBias</span><span class="p">(</span><span class="n">accBias</span><span class="p">,</span> <span class="n">gyroBias</span><span class="p">)</span>
+
+<span class="c1"># Instantiate IMU simulation class as `runner`</span>
+<span class="n">dt</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="c1"># 10 Hz</span>
 <span class="n">runner</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">ScenarioRunner</span><span class="p">(</span><span class="n">scenario</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">bias</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>GTSAM contains a powerful, state of the art factor class called the <code class="docutils literal notranslate"><span class="pre">ImuFactor</span></code> that allows us to accumulate IMU measurements and periodically add the resulting relative pose information to the graph. The accumulation of (high-rate) IMU measurements is done in a class called <code class="docutils literal notranslate"><span class="pre">PreintegratedImuMeasurements</span></code>, abbreviated “PIM”.</p>
+<p>GTSAM contains a powerful, state of the art factor called the <code class="docutils literal notranslate"><span class="pre">ImuFactor</span></code> that allows us to accumulate IMU measurements and periodically add the resulting relative pose information to the graph. The accumulation of (high-rate) IMU measurements is done in a class called <code class="docutils literal notranslate"><span class="pre">PreintegratedImuMeasurements</span></code>, abbreviated “PIM”.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create graph</span>
@@ -676,7 +684,7 @@ with angular velocity 30 degree/sec (negative in FLU). We set up a simulation us
 <div class="cell_output docutils container">
 <img alt="_images/S74_drone_perception_11_0.svg" src="_images/S74_drone_perception_11_0.svg" /></div>
 </div>
-<p>We can optimize even <em>without</em> any external measurements, but unless you pay a LOT, your estimate will drift very rapidly.</p>
+<p>We can optimize even <em>without</em> any external measurements, but unless you pay for a very expensive IMU, your estimate will drift very rapidly.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;initial error: </span><span class="si">{</span><span class="n">imu_graph</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">imu_initial</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -690,8 +698,8 @@ with angular velocity 30 degree/sec (negative in FLU). We set up a simulation us
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>initial error: 23403506.33121535
-final error: 5.1038727723632474e-23
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>initial error: 25383190.206928074
+final error: 4.7889397056701405e-23
 </pre></div>
 </div>
 </div>
@@ -814,6 +822,13 @@ final error: 5.1038727723632474e-23
             <p class="prev-next-subtitle">previous</p>
             <p class="prev-next-title"><span class="section-number">7.3. </span>Sensing for Drones</p>
         </div>
+    </a>
+    <a class='right-next' id="next-link" href="S75_drone_planning.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">7.5. </span>Trajectory Optimization</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
     </a>
 </div>
             

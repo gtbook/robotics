@@ -398,6 +398,11 @@
      7.4. Visual SLAM
     </a>
    </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="S75_drone_planning.html">
+     7.5. Trajectory Optimization
+    </a>
+   </li>
   </ul>
  </li>
 </ul>
@@ -647,7 +652,7 @@
 <div class="cell_output docutils container">
 <div class="output text_html">
 <div align='center'>
-<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S42-Warehouse%20robots-06.jpg?raw=1' style='height:256 width:100%'/>
+<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S42-Warehouse%20robots-01.jpg?raw=1' style='height:256 width:100%'/>
 </div>
 </div></div>
 </div>
@@ -683,7 +688,7 @@ p^i_y &amp;= R \sin(\theta^i) \\
 <span class="n">num_wheels</span> <span class="o">=</span> <span class="mi">3</span>
 
 <span class="k">def</span> <span class="nf">wheel_pose</span><span class="p">(</span><span class="n">i</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Return x,y, and theta for wheel with given index.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return x,y, and theta for wheel with given index.&quot;&quot;&quot;</span>
     <span class="n">theta</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="mi">2</span><span class="o">/</span><span class="n">num_wheels</span>
     <span class="n">px</span><span class="p">,</span> <span class="n">py</span> <span class="o">=</span> <span class="n">R</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="n">R</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">,</span> <span class="n">theta</span>
@@ -782,7 +787,7 @@ of the unit vectors <span class="math notranslate nohighlight">\(u_\|\)</span> a
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">wheel_velocity</span><span class="p">(</span><span class="n">vx</span><span class="p">:</span><span class="nb">float</span><span class="p">,</span> <span class="n">vy</span><span class="p">:</span><span class="nb">float</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Calulate parallel and perpendicular velocities at wheel i&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calulate parallel and perpendicular velocities at wheel i&quot;&quot;&quot;</span>
     <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">theta</span> <span class="o">=</span> <span class="n">wheel_pose</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
     <span class="n">para</span> <span class="o">=</span> <span class="o">-</span> <span class="n">vx</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">+</span> <span class="n">vy</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
     <span class="n">perp</span> <span class="o">=</span>   <span class="n">vx</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">+</span> <span class="n">vy</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
@@ -861,7 +866,7 @@ that maps a desired robot velocity <span class="math notranslate nohighlight">\(
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">jacobian_matrix</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Compute matrix converting from velocity to wheel velocities.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute matrix converting from velocity to wheel velocities.&quot;&quot;&quot;</span>
     <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_wheels</span><span class="p">):</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">theta</span> <span class="o">=</span> <span class="n">wheel_pose</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
@@ -886,7 +891,7 @@ that maps a desired robot velocity <span class="math notranslate nohighlight">\(
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>wheel 0: 0.5
 wheel 1: -1.549038105676658
-wheel 2: 1.0490381056766573
+wheel 2: 1.049038105676657
 
 Using matrix method:
 [ 0.5        -1.54903811  1.04903811]
