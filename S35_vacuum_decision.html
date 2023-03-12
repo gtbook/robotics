@@ -48,6 +48,8 @@
     <script src="_static/sphinx-book-theme.d59cb220de22ca1c485ebbdc042f0030.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script async="async" src="https://unpkg.com/thebe@0.5.1/lib/index.js"></script>
     <script>
         const thebe_selector = ".thebe"
@@ -267,17 +269,17 @@
    </li>
    <li class="toctree-l2">
     <a class="reference internal" href="S44_logistics_perception.html">
-     4.7. Localization
+     4.4. Localization
     </a>
    </li>
    <li class="toctree-l2">
     <a class="reference internal" href="S45_logistics_planning.html">
-     4.8. Planning for Logistics
+     4.5. Planning for Logistics
     </a>
    </li>
    <li class="toctree-l2">
     <a class="reference internal" href="S46_logistics_learning.html">
-     4.9. Some System Identification
+     4.6. Some System Identification
     </a>
    </li>
   </ul>
@@ -299,27 +301,27 @@
    </li>
    <li class="toctree-l2">
     <a class="reference internal" href="S52_diffdrive_actions.html">
-     5.4. Motion Model for the Differential Drive Robot
+     5.2. Motion Model for the Differential Drive Robot
     </a>
    </li>
    <li class="toctree-l2">
     <a class="reference internal" href="S53_diffdrive_sensing.html">
-     5.5. Robot Vision
+     5.3. Robot Vision
     </a>
    </li>
    <li class="toctree-l2">
     <a class="reference internal" href="S54_diffdrive_perception.html">
-     5.6. Computer Vision 101
+     5.4. Computer Vision 101
     </a>
    </li>
    <li class="toctree-l2">
     <a class="reference internal" href="S55_diffdrive_planning.html">
-     5.7. Path Planning
+     5.5. Path Planning
     </a>
    </li>
    <li class="toctree-l2">
     <a class="reference internal" href="S56_diffdrive_learning.html">
-     5.8. Deep Learning
+     5.6. Deep Learning
     </a>
    </li>
   </ul>
@@ -341,27 +343,27 @@
    </li>
    <li class="toctree-l2">
     <a class="reference internal" href="S62_driving_actions.html">
-     6.6. Kinematics for Driving
+     6.2. Kinematics for Driving
     </a>
    </li>
    <li class="toctree-l2">
     <a class="reference internal" href="S63_driving_sensing.html">
-     6.8. Sensing for Autonomous Vehicles
+     6.3. Sensing for Autonomous Vehicles
     </a>
    </li>
    <li class="toctree-l2">
     <a class="reference internal" href="S64_driving_perception.html">
-     6.9. SLAM
+     6.4. SLAM
     </a>
    </li>
    <li class="toctree-l2">
     <a class="reference internal" href="S65_driving_planning.html">
-     6.10. Planning for Autonomous Driving.
+     6.5. Planning for Autonomous Driving.
     </a>
    </li>
    <li class="toctree-l2">
     <a class="reference internal" href="S66_driving_DRL.html">
-     6.11. Deep Reinforcement Learning
+     6.6. Deep Reinforcement Learning
     </a>
    </li>
   </ul>
@@ -721,16 +723,16 @@ the concept of Markov decision processes (MDPs).</p>
 <div class="cell_output docutils container">
 <div class="output text_html">
 <div align='center'>
-<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S35-iRobot%20vacuuming%20robot-07.jpg?raw=1' style='height:256 width:100%'/>
+<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S35-iRobot%20vacuuming%20robot-06.jpg?raw=1' style='height:256 width:100%'/>
 </div>
 </div></div>
 </div>
 <p>Previously in this chapter, we described how conditional probability distributions can be used to model uncertainty
-in the effects of actions. We defined the belief state $b_{t+1}$ to be the posterior probability distribution
-for the state at time $t+1$ given the sequence of actions $a_1 \dots a_t$.
+in the effects of actions. We defined the belief state <span class="math notranslate nohighlight">\(b_{t+1}\)</span> to be the posterior probability distribution
+for the state at time <span class="math notranslate nohighlight">\(t+1\)</span> given the sequence of actions <span class="math notranslate nohighlight">\(a_1 \dots a_t\)</span>.
 In every example, the sequence of actions was predetermined, and we merely calculated probabilities
 associated with performing these actions from some specified initial state, described
-by a probability distribution $P(X_1)$.</p>
+by a probability distribution <span class="math notranslate nohighlight">\(P(X_1)\)</span>.</p>
 <p>In this chapter, we consider the problem of choosing which actions to execute.
 Making these decisions requires that we have quantitative criteria for evaluating actions and their effects.
 We encode these criteria using <em>reward functions</em>.
@@ -783,20 +785,20 @@ For example, entering the living room from the hallway might be less desirable
 than entering from the kitchen (if, for example, guests are likely to arrive
 in the entrance hallway).</p>
 <p>Reward functions provide a very general solution that addresses all of these limitation.
-Let $\cal X$ denote the set of states and $\cal A$ the set of actions.
-The reward function, $R : {\cal X} \times {\cal A} \times {\cal X} \rightarrow \mathbb{R}$,
+Let <span class="math notranslate nohighlight">\(\cal X\)</span> denote the set of states and <span class="math notranslate nohighlight">\(\cal A\)</span> the set of actions.
+The reward function, <span class="math notranslate nohighlight">\(R : {\cal X} \times {\cal A} \times {\cal X} \rightarrow \mathbb{R}\)</span>,
 assigns a numeric reward to specific state transitions under specific actions.
-In particular, $R(x_t, a_t, x_{t+1})$ is the reward obtained by arriving to state
-$x_{t+1}$ from state $x_t$ as a result of executing action $a_t$.</p>
+In particular, <span class="math notranslate nohighlight">\(R(x_t, a_t, x_{t+1})\)</span> is the reward obtained by arriving to state
+<span class="math notranslate nohighlight">\(x_{t+1}\)</span> from state <span class="math notranslate nohighlight">\(x_t\)</span> as a result of executing action <span class="math notranslate nohighlight">\(a_t\)</span>.</p>
 <p>In what follows we assume that the reward function is time-invariant, i.e., the benefit of moving up from
 the hallway to the living room does not change as time passes.
 This allows us to use the more compact notation
-$R(x, a, x’)$ to represent the award obtained by arriving to (the next) state $x’$
-by executing action $a$ in state $x$. We will frequently use this notation in the remainder of the section.</p>
+<span class="math notranslate nohighlight">\(R(x, a, x')\)</span> to represent the award obtained by arriving to (the next) state <span class="math notranslate nohighlight">\(x'\)</span>
+by executing action <span class="math notranslate nohighlight">\(a\)</span> in state <span class="math notranslate nohighlight">\(x\)</span>. We will frequently use this notation in the remainder of the section.</p>
 <p>This form for the reward function is very general, allowing us to encode context dependent rewards
 that depend on the state in which an action is executed.
 It is also common to specify rewards merely as a function of state.
-In this case, we denote by $R(x)$ the reward obtained for arriving to state $x$, regardless
+In this case, we denote by <span class="math notranslate nohighlight">\(R(x)\)</span> the reward obtained for arriving to state <span class="math notranslate nohighlight">\(x\)</span>, regardless
 of the action that was applied, and regardless of the previous state.
 An example of such a reward function is given below, implemented as a python function.
 It simply returns a reward of 10 upon entering the living room:</p>
@@ -826,24 +828,25 @@ It simply returns a reward of 10 upon entering the living room:</p>
 </div></blockquote>
 <p>Because the effects of actions are uncertain,
 there is no way for the robot to know definitively the reward that it will obtain
-by executing a specific action $a$ in state $x$.
+by executing a specific action <span class="math notranslate nohighlight">\(a\)</span> in state <span class="math notranslate nohighlight">\(x\)</span>.
 In this case, we can use the <strong>expected reward</strong> as a surrogate.
 As we have seen in the previous chapter, this expectation will provide a good
-estimate of the average reward that will be received if action $a$ is executed from state $x$ may times,
+estimate of the average reward that will be received if action <span class="math notranslate nohighlight">\(a\)</span> is executed from state <span class="math notranslate nohighlight">\(x\)</span> may times,
 even if it provides no guarantees about the reward that will be obtained by any specific moment in time.</p>
-<p>We denote the expected reward for executing action $a$ in state $x$
-by $\bar{R}(x,a)$,
+<p>We denote the expected reward for executing action <span class="math notranslate nohighlight">\(a\)</span> in state <span class="math notranslate nohighlight">\(x\)</span>
+by <span class="math notranslate nohighlight">\(\bar{R}(x,a)\)</span>,
 and its value is obtained by evaluating the expectation</p>
-<p>$$
-\bar{R}(x,a) \doteq E[R(x,a,X’)] = \sum_{x’} P(x’|x,a) R(x, a, x’)
-$$</p>
-<p>Note that we use the upper case $X’$ to indicate that the expectation is taken with
+<div class="math notranslate nohighlight">
+\[
+\bar{R}(x,a) \doteq E[R(x,a,X')] = \sum_{x'} P(x'|x,a) R(x, a, x')
+\]</div>
+<p>Note that we use the upper case <span class="math notranslate nohighlight">\(X'\)</span> to indicate that the expectation is taken with
 respect to the random next state.
 Accordingly, the sum is over all possible next states, and the reward for each next
-state is weighted by the probability of arriving to that state from state $x$ by executing action $a$.</p>
+state is weighted by the probability of arriving to that state from state <span class="math notranslate nohighlight">\(x\)</span> by executing action <span class="math notranslate nohighlight">\(a\)</span>.</p>
 <!-- In some cases (e.g., when the transition probabilities are *known*),
 it can be convenient to work only with the expected reward, instead of dealing wit $R(x,a,x')$
-which some texts do. However, below we will continue to work with the most general formulation. --><p>To <em>calculate</em> the expected reward in code, it would be nice to rely on functions that do string compares, which is not very efficient. Since states and actions are finite (and of low cardinality), we can create a multidimensional array $R(x,a,x’)$ that the rewards for every possible transition $x,a \rightarrow x’$. We use the handy GTSAM <code class="docutils literal notranslate"><span class="pre">enumerate</span></code> method below to do so:</p>
+which some texts do. However, below we will continue to work with the most general formulation. --><p>To <em>calculate</em> the expected reward in code, it would be nice to rely on functions that do string compares, which is not very efficient. Since states and actions are finite (and of low cardinality), we can create a multidimensional array <span class="math notranslate nohighlight">\(R(x,a,x')\)</span> that the rewards for every possible transition <span class="math notranslate nohighlight">\(x,a \rightarrow x'\)</span>. We use the handy GTSAM <code class="docutils literal notranslate"><span class="pre">enumerate</span></code> method below to do so:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">conditional</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">DiscreteConditional</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">)],</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">action_spec</span><span class="p">)</span>
@@ -865,8 +868,8 @@ which some texts do. However, below we will continue to work with the most gener
 </div>
 <p>The result above is simple to interpret: if the robot
 arrives to the living room (index 0) the robot obtains a reward of 10, otherwise 0.</p>
-<p>Note that $R$ is a <em>multidimensional</em> array, with shape $(5, 4, 5)$, corresponding to the dimensionality of the arguments of the reward function $R(x,a,x’)$.
-We can do the same with the transition probabilities, creating a multidimensional array $T$ with an entry for every possible transition $x \rightarrow a \rightarrow x’$ with probability $P(x’|a,x)$:</p>
+<p>Note that <span class="math notranslate nohighlight">\(R\)</span> is a <em>multidimensional</em> array, with shape <span class="math notranslate nohighlight">\((5, 4, 5)\)</span>, corresponding to the dimensionality of the arguments of the reward function <span class="math notranslate nohighlight">\(R(x,a,x')\)</span>.
+We can do the same with the transition probabilities, creating a multidimensional array <span class="math notranslate nohighlight">\(T\)</span> with an entry for every possible transition <span class="math notranslate nohighlight">\(x \rightarrow a \rightarrow x'\)</span> with probability <span class="math notranslate nohighlight">\(P(x'|a,x)\)</span>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="nb">float</span><span class="p">)</span>
@@ -886,7 +889,7 @@ We can do the same with the transition probabilities, creating a multidimensiona
 </div>
 </div>
 <p>As expected, we end up in the living room with 80% chance, while staying in place (the Kitchen) 20% of the time.</p>
-<p>Then, finally, calculating the expected reward $\bar{R}(x,a)$ for a particular state-action pair $(x,a)$ becomes a simple dot product:</p>
+<p>Then, finally, calculating the expected reward <span class="math notranslate nohighlight">\(\bar{R}(x,a)\)</span> for a particular state-action pair <span class="math notranslate nohighlight">\((x,a)\)</span> becomes a simple dot product:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="p">,</span> <span class="n">a</span> <span class="o">=</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;Kitchen&quot;</span><span class="p">),</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;L&quot;</span><span class="p">)</span>
@@ -916,10 +919,11 @@ vector would have a $1$ in the entry corresponding to the current room, and zero
 all other entries.
 Therefore, this form is somewhat more general than that given above. -->
 <p>Equipped with the definition of expected reward, we can introduce a first, <strong>greedy planning</strong> algorithm:
-Given the current belief state $b_t$, execute the action that maximizes the expected reward:</p>
-<p>$$
+Given the current belief state <span class="math notranslate nohighlight">\(b_t\)</span>, execute the action that maximizes the expected reward:</p>
+<div class="math notranslate nohighlight">
+\[
 a^* = \arg  \max_{a \in {\cal A}} E[ R(X_t, a, X_{t+t})]
-$$</p>
+\]</div>
  <!-- = \arg \max_{a \in {\cal A}}\left( b_t M_{A}\right) R --><p>For example, in the “Kitchen”, we can calculate the expected award for all actions:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -938,7 +942,7 @@ Expected reward (Kitchen, D) = 0.0
 </div>
 </div>
 </div>
-<p>It turns out that $8.0$ is the best we can do by greedily choosing a single action, as the expected <em>immediate</em> reward for any other action is zero. Hence, whenever we find ourselves in the Kitchen, a good course of action is to always go left!</p>
+<p>It turns out that <span class="math notranslate nohighlight">\(8.0\)</span> is the best we can do by greedily choosing a single action, as the expected <em>immediate</em> reward for any other action is zero. Hence, whenever we find ourselves in the Kitchen, a good course of action is to always go left!</p>
 </div>
 <div class="section" id="utility-for-a-defined-sequence-of-actions">
 <h2><span class="section-number">3.5.3. </span>Utility for a Defined Sequence of Actions<a class="headerlink" href="#utility-for-a-defined-sequence-of-actions" title="Permalink to this headline">¶</a></h2>
@@ -955,45 +959,48 @@ There are two immediate disadvantages to a direct implementation of this approac
 <li><p>First, because the effects of actions are uncertain, it is likely that the further we look
 into the future, the more uncertain we will be about the robot’s anticipated state.
 Therefore, it makes sense to discount our consideration of rewards that might occur far into the future,
-say at times $X_{t+T}$, for increasing values of $T$.</p></li>
+say at times <span class="math notranslate nohighlight">\(X_{t+T}\)</span>, for increasing values of <span class="math notranslate nohighlight">\(T\)</span>.</p></li>
 <li><p>Second, it is often convenient to reason with an infinite time horizon, e.g., consider the case when the robot will operate forever.
 While this is certainly not a realistic expectation,
 reasoning over an infinite time horizon often simplifies the mathematical complexities of planning into the future.
-If we merely compute the sum of all future rewards, this sum will diverge to infinity as $T$ approaches infinity.</p></li>
+If we merely compute the sum of all future rewards, this sum will diverge to infinity as <span class="math notranslate nohighlight">\(T\)</span> approaches infinity.</p></li>
 </ul>
-<p>We can deal with both of these disadvantages by multiplying the reward at time $t + T$ by a discounting
-factor $\gamma^T$, with $0 &lt; \gamma \leq 1$.
-We refer to $\gamma$ as the <strong>discount factor</strong>
-and to the term $\gamma^T R(x_t,a_t,x_{t+T})$ as a <strong>discounted reward.</strong>
-Note that for $\gamma = 1$, there is no discount, and all future rewards are treated with equal weight.</p>
-<p>Suppose the robot executes a sequence of actions, $a_1, \dots, a_n$,
-starting in state  $X_1=x_1$, and passes through
-state sequence $x_1,x_2,x_3\dots x_{n+1}$.
-We define the utility function $U: {\cal A}^n \times {\cal X}^{n+1} \rightarrow \mathbb{R}$ as</p>
-<p>$$
+<p>We can deal with both of these disadvantages by multiplying the reward at time <span class="math notranslate nohighlight">\(t + T\)</span> by a discounting
+factor <span class="math notranslate nohighlight">\(\gamma^T\)</span>, with <span class="math notranslate nohighlight">\(0 &lt; \gamma \leq 1\)</span>.
+We refer to <span class="math notranslate nohighlight">\(\gamma\)</span> as the <strong>discount factor</strong>
+and to the term <span class="math notranslate nohighlight">\(\gamma^T R(x_t,a_t,x_{t+T})\)</span> as a <strong>discounted reward.</strong>
+Note that for <span class="math notranslate nohighlight">\(\gamma = 1\)</span>, there is no discount, and all future rewards are treated with equal weight.</p>
+<p>Suppose the robot executes a sequence of actions, <span class="math notranslate nohighlight">\(a_1, \dots, a_n\)</span>,
+starting in state  <span class="math notranslate nohighlight">\(X_1=x_1\)</span>, and passes through
+state sequence <span class="math notranslate nohighlight">\(x_1,x_2,x_3\dots x_{n+1}\)</span>.
+We define the utility function <span class="math notranslate nohighlight">\(U: {\cal A}^n \times {\cal X}^{n+1} \rightarrow \mathbb{R}\)</span> as</p>
+<div class="math notranslate nohighlight">
+\[
 U(a_1, \dots, a_n, x_1, \dots x_{n+1}) =
-R(x_1,a_1, x_2) + \gamma R(x_2, a_2, x_3) + \gamma^2 R(x_3, \pi(x_3), x_4) + \dots \gamma^{n} R(x_{n}, a_{n}, x_{n+1})$$</p>
+R(x_1,a_1, x_2) + \gamma R(x_2, a_2, x_3) + \gamma^2 R(x_3, \pi(x_3), x_4) + \dots \gamma^{n} R(x_{n}, a_{n}, x_{n+1})\]</div>
 <p>We can write this more compactly as the summation</p>
-<p>$$
+<div class="math notranslate nohighlight">
+\[
 U(a_1, \dots, a_n, x_1, \dots x_{n+1}) =
-\sum_{t=1}^{n} = \gamma^{t-1} R(x_t, a_t, x_{t+1})
-$$</p>
-<p>For $n &lt; \infty$, we refer to this as a finite-horizon utility function.
+\sum_{t=1}^{n} = \gamma^{t-1} R(x_t, a_t, x_{t+1}) 
+\]</div>
+<p>For <span class="math notranslate nohighlight">\(n &lt; \infty\)</span>, we refer to this as a finite-horizon utility function.
 Note that influence of future rewards decreases exponentially with the time horizon,
-and that the use of $\gamma^{t-1}$ ensures that the sum will converge for the infinite horizon case
-(under mild assumptions about $R$).</p>
+and that the use of <span class="math notranslate nohighlight">\(\gamma^{t-1}\)</span> ensures that the sum will converge for the infinite horizon case
+(under mild assumptions about <span class="math notranslate nohighlight">\(R\)</span>).</p>
 <p>The expression above is defined for a specific sequence of actions and a specific sequence of states.
 When planning, as we have noted above, we are unable to know with certainty the future states.
 We can, again, deal with this difficulty by computing the expected utility for a
 given sequence of actions,
-$E[U(a_1, \dots, a_n, X_1, \dots X_n)]$.
+<span class="math notranslate nohighlight">\(E[U(a_1, \dots, a_n, X_1, \dots X_n)]\)</span>.
 We can now formulate a slightly more sophisticated version of our planning problem:</p>
-<p>$$ a_1^<em>, \dots a_n^</em> = \arg  \max_{a_1 \dots a_n \in {\cal A}^n} E[U(a_1, \dots, a_n, X_1, \dots X_{n+1})]
-$$</p>
+<div class="math notranslate nohighlight">
+\[ a_1^*, \dots a_n^* = \arg  \max_{a_1 \dots a_n \in {\cal A}^n} E[U(a_1, \dots, a_n, X_1, \dots X_{n+1})]
+\]</div>
 <p>As formulated above, this problem could be solved by merely enumerating every possible action sequence,
 and choosing the sequence that maximizes the expectation.
 Obviously this is not a computationally tractable approach.
-Not only does the number of possible action sequences grow exponentially with the time horizon $n$,
+Not only does the number of possible action sequences grow exponentially with the time horizon <span class="math notranslate nohighlight">\(n\)</span>,
 but the computation of the expectation for a specific action sequence is also computationally heavy.
 We can, however, approximate this optimization process using the concept of rollouts, as we will now see.</p>
 </div>
@@ -1003,11 +1010,12 @@ We can, however, approximate this optimization process using the concept of roll
 <div><p>Rollin’, rollin’, rollin’…</p>
 </div></blockquote>
 <p>Consider the computation required to determine the expected utility for a sequence of only two actions:</p>
-<p>$$
+<div class="math notranslate nohighlight">
+\[
 E[U(a_1,a_2, X_1, X_2, X_3)] = E[R(X_1, a_1, X_2) + \gamma R(X_2, a_2, X_3)]
-$$</p>
+\]</div>
 <p>Computing the expectation requires summing over all combinations of values for states
-$X_1, X_2, X_3$.  Clearly, as $n$ becomes large, this is not a tractable computation.
+<span class="math notranslate nohighlight">\(X_1, X_2, X_3\)</span>.  Clearly, as <span class="math notranslate nohighlight">\(n\)</span> becomes large, this is not a tractable computation.
 We can approximate this computation by recalling the relationship between
 the expected value for a probability distribution and the average value over
 many realizations of the underlying random process.
@@ -1016,15 +1024,15 @@ corresponds to what we expect to observe as the average of that random variable 
 This immediately suggests an approximation algorithm:</p>
 <ul class="simple">
 <li><p>Generate many sample trajectories
-for the action sequence $a_1, \dots, a_n$;</p></li>
+for the action sequence <span class="math notranslate nohighlight">\(a_1, \dots, a_n\)</span>;</p></li>
 <li><p>compute the average of the discounted rewards over
 these sample trajectories.</p></li>
 </ul>
-<p>A specific sequence of actions, $a_1, \dots, a_n$ is sometimes called a <strong>control tape</strong>.
+<p>A specific sequence of actions, <span class="math notranslate nohighlight">\(a_1, \dots, a_n\)</span> is sometimes called a <strong>control tape</strong>.
 The process of evaluating the discounted reward for such a sequence is called a <strong>rollout</strong> for the control tape.
 Each rollout produces one sample trajectory, and one corresponding discounted reward.
 As an example, suppose the robot starts in the office executes the sequence
-$a_1, a_2, a_3, a_4$ = R,U,L,L (i.e., the robot executes actions <em>move right, move up, move left, move left</em>)
+<span class="math notranslate nohighlight">\(a_1, a_2, a_3, a_4\)</span> = R,U,L,L (i.e., the robot executes actions <em>move right, move up, move left, move left</em>)
 in an attempt to reach the living room.</p>
 <p>Because we took care to specify the Markov chain above in reverse topological order, we can then use the GTSAM method <code class="docutils literal notranslate"><span class="pre">sample</span></code> to do the rollouts for us:</p>
 <div class="cell docutils container">
@@ -1162,7 +1170,7 @@ it would have chosen to move right until it reached the hallway,
 at which time it would have chosen to move up until reaching the living room.
 Clearly, the robot would make better choices if it were allowed to dynamically
 choose which action to execute based on its current state.</p>
-<p>A <strong>policy</strong>, $\pi: {\cal X} \rightarrow {\cal A}$ is a mapping from states to actions.
+<p>A <strong>policy</strong>, <span class="math notranslate nohighlight">\(\pi: {\cal X} \rightarrow {\cal A}\)</span> is a mapping from states to actions.
 Specifying a policy instead of a control tape has the potential to significantly improve the robot’s performance, by adapting the action sequence based on the actual state trajectory that occurs during execution.</p>
 <p>The code below defines a fairly intuitive policy. If in the office, move right. If in the dining room or kitchen, move left.
 If in the hallway or living room, move up.
@@ -1180,11 +1188,11 @@ Note we implement policies as a simple list in python, so <code class="docutils 
 </div>
 </div>
 <p>Again, we return an index into the <code class="docutils literal notranslate"><span class="pre">action_space</span></code> to make the following code efficient.
-Once we have a given policy, $\pi$, we can compute a policy rollout in a manner analogous to computing
+Once we have a given policy, <span class="math notranslate nohighlight">\(\pi\)</span>, we can compute a policy rollout in a manner analogous to computing
 control tape rollouts described above.
 In particular, at each state, instead of sampling from the distribution
-$P(X_{t+1} | a_t, X_t)$ we sample from the distribution
-$P(X_{t+1} | \pi(X_t), X_t)$. In other words, instead of simulating a pre-specified action $a_t$, we choose $a_t = \pi(X_t)$.</p>
+<span class="math notranslate nohighlight">\(P(X_{t+1} | a_t, X_t)\)</span> we sample from the distribution
+<span class="math notranslate nohighlight">\(P(X_{t+1} | \pi(X_t), X_t)\)</span>. In other words, instead of simulating a pre-specified action <span class="math notranslate nohighlight">\(a_t\)</span>, we choose <span class="math notranslate nohighlight">\(a_t = \pi(X_t)\)</span>.</p>
 <p>Here is a function that computes a rollout given a policy, rather than a control tape:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1243,59 +1251,65 @@ for a fixed sequence of actions.</p>
 <div class="section" id="the-value-function-for-a-given-policy">
 <h2><span class="section-number">3.5.6. </span>The Value Function (for a given policy)<a class="headerlink" href="#the-value-function-for-a-given-policy" title="Permalink to this headline">¶</a></h2>
 <blockquote>
-<div><p>The value function $V^\pi$ measures the expected outcome from each state, under a given policy $\pi$.</p>
+<div><p>The value function <span class="math notranslate nohighlight">\(V^\pi\)</span> measures the expected outcome from each state, under a given policy <span class="math notranslate nohighlight">\(\pi\)</span>.</p>
 </div></blockquote>
-<p>Above, we defined the utility for a specific sequence of $n$ actions as</p>
-<p>$$
+<p>Above, we defined the utility for a specific sequence of <span class="math notranslate nohighlight">\(n\)</span> actions as</p>
+<div class="math notranslate nohighlight">
+\[
 U(a_1, \dots, a_n, x_1, \dots x_{n+1}) =
-R(x_1,a_1, x_2) + \gamma R(x_2, a_2, x_3) + \gamma^2 R(x_3, \pi(x_3), x_4) + \dots \gamma^{n} R(x_{n}, a_{n}, x_{n+1})$$</p>
-<p>and used the expected utility, $E[U(a_1, \dots, a_n, X_1, \dots X_n)]$ as a quantitative measure
+R(x_1,a_1, x_2) + \gamma R(x_2, a_2, x_3) + \gamma^2 R(x_3, \pi(x_3), x_4) + \dots \gamma^{n} R(x_{n}, a_{n}, x_{n+1})\]</div>
+<p>and used the expected utility, <span class="math notranslate nohighlight">\(E[U(a_1, \dots, a_n, X_1, \dots X_n)]\)</span> as a quantitative measure
 of the efficacy of the specific action sequence.
-We can apply this same type of reasoning for a policy, $\pi$.
+We can apply this same type of reasoning for a policy, <span class="math notranslate nohighlight">\(\pi\)</span>.
 When evaluating policies, it is typical to use a discounted
 reward over an infinite time horizon.
-In this case, we define the <strong>value function for policy $\pi$</strong>,
-$V^\pi:{\cal X} \rightarrow \mathbb{R}$ as</p>
-<p>$$
+In this case, we define the <strong>value function for policy <span class="math notranslate nohighlight">\(\pi\)</span></strong>,
+<span class="math notranslate nohighlight">\(V^\pi:{\cal X} \rightarrow \mathbb{R}\)</span> as</p>
+<div class="math notranslate nohighlight">
+\[
 V^\pi(x_1) \doteq E [R(x_1, \pi(x_1), X_2) + \gamma R(X_2, \pi(X_2), X_3) + \gamma^2 R(X_3, \pi(X_3), X_4) + \dots]
-$$</p>
+\]</div>
 <p>where the expectation is taken over the possible values
-of the states $X_2, X_2, X_3 \dots$.
-Note that the policy $\pi$ is deterministic, but that $\pi(X_i)$ is the random action that results
-from applying the deterministic policy to the stochastic state $X_i$.</p>
-<p>In the definition for $V^\pi$, the argument is given as $x_1$, the initial state.
+of the states <span class="math notranslate nohighlight">\(X_2, X_2, X_3 \dots\)</span>.
+Note that the policy <span class="math notranslate nohighlight">\(\pi\)</span> is deterministic, but that <span class="math notranslate nohighlight">\(\pi(X_i)\)</span> is the random action that results
+from applying the deterministic policy to the stochastic state <span class="math notranslate nohighlight">\(X_i\)</span>.</p>
+<p>In the definition for <span class="math notranslate nohighlight">\(V^\pi\)</span>, the argument is given as <span class="math notranslate nohighlight">\(x_1\)</span>, the initial state.
 We can easily generalize this to arbitrary time steps as</p>
-<p>$$
+<div class="math notranslate nohighlight">
+\[
 V^\pi(x_t) \doteq E [R(x_t, \pi(x_t), X_{t+1}) + \gamma R(X_{t+1}, \pi(X_{t+1}), X_{t+2}) + \gamma^2 R(X_{t+2}, \pi(X_{t+2}), X_{t+3}) + \dots]
-$$</p>
+\]</div>
 <p>The value function for a policy can be written in a nice recursive form
 that can be obtained by the following derivation.</p>
-<p>$$
+<div class="math notranslate nohighlight">
+\[\begin{split}
 \begin{aligned}
 V^\pi(x_1) &amp;=
-E [R(x_1, \pi(x_1), X_2) + \gamma R(X_2, \pi(X_2), X_3) + \gamma^2 R(X_3, \pi(X_3), X_4) + \dots] \
+E [R(x_1, \pi(x_1), X_2) + \gamma R(X_2, \pi(X_2), X_3) + \gamma^2 R(X_3, \pi(X_3), X_4) + \dots] \\
 &amp;=
-\sum_{x_2} P(x_2|x_1, \pi(x_1)) {R(x_1, \pi(x_1), x_2) + E [\gamma R(x_2, \pi(x_2), X_3) + \gamma^2 R(X_3, \pi(X_3), X_4) + \dots]}\
-&amp;= \sum_{x_2} P(x_2|x_1, \pi(x_1)) {R(x_1, \pi(x_1), x_2) + \gamma V^\pi(x_2)}
+ \sum_{x_2} P(x_2|x_1, \pi(x_1)) \{R(x_1, \pi(x_1), x_2) + E [\gamma R(x_2, \pi(x_2), X_3) + \gamma^2 R(X_3, \pi(X_3), X_4) + \dots]\}\\
+&amp;= \sum_{x_2} P(x_2|x_1, \pi(x_1)) \{R(x_1, \pi(x_1), x_2) + \gamma V^\pi(x_2)\}
 \end{aligned}
-$$</p>
+\end{split}\]</div>
 <p>where the second line is obtained by explicitly writing the summation for the expectation
-taken with respect to the random state $X_2$,
+taken with respect to the random state <span class="math notranslate nohighlight">\(X_2\)</span>,
 and the third line is obtained by noticing that
-$V^\pi(x_2) =E [\gamma R(x_2, \pi(x_2), X_3) + \gamma^2 R(X_3, \pi(X_3), X_4) + \dots]$.</p>
+<span class="math notranslate nohighlight">\(V^\pi(x_2) =E [\gamma R(x_2, \pi(x_2), X_3) + \gamma^2 R(X_3, \pi(X_3), X_4) + \dots]\)</span>.</p>
 <p>We can apply the distributivity property to this expression to obtain</p>
-<p>$$
+<div class="math notranslate nohighlight">
+\[\begin{split}
 \begin{aligned}
-V^\pi(x_1) &amp;= \sum_{x_2} P(x_2|x_1, \pi(x_1)) R(x_1, \pi(x_1), x_2) + \gamma  \sum_{x_2} P(x_2|x_1, \pi(x_1))  V^\pi(x_2) \
+V^\pi(x_1) &amp;= \sum_{x_2} P(x_2|x_1, \pi(x_1)) R(x_1, \pi(x_1), x_2) + \gamma  \sum_{x_2} P(x_2|x_1, \pi(x_1))  V^\pi(x_2) \\
 &amp;= \bar{R}(x_1,\pi(x_1)) + \gamma \sum_{x_2} P(x_2|x_1, \pi(x_1)) V^\pi(x_2)
 \end{aligned}
-$$</p>
-<p>in which the term $\bar{R}(x_1,\pi(x_1))$ is the expected reward for applying action $a = \pi(x_1)$ in state $x_1$.
+\end{split}\]</div>
+<p>in which the term <span class="math notranslate nohighlight">\(\bar{R}(x_1,\pi(x_1))\)</span> is the expected reward for applying action <span class="math notranslate nohighlight">\(a = \pi(x_1)\)</span> in state <span class="math notranslate nohighlight">\(x_1\)</span>.
 This can be computed directly using the reward function and transition probabilities.
-By now substituting $x$ for $x_1$, and $x’$ for $x_{2}$ we can generalize this expression
-to apply to the state $x$ at any arbitrary time:</p>
-<p>$$V^\pi(x) = \bar{R}(x,\pi(x)) + \gamma \sum_{x’} P(x’|x, \pi(x)) V^\pi(x’)$$</p>
-<p>This has a very nice interpretation: the value of a state under a given policy is the expected reward $\bar{R}(x,\pi(x))$ under that policy, <em>plus</em> the discounted expected value of the next state.</p>
+By now substituting <span class="math notranslate nohighlight">\(x\)</span> for <span class="math notranslate nohighlight">\(x_1\)</span>, and <span class="math notranslate nohighlight">\(x'\)</span> for <span class="math notranslate nohighlight">\(x_{2}\)</span> we can generalize this expression
+to apply to the state <span class="math notranslate nohighlight">\(x\)</span> at any arbitrary time:</p>
+<div class="math notranslate nohighlight">
+\[V^\pi(x) = \bar{R}(x,\pi(x)) + \gamma \sum_{x'} P(x'|x, \pi(x)) V^\pi(x')\]</div>
+<p>This has a very nice interpretation: the value of a state under a given policy is the expected reward <span class="math notranslate nohighlight">\(\bar{R}(x,\pi(x))\)</span> under that policy, <em>plus</em> the discounted expected value of the next state.</p>
 <div class="section" id="thought-exercise">
 <h3><span class="section-number">3.5.6.1. </span>Thought exercise<a class="headerlink" href="#thought-exercise" title="Permalink to this headline">¶</a></h3>
 <p>Without a discount factor, we would always be hopeful that if we take one more step, we will find a pot of gold. Reflect on what various values for the discount factor mean in real life.</p>
@@ -1311,28 +1325,30 @@ using control tape rollouts,
 we can approximate the value function by sampling over a number of policy rollouts.
 This process provides a <em>Monte Carlo approximation</em> of the value function for a given policy.
 Of course we cannot apply a policy rollout over an infinite time horizon, so we apply
-the rollout only to some finite number of time steps, say $N_{\rm{ro}}$.</p>
+the rollout only to some finite number of time steps, say <span class="math notranslate nohighlight">\(N_{\rm{ro}}\)</span>.</p>
 <p>Note this is an approximation in <em>two</em> ways:</p>
 <ol class="simple">
-<li><p>We approximate the expectation by averaging over $N_{\rm{Samples}}$ sample trajectories.</p></li>
-<li><p>We only roll out for  $N_{\rm{ro}}$ steps.
+<li><p>We approximate the expectation by averaging over <span class="math notranslate nohighlight">\(N_{\rm{Samples}}\)</span> sample trajectories.</p></li>
+<li><p>We only roll out for  <span class="math notranslate nohighlight">\(N_{\rm{ro}}\)</span> steps.
 We can improve on this by increasing the number of samples or by increasing the horizon, but at a cost linear in their product, i.e.,
-$O(N_{\rm{ro}} N_{\rm{Samples}})$:</p></li>
+<span class="math notranslate nohighlight">\(O(N_{\rm{ro}} N_{\rm{Samples}})\)</span>:</p></li>
 </ol>
-<p>You might worry that evaluating sample paths of length $N_{\rm{ro}}$ could lead to significant errors
+<p>You might worry that evaluating sample paths of length <span class="math notranslate nohighlight">\(N_{\rm{ro}}\)</span> could lead to significant errors
 in our approximation.
 In fact, it is easy to determine an upper bound on this error.
-Since $R(x, a, x’) $ is finite,
-we know that there is some upper bound $R_{\rm{max}}$ such that $R(x, a, x’) &lt; R_{\rm{max}}$, for all
-possible $x,a,x’$.
-We can use this fact to find a bound on $V^\pi$:</p>
-<p>$$V^\pi(x_t)
+Since <span class="math notranslate nohighlight">\(R(x, a, x') \)</span> is finite,
+we know that there is some upper bound <span class="math notranslate nohighlight">\(R_{\rm{max}}\)</span> such that <span class="math notranslate nohighlight">\(R(x, a, x') &lt; R_{\rm{max}}\)</span>, for all
+possible <span class="math notranslate nohighlight">\(x,a,x'\)</span>.
+We can use this fact to find a bound on <span class="math notranslate nohighlight">\(V^\pi\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[V^\pi(x_t)
 \leq \max_{x_t, x_{t+1}, \dots} \sum_{i=0}^\infty \gamma ^i R(x_{t+i},\pi(x_{t+i}), x_{t+i+1})
-\leq \sum_{i=0}^\infty \gamma ^i R_{\rm{max}} = \frac{R_{\rm{max}}}{1 - \gamma}$$</p>
-<p>in which the final term applies for $0 &lt; \gamma &lt; 1$.
+\leq \sum_{i=0}^\infty \gamma ^i R_{\rm{max}} = \frac{R_{\rm{max}}}{1 - \gamma}\]</div>
+<p>in which the final term applies for <span class="math notranslate nohighlight">\(0 &lt; \gamma &lt; 1\)</span>.
 This expression can then be used to bound the error</p>
-<p>$$
-V^\pi(x) - \sum_{i=0}^{N_{\rm{ro}}}\gamma ^i R(x_i,\pi(xi), x_{i+1})$$</p>
+<div class="math notranslate nohighlight">
+\[
+V^\pi(x) - \sum_{i=0}^{N_{\rm{ro}}}\gamma ^i R(x_i,\pi(xi), x_{i+1})\]</div>
 <p>Because we have functions to sample a policy rollout <em>and</em> to calculate the value of a rollout, the code is simple enough:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1361,7 +1377,7 @@ V(Dining Room) ~ 19.25
 </div>
 </div>
 </div>
-<p>The above calculation was done with a horizon of $N=5$ and 10 samples. Of course, we can use more samples and a longer horizon to obtain a much more accurate estimate:</p>
+<p>The above calculation was done with a horizon of <span class="math notranslate nohighlight">\(N=5\)</span> and 10 samples. Of course, we can use more samples and a longer horizon to obtain a much more accurate estimate:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nr_samples</span> <span class="o">=</span> <span class="mi">100</span>
@@ -1376,10 +1392,10 @@ V(Dining Room) ~ 19.25
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Living Room) ~ 99.43
-V(Kitchen) ~ 97.64
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Office) ~ 84.74
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Kitchen) ~ 97.64
+V(Office) ~ 84.74
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Hallway) ~ 97.37
@@ -1396,98 +1412,84 @@ V(Kitchen) ~ 97.64
 <blockquote>
 <div><p>For any fixed policy we can <em>exactly</em> compute the value function.</p>
 </div></blockquote>
-<p>We can compute the exact value of $V^\pi$ by solving a system of linear equations.
+<p>We can compute the exact value of <span class="math notranslate nohighlight">\(V^\pi\)</span> by solving a system of linear equations.
 Recall our recursive definition of the value function:</p>
-<p>$$V^\pi(x) = \bar{R}(x,\pi(x)) + \gamma \sum_{x’} P(x’|x, \pi(x)) V^\pi(x’)$$</p>
-<p>This equation holds for every possible value $x$ for the state.
-Hence, if there are $n$ possible states, we obtain $n$ linear equations in $n$ unknowns.
-Each of these $n$ equations is obtained by evaluating $V^\pi(x)$ for a specific value of $x$.
-Collecting the unknown $V^\pi$ terms on the left hand side and the known $\bar{R}(x,\pi(x))$
+<div class="math notranslate nohighlight">
+\[V^\pi(x) = \bar{R}(x,\pi(x)) + \gamma \sum_{x'} P(x'|x, \pi(x)) V^\pi(x')\]</div>
+<p>This equation holds for every possible value <span class="math notranslate nohighlight">\(x\)</span> for the state.
+Hence, if there are <span class="math notranslate nohighlight">\(n\)</span> possible states, we obtain <span class="math notranslate nohighlight">\(n\)</span> linear equations in <span class="math notranslate nohighlight">\(n\)</span> unknowns.
+Each of these <span class="math notranslate nohighlight">\(n\)</span> equations is obtained by evaluating <span class="math notranslate nohighlight">\(V^\pi(x)\)</span> for a specific value of <span class="math notranslate nohighlight">\(x\)</span>.
+Collecting the unknown <span class="math notranslate nohighlight">\(V^\pi\)</span> terms on the left hand side and the known <span class="math notranslate nohighlight">\(\bar{R}(x,\pi(x))\)</span>
 terms on the right hand side, we obtain</p>
-<p>$$V^\pi(x) - \gamma \sum_{x’} P(x’|x, \pi(x)) V^\pi(x’) = \bar{R}(x,\pi(x))$$</p>
+<div class="math notranslate nohighlight">
+\[V^\pi(x) - \gamma \sum_{x'} P(x'|x, \pi(x)) V^\pi(x') = \bar{R}(x,\pi(x))\]</div>
 <p>To make this explicit yet concise for our vacuum cleaning robot example,
-let us define the <em>scalar</em> $T^\pi_{xy}\doteq P(y|x,\pi(x))$ as the transition probability from state $x$ to state $y$ under policy $\pi$.
-In addition, we use the abbreviations L,K,O,H, and D for the rooms, and use the shorthand $V^\pi_x\doteq V^\pi(x)$ for the value of state $x$ under policy $\pi$.
+let us define the <em>scalar</em> <span class="math notranslate nohighlight">\(T^\pi_{xy}\doteq P(y|x,\pi(x))\)</span> as the transition probability from state <span class="math notranslate nohighlight">\(x\)</span> to state <span class="math notranslate nohighlight">\(y\)</span> under policy <span class="math notranslate nohighlight">\(\pi\)</span>.
+In addition, we use the abbreviations L,K,O,H, and D for the rooms, and use the shorthand <span class="math notranslate nohighlight">\(V^\pi_x\doteq V^\pi(x)\)</span> for the value of state <span class="math notranslate nohighlight">\(x\)</span> under policy <span class="math notranslate nohighlight">\(\pi\)</span>.
 Using this notation, we can evaluate the above expression for
-r $x = L$, we obtain</p>
-<p>$$
+r <span class="math notranslate nohighlight">\(x = L\)</span>, we obtain</p>
+<div class="math notranslate nohighlight">
+\[\begin{split} 
 \begin{aligned}
-V^\pi(L) - \gamma \sum_{x’\in {L,K,O,H,D}} T^\pi_{Lx’} V^\pi_{x’} &amp; = \bar{R}(L,\pi(L)) \
-V^\pi_{L}</p>
-<ul class="simple">
-<li><p>\gamma T^\pi_{LL} V^\pi_{L}</p></li>
-<li><p>\gamma T^\pi_{LK} V^\pi_{K}</p></li>
-<li><p>\gamma T^\pi_{LO} V^\pi_{O}</p></li>
-<li><p>\gamma T^\pi_{LH} V^\pi_{H}</p></li>
-<li><p>\gamma T^\pi_{LD} V^\pi_{D}
-&amp;= \bar{R}(L,\pi(L)) \
-(1 - \gamma T^\pi_{LL}) V^\pi_{L}</p></li>
-<li><p>\gamma T^\pi_{LK} V^\pi_{K}</p></li>
-<li><p>\gamma T^\pi_{LO} V^\pi_{O}</p></li>
-<li><p>\gamma T^\pi_{LH} V^\pi_{H}</p></li>
-<li><p>\gamma T^\pi_{LD} V^\pi_{D}
+V^\pi(L) - \gamma \sum_{x'\in {L,K,O,H,D}} T^\pi_{Lx'} V^\pi_{x'} &amp; = \bar{R}(L,\pi(L)) \\
+V^\pi_{L}
+- \gamma T^\pi_{LL} V^\pi_{L}
+- \gamma T^\pi_{LK} V^\pi_{K} 
+- \gamma T^\pi_{LO} V^\pi_{O} 
+- \gamma T^\pi_{LH} V^\pi_{H} 
+- \gamma T^\pi_{LD} V^\pi_{D} 
+&amp;= \bar{R}(L,\pi(L)) \\
+(1 - \gamma T^\pi_{LL}) V^\pi_{L}
+- \gamma T^\pi_{LK} V^\pi_{K} 
+- \gamma T^\pi_{LO} V^\pi_{O} 
+- \gamma T^\pi_{LH} V^\pi_{H} 
+- \gamma T^\pi_{LD} V^\pi_{D} 
 &amp;= \bar{R}(L,\pi(L))
 \end{aligned}
-$$</p></li>
-</ul>
+\end{split}\]</div>
 <p>If we apply this same process for each of the five rooms,
 we obtain the following five equations:</p>
-<p>$$
+<div class="math notranslate nohighlight">
+\[\begin{split}
 \begin{aligned}
-(1 - \gamma T^\pi_{LL}) V^\pi_{L}</p>
-<ul class="simple">
-<li><p>\gamma T^\pi_{LK} V^\pi_{K}</p></li>
-<li><p>\gamma T^\pi_{LO} V^\pi_{O}</p></li>
-<li><p>\gamma T^\pi_{LH} V^\pi_{H}</p></li>
-<li><p>\gamma T^\pi_{LD} V^\pi_{D}
+(1 - \gamma T^\pi_{LL}) V^\pi_{L}
+- \gamma T^\pi_{LK} V^\pi_{K} 
+- \gamma T^\pi_{LO} V^\pi_{O} 
+- \gamma T^\pi_{LH} V^\pi_{H} 
+- \gamma T^\pi_{LD} V^\pi_{D} 
 &amp;= \bar{R}(L,\pi(L))
-\</p></li>
-<li><p>\gamma T^\pi_{KL} V^\pi_{L}</p></li>
-</ul>
-<ul class="simple">
-<li><p>(1 - \gamma T^\pi_{KK}) V^\pi_{K}</p></li>
-</ul>
-<ul class="simple">
-<li><p>\gamma T^\pi_{KO} V^\pi_{O}</p></li>
-<li><p>\gamma T^\pi_{KH} V^\pi_{H}</p></li>
-<li><p>\gamma T^\pi_{KD} V^\pi_{D}
+\\
+- \gamma T^\pi_{KL} V^\pi_{L}
++ (1 - \gamma T^\pi_{KK}) V^\pi_{K} 
+- \gamma T^\pi_{KO} V^\pi_{O} 
+- \gamma T^\pi_{KH} V^\pi_{H} 
+- \gamma T^\pi_{KD} V^\pi_{D} 
 &amp;= \bar{R}(K,\pi(K))
-\</p></li>
-<li><p>\gamma T^\pi_{OL} V^\pi_{L}</p></li>
-<li><p>\gamma T^\pi_{OK} V^\pi_{K}</p></li>
-</ul>
-<ul class="simple">
-<li><p>(1 - \gamma T^\pi_{OO}) V^\pi_{O}</p></li>
-</ul>
-<ul class="simple">
-<li><p>\gamma T^\pi_{OH} V^\pi_{H}</p></li>
-<li><p>\gamma T^\pi_{OD} V^\pi_{D}
+\\
+- \gamma T^\pi_{OL} V^\pi_{L}
+- \gamma T^\pi_{OK} V^\pi_{K} 
++ (1 - \gamma T^\pi_{OO}) V^\pi_{O} 
+- \gamma T^\pi_{OH} V^\pi_{H} 
+- \gamma T^\pi_{OD} V^\pi_{D} 
 &amp;= \bar{R}(O,\pi(O))
-\</p></li>
-<li><p>\gamma T^\pi_{HL} V^\pi_{L}</p></li>
-<li><p>\gamma T^\pi_{HK} V^\pi_{K}</p></li>
-<li><p>\gamma T^\pi_{HO} V^\pi_{O}</p></li>
-</ul>
-<ul class="simple">
-<li><p>(1 - \gamma T^\pi_{HH}) V^\pi_{H}</p></li>
-</ul>
-<ul class="simple">
-<li><p>\gamma T^\pi_{HD} V^\pi_{D}
+\\
+- \gamma T^\pi_{HL} V^\pi_{L}
+- \gamma T^\pi_{HK} V^\pi_{K} 
+- \gamma T^\pi_{HO} V^\pi_{O} 
++ (1 - \gamma T^\pi_{HH}) V^\pi_{H} 
+- \gamma T^\pi_{HD} V^\pi_{D} 
 &amp;= \bar{R}(H,\pi(H))
-\</p></li>
-<li><p>\gamma T^\pi_{DL} V^\pi_{L}</p></li>
-<li><p>\gamma T^\pi_{DK} V^\pi_{K}</p></li>
-<li><p>\gamma T^\pi_{DO} V^\pi_{O}</p></li>
-<li><p>\gamma T^\pi_{DH} V^\pi_{H}</p></li>
-</ul>
-<ul class="simple">
-<li><p>(1 - \gamma T^\pi_{DD}) V^\pi_{D}
+\\
+- \gamma T^\pi_{DL} V^\pi_{L}
+- \gamma T^\pi_{DK} V^\pi_{K} 
+- \gamma T^\pi_{DO} V^\pi_{O} 
+- \gamma T^\pi_{DH} V^\pi_{H} 
++ (1 - \gamma T^\pi_{DD}) V^\pi_{D} 
 &amp;= \bar{R}(D,\pi(D))
 \end{aligned}
-$$</p></li>
-</ul>
+\end{split}\]</div>
 <p>The unknowns in these equations are
-$V^\pi_{L}, V^\pi_{K}, V^\pi_{O}, V^\pi_{H}, V^\pi_{D}$. All of the other terms are
+<span class="math notranslate nohighlight">\(V^\pi_{L}, V^\pi_{K}, V^\pi_{O}, V^\pi_{H}, V^\pi_{D}\)</span>. All of the other terms are
 either transition probabilities or expected rewards, whose values are either given,
 or can easily be computed.</p>
 <p>In code, this becomes:</p>
@@ -1533,7 +1535,7 @@ b = [10.  8.  0.  8.  0.]
 </div>
 </div>
 </div>
-<p>When we calculate the value function $V^\pi$ under this policy <code class="docutils literal notranslate"><span class="pre">reasonable_policy</span></code> we see that our <em>exact</em> value function was well approximated by Monte Carlo estimate above:</p>
+<p>When we calculate the value function <span class="math notranslate nohighlight">\(V^\pi\)</span> under this policy <code class="docutils literal notranslate"><span class="pre">reasonable_policy</span></code> we see that our <em>exact</em> value function was well approximated by Monte Carlo estimate above:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">value_for_pi</span> <span class="o">=</span> <span class="n">calculate_value_function</span><span class="p">(</span><span class="n">reasonable_policy</span><span class="p">)</span>
@@ -1556,7 +1558,7 @@ b = [10.  8.  0.  8.  0.]
 </div>
 <div class="section" id="exercise">
 <h3><span class="section-number">3.5.8.1. </span>Exercise<a class="headerlink" href="#exercise" title="Permalink to this headline">¶</a></h3>
-<p>Why is the value function in the living room $100$ and not the immediate reward $10$?</p>
+<p>Why is the value function in the living room <span class="math notranslate nohighlight">\(100\)</span> and not the immediate reward <span class="math notranslate nohighlight">\(10\)</span>?</p>
 </div>
 </div>
 <div class="section" id="optimal-policy-and-value-function">
@@ -1564,30 +1566,31 @@ b = [10.  8.  0.  8.  0.]
 <blockquote>
 <div><p>The optimal policy and optimal value function are besties.</p>
 </div></blockquote>
-<p>Now that we know how to compute the value function for an arbitrary policy $\pi$,
+<p>Now that we know how to compute the value function for an arbitrary policy <span class="math notranslate nohighlight">\(\pi\)</span>,
 we turn our attention to computing the <strong>optimal value function</strong>,
-which can be used to construct the <strong>optimal policy</strong> $\pi^*$</p>
-<p>The optimal value function  $V^*: {\cal X} \rightarrow {\cal A}$
+which can be used to construct the <strong>optimal policy</strong> <span class="math notranslate nohighlight">\(\pi^*\)</span></p>
+<p>The optimal value function  <span class="math notranslate nohighlight">\(V^*: {\cal X} \rightarrow {\cal A}\)</span>
 is merely the value function for the optimal policy.
 This can be written mathmatically as</p>
-<p>$$
+<div class="math notranslate nohighlight">
+\[\begin{split}
 \begin{aligned}
-V^<em>(x) &amp;= \max_\pi V^{\pi}(x) \
+V^*(x) &amp;= \max_\pi V^{\pi}(x) \\
 &amp;=
-\max_\pi \left{ \bar{R}(x,\pi(x)) + \gamma \sum_{x’} P(x’|x, \pi(x)) V^\pi(x’)   \right}\
+\max_\pi \left\{ \bar{R}(x,\pi(x)) + \gamma \sum_{x'} P(x'|x, \pi(x)) V^\pi(x')   \right\}\\
 &amp;=
-\max_a  \left{ \bar{R}(x,a) + \gamma \sum_{x’} P(x’|x, a) V^</em>(x’)   \right} \
+\max_a  \left\{ \bar{R}(x,a) + \gamma \sum_{x'} P(x'|x, a) V^*(x')   \right\} \\
 \end{aligned}
-$$</p>
+\end{split}\]</div>
 <p>In the above, the second line follows immediately by substituting
-our earlier expression for $V^\pi$ into the maximization.
+our earlier expression for <span class="math notranslate nohighlight">\(V^\pi\)</span> into the maximization.
 The third line is more interesting.
 Because the value function has been written in recursive form,
-$\pi$ is only applied to the current state (i.e., when $\pi$ is evaluated in the optimization,
-it always appears as $\pi(x)$).
+<span class="math notranslate nohighlight">\(\pi\)</span> is only applied to the current state (i.e., when <span class="math notranslate nohighlight">\(\pi\)</span> is evaluated in the optimization,
+it always appears as <span class="math notranslate nohighlight">\(\pi(x)\)</span>).
 Therefore, we can write the optimization
 as a maximization with respect to the <em>action</em> applied in the <em>current state</em>, rather than as a
-maximization with respect to the entire policy $\pi$!
+maximization with respect to the entire policy <span class="math notranslate nohighlight">\(\pi\)</span>!
 This equation is known as the <strong>Bellman equation</strong>.
 It is named after Richard Bellman, the mathematician
 who discovered it, and it is one of the most important equations in all of computer science.</p>
@@ -1595,22 +1598,25 @@ who discovered it, and it is one of the most important equations in all of compu
 the optimal value function of a state is the maximum expected reward
 <em>plus</em> the discounted expected value function when acting optimally in the future.</p>
 <p>Using Bellman’s equation, it is straightforward to compute the optimal policy from a given state.</p>
-<p>$$
-\pi^<em>(x) = \arg
-\max_a  \left{ \bar{R}(x,a) + \gamma \sum_{x’} P(x’|x, a) V^</em>(x’)   \right}
-$$</p>
-<p>This computation is performed so often that it is convenient to introduce the so-called $Q$-function</p>
-<p>$$
+<div class="math notranslate nohighlight">
+\[
+\pi^*(x) = \arg
+\max_a  \left\{ \bar{R}(x,a) + \gamma \sum_{x'} P(x'|x, a) V^*(x')   \right\} 
+\]</div>
+<p>This computation is performed so often that it is convenient to introduce the so-called <span class="math notranslate nohighlight">\(Q\)</span>-function</p>
+<div class="math notranslate nohighlight">
+\[
 \begin{aligned}
-Q^<em>(x,a) \doteq \bar{R}(x,a) + \gamma \sum_{x’} P(x’|x, a) V^</em>(x’)
+Q^*(x,a) \doteq \bar{R}(x,a) + \gamma \sum_{x'} P(x'|x, a) V^*(x') 
 \end{aligned}
-$$</p>
+\]</div>
 <p>which allows us to write the optimal policy as</p>
-<p>$$
-\pi^<em>(x) = \arg
-\max_a  Q^</em>(x,a)
-$$</p>
-<p>We will see the $Q$-function again, when we discuss reinforcement learning.
+<div class="math notranslate nohighlight">
+\[
+\pi^*(x) = \arg
+\max_a  Q^*(x,a)
+\]</div>
+<p>We will see the <span class="math notranslate nohighlight">\(Q\)</span>-function again, when we discuss reinforcement learning.
 The code for computing a Q-value from a value function is given below:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1623,30 +1629,30 @@ The code for computing a Q-value from a value function is given below:</p>
 </div>
 <p>We will describe two methods for determining the optimal policy.
 The first method, policy iteration, iteratively improves candidate policies,
-ultimately converging to the optimal policy $\pi^<em>$.
-The second method, value iteration, iteratively improves an estimate of $V^</em>$,
+ultimately converging to the optimal policy <span class="math notranslate nohighlight">\(\pi^*\)</span>.
+The second method, value iteration, iteratively improves an estimate of <span class="math notranslate nohighlight">\(V^*\)</span>,
 ultimately converging to the optimal value function.</p>
 </div>
 <div class="section" id="policy-iteration">
 <h2><span class="section-number">3.5.10. </span>Policy Iteration<a class="headerlink" href="#policy-iteration" title="Permalink to this headline">¶</a></h2>
 <blockquote>
-<div><p>By iteratively improving an estimate of the optimal policy, we eventually find $\pi^*$.</p>
+<div><p>By iteratively improving an estimate of the optimal policy, we eventually find <span class="math notranslate nohighlight">\(\pi^*\)</span>.</p>
 </div></blockquote>
 <p>One way to compute an optimal policy is to start with an initial guess
 at the optimal policy, and then iteratively improve our guess until until no futher improvements are possible.
 This is exactly the approach taken by <strong>policy iteration</strong>.
 In particular, policy iteration generates a sequence of policies
-$\pi^0, \pi^1, \dots \pi^n$, such that $\pi^{k+1}$ is better than policy $\pi^k$.
+<span class="math notranslate nohighlight">\(\pi^0, \pi^1, \dots \pi^n\)</span>, such that <span class="math notranslate nohighlight">\(\pi^{k+1}\)</span> is better than policy <span class="math notranslate nohighlight">\(\pi^k\)</span>.
 This process ends when no further improvement is possible, which
-occurs when $\pi^{k+1} = \pi^k.$</p>
-<p>To improve the policy $\pi^k$, we update the action chosen <em>for each state</em> by applying
-Bellman’s equation using $\pi^k$ in place of $\pi^*$.
+occurs when <span class="math notranslate nohighlight">\(\pi^{k+1} = \pi^k.\)</span></p>
+<p>To improve the policy <span class="math notranslate nohighlight">\(\pi^k\)</span>, we update the action chosen <em>for each state</em> by applying
+Bellman’s equation using <span class="math notranslate nohighlight">\(\pi^k\)</span> in place of <span class="math notranslate nohighlight">\(\pi^*\)</span>.
 The can be achieved with the following algorithm:</p>
-<p>Start with a random policy $\pi^0$, and repeat until convergence:</p>
+<p>Start with a random policy <span class="math notranslate nohighlight">\(\pi^0\)</span>, and repeat until convergence:</p>
 <ol class="simple">
-<li><p>Compute the value function $V^{\pi^k}$</p></li>
-<li><p>Improve the policy for each state $x \in {\cal X}$ using the update rule:
-$\pi^{k+1}(x) \leftarrow\arg \max_a \sum_{x’} {P(x’|x, a) {R(x, a, x’) + \gamma V^k(x’)}$</p></li>
+<li><p>Compute the value function <span class="math notranslate nohighlight">\(V^{\pi^k}\)</span></p></li>
+<li><p>Improve the policy for each state <span class="math notranslate nohighlight">\(x \in {\cal X}\)</span> using the update rule:
+<span class="math notranslate nohighlight">\(\pi^{k+1}(x) \leftarrow\arg \max_a \sum_{x'} \{P(x'|x, a) \{R(x, a, x') + \gamma V^k(x')\}\)</span></p></li>
 </ol>
 <p>Notice that this algorithm has the side benefit of computing
 successively better approximations to the value function at each iteration.
@@ -1669,7 +1675,7 @@ implemented with the following code:</p>
 </div>
 <p>The whole policy iteration algorithm then simply iterates these until the policy no longer changes. If no initial policy is given, we can
 start with a zero value function
-$V^{\pi^0}(x) = 0$ for all $x$:</p>
+<span class="math notranslate nohighlight">\(V^{\pi^0}(x) = 0\)</span> for all <span class="math notranslate nohighlight">\(x\)</span>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">policy_iteration</span><span class="p">(</span><span class="n">pi</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_iterations</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
@@ -1686,7 +1692,7 @@ $V^{\pi^0}(x) = 0$ for all $x$:</p>
 </div>
 </div>
 <p>On the other hand, if we have a guess for the initial policy, we can intialize
-$\pi^0$ accordingly.
+<span class="math notranslate nohighlight">\(\pi^0\)</span> accordingly.
 For example, we can start with a not-so-smart <code class="docutils literal notranslate"><span class="pre">always_right</span></code> policy:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1746,9 +1752,6 @@ We already knew that it should be pretty good at getting to the living room as f
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;L&#39;, &#39;L&#39;, &#39;R&#39;, &#39;U&#39;, &#39;U&#39;]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
-</div>
 </div>
 </div>
 <p>Just be sure, let us sanity check the solution above using the Monte Carlo estimate of the policy, which should give the same answer:</p>
@@ -1789,35 +1792,37 @@ We already knew that it should be pretty good at getting to the living room as f
 <blockquote>
 <div><p>Dynamic programming can be used to obtain the optimal value function.</p>
 </div></blockquote>
-<p>Recall Bellman’s equation, which must hold for each state $x$.</p>
-<p>$$
-V^<em>(x) = \max_a  \left{ \bar{R}(x,a) + \gamma \sum_{x’} P(x’|x, a) V^</em>(x’)   \right}
-$$</p>
+<p>Recall Bellman’s equation, which must hold for each state <span class="math notranslate nohighlight">\(x\)</span>.</p>
+<div class="math notranslate nohighlight">
+\[
+V^*(x) = \max_a  \left\{ \bar{R}(x,a) + \gamma \sum_{x'} P(x'|x, a) V^*(x')   \right\} 
+\]</div>
 <p>Sadly, this is not a linear equation (the maximimation operation is not linear), so we cannot solve this
-equation for $V^<em>$ as a system of linear equations.
-<strong>Value iteration</strong> approximates $V^</em>$ by constructing a sequence of estimates,
-$V^0, V^1, \dots , V^n$ that converges to $V^*$.
-Starting with an initial guess, $V^0$, at each iteration we update
+equation for <span class="math notranslate nohighlight">\(V^*\)</span> as a system of linear equations.
+<strong>Value iteration</strong> approximates <span class="math notranslate nohighlight">\(V^*\)</span> by constructing a sequence of estimates,
+<span class="math notranslate nohighlight">\(V^0, V^1, \dots , V^n\)</span> that converges to <span class="math notranslate nohighlight">\(V^*\)</span>.
+Starting with an initial guess, <span class="math notranslate nohighlight">\(V^0\)</span>, at each iteration we update
 our approximation of the value function by the update rule:</p>
-<p>$$
-V^{k+1}(x) \leftarrow \max_a \left{ \bar{R}(x,a) + \gamma \sum_{x’} P(x’|x, a) V^k(x’)   \right}
-$$</p>
+<div class="math notranslate nohighlight">
+\[
+V^{k+1}(x) \leftarrow \max_a \left\{ \bar{R}(x,a) + \gamma \sum_{x'} P(x'|x, a) V^k(x')   \right\} 
+\]</div>
 <p>Notice that the right hand side of includes two terms:
-the expected reward (which we can compute exactly), and a term in $V^k$ (our current best guess at the value function).
-Value iteration operates by iteratively using our <em>current best guess</em> of $V^*$ along with the <em>known</em> expected reward
+the expected reward (which we can compute exactly), and a term in <span class="math notranslate nohighlight">\(V^k\)</span> (our current best guess at the value function).
+Value iteration operates by iteratively using our <em>current best guess</em> of <span class="math notranslate nohighlight">\(V^*\)</span> along with the <em>known</em> expected reward
 to update the approximation.
 Unlike policy iteration, we do not expect value iteration to converge to the exact result in finite time.
-Therefore, we cannot use $V^{k+1} = V^k$ as our termination condition.
-Instead, we often use a condition such as $|V^{k+1} - V^k| &lt; \epsilon$, for some small value of $\epsilon$
+Therefore, we cannot use <span class="math notranslate nohighlight">\(V^{k+1} = V^k\)</span> as our termination condition.
+Instead, we often use a condition such as <span class="math notranslate nohighlight">\(|V^{k+1} - V^k| &lt; \epsilon\)</span>, for some small value of <span class="math notranslate nohighlight">\(\epsilon\)</span>
 as the termination condition.</p>
-<p>Finally, note that we can define Q values for the $k^{th}$ iteration as
-$$
-Q(x, a; V^k) \doteq \bar{R}(x,a) + \gamma \sum_{x’} P(x’|x, a) V^k(x’),
-$$</p>
+<p>Finally, note that we can define Q values for the <span class="math notranslate nohighlight">\(k^{th}\)</span> iteration as
+$<span class="math notranslate nohighlight">\(
+Q(x, a; V^k) \doteq \bar{R}(x,a) + \gamma \sum_{x'} P(x'|x, a) V^k(x'),
+\)</span>$</p>
 <p>and hence a value update is simply
-$$
+$<span class="math notranslate nohighlight">\(
 V^{k+1}(x) \leftarrow \max_a Q(x, a; V^k).
-$$</p>
+\)</span>$</p>
 <p>In code, this is actually easier than policy iteration:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1879,13 +1884,13 @@ $$</p>
 <h2><span class="section-number">3.5.12. </span>Summary<a class="headerlink" href="#summary" title="Permalink to this headline">¶</a></h2>
 <p>Markov Decion Processes or MDPs are used to model decision in a stochastic environment, albeit with complete knowledge of the state. It is a rich subject, and we introduced many new concepts in this section:</p>
 <ul class="simple">
-<li><p>The reward function $R : {\cal X} \times {\cal A} \times {\cal X} \rightarrow \mathbb{R}$.</p></li>
-<li><p>The expected reward $\bar{R}(x,a)$ for executing action $a$ in state $x$, and the corresponding greedy planning algorithm.</p></li>
-<li><p>The utility function $U: {\cal A}^n \times {\cal X}^{n+1} \rightarrow \mathbb{R}$ as the sum of discounted rewards.</p></li>
+<li><p>The reward function <span class="math notranslate nohighlight">\(R : {\cal X} \times {\cal A} \times {\cal X} \rightarrow \mathbb{R}\)</span>.</p></li>
+<li><p>The expected reward <span class="math notranslate nohighlight">\(\bar{R}(x,a)\)</span> for executing action <span class="math notranslate nohighlight">\(a\)</span> in state <span class="math notranslate nohighlight">\(x\)</span>, and the corresponding greedy planning algorithm.</p></li>
+<li><p>The utility function <span class="math notranslate nohighlight">\(U: {\cal A}^n \times {\cal X}^{n+1} \rightarrow \mathbb{R}\)</span> as the sum of discounted rewards.</p></li>
 <li><p>The notion of rollouts to approximate the expected utility of actions.</p></li>
-<li><p>The policy $\pi: {\cal X} \rightarrow {\cal A}$ as a mapping from states to actions.</p></li>
-<li><p>the value function $V^\pi:{\cal X} \rightarrow \mathbb{R}$ associated with a given policy $\pi$.</p></li>
-<li><p>The use of policy rollouts to approximate the value function $V^\pi$.</p></li>
+<li><p>The policy <span class="math notranslate nohighlight">\(\pi: {\cal X} \rightarrow {\cal A}\)</span> as a mapping from states to actions.</p></li>
+<li><p>the value function <span class="math notranslate nohighlight">\(V^\pi:{\cal X} \rightarrow \mathbb{R}\)</span> associated with a given policy <span class="math notranslate nohighlight">\(\pi\)</span>.</p></li>
+<li><p>The use of policy rollouts to approximate the value function <span class="math notranslate nohighlight">\(V^\pi\)</span>.</p></li>
 <li><p>Exact calculation of the value function for a fixed policy.</p></li>
 <li><p>The optimal policy and value function, governed by the Bellman equation.</p></li>
 <li><p>Two algorithms to compute those: policy iteration and value iteration.</p></li>
