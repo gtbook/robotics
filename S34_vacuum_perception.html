@@ -906,7 +906,7 @@
 <div class="cell_output docutils container">
 <div class="output text_html">
 <div align='center'>
-<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S34-iRobot%20vacuuming%20robot-03.jpg?raw=1' style='height:256 width:100%'/>
+<img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S34-iRobot%20vacuuming%20robot-05.jpg?raw=1' style='height:256 width:100%'/>
 </div>
 </div></div>
 </div>
@@ -1405,25 +1405,43 @@ to give the intuition. To find the MPE for <span class="math notranslate nohighl
 <div class="math notranslate nohighlight">
 \[\phi(X_1, X_2, X_3)=\prod\phi_{i}(\mathcal{X}_{i})\]</div>
 <p>i.e., the <strong>value</strong> of the factor graph.</p>
-<p>Because the value of the factor graph is a product of factor values, we can compute its maximum recursively, dynamic programming style. We start by first looking at all factors connected to <span class="math notranslate nohighlight">\(X_1\)</span>:</p>
+<p>Because the value of the factor graph is a product of factor values, we can compute its maximum recursively, dynamic programming style. We start by writing out the maximization over the product explicitly:</p>
 <div class="math notranslate nohighlight">
-\[\begin{split}
-\begin{align*}
-\max_\mathcal{X} \prod\phi_{i}(\mathcal{X}_{i})
-&amp;= \max_{X_1, X_2, X_3} ~~~\phi_1(X_1)\phi_2(X_1)\phi_3(X_1, X_2) &amp;\phi_4(X_2)\phi_5(X_2, X_{3})\phi_6(X_3)
-\\ &amp;= \max_{X_2, X_3} ~~~\{ \max_{X_1} \phi_1(X_1)\phi_2(X_1)\phi_3(X_1, X_2) \} &amp;\phi_4(X_2)\phi_5(X_2, X_{3})\phi_6(X_3)
-\\ &amp;= \max_{X_2, X_3} ~~~\tau(X_2) &amp;\phi_4(X_2)\phi_5(X_2, X_{3})\phi_6(X_3)
-\end{align*}
-\end{split}\]</div>
-<p>Above <span class="math notranslate nohighlight">\(\tau(X_2)\doteq \max_{X_1} \phi_1(X_1)\phi_2(X_1)\phi_3(X_1, X_2)\)</span> records the maximum value resulting from <em>only</em> maximizing <span class="math notranslate nohighlight">\(X_1\)</span>, but this depends on the value of <span class="math notranslate nohighlight">\(X_2\)</span>. After we recursively find the optimal values for <span class="math notranslate nohighlight">\(X_2\)</span> and <span class="math notranslate nohighlight">\(X_3\)</span>, we can recover <span class="math notranslate nohighlight">\(X_1\)</span> as a function of <span class="math notranslate nohighlight">\(X_2\)</span> by</p>
+\[
+\max_{\mathcal{X}} \prod\phi_{i}(\mathcal{X}_{i}) = 
+\max_{X_1, X_2, X_3} ~~~\phi_1(X_1)\phi_2(X_1)\phi_3(X_1, X_2) \phi_4(X_2)\phi_5(X_2, X_3)\phi_6(X_3) 
+\]</div>
+<p>The key to our recursion will be to consider each variable in turn, starting with <span class="math notranslate nohighlight">\(X_1\)</span>. In particular, let us group all the factors connected to <span class="math notranslate nohighlight">\(X_1\)</span></p>
+<div class="math notranslate nohighlight">
+\[
+\max_{\mathcal{X}} \prod\phi_{i}(\mathcal{X}_{i}) = 
+\max_{X_1, X_2, X_3} ~~~ \{ \phi_1(X_1)\phi_2(X_1)\phi_3(X_1, X_2) \} ~~~ \phi_4(X_2)\phi_5(X_2, X_3)\phi_6(X_3)
+\]</div>
+<p>which allows us to move the <em>max</em> operator inside:</p>
+<div class="math notranslate nohighlight">
+\[
+\max_{\mathcal{X}} \prod\phi_{i}(\mathcal{X}_{i}) = 
+\max_{X_2, X_3} ~~~ \{ \max_{X_1} \phi_1(X_1)\phi_2(X_1)\phi_3(X_1, X_2) \} ~~~ \phi_4(X_2)\phi_5(X_2, X_3)\phi_6(X_3)
+\]</div>
+<p>The key to the recursion is that we can simply consider the expression inside the curly braces as new factor on <span class="math notranslate nohighlight">\(X_2\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\tau(X_2)\doteq \max_{X_1} \phi_1(X_1)\phi_2(X_1)\phi_3(X_1, X_2)\]</div>
+<p>which records the maximum value resulting from <em>only</em> maximizing <span class="math notranslate nohighlight">\(X_1\)</span>. The value of the computation depends on the value of <span class="math notranslate nohighlight">\(X_2\)</span>, because <span class="math notranslate nohighlight">\(X_2\)</span> was involved in factor <span class="math notranslate nohighlight">\(\phi_3\)</span>. However, crucially, the variable <span class="math notranslate nohighlight">\(X_3\)</span> is not involved in the maximization.</p>
+<p>Substituting the new factor into the maximization, we now need to maximize over a <em>reduced</em> factor graph that no longer is a function of <span class="math notranslate nohighlight">\(X_1\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[
+\max_{\mathcal{X}} \prod\phi_{i}(\mathcal{X}_{i}) =
+\max_{X_2, X_3} ~~~\tau(X_2) \phi_4(X_2)\phi_5(X_2, X_3)\phi_6(X_3)
+\]</div>
+<p>and this allows us to recurse, which we will do so explicitly below. After we recursively find the optimal values for <span class="math notranslate nohighlight">\(X_2\)</span> and <span class="math notranslate nohighlight">\(X_3\)</span>, we can recover <span class="math notranslate nohighlight">\(X_1\)</span> as a function of <span class="math notranslate nohighlight">\(X_2\)</span> by</p>
 <div class="math notranslate nohighlight">
 \[
 g_1(X_2) = \arg \max_{X_1} \phi_1(X_1)\phi_2(X_1)\phi_3(X_1, X_2)
 \]</div>
 <p>where the <em>lookup table</em> can be created at the same time that we compute <span class="math notranslate nohighlight">\(\tau(X_2)\)</span>.</p>
-<p>The above shows the general principle for max-product by concentrating on <span class="math notranslate nohighlight">\(X_1\)</span>, but we must do the same computation for all other variables as well.
+<p>The above shows the general principle for max-product by <em>eliminating</em> <span class="math notranslate nohighlight">\(X_1\)</span>, and we must do the same computation for all other variables as well.
 Below we use the factor graph to illustrate how the max-product algorithm
-proceeds one variable at a time, using “Bayes-net-style” directed edges to represent the lookup tables <span class="math notranslate nohighlight">\(g_k(X_{k+1})\)</span>, and factors to represent the <span class="math notranslate nohighlight">\(\tau(.)\)</span> functions, as indeed they <em>are</em> factors. Because at every step, one variable is <em>eliminated</em> from the maximization, the max-product algorithm is in fact an instance of the <strong>elimination algorithm</strong>, which we will see pop up in many different guises.</p>
+proceeds one variable at a time, using “Bayes-net-style” directed edges to represent the lookup tables <span class="math notranslate nohighlight">\(g_k(X_{k+1})\)</span>, and factors to represent the <span class="math notranslate nohighlight">\(\tau(.)\)</span> functions, as indeed they <em>are</em> factors. Because at every step, one variable is eliminated from the maximization, the max-product algorithm is in fact an instance of the <strong>elimination algorithm</strong>, which we will see pop up in many different guises.</p>
 <p>We proceed from left to right, i.e. we start with state <span class="math notranslate nohighlight">\(X_1\)</span> and proceed until we
 processed all states. We will tackle the three steps one by one in ths subsections below:</p>
 <div class="section" id="eliminating-x-1">
@@ -1645,13 +1663,13 @@ construct the factor graph directly from the measurements.</p>
 <p>Again, the key is that we can compute the posterior recursively from the product of factors, in dynamic programming style:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
-\begin{align*}
+\begin{aligned}
 P(\mathcal{X}|\mathcal{Z}) &amp;\propto \prod\phi_{i}(\mathcal{X}_{i})
 \\&amp;\propto \phi_1(X_1)\phi_2(X_1)\phi_3(X_1, X_2) \phi_4(X_2)\phi_5(X_2, X_{3})\phi_6(X_3)
 \\&amp;\propto \{\phi_1(X_1)\phi_2(X_1)\phi_3(X_1, X_2)\} ~~ \phi_4(X_2)\phi_5(X_2, X_{3})\phi_6(X_3)
 \\ &amp;\propto \{P(X_1|X_2, \mathcal{Z}) \tau(X_2)\} ~~ \phi_4(X_2)\phi_5(X_2, X_{3})\phi_6(X_3)
 \\ &amp;= P(X_1|X_2, \mathcal{Z}) ~~ P(X_2, X_3|\mathcal{Z})
-\end{align*}
+\end{aligned}
 \end{split}\]</div>
 <p>where the last equality invoked recursion to calculate the posterior <span class="math notranslate nohighlight">\(P(X_2, X_3|\mathcal{Z})\)</span> on the remaining variables from the remain factors. Below we assume the dependence on the given measurements <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span> (and actions, if appropriate) as implied, and drop <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span> from the equations.</p>
 <p>In contrast to max-product, we now define the factor <span class="math notranslate nohighlight">\(\tau\)</span> obtained by <em>summing</em> over the variable that is being eliminated</p>
@@ -1739,7 +1757,7 @@ MPE, as they average over the entire probability distribution.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/S34_vacuum_perception_50_0.svg" src="_images/S34_vacuum_perception_50_0.svg" /></div>
+<img alt="_images/S34_vacuum_perception_51_0.svg" src="_images/S34_vacuum_perception_51_0.svg" /></div>
 </div>
 <p>One of the things we can do with this <em>exact</em> posterior is sample from it, which is one possible state history conditioned on the available sensor measurements <em>and</em> the known action sequence:</p>
 <div class="cell docutils container">
