@@ -1,606 +1,448 @@
 
+
 <!DOCTYPE html>
 
-<html>
+
+<html lang="en" >
+
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
     <title>5.5. Path Planning &#8212; Introduction to Robotics and Perception</title>
-    
-  <link href="_static/css/theme.css" rel="stylesheet">
-  <link href="_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
 
-    
-  <link rel="stylesheet"
-    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
 
-    
-      
-
-    
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/sphinx-book-theme.css?digest=c3fdc42140077d1ad13ad2f1588a4309" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
     <link rel="stylesheet" type="text/css" href="_static/style.css" />
-    <link rel="stylesheet" type="text/css" href="_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
-    <link rel="stylesheet" type="text/css" href="_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
-    
-  <link rel="preload" as="script" href="_static/js/index.be7d3bbb2ef33a8344ce.js">
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/clipboard.min.js"></script>
     <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
     <script>let toggleHintShow = 'Click to show';</script>
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="_static/togglebutton.js"></script>
-    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
-    <script src="_static/sphinx-book-theme.d59cb220de22ca1c485ebbdc042f0030.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script async="async" src="https://www.googletagmanager.com/gtag/js?id=UA-312077-7"></script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'UA-312077-7');
+            </script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script async="async" src="https://unpkg.com/thebe@0.5.1/lib/index.js"></script>
-    <script>
-        const thebe_selector = ".thebe"
-        const thebe_selector_input = "pre"
-        const thebe_selector_output = ".output"
-    </script>
-    <script async="async" src="_static/sphinx-thebe.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'S55_diffdrive_planning';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="5.6. Deep Learning" href="S56_diffdrive_learning.html" />
     <link rel="prev" title="5.4. Computer Vision 101" href="S54_diffdrive_perception.html" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="None">
-    
-
-    <!-- Google Analytics -->
-    
-<script async="" src="https://www.google-analytics.com/analytics.js"></script>
-<script>
-                        window.ga = window.ga || function () {
-                            (ga.q = ga.q || []).push(arguments) };
-                        ga.l = +new Date;
-                        ga('create', 'UA-312077-7', 'auto');
-                        ga('set', 'anonymizeIp', true);
-                        ga('send', 'pageview');
-                    </script>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
-    
-    <div class="container-fluid" id="banner"></div>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
 
-    
-
-    <div class="container-xl">
-      <div class="row">
-          
-<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
-    
-        <div class="navbar-brand-box">
-    <a class="navbar-brand text-wrap" href="index.html">
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
       
-        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+      <div class="bd-sidebar-primary bd-sidebar">
         
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
+
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+    
+    
       
-      
-      <img src="_static/logo.png" class="logo" alt="logo">
-      
-      
-      <h1 class="site-logo" id="site-title">Introduction to Robotics and Perception</h1>
-      
-    </a>
-</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
-  <i class="icon fas fa-search"></i>
-  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
-</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
-    <div class="bd-toc-item active">
-        <ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="intro.html">
-   Introduction to Robotics and Perception
-  </a>
- </li>
+    
+    
+    <img src="_static/logo.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    Introduction to Robotics and Perception
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="S10_introduction.html">1. Introduction</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="S11_intro_state.html">1.1. Representing State</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S12_intro_actions.html">1.2. Robot Actions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S13_intro_sensing.html">1.3. Sensing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S14_intro_perception.html">1.4. Perception</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S15_intro_decision.html">1.5. Planning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S16_intro_learning.html">1.6. Learning</a></li>
 </ul>
-<ul class="current nav bd-sidenav">
- <li class="toctree-l1 has-children">
-  <a class="reference internal" href="S10_introduction.html">
-   1. Introduction
-  </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
-  <label for="toctree-checkbox-1">
-   <i class="fas fa-chevron-down">
-   </i>
-  </label>
-  <ul>
-   <li class="toctree-l2">
-    <a class="reference internal" href="S11_intro_state.html">
-     1.1. Representing State
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="S12_intro_actions.html">
-     1.2. Robot Actions
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="S13_intro_sensing.html">
-     1.3. Sensing
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="S14_intro_perception.html">
-     1.4. Perception
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="S15_intro_decision.html">
-     1.5. Planning
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="S16_intro_learning.html">
-     1.6. Learning
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toctree-l1 has-children">
-  <a class="reference internal" href="S20_sorter_intro.html">
-   2. A Trash Sorting Robot
-  </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
-  <label for="toctree-checkbox-2">
-   <i class="fas fa-chevron-down">
-   </i>
-  </label>
-  <ul>
-   <li class="toctree-l2">
-    <a class="reference internal" href="S21_sorter_state.html">
-     2.1. Modeling the World State
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="S22_sorter_actions.html">
-     2.2. Actions for Sorting Trash
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="S23_sorter_sensing.html">
-     2.3. Sensors for Sorting Trash
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="S24_sorter_perception.html">
-     2.4. Perception
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="S25_sorter_decision_theory.html">
-     2.5. Decision Theory
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="S26_sorter_learning.html">
-     2.6. Learning
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toctree-l1 has-children">
-  <a class="reference internal" href="S30_vacuum_intro.html">
-   3. A Robot Vacuum Cleaner
-  </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
-  <label for="toctree-checkbox-3">
-   <i class="fas fa-chevron-down">
-   </i>
-  </label>
-  <ul>
-   <li class="toctree-l2">
-    <a class="reference internal" href="S31_vacuum_state.html">
-     3.1. Modeling the State of the Vacuum Cleaning Robot
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="S32_vacuum_actions.html">
-     3.2. Actions over time
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="S33_vacuum_sensing.html">
-     3.3. Dynamic Bayes Nets
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="S34_vacuum_perception.html">
-     3.4. Perception with Graphical Models
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="S35_vacuum_decision.html">
-     3.5. Markov Decision Processes
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="S36_vacuum_RL.html">
-     3.6. Reinforcement Learning
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toctree-l1 has-children">
-  <a class="reference internal" href="S40_logistics_intro.html">
-   4. Warehouse Robots in 2D
-  </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
-  <label for="toctree-checkbox-4">
-   <i class="fas fa-chevron-down">
-   </i>
-  </label>
-  <ul>
-   <li class="toctree-l2">
-    <a class="reference internal" href="S41_logistics_state.html">
-     4.1. Continuous State
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="S42_logistics_actions.html">
-     4.2. Moving in 2D
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="S43_logistics_sensing.html">
-     4.3. Sensor Models with Continuous State
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="S44_logistics_perception.html">
-     4.4. Localization
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="S45_logistics_planning.html">
-     4.5. Planning for Logistics
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="S46_logistics_learning.html">
-     4.6. Some System Identification
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toctree-l1 current active has-children">
-  <a class="reference internal" href="S50_diffdrive_intro.html">
-   5. A Mobile Robot With Simple Kinematics
-  </a>
-  <input checked="" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
-  <label for="toctree-checkbox-5">
-   <i class="fas fa-chevron-down">
-   </i>
-  </label>
-  <ul class="current">
-   <li class="toctree-l2">
-    <a class="reference internal" href="S51_diffdrive_state.html">
-     5.1. State Space for a Differential Drive Robot
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="S52_diffdrive_actions.html">
-     5.2. Motion Model for the Differential Drive Robot
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="S53_diffdrive_sensing.html">
-     5.3. Robot Vision
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="S54_diffdrive_perception.html">
-     5.4. Computer Vision 101
-    </a>
-   </li>
-   <li class="toctree-l2 current active">
-    <a class="current reference internal" href="#">
-     5.5. Path Planning
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="S56_diffdrive_learning.html">
-     5.6. Deep Learning
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toctree-l1 has-children">
-  <a class="reference internal" href="S60_driving_intro.html">
-   6. Autonomous Vehicles
-  </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
-  <label for="toctree-checkbox-6">
-   <i class="fas fa-chevron-down">
-   </i>
-  </label>
-  <ul>
-   <li class="toctree-l2">
-    <a class="reference internal" href="S61_driving_state.html">
-     6.1. Planar Geometry
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="S62_driving_actions.html">
-     6.2. Kinematics for Driving
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="S63_driving_sensing.html">
-     6.3. Sensing for Autonomous Vehicles
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="S64_driving_perception.html">
-     6.4. SLAM
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="S65_driving_planning.html">
-     6.5. Planning for Autonomous Driving.
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="S66_driving_DRL.html">
-     6.6. Deep Reinforcement Learning
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toctree-l1 has-children">
-  <a class="reference internal" href="S70_drone_intro.html">
-   7. Autonomous Drones in 3D
-  </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
-  <label for="toctree-checkbox-7">
-   <i class="fas fa-chevron-down">
-   </i>
-  </label>
-  <ul>
-   <li class="toctree-l2">
-    <a class="reference internal" href="S71_drone_state.html">
-     7.1. Moving in Three Dimensions
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="S72_drone_actions.html">
-     7.2. Multi-rotor Aircraft
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="S73_drone_sensing.html">
-     7.3. Sensing for Drones
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="S74_drone_perception.html">
-     7.4. Visual SLAM
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="S75_drone_planning.html">
-     7.5. Trajectory Optimization
-    </a>
-   </li>
-  </ul>
- </li>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="S20_sorter_intro.html">2. A Trash Sorting Robot</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="S21_sorter_state.html">2.1. Modeling the World State</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S22_sorter_actions.html">2.2. Actions for Sorting Trash</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S23_sorter_sensing.html">2.3. Sensors for Sorting Trash</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S24_sorter_perception.html">2.4. Perception</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S25_sorter_decision_theory.html">2.5. Decision Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S26_sorter_learning.html">2.6. Learning</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="S30_vacuum_intro.html">3. A Robot Vacuum Cleaner</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="S31_vacuum_state.html">3.1. Modeling the State of the Vacuum Cleaning Robot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S32_vacuum_actions.html">3.2. Actions over time</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S33_vacuum_sensing.html">3.3. Dynamic Bayes Nets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S34_vacuum_perception.html">3.4. Perception with Graphical Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S35_vacuum_decision.html">3.5. Markov Decision Processes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S36_vacuum_RL.html">3.6. Reinforcement Learning</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="S40_logistics_intro.html">4. Warehouse Robots in 2D</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="S41_logistics_state.html">4.1. Continuous State</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S42_logistics_actions.html">4.2. Moving in 2D</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S43_logistics_sensing.html">4.3. Sensor Models with Continuous State</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S44_logistics_perception.html">4.4. Localization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S45_logistics_planning.html">4.5. Planning for Logistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S46_logistics_learning.html">4.6. Some System Identification</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="S50_diffdrive_intro.html">5. A Mobile Robot With Simple Kinematics</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="S51_diffdrive_state.html">5.1. State Space for a Differential Drive Robot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S52_diffdrive_actions.html">5.2. Motion Model for the Differential Drive Robot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S53_diffdrive_sensing.html">5.3. Robot Vision</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S54_diffdrive_perception.html">5.4. Computer Vision 101</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">5.5. Path Planning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S56_diffdrive_learning.html">5.6. Deep Learning</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="S60_driving_intro.html">6. Autonomous Vehicles</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="S61_driving_state.html">6.1. Planar Geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S62_driving_actions.html">6.2. Kinematics for Driving</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S63_driving_sensing.html">6.3. Sensing for Autonomous Vehicles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S64_driving_perception.html">6.4. SLAM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S65_driving_planning.html">6.5. Planning for Autonomous Driving.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S66_driving_DRL.html">6.6. Deep Reinforcement Learning</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="S70_drone_intro.html">7. Autonomous Drones in 3D</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="S71_drone_state.html">7.1. Moving in Three Dimensions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S72_drone_actions.html">7.2. Multi-rotor Aircraft</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S73_drone_sensing.html">7.3. Sensing for Drones</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S74_drone_perception.html">7.4. Visual SLAM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S75_drone_planning.html">7.5. Trajectory Optimization</a></li>
+</ul>
+</li>
 </ul>
 
     </div>
-</nav> <!-- To handle the deprecated key -->
-
-<div class="navbar_extra_footer">
-  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
-</div>
-
-</div>
-
-
-          
-
-
-          
-<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
-    
-    <div class="topbar container-xl fixed-top">
-    <div class="topbar-contents row">
-        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
-        <div class="col pl-md-4 topbar-main">
-            
-            <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
-                data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
-                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
-                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
-                <i class="fas fa-bars"></i>
-                <i class="fas fa-arrow-left"></i>
-                <i class="fas fa-arrow-up"></i>
-            </button>
-            
-            
-<div class="dropdown-buttons-trigger">
-    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
-            class="fas fa-download"></i></button>
-
-    <div class="dropdown-buttons">
-        <!-- ipynb file if we had a myst markdown file -->
-        
-        <!-- Download raw file -->
-        <a class="dropdown-buttons" href="_sources/S55_diffdrive_planning.ipynb"><button type="button"
-                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
-                data-placement="left">.ipynb</button></a>
-        <!-- Download PDF via print -->
-        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
-                onclick="printPdf(this)" data-toggle="tooltip" data-placement="left">.pdf</button>
+</nav></div>
     </div>
-</div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
 
-            <!-- Source interaction buttons -->
 
-<div class="dropdown-buttons-trigger">
-    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
-        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
-    <div class="dropdown-buttons sourcebuttons">
-        <a class="repository-button"
-            href="https://github.com/gtbook/robotics"><button type="button" class="btn btn-secondary topbarbtn"
-                data-toggle="tooltip" data-placement="left" title="Source repository"><i
-                    class="fab fa-github"></i>repository</button></a>
-        <a class="issues-button"
-            href="https://github.com/gtbook/robotics/issues/new?title=Issue%20on%20page%20%2FS55_diffdrive_planning.html&body=Your%20issue%20content%20here."><button
-                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
-                title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
+      </div>
+      
+      <main id="main-content" class="bd-main">
         
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
     </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/gtbook/robotics" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/gtbook/robotics/issues/new?title=Issue%20on%20page%20%2FS55_diffdrive_planning.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
 </div>
 
-            <!-- Full screen (wrap in <a> to have style consistency -->
 
-<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
-        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
-        title="Fullscreen mode"><i
-            class="fas fa-expand"></i></button></a>
 
-            <!-- Launch buttons -->
 
-<div class="dropdown-buttons-trigger">
-    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
-        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
-    <div class="dropdown-buttons">
-        
-        <a class="binder-button" href="https://mybinder.org/v2/gh/gtbook/robotics/main?urlpath=tree/S55_diffdrive_planning.ipynb"><button type="button"
-                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
-                data-placement="left"><img class="binder-button-logo"
-                    src="_static/images/logo_binder.svg"
-                    alt="Interact on binder">Binder</button></a>
-        
-        
-        
-        
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/S55_diffdrive_planning.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
     </div>
+  
 </div>
+</div>
+              
+              
 
-        </div>
-
-        <!-- Table of contents -->
-        <div class="d-none d-md-block col-md-2 bd-toc show noprint">
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Path Planning</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
             
-            <div class="tocsection onthispage pt-5 pb-3">
-                <i class="fas fa-list"></i> Contents
+            <div>
+                <h2> Contents </h2>
             </div>
-            <nav id="bd-toc-nav" aria-label="Page">
+            <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#configuration-space-obstacles">
-   5.5.1. Configuration Space Obstacles
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#value-iteration">
-   5.5.2. Value Iteration
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#artificial-potential-fields">
-   5.5.3. Artificial Potential Fields
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#probabilistic-road-maps-prms">
-   5.5.4. Probabilistic Road Maps (PRMs)
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#rrt">
-   5.5.5. RRT
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#a-simple-rrt-implementation">
-   5.5.6. A Simple RRT Implementation
-  </a>
- </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configuration-space-obstacles">5.5.1. Configuration Space Obstacles</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#value-iteration">5.5.2. Value Iteration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#artificial-potential-fields">5.5.3. Artificial Potential Fields</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#probabilistic-road-maps-prms">5.5.4. Probabilistic Road Maps (PRMs)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rrt">5.5.5. RRT</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-simple-rrt-implementation">5.5.6. A Simple RRT Implementation</a></li>
 </ul>
-
             </nav>
         </div>
     </div>
 </div>
-    <div id="main-content" class="row">
-        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
-            <!-- Table of contents that is only displayed when printing the page -->
-            <div id="jb-print-docs-body" class="onlyprint">
-                <h1>Path Planning</h1>
-                <!-- Table of contents -->
-                <div id="print-main-content">
-                    <div id="jb-print-toc">
-                        
-                        <div>
-                            <h2> Contents </h2>
-                        </div>
-                        <nav aria-label="Page">
-                            <ul class="visible nav section-nav flex-column">
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#configuration-space-obstacles">
-   5.5.1. Configuration Space Obstacles
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#value-iteration">
-   5.5.2. Value Iteration
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#artificial-potential-fields">
-   5.5.3. Artificial Potential Fields
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#probabilistic-road-maps-prms">
-   5.5.4. Probabilistic Road Maps (PRMs)
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#rrt">
-   5.5.5. RRT
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#a-simple-rrt-implementation">
-   5.5.6. A Simple RRT Implementation
-  </a>
- </li>
-</ul>
 
-                        </nav>
-                    </div>
-                </div>
-            </div>
-            
-              <div>
+              
                 
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
   <p><a href="https://colab.research.google.com/github/gtbook/robotics/blob/main/S55_diffdrive_planning.ipynb" target="_parent"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg" /></a></p>
-<div class="tex2jax_ignore mathjax_ignore section" id="path-planning">
-<h1><span class="section-number">5.5. </span>Path Planning<a class="headerlink" href="#path-planning" title="Permalink to this headline">¶</a></h1>
+<section class="tex2jax_ignore mathjax_ignore" id="path-planning">
+<h1><span class="section-number">5.5. </span>Path Planning<a class="headerlink" href="#path-planning" title="Permalink to this heading">#</a></h1>
 <blockquote>
 <div><p>Samples are useful for planning as well.</p>
 </div></blockquote>
@@ -621,8 +463,8 @@ while finding solution paths for most typical problems.</p>
 <p>In this section, we will describe several approaches to path planning,
 all of which operate in the configuration space, to illustrate
 the range of trade-offs that exist in this domain.</p>
-<div class="section" id="configuration-space-obstacles">
-<h2><span class="section-number">5.5.1. </span>Configuration Space Obstacles<a class="headerlink" href="#configuration-space-obstacles" title="Permalink to this headline">¶</a></h2>
+<section id="configuration-space-obstacles">
+<h2><span class="section-number">5.5.1. </span>Configuration Space Obstacles<a class="headerlink" href="#configuration-space-obstacles" title="Permalink to this heading">#</a></h2>
 <p>Although the robot moves physically in its workspace, the path planning problem is more easily addressed
 if we work directly in the robot’s configuration space.
 As in Section 5.2, we will denote a robot configuration by <span class="math notranslate nohighlight">\(q\)</span> and the configuration space of the robot by <span class="math notranslate nohighlight">\({\cal Q}\)</span>.
@@ -650,9 +492,9 @@ In some cases we require that <span class="math notranslate nohighlight">\(\gamm
 it may be possible to explicitly compute <span class="math notranslate nohighlight">\({\cal Q}_\mathrm{free}\)</span>;
 however, the time required for this computation grows exponentially with the
 dimension of the configuration space, so this approach is not taken for even moderately complex robotic systems.</p>
-</div>
-<div class="section" id="value-iteration">
-<h2><span class="section-number">5.5.2. </span>Value Iteration<a class="headerlink" href="#value-iteration" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="value-iteration">
+<h2><span class="section-number">5.5.2. </span>Value Iteration<a class="headerlink" href="#value-iteration" title="Permalink to this heading">#</a></h2>
 <p>In Chapter 4 we saw how the value function could be used to plan a path that led a robot with stochastic actions to a goal while avoiding obstacles.
 We can apply this same method to the problem of planning collision-free paths in the configuration space.
 We merely place a large negative reward along the configuration space obstacle boundaries, and a large positive reward at the goal configuration.
@@ -675,9 +517,9 @@ Therefore, using the value function to solve a single path planning problem can 
 since it essentially computes a path to the goal from <em>every</em> configuration in the grid.
 Finally, the cost of computing the value function grows exponentially with the dimension of the configuration space,
 precluding the use of this method to plan paths for more complex robots.</p>
-</div>
-<div class="section" id="artificial-potential-fields">
-<h2><span class="section-number">5.5.3. </span>Artificial Potential Fields<a class="headerlink" href="#artificial-potential-fields" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="artificial-potential-fields">
+<h2><span class="section-number">5.5.3. </span>Artificial Potential Fields<a class="headerlink" href="#artificial-potential-fields" title="Permalink to this heading">#</a></h2>
 <p>Instead of exhaustively applying value iteration to a 2D grid representation of the configuration space,
 we could try to construct a function that can be expressed in closed-form, such that following
 the gradient of this function would lead to the goal configuration while avoiding any configuration
@@ -742,9 +584,9 @@ it is possible to use potential fields methods for real-time applications.
 The second key difference is that value functions always have a single optimum, and that gradient
 descent is guaranteed to find it, unlike potential fields that are apt to be trapped
 in local minima.</p>
-</div>
-<div class="section" id="probabilistic-road-maps-prms">
-<h2><span class="section-number">5.5.4. </span>Probabilistic Road Maps (PRMs)<a class="headerlink" href="#probabilistic-road-maps-prms" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="probabilistic-road-maps-prms">
+<h2><span class="section-number">5.5.4. </span>Probabilistic Road Maps (PRMs)<a class="headerlink" href="#probabilistic-road-maps-prms" title="Permalink to this heading">#</a></h2>
 <p>As discussed above, the value function is guaranteed to find a path because it essentially explores the entire configuration space (applying dynamic programming outward from the goal configuration), while potential field planning is efficient because it focuses computation on the search for an individual path.
 A compromise approach would be to build a global representation, but to encode only a small number of
 paths in that representation.
@@ -780,9 +622,9 @@ An path planning algorithm is said to be <strong>probabilistically complete</str
 <p>Not only are PRM methods probabilistically complete, but in addition
 they have the property that <span class="math notranslate nohighlight">\(p_f(n)\)</span> decreases to zero exponentially as <span class="math notranslate nohighlight">\(n\)</span> increases.
 This is a powerful result, even if it fails to provide a deterministic guarantee of completeness.</p>
-</div>
-<div class="section" id="rrt">
-<h2><span class="section-number">5.5.5. </span>RRT<a class="headerlink" href="#rrt" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="rrt">
+<h2><span class="section-number">5.5.5. </span>RRT<a class="headerlink" href="#rrt" title="Permalink to this heading">#</a></h2>
 <blockquote>
 <div><p>Grow a tree to the goal.</p>
 </div></blockquote>
@@ -794,7 +636,7 @@ This is the approach taken with Rapidly-Exploring Random Trees (RRTs).</p>
 tree.
 Let <span class="math notranslate nohighlight">\(T_k\)</span> denote the tree that exists at the <span class="math notranslate nohighlight">\(k^{th}\)</span> iteration.
 A new node is added to the tree as follows:</p>
-<ol class="simple">
+<ol class="arabic simple">
 <li><p>Randomly choose a configuration <span class="math notranslate nohighlight">\(q_\mathrm{rand}\)</span>.</p></li>
 <li><p>Let <span class="math notranslate nohighlight">\(q_\mathrm{near}\)</span> be the node in the current tree <span class="math notranslate nohighlight">\(T_k\)</span> that is nearest to <span class="math notranslate nohighlight">\(q_\mathrm{rand}\)</span>.</p></li>
 <li><p>Create a new node <span class="math notranslate nohighlight">\(q_\mathrm{new}\)</span> by taking a small step from <span class="math notranslate nohighlight">\(q_\mathrm{near}\)</span> in
@@ -810,9 +652,9 @@ In addition, it has been shown that the distribution of nodes in the tree conver
 to the sampling distribution (e.g., if <span class="math notranslate nohighlight">\(q_\mathrm{rand}\)</span> is generated by sampling from a uniform
 distribution on the configuration space, then the distribution of nodes
 in <span class="math notranslate nohighlight">\(T_k\)</span> will converge to a uniform distribution).</p>
-</div>
-<div class="section" id="a-simple-rrt-implementation">
-<h2><span class="section-number">5.5.6. </span>A Simple RRT Implementation<a class="headerlink" href="#a-simple-rrt-implementation" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="a-simple-rrt-implementation">
+<h2><span class="section-number">5.5.6. </span>A Simple RRT Implementation<a class="headerlink" href="#a-simple-rrt-implementation" title="Permalink to this heading">#</a></h2>
 <p>RRTs have become increasingly popular in the robot motion planning community, for reasons that will become more apparent when we revisit RRT-style planning for aerial drones in Chapter 7.
 For now, we will use a very simple implementation of RRTs to construct motion plans for our DDR.
 Because the DDR can turn in place, we have to only build an RRT on the <em>position</em> of the DDR.</p>
@@ -915,13 +757,13 @@ We adopt a rather simple strategy: turn towards the target, and drive some fract
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/S55_diffdrive_planning_25_0.png" src="_images/S55_diffdrive_planning_25_0.png" />
+<img alt="_images/a46f02b8c5fe0dc2ede1325bbca05f3b2626b88a5a21fc1e8dab40090c79f725.png" src="_images/a46f02b8c5fe0dc2ede1325bbca05f3b2626b88a5a21fc1e8dab40090c79f725.png" />
 </div>
 </div>
 <p>You can see that the RRT fills up the entire area of interest.
 The algorithm terminates when we get close to the goal.</p>
-</div>
-</div>
+</section>
+</section>
 
     <script type="text/x-thebe-config">
     {
@@ -935,7 +777,7 @@ The algorithm terminates when we get close to the goal.</p>
             mode: "python"
         },
         kernelOptions: {
-            kernelName: "python3",
+            name: "python3",
             path: "./."
         },
         predefinedOutput: true
@@ -943,44 +785,110 @@ The algorithm terminates when we get close to the goal.</p>
     </script>
     <script>kernelName = 'python3'</script>
 
-              </div>
+                </article>
               
-            
-                <!-- Previous / next buttons -->
-<div class='prev-next-area'> 
-    <a class='left-prev' id="prev-link" href="S54_diffdrive_perception.html" title="previous page">
-        <i class="fas fa-angle-left"></i>
-        <div class="prev-next-info">
-            <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title"><span class="section-number">5.4. </span>Computer Vision 101</p>
-        </div>
+
+              
+              
+                <footer class="bd-footer-article">
+                  
+<div class="footer-article-items footer-article__inner">
+  
+    <div class="footer-article-item"><!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="S54_diffdrive_perception.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">5.4. </span>Computer Vision 101</p>
+      </div>
     </a>
-    <a class='right-next' id="next-link" href="S56_diffdrive_learning.html" title="next page">
-    <div class="prev-next-info">
+    <a class="right-next"
+       href="S56_diffdrive_learning.html"
+       title="next page">
+      <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
         <p class="prev-next-title"><span class="section-number">5.6. </span>Deep Learning</p>
-    </div>
-    <i class="fas fa-angle-right"></i>
-    </a>
-</div>
-            
-        </div>
-    </div>
-    <footer class="footer">
-  <p>
-    
-      By Frank Dellaert and Seth Hutchinson<br/>
-    
-        &copy; Copyright 2021.<br/>
-  </p>
-</footer>
-</main>
-
-
       </div>
-    </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div></div>
   
-  <script src="_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
+</div>
 
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configuration-space-obstacles">5.5.1. Configuration Space Obstacles</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#value-iteration">5.5.2. Value Iteration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#artificial-potential-fields">5.5.3. Artificial Potential Fields</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#probabilistic-road-maps-prms">5.5.4. Probabilistic Road Maps (PRMs)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rrt">5.5.5. RRT</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-simple-rrt-implementation">5.5.6. A Simple RRT Implementation</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Frank Dellaert and Seth Hutchinson
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+  </footer>
   </body>
 </html>
