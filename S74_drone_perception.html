@@ -19,12 +19,12 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
 
   
-  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
   <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
@@ -39,8 +39,9 @@
     <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=927b94d3fcb96560df09" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=927b94d3fcb96560df09" />
+  <script src="_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=927b94d3fcb96560df09"></script>
 
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
@@ -87,6 +88,15 @@ const thebe_selector_output = ".output, .cell_output"
   
   
   <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
   
   <input type="checkbox"
           class="sidebar-toggle"
@@ -385,10 +395,10 @@ const thebe_selector_output = ".output, .cell_output"
 
 <script>
 document.write(`
-  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
-    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
-    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
   </button>
 `);
 </script>
@@ -396,7 +406,7 @@ document.write(`
 <script>
 document.write(`
   <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
   </button>
 `);
 </script>
@@ -454,22 +464,32 @@ document.write(`
 <h3><span class="section-number">7.4.1.1. </span>Integrating the IMU<a class="headerlink" href="#integrating-the-imu" title="Permalink to this heading">#</a></h3>
 <p>We start off by encoding the information provided by the inertial measurement unit (IMU) in a factor graph.</p>
 <p>As an example in code, below we define a scenario with forward velocity 2m/s, while pitching up
-with angular velocity 30 degree/sec (negative in FLU). We set up a simulation using a class called the <code class="docutils literal notranslate"><span class="pre">ScenarioRunner</span></code>.</p>
+with angular velocity 30 degree/sec (negative in FLU). We set up a simulation using a build-in GTSAM class called the <code class="docutils literal notranslate"><span class="pre">ScenarioRunner</span></code>. To use this class, we need to define four things:</p>
+<ul class="simple">
+<li><p>a scenario: below we use a “constant twist” scenario which is very much like the example in Section 7.2: a constant angular and linear velocity specified in the body frame;</p></li>
+<li><p>noise parameters for the gyroscope and accelerometer</p></li>
+<li><p>the sample frequency, which we set at 10Hz</p></li>
+<li><p>bias parameters, to simulate how a bias actually corrupts the IMU measurements</p></li>
+</ul>
+<p>We then create a <code class="docutils literal notranslate"><span class="pre">runner</span></code> with these:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set up the scenario with a constant velocity model, both angular (W) and linear (V)</span>
-<span class="n">W</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">30</span><span class="p">),</span> <span class="mi">0</span><span class="p">])</span>
-<span class="n">V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
-<span class="n">scenario</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">ConstantTwistScenario</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
+<span class="n">wb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">30</span><span class="p">),</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">vb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">scenario</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">ConstantTwistScenario</span><span class="p">(</span><span class="n">wb</span><span class="p">,</span> <span class="n">vb</span><span class="p">)</span>
 
 <span class="c1"># Create noise parameters</span>
-<span class="n">params</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">PreintegrationParams</span><span class="o">.</span><span class="n">MakeSharedU</span><span class="p">(</span><span class="mf">9.8</span><span class="p">)</span>
+<span class="n">noise_parameters</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">PreintegrationParams</span><span class="o">.</span><span class="n">MakeSharedU</span><span class="p">(</span><span class="mf">9.8</span><span class="p">)</span>
 <span class="n">kGyroSigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span> <span class="o">/</span> <span class="mi">60</span>  <span class="c1"># 0.5 degree ARW</span>
 <span class="n">kAccelSigma</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="o">/</span> <span class="mi">60</span>  <span class="c1"># 10 cm VRW</span>
-<span class="n">params</span><span class="o">.</span><span class="n">setGyroscopeCovariance</span><span class="p">(</span><span class="n">kGyroSigma</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span>
-<span class="n">params</span><span class="o">.</span><span class="n">setAccelerometerCovariance</span><span class="p">(</span><span class="n">kAccelSigma</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span>
-                                    <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span>
-<span class="n">params</span><span class="o">.</span><span class="n">setIntegrationCovariance</span><span class="p">(</span><span class="mf">0.0000001</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span>
+<span class="n">I3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+<span class="n">noise_parameters</span><span class="o">.</span><span class="n">setGyroscopeCovariance</span><span class="p">(</span><span class="n">kGyroSigma</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">I3</span><span class="p">)</span>
+<span class="n">noise_parameters</span><span class="o">.</span><span class="n">setAccelerometerCovariance</span><span class="p">(</span><span class="n">kAccelSigma</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">I3</span><span class="p">)</span>
+<span class="n">noise_parameters</span><span class="o">.</span><span class="n">setIntegrationCovariance</span><span class="p">(</span><span class="mf">0.0000001</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">I3</span><span class="p">)</span> <span class="c1"># ignore this for now</span>
+
+<span class="c1"># Set the sample time</span>
+<span class="n">dt</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="c1"># 10 Hz</span>
 
 <span class="c1"># Create bias parameters</span>
 <span class="n">accBias</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span> <span class="c1"># bias in accelerometer</span>
@@ -477,53 +497,84 @@ with angular velocity 30 degree/sec (negative in FLU). We set up a simulation us
 <span class="n">bias</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">imuBias</span><span class="o">.</span><span class="n">ConstantBias</span><span class="p">(</span><span class="n">accBias</span><span class="p">,</span> <span class="n">gyroBias</span><span class="p">)</span>
 
 <span class="c1"># Instantiate IMU simulation class as `runner`</span>
-<span class="n">dt</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="c1"># 10 Hz</span>
-<span class="n">runner</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">ScenarioRunner</span><span class="p">(</span><span class="n">scenario</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">bias</span><span class="p">)</span>
+<span class="n">runner</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">ScenarioRunner</span><span class="p">(</span><span class="n">scenario</span><span class="p">,</span> <span class="n">noise_parameters</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">bias</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>GTSAM contains a powerful, state of the art factor called the <code class="docutils literal notranslate"><span class="pre">ImuFactor</span></code> that allows us to accumulate IMU measurements and periodically add the resulting relative pose information to the graph. The accumulation of (high-rate) IMU measurements is done in a class called <code class="docutils literal notranslate"><span class="pre">PreintegratedImuMeasurements</span></code>, abbreviated “PIM”.</p>
+<p>The plan is this: we will use the <code class="docutils literal notranslate"><span class="pre">runner</span></code> class to generate noisy measurements and then use GTSAM to optimize for the optimal trajectory given those measurements.</p>
+<p>With the <code class="docutils literal notranslate"><span class="pre">scenario</span></code> class, we can create some (good) initial values by calling the <code class="docutils literal notranslate"><span class="pre">scenario.navState</span></code> at <span class="math notranslate nohighlight">\(t=0\)</span> as well as every 5 steps, which is twice a second given our sampling time <span class="math notranslate nohighlight">\(dt=0.1\)</span>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define key naming scheme for GTSAM</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">symbol_shorthand</span><span class="o">.</span><span class="n">X</span> <span class="c1"># for poses</span>
+<span class="n">V</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">symbol_shorthand</span><span class="o">.</span><span class="n">V</span> <span class="c1"># for velocities</span>
+<span class="n">B0</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">symbol</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="c1"># for bias</span>
+
+<span class="c1"># Create values and add initial state</span>
+<span class="n">values</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Values</span><span class="p">()</span>
+<span class="n">state</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">navState</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Adding initial state with position </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">pose</span><span class="p">()</span><span class="o">.</span><span class="n">translation</span><span class="p">(),</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">values</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">X</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">state</span><span class="o">.</span><span class="n">pose</span><span class="p">())</span>
+<span class="n">values</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">V</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">state</span><span class="o">.</span><span class="n">velocity</span><span class="p">())</span>
+
+<span class="n">i</span><span class="p">,</span> <span class="n">T</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">3.5</span> <span class="c1"># run scenario at 10Hz for 3.5 seconds, adding state every 5th iteration</span>
+<span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">dt</span><span class="p">)):</span>
+    <span class="k">if</span> <span class="n">j</span><span class="o">&gt;</span><span class="mi">0</span> <span class="ow">and</span> <span class="n">j</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># create IMU factor</span>
+        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">navState</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Adding navState </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2"> at t=</span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s2"> with position </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">pose</span><span class="p">()</span><span class="o">.</span><span class="n">translation</span><span class="p">(),</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">values</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">X</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">state</span><span class="o">.</span><span class="n">pose</span><span class="p">()</span><span class="o">.</span><span class="n">retract</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,))))</span>
+        <span class="n">values</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">V</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">state</span><span class="o">.</span><span class="n">velocity</span><span class="p">()</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,)))</span>
+
+<span class="c1"># Add bias, as we will need it below</span>
+<span class="n">values</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">B0</span><span class="p">,</span> <span class="n">bias</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Adding initial state with position [0. 0. 0.]
+Adding navState 1 at t=0.5 with position [1.  0.  0.1]
+Adding navState 2 at t=1.0 with position [1.9 0.  0.5]
+Adding navState 3 at t=1.5 with position [2.7 0.  1.1]
+Adding navState 4 at t=2.0 with position [3.3 0.  1.9]
+Adding navState 5 at t=2.5 with position [3.7 0.  2.8]
+Adding navState 6 at t=3.0 with position [3.8 0.  3.8]
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now we will create the most complicated factor graph of the entire book, as it involves a factor that is connected to no less than five unknowns at every step. GTSAM contains a powerful, state of the art factor called the <code class="docutils literal notranslate"><span class="pre">ImuFactor</span></code> that allows us to accumulate IMU measurements and periodically add the resulting relative pose information to the graph.</p>
+<p>The accumulation of (high-rate) IMU measurements is done in a class called <code class="docutils literal notranslate"><span class="pre">PreintegratedImuMeasurements</span></code>, abbreviated “PIM”., which is done at 10Hz.
+Every 5 steps we then add an <code class="docutils literal notranslate"><span class="pre">ImuFactor</span></code> that is connected to two successive poses with keys <code class="docutils literal notranslate"><span class="pre">X(i)</span></code> and <code class="docutils literal notranslate"><span class="pre">X(i+1)</span></code> and their corresponding velocities with keys <code class="docutils literal notranslate"><span class="pre">V(i)</span></code> and <code class="docutils literal notranslate"><span class="pre">V(i+1)</span></code>, as well as the (single) bias unknown with key <code class="docutils literal notranslate"><span class="pre">B(0)</span></code>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create graph</span>
-<span class="n">X</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">symbol_shorthand</span><span class="o">.</span><span class="n">X</span>
-<span class="n">V</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">symbol_shorthand</span><span class="o">.</span><span class="n">V</span>
 <span class="n">imu_graph</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">NonlinearFactorGraph</span><span class="p">()</span>
-<span class="n">state</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">navState</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="n">Iso</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">noiseModel</span><span class="o">.</span><span class="n">Isotropic</span>
+<span class="n">state</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">navState</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="n">imu_graph</span><span class="o">.</span><span class="n">addPriorPose3</span><span class="p">(</span><span class="n">X</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">state</span><span class="o">.</span><span class="n">pose</span><span class="p">(),</span> <span class="n">Iso</span><span class="o">.</span><span class="n">Sigma</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">))</span>
 <span class="n">imu_graph</span><span class="o">.</span><span class="n">addPriorVector</span><span class="p">(</span><span class="n">V</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">state</span><span class="o">.</span><span class="n">velocity</span><span class="p">(),</span> <span class="n">Iso</span><span class="o">.</span><span class="n">Sigma</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">))</span>
-<span class="n">BIAS_KEY</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">symbol</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-<span class="n">imu_graph</span><span class="o">.</span><span class="n">addPriorConstantBias</span><span class="p">(</span><span class="n">BIAS_KEY</span><span class="p">,</span> <span class="n">bias</span><span class="p">,</span> <span class="n">Iso</span><span class="o">.</span><span class="n">Sigma</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">))</span>
+<span class="n">imu_graph</span><span class="o">.</span><span class="n">addPriorConstantBias</span><span class="p">(</span><span class="n">B0</span><span class="p">,</span> <span class="n">bias</span><span class="p">,</span> <span class="n">Iso</span><span class="o">.</span><span class="n">Sigma</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">))</span>
 
-<span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="n">imu_initial</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Values</span><span class="p">()</span>
-<span class="n">imu_initial</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">BIAS_KEY</span><span class="p">,</span> <span class="n">bias</span><span class="p">)</span>
-<span class="n">imu_initial</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">X</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">state</span><span class="o">.</span><span class="n">pose</span><span class="p">())</span>
-<span class="n">imu_initial</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">V</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">state</span><span class="o">.</span><span class="n">velocity</span><span class="p">())</span>
-
-<span class="n">T</span><span class="o">=</span><span class="mf">3.5</span>
-<span class="c1"># initialize data structure for pre-integrated IMU measurements</span>
-<span class="n">pim</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">PreintegratedImuMeasurements</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">bias</span><span class="p">)</span>
+<span class="n">i</span><span class="p">,</span> <span class="n">T</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">3.5</span> <span class="c1"># run scenario at 10Hz for 3.5 seconds, adding state every 5th iteration</span>
+<span class="n">pim</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">PreintegratedImuMeasurements</span><span class="p">(</span><span class="n">noise_parameters</span><span class="p">,</span> <span class="n">bias</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">dt</span><span class="p">)):</span>
     <span class="n">measuredOmega</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">measuredAngularVelocity</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
     <span class="n">measuredAcc</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">measuredSpecificForce</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
     <span class="n">pim</span><span class="o">.</span><span class="n">integrateMeasurement</span><span class="p">(</span><span class="n">measuredAcc</span><span class="p">,</span> <span class="n">measuredOmega</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">j</span><span class="o">&gt;</span><span class="mi">0</span> <span class="ow">and</span> <span class="n">j</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="c1"># create IMU factor</span>
-        <span class="n">factor</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">ImuFactor</span><span class="p">(</span><span class="n">X</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">V</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">X</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">V</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">BIAS_KEY</span><span class="p">,</span> <span class="n">pim</span><span class="p">)</span>
+        <span class="n">factor</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">ImuFactor</span><span class="p">(</span><span class="n">X</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">V</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">X</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">V</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">B0</span><span class="p">,</span> <span class="n">pim</span><span class="p">)</span>
         <span class="n">imu_graph</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">factor</span><span class="p">)</span>
         <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="n">state</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">navState</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
-        <span class="n">imu_initial</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">X</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">state</span><span class="o">.</span><span class="n">pose</span><span class="p">()</span><span class="o">.</span><span class="n">retract</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,))))</span>
-        <span class="n">imu_initial</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">V</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">state</span><span class="o">.</span><span class="n">velocity</span><span class="p">()</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,)))</span>
         <span class="n">pim</span><span class="o">.</span><span class="n">resetIntegration</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>The graph displayed below shows (a bit messily) that the IMUFactors tie together the <code class="docutils literal notranslate"><span class="pre">Pose3</span></code> states <span class="math notranslate nohighlight">\(x_k\)</span>, the velocities <span class="math notranslate nohighlight">\(v_k\)</span>m and the unknown IMU biases <span class="math notranslate nohighlight">\(b_0\)</span>.</p>
+<p>The graph displayed below shows (a bit messily) that the IMUFactors tie together the <code class="docutils literal notranslate"><span class="pre">Pose3</span></code> states <span class="math notranslate nohighlight">\(x_k\)</span>, the velocities <span class="math notranslate nohighlight">\(v_k\)</span> and the unknown IMU biases <span class="math notranslate nohighlight">\(b_0\)</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">position_hints</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;u&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;z&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
@@ -538,9 +589,9 @@ with angular velocity 30 degree/sec (negative in FLU). We set up a simulation us
 <p>We can optimize even <em>without</em> any external measurements, but unless you pay for a very expensive IMU, your estimate will drift very rapidly.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;initial error: </span><span class="si">{</span><span class="n">imu_graph</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">imu_initial</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;initial error: </span><span class="si">{</span><span class="n">imu_graph</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">values</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="n">lm</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">LevenbergMarquardtOptimizer</span><span class="p">(</span><span class="n">imu_graph</span><span class="p">,</span> <span class="n">imu_initial</span><span class="p">)</span>
+    <span class="n">lm</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">LevenbergMarquardtOptimizer</span><span class="p">(</span><span class="n">imu_graph</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
     <span class="n">imu_result</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">optimize</span><span class="p">()</span>
 <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;LM Optimization failed&quot;</span><span class="p">)</span>
@@ -549,8 +600,8 @@ with angular velocity 30 degree/sec (negative in FLU). We set up a simulation us
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>initial error: 32024603.913580805
-final error: 1.0672664446288245e-23
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>initial error: 18602003.969187018
+final error: 2.079347212575301e-23
 </pre></div>
 </div>
 </div>
@@ -667,11 +718,10 @@ final error: 1.0672664446288245e-23
 
               
               
-                <footer class="bd-footer-article">
-                  
-<div class="footer-article-items footer-article__inner">
-  
-    <div class="footer-article-item"><!-- Previous / next buttons -->
+              
+              
+                <footer class="prev-next-footer">
+                  <!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
        href="S73_drone_sensing.html"
@@ -691,10 +741,7 @@ final error: 1.0672664446288245e-23
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
-</div></div>
-  
 </div>
-
                 </footer>
               
             </div>
@@ -762,8 +809,8 @@ By Frank Dellaert and Seth Hutchinson
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+  <script src="_static/scripts/bootstrap.js?digest=927b94d3fcb96560df09"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=927b94d3fcb96560df09"></script>
 
   <footer class="bd-footer">
   </footer>
