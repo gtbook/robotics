@@ -496,7 +496,7 @@ document.write(`
 <p>The Markov chain we discussed in the previous section is an example of a <strong>Dynamic Bayes Net</strong> or <strong>DBN</strong>: a Bayes net in which  <em>Bayes net slices</em> are replicated through time, to model the evolution of states over time. Below we add observations into the mix, and show how we can simulate the complete system using a technique called <em>ancestral sampling</em>.</p>
 <section id="a-sensor-model">
 <h2><span class="section-number">3.3.1. </span>A Sensor Model<a class="headerlink" href="#a-sensor-model" title="Permalink to this heading">#</a></h2>
-<p>First, we need to see a few things about sensing for our example system. This chapter is primarily focused on action, and hence the sensing we will consider is fairly simple. Let us conceive of a simple light sensor that gives an indication as to which room we are in. Specifically, let us assume that the living room and kitchen are on the south side, and hence have a lot of light on a typical day. The office in the dining room or on the north side, and the light sensor will typically respond with medium light levels. The hallway, on the other hand, is very dark as it has few windows. The conditional probability distribution <span class="math notranslate nohighlight">\(P(Z_t|X_t)\)</span> captures these semantics, with <span class="math notranslate nohighlight">\(X_t\)</span> the state at time <span class="math notranslate nohighlight">\(t\)</span> as before, and <span class="math notranslate nohighlight">\(Z_t\in\{\text{dark}, \text{medium}, \text{light}\}\)</span> the measured light level:</p>
+<p>This chapter is primarily focused on action, and hence the sensing we will consider is fairly simple. Let us conceive of a simple light sensor that gives an indication as to which room we are in. Specifically, let us assume that the living room and kitchen are on the south side, and hence have a lot of light on a typical day. The office in the dining room or on the north side, and the light sensor will typically respond with medium light levels. The hallway, on the other hand, is very dark as it has few windows. The conditional probability distribution <span class="math notranslate nohighlight">\(P(Z_t|X_t)\)</span> captures these semantics, with <span class="math notranslate nohighlight">\(X_t\)</span> the state at time <span class="math notranslate nohighlight">\(t\)</span> as before, and <span class="math notranslate nohighlight">\(Z_t\in\{\text{dark}, \text{medium}, \text{light}\}\)</span> the measured light level:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># vacuum.light_levels = [&quot;dark&quot;, &quot;medium&quot;, &quot;light&quot;]</span>
@@ -523,8 +523,8 @@ document.write(`
 </table>
 </div></div></div>
 </div>
-<p>Single time step reasoning will fall short for our vacuuming robot, which operates in time. for example, recall from the previous chapter that given a sensor reading of, say, <span class="math notranslate nohighlight">\(Z_1\)</span>=<code class="docutils literal notranslate"><span class="pre">medium</span></code>, the maximum likelihood estimate (MLE) for the state <span class="math notranslate nohighlight">\(X_1\)</span> of the robot is <code class="docutils literal notranslate"><span class="pre">dining</span> <span class="pre">room</span></code>: it corresponds to the highest value in the <code class="docutils literal notranslate"><span class="pre">medium</span></code> column.
-Intuitively, however, we should be able to use our history to obtain a better estimate of the location of the robot. For example, if you were just in the living room, there is no way that we could have gotten to the dining room in a single step. In this section we will see how we can reason probabilistically about such things.</p>
+<p>Single time step reasoning will fall short for our vacuuming robot, which operates in time. For example, recall from the previous chapter that given a sensor reading of, say, <span class="math notranslate nohighlight">\(Z_1\)</span>=<code class="docutils literal notranslate"><span class="pre">medium</span></code>, the maximum likelihood estimate (MLE) for the state <span class="math notranslate nohighlight">\(X_1\)</span> of the robot is <code class="docutils literal notranslate"><span class="pre">dining</span> <span class="pre">room</span></code>: it corresponds to the highest value in the <code class="docutils literal notranslate"><span class="pre">medium</span></code> column.
+Intuitively, however, we should be able to use the robot’s history to obtain a better estimate of its location. For example, if the robot were just in the living room, there is no way that it could have gotten to the dining room in a single step. In this section we will see how we can reason probabilistically about such things.</p>
 </section>
 <section id="id1">
 <h2><span class="section-number">3.3.2. </span>Dynamic Bayes Nets<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h2>
@@ -552,13 +552,14 @@ over time, we call it a <strong>dynamic Bayes net</strong> or DBN.</p>
 <div class="cell_output docutils container">
 <img alt="_images/612ae4ea9aaed33619b226f07d3a67453f736be43ee82638846dc3d095267a83.svg" src="_images/612ae4ea9aaed33619b226f07d3a67453f736be43ee82638846dc3d095267a83.svg" /></div>
 </div>
-<p>You can see that after the first time step, the Bayes net is simply repeating the “AXZ” pattern (or <em>slice</em>!) over and over again. The joint distribution over states <span class="math notranslate nohighlight">\(X\)</span> and measurements <span class="math notranslate nohighlight">\(Z\)</span>, <em>given</em> the action sequence <span class="math notranslate nohighlight">\(A\)</span> is given</p>
+<p>You can see that after the first time step, the Bayes net is simply repeating the “AXZ” pattern (or <em>slice</em>!) over and over again. The joint distribution over states <span class="math notranslate nohighlight">\(X_{1:n} = (X_1 \dots, X_n)\)</span> and measurements <span class="math notranslate nohighlight">\(Z_{1:n} = (Z_1, \dots , Z_n)\)</span>, <em>given</em>
+the action sequence <span class="math notranslate nohighlight">\(A_{1:n} = (A_1, \dots , A_n)\)</span> is given</p>
 <div class="math notranslate nohighlight">
-\[P(Z,X|A)= P(Z_1| X_1) P(X_1) \prod_{k=2}^{N} P(Z_k| X_k) P(X_k|A_k,X_{k-1}) \]</div>
+\[P(Z_{1:n},X_{1:n}|A_{1:n})= P(Z_1| X_1) P(X_1) \prod_{k=2}^{n} P(Z_k| X_k) P(X_k|A_{k-1},X_{k-1}) \]</div>
 </section>
 <section id="ancestral-sampling">
 <h2><span class="section-number">3.3.3. </span>Ancestral Sampling<a class="headerlink" href="#ancestral-sampling" title="Permalink to this heading">#</a></h2>
-<p>Recall the example Bayes net example on the 4 variables W,X,Y,Z, with joint distribution</p>
+<p>Recall the example Bayes net example above with the four variables W,X,Y,Z, and joint distribution</p>
 <div class="math notranslate nohighlight">
 \[P(W,X,Y,Z)=P(W|X,Z)P(X|Y,Z)P(Y|Z)P(Z):\]</div>
 <div class="cell docutils container">
@@ -573,11 +574,13 @@ over time, we call it a <strong>dynamic Bayes net</strong> or DBN.</p>
 <p>Sampling from the joint distribution given in Bayes net form can be done
 by sampling each variable in turn, but making sure that we always sample
 a node’s parents first. This can be done through the notion of a
-<strong>topological sort</strong> of the DAG.</p>
+<strong>topological sort</strong> of the DAG. A topological sort of a DAG is an ordering
+of the vertices <span class="math notranslate nohighlight">\(\{v_1, \dots , v_n\}\)</span> such that <span class="math notranslate nohighlight">\(v_i\)</span> precedes <span class="math notranslate nohighlight">\(v_j\)</span> in the sort when there
+is a directed edge from <span class="math notranslate nohighlight">\(v_i\)</span> to <span class="math notranslate nohighlight">\(v_j\)</span> in the DAG.</p>
 <p>An easy algorithm to obtain a topological sort is <strong>Kahn’s algorithm</strong>,
-which recursively removes a node from the graph that either has no
+which iteratively removes nodes from the graph that either have no
 parents, or whose parents have all been removed already. The order in
-which nodes were removed constitutes a (non-unique) topological sort
+which nodes are removed constitutes a (non-unique) topological sort
 order.</p>
 <p>Sampling is then done by inverse transform sampling for each variable
 separately, in topological sort order. The graph above happens to be laid out already in topological sort order, if read from top to bottom.
@@ -590,7 +593,8 @@ an exception rather than the rule.</p>
 <p>Simulation of a robot is then equivalent
 to ancestral sampling from the DBN associated with the robot, i.e., the controlled Markov chain augmented with the measurement CPTs.
 In this case one topological sort is
-rather obvious, and so is a simulation algorithm to sample from <span class="math notranslate nohighlight">\(P(X,Z|A)\)</span>:</p>
+rather obvious, and so is a simulation algorithm to sample from
+<span class="math notranslate nohighlight">\(P(X_{1:n},Z_{1:n}|A_{1:n})\)</span>:</p>
 <ol class="arabic">
 <li><p>First, assign <span class="math notranslate nohighlight">\(k\leftarrow1\)</span>, and sample the initial state <span class="math notranslate nohighlight">\(x_1\)</span> from <span class="math notranslate nohighlight">\(P(X_1)\)</span>, a prior
 over the state. We write</p>
@@ -618,7 +622,8 @@ over the state. We write</p>
 </section>
 <section id="ancestral-sampling-with-gtsam">
 <h2><span class="section-number">3.3.5. </span>Ancestral Sampling with GTSAM<a class="headerlink" href="#ancestral-sampling-with-gtsam" title="Permalink to this heading">#</a></h2>
-<p>Of course, GTSAM has a method built in to do ancestral sampling, <em>but</em> it only works for a <em>reverse</em> topologically sorted Bayes nets. This matches the way we write down joint distributions, with parents towards the right, and it is also why above we used the built-in <code class="docutils literal notranslate"><span class="pre">reversed</span></code> on the range: this was to make sure that later states get sampled last. Because we only specified <span class="math notranslate nohighlight">\(P(Z,X|A)\)</span>, we need to give an action sequence as argument:</p>
+<p>Of course, GTSAM has a method built in to do ancestral sampling, <em>but</em> it only works for a <em>reverse</em> topologically sorted Bayes nets. This matches the way we write down joint distributions, with parents towards the right, and it is also why above we used the built-in <code class="docutils literal notranslate"><span class="pre">reversed</span></code> on the range: this was to make sure that later states get sampled last. Because we only specified
+<span class="math notranslate nohighlight">\(P(Z_{1:n},X_{1:n}|A_{1:n})\)</span>, we need to give an action sequence as argument:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">actions</span> <span class="o">=</span> <span class="n">VARIABLES</span><span class="o">.</span><span class="n">assignment</span><span class="p">({</span><span class="n">A</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span> <span class="s2">&quot;R&quot;</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">N</span><span class="p">)})</span>

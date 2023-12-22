@@ -439,7 +439,7 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-proximity-sensor">4.3.1. A proximity sensor</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-range-sensor">4.3.2. A Range Sensor</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#negative-information">4.3.3. Negative Information</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-case-of-no-beacons-in-sensing-range">4.3.3. The Case of No Beacons in Sensing Range</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-gps-like-location-sensor">4.3.4. A GPS-Like Location Sensor</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simulating-states-and-measurements">4.3.5. Simulating States <em>and</em> Measurements</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gps-style-likelihoods">4.3.6. GPS-style Likelihoods</a></li>
@@ -469,7 +469,7 @@ each of which are similar to sensors that are frequently used in modern robotic 
 <ul class="simple">
 <li><p>a proximity sensor</p></li>
 <li><p>an RFID range sensor, which has a non-linear measurement prediction model</p></li>
-<li><p>a GPS-like location sensor, which uses a linear-Gaussian conditional density</p></li>
+<li><p>a GPS-like location sensor, which uses a Gaussian conditional density</p></li>
 </ul>
 <p>The proximity sensor detects when the robot is near an obstacle. Therefore, this sensor’s
 response depends on the geometry of the environment.
@@ -501,7 +501,7 @@ walls that enclose the warehouse).
 For a given point <span class="math notranslate nohighlight">\(x \in {\cal D}\)</span>, the distance to the nearest obstacle can be defined by</p>
 <div class="math notranslate nohighlight">
 \[
-d(x) = \min_{y \in X_{obs}} \|x - y\|^{1/2}
+d(x) = \min_{y \in X_{obs}} \|x - y\|
 \]</div>
 <p>We now define the signed distance to be negative for <span class="math notranslate nohighlight">\(x\)</span> is inside the obstacle, and positive for points outside the obstacle:</p>
 <div class="math notranslate nohighlight">
@@ -544,7 +544,8 @@ P(z_k=\text{ON}|x_k)
 \end{array}
 \right.
 \end{split}\]</div>
-<p>Below we show the ON and OFF <em>likelihood</em> images for this simple model. Recall that the likelihood <span class="math notranslate nohighlight">\(l(x_k;z_k=\text{ON})\propto P(z_k=\text{ON}|z_k)\)</span> is a function <em>of the state</em> <span class="math notranslate nohighlight">\(x_k\)</span>, so we can show it as a map:</p>
+<p>The figure below shows the likelihood for <span class="math notranslate nohighlight">\(z_k = \text{ON}\)</span>.
+Recall that the likelihood <span class="math notranslate nohighlight">\(l(x_k;z_k=\text{ON})\propto P(z_k=\text{ON}|z_k)\)</span> is a function <em>of the state</em> <span class="math notranslate nohighlight">\(x_k\)</span>, so we can show it as a map:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">logistics</span><span class="o">.</span><span class="n">show_map</span><span class="p">(</span><span class="n">logistics</span><span class="o">.</span><span class="n">proximity_map_on</span><span class="p">)</span>
@@ -555,7 +556,7 @@ P(z_k=\text{ON}|x_k)
 <img alt="_images/d88b103dad1c1d09ec0cb57a80e9beb0810dfcbdc9a57ed5f0f458704546a39e.png" src="_images/d88b103dad1c1d09ec0cb57a80e9beb0810dfcbdc9a57ed5f0f458704546a39e.png" />
 </div>
 </div>
-<p>Note that we denote a likelihood over a continuous variable with lowercase <span class="math notranslate nohighlight">\(l()\)</span>, in analogy to the lowercase <span class="math notranslate nohighlight">\(p()\)</span> we use for densities. For this specific sensor model, at any location, the likelihood <span class="math notranslate nohighlight">\(l(x_k;z_k=\text{OFF})\)</span> of <span class="math notranslate nohighlight">\(x_k\)</span> given that the sensor is OFF will be the mirror image of the map above:</p>
+<p>Note that we denote a likelihood over a continuous variable with lowercase <span class="math notranslate nohighlight">\(l()\)</span>, in analogy to the lowercase <span class="math notranslate nohighlight">\(p()\)</span> we use for densities. For this specific sensor model, at any location, the likelihood <span class="math notranslate nohighlight">\(l(x_k;z_k=\text{OFF})\)</span> of <span class="math notranslate nohighlight">\(x_k\)</span> given that the sensor is OFF will be the mirror image of the map above, as shown below.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">logistics</span><span class="o">.</span><span class="n">show_map</span><span class="p">(</span><span class="n">logistics</span><span class="o">.</span><span class="n">proximity_map_off</span><span class="p">)</span>
@@ -570,9 +571,9 @@ P(z_k=\text{ON}|x_k)
 <section id="a-range-sensor">
 <h2><span class="section-number">4.3.2. </span>A Range Sensor<a class="headerlink" href="#a-range-sensor" title="Permalink to this heading">#</a></h2>
 <blockquote>
-<div><p>A range sensor is <em>non-linear</em>.</p>
+<div><p>A range sensor returns the distance to a landmark.</p>
 </div></blockquote>
-<p>Let us assume that the operator of the warehouse has installed a number of <em>beacons</em> throughout the warehouse, at strategically placed locations. The measurement function <span class="math notranslate nohighlight">\(h(x_k; b_i)\)</span> for a sensor measuring the range to a beacon at location <span class="math notranslate nohighlight">\(b_i\)</span> is non-linear:</p>
+<p>Let us assume that the operator of the warehouse has installed a number of <em>beacons</em> throughout the warehouse, at strategically placed locations. The measurement function <span class="math notranslate nohighlight">\(h(x_k; b_i)\)</span> for a sensor measuring the range to a beacon at location <span class="math notranslate nohighlight">\(b_i\)</span> is given by:</p>
 <div class="math notranslate nohighlight">
 \[
 h(x_k;b_i) = \|x_k - b_i\| = \sqrt{(x_k - b_i)^T(x_k - b_i)}
@@ -588,7 +589,7 @@ noise for sensors, leading to the measurement model:</p>
 <div class="math notranslate nohighlight">
 \[z_k = h(x_k;b_i) + w_k\]</div>
 <p>in which <span class="math notranslate nohighlight">\(w_k\)</span> is the noise term (unrelated to the noise in our motion model).
-Using this model, we see that the the conditional probability of a range measurement <span class="math notranslate nohighlight">\(z_k\)</span> given a continuous state <span class="math notranslate nohighlight">\(x_k\)</span> <em>is</em> a Gaussian, even though its mean <span class="math notranslate nohighlight">\(\mu\)</span> is computed as a nonlinear function of the <span class="math notranslate nohighlight">\(x_k\)</span>.</p>
+Using this model, we see that the conditional probability of a range measurement <span class="math notranslate nohighlight">\(z_k\)</span> given a continuous state <span class="math notranslate nohighlight">\(x_k\)</span> <em>is</em> a Gaussian, even though its mean <span class="math notranslate nohighlight">\(\mu\)</span> is computed as a nonlinear function of <span class="math notranslate nohighlight">\(x_k\)</span>.</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 \begin{aligned}
@@ -596,7 +597,7 @@ p(z_k|x_k; b_i) &amp;= \mathcal{N}(z_k;\mu=h(x_k;b_i), \sigma^2) \\
 &amp;= \frac{1}{\sqrt{2\pi\sigma^2}} \exp\{-\frac{1}{2\sigma^2}(z_k-h(x_k;b_i))^2\}
 \end{aligned}
 \end{split}\]</div>
-<p>Note that the range is one-dimensional, so we again use the simpler univariate Gaussian notation, and we use the variance <span class="math notranslate nohighlight">\(\sigma^2\)</span> to characterize the zero-mean Gaussian noise.</p>
+<p>Note that the range is one-dimensional, so we again use the simpler univariate Gaussian, and we use the variance <span class="math notranslate nohighlight">\(\sigma^2\)</span> to characterize the zero-mean Gaussian noise.</p>
 <p>The equation below for the <em>likelihood</em> of the state <span class="math notranslate nohighlight">\(x_k\)</span> given a measurement <span class="math notranslate nohighlight">\(z_k\)</span> (to beacon <span class="math notranslate nohighlight">\(b_i\)</span>) seems similar to a Gaussian density:</p>
 <div class="math notranslate nohighlight">
 \[
@@ -606,7 +607,7 @@ L(x_k;z_k, b_i) = \exp\{-\frac{1}{2\sigma^2}(z_k-h(x_k;b_i))^2\}.
 when we compute the likelihood for state <span class="math notranslate nohighlight">\(x_k\)</span>),
 the likelihood does not even remotely look like a Gaussian!
 In fact, the likelihood will be high where the state agrees with the given range measurement, i.e., in an <em>annulus</em> of the right radius around the beacon. The “width” of the annulus will be proportional to the measurement noise <span class="math notranslate nohighlight">\(\sigma\)</span>.</p>
-<p>To make this concrete, let us add 8 beacons to the base map, at either side of the shelves, which seems very useful for robot navigation. Again, we defined these in <code class="docutils literal notranslate"><span class="pre">gtbook.logistics.beacons</span></code>, and we show them below on the base map:</p>
+<p>To make this concrete, let us add 8 beacons to the base map, at either end of the shelves, which seems very useful for robot navigation. Again, we define these in <code class="docutils literal notranslate"><span class="pre">gtbook.logistics.beacons</span></code>, and we show them below on the base map:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">logistics</span><span class="o">.</span><span class="n">show_map</span><span class="p">(</span><span class="n">logistics</span><span class="o">.</span><span class="n">base_map</span><span class="p">,</span> <span class="n">logistics</span><span class="o">.</span><span class="n">beacons</span><span class="p">)</span>
@@ -660,15 +661,16 @@ In fact, the likelihood will be high where the state agrees with the given range
 </div>
 <p>As you can see, <em>all</em> positions at a range of approximately 4 meters have a high likelihood.</p>
 </section>
-<section id="negative-information">
-<h2><span class="section-number">4.3.3. </span>Negative Information<a class="headerlink" href="#negative-information" title="Permalink to this heading">#</a></h2>
+<section id="the-case-of-no-beacons-in-sensing-range">
+<h2><span class="section-number">4.3.3. </span>The Case of No Beacons in Sensing Range<a class="headerlink" href="#the-case-of-no-beacons-in-sensing-range" title="Permalink to this heading">#</a></h2>
 <blockquote>
-<div><p>Negative information is also information!</p>
+<div><p>The absence of beacons in the sensor data can be informative.</p>
 </div></blockquote>
 <p>The likelihood model above is useful when a beacon is within sensing range of the RFID reader. But what happens when all beacons are out of range? Let us assume that the RFID reader always returns the range to the closest beacon, along with its identification number, but it returns a special value when all the beacons are out of range. Formally, we can model this as a <em>pair</em> of values that is returned by the sensor,</p>
 <div class="math notranslate nohighlight">
 \[z_{RFID}\in \bar{N} \times \mathbb{\bar{R}}^+,\]</div>
-<p>where <span class="math notranslate nohighlight">\(\bar{N}\)</span> is the set of integers extended with <code class="docutils literal notranslate"><span class="pre">None</span></code>, and <span class="math notranslate nohighlight">\(\mathbb{\bar{R}}^+\)</span> is the set of positive real numbers extended with <span class="math notranslate nohighlight">\(\infty\)</span>.</p>
+<p>where <span class="math notranslate nohighlight">\(\bar{N}\)</span> is the set of integers extended with <code class="docutils literal notranslate"><span class="pre">None</span></code>, and <span class="math notranslate nohighlight">\(\mathbb{\bar{R}}^+\)</span> is the set of positive real numbers extended with <span class="math notranslate nohighlight">\(\infty\)</span>. Note that in the case of additive Gaussian sensor noise, it is possible to
+have <span class="math notranslate nohighlight">\(z_k &lt; 0\)</span> returned by the range sensor. In such cases, we might simply assign <span class="math notranslate nohighlight">\(z_k = 0\)</span>.</p>
 <p>In code this easy to implement: if all sensors are out of range we  return <code class="docutils literal notranslate"><span class="pre">None</span></code> for the identification and <code class="docutils literal notranslate"><span class="pre">float('inf')</span></code> for the range. For example, here is some code that returns the range to the nearest beacon (given in a list <code class="docutils literal notranslate"><span class="pre">beacons</span></code>) and <code class="docutils literal notranslate"><span class="pre">None,</span> <span class="pre">float('inf')</span></code> if all are out of range:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -691,7 +693,7 @@ In fact, the likelihood will be high where the state agrees with the given range
 </div>
 </div>
 <p>The special “out of range” measurement conveys a lot of information as well! If we are within range of a sensor, the likelihood function is as above (an annulus). But when we are <em>out</em> of range, the likelihood function has a very strange shape indeed: it will be 1.0 for all continuous states out of range of all beacons, and zero for states within range of a beacon. This makes sense: if the robot were within range of a beacon, the sensor would have returned
-an actual range, <em>not</em> infinity. This in turn tells us that the robot must be somewhere outside the range of all beacons, which is very powerful information.</p>
+an actual range, <em>not</em> infinity. This in turn tells us that the robot must be somewhere outside the range of all beacons, which is very powerful information. The likelihood for this case can be plotted with the following code.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">out_of_rfid_range</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">max_range</span><span class="o">=</span><span class="mi">8</span><span class="p">):</span>
@@ -714,7 +716,7 @@ an actual range, <em>not</em> infinity. This in turn tells us that the robot mus
 <div><p>A simple conditionally Gaussian measurement.</p>
 </div></blockquote>
 <p>The last sensor we will consider, a GPS-like location sensor, is a bit of a cheat. In fact, there are no great indoor GPS-like sensors.
-People have tried all kinds of things, like triangulating WiFi signals etc., but in fact a cheap and reliable GPS-like sensor that works indoors is still not available at the time of writing.
+People have tried all kinds of things, like triangulating WiFi signals etc., but a cheap and reliable GPS-like sensor that works indoors is still not available at the time of writing.
 However, it is a good illustrative example to introduce a simple, conditionally Gaussian measurement.
 Also, it can be a good way to model a more complicated sensor, e.g., a camera-based localization system that uses some type of map.</p>
 <p>The <strong>measurement model</strong> <span class="math notranslate nohighlight">\(h(x_k)\)</span>, that predicts the measurement <span class="math notranslate nohighlight">\(z_k\)</span> given the state <span class="math notranslate nohighlight">\(x_k\)</span>, will again be a conditional Gaussian. In this example, let us assume the measurement is simply the location of the robot, but with coordinates measured in <em>cm</em>. The measurement model in this case is <em>linear</em>, and we again assume additive noise:</p>
@@ -737,7 +739,7 @@ p(z_k|x_k) &amp;= \mathcal{N}(z_k;\mu=C x_k, \Sigma=R) \\
 \end{aligned}
 \end{split}\]</div>
 <p>where <span class="math notranslate nohighlight">\(R\)</span> is the traditional symbol used for measurement model covariance,
-and <span class="math notranslate nohighlight">\(|R|\)</span> in the denominator denotes the determinant of <span class="math notranslate nohighlight">\(R\)</span>. Assuming a fairly inaccurate sensor, with 30cm standard deviation, we have <span class="math notranslate nohighlight">\(R=\text{diag}(30^2,30^2)\)</span>. Note that the <span class="math notranslate nohighlight">\(2\times 2\)</span> measurement covariance matrix <span class="math notranslate nohighlight">\(R\)</span> is expressed in the units of the measurement, i.e., centimeters, <em>not</em> the units of the state.</p>
+and <span class="math notranslate nohighlight">\(|R|\)</span> in the denominator denotes the determinant of <span class="math notranslate nohighlight">\(R\)</span>. Assuming a fairly inaccurate sensor, with 30cm standard deviation, we have <span class="math notranslate nohighlight">\(R=\text{diag}(30^2,30^2)\)</span> if the uncertainties in the <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> directions are independent of one another. Note that the <span class="math notranslate nohighlight">\(2\times 2\)</span> measurement covariance matrix <span class="math notranslate nohighlight">\(R\)</span> is expressed in the units of the measurement, i.e., centimeters, <em>not</em> the units of the state.</p>
 </section>
 <section id="simulating-states-and-measurements">
 <h2><span class="section-number">4.3.5. </span>Simulating States <em>and</em> Measurements<a class="headerlink" href="#simulating-states-and-measurements" title="Permalink to this heading">#</a></h2>
@@ -826,10 +828,10 @@ p(X,Z|U) = p(x_1)p(z_1|x_1) \prod_{k=2}^N p(x_k|x_{k-1}, u_{k-1})p(z_k|x_k).
 <blockquote>
 <div><p>A likelihood is not a probability. A likelihood is not a probability. A likelihood is not a probability.</p>
 </div></blockquote>
-<p>Let us recall the definition of a likelihood of a state <span class="math notranslate nohighlight">\(x\)</span> from section 2.4, as being a function <em>proportional</em> to the conditional density of a measurement <span class="math notranslate nohighlight">\(z\)</span>, but viewed as a function of <span class="math notranslate nohighlight">\(x\)</span>:</p>
+<p>Let us recall the definition of the likelihood of a state <span class="math notranslate nohighlight">\(x\)</span> from section 2.4, as being a function <em>proportional</em> to the conditional density of a measurement <span class="math notranslate nohighlight">\(z\)</span>, but viewed as a function of <span class="math notranslate nohighlight">\(x\)</span>:</p>
 <div class="math notranslate nohighlight">
 \[L(x;z) \propto p(z|x).\]</div>
-<p>The notation emphasizes that the measurement <span class="math notranslate nohighlight">\(z\)</span> is given, and the likelihood is a function defined on the state <em>continuous</em> state <span class="math notranslate nohighlight">\(x\)</span>.</p>
+<p>The notation emphasizes that the measurement <span class="math notranslate nohighlight">\(z\)</span> is given, and the likelihood is a function defined on the <em>continuous</em> state <span class="math notranslate nohighlight">\(x\)</span>.</p>
 <p>What is the likelihood function for our GPS-like sensor? That’s easy enough: we take the conditional probability, drop the normalization constant, and view it as a function of the state <span class="math notranslate nohighlight">\(x_k\)</span> rather than the <em>known</em> measurement <span class="math notranslate nohighlight">\(z_k\)</span>:</p>
 <div class="math notranslate nohighlight">
 \[
@@ -840,7 +842,7 @@ and <span class="math notranslate nohighlight">\(x_k, z_k \in \mathbb{R}^n\)</sp
 <div class="math notranslate nohighlight">
 \[
 \begin{aligned}
-L(x_k;z_k) \doteq \exp\{-0.5 (x_k-C^{-1}z_k)C^T R^{-1}C(x_k-C^{-1}z_k)\}
+L(x_k;z_k) \doteq \exp\{-0.5 (x_k-C^{-1}z_k)^T C^T R^{-1}C(x_k-C^{-1}z_k)\}
 \end{aligned}
 \]</div>
 <p>which is <em>proportional</em> to a Gaussian density with mean <span class="math notranslate nohighlight">\(C^{-1}z_k\)</span> and covariance matrix <span class="math notranslate nohighlight">\(\Sigma=(C^T R^{-1}C)^{-1}=C^{-1}RC^{-T}\)</span>. This actually makes sense: the most <em>likely</em> state <span class="math notranslate nohighlight">\(x_k\)</span> given a measurement <span class="math notranslate nohighlight">\(z_k\)</span> is just the measurement, now <em>divided</em> by 100 to convert to meters, hence the <span class="math notranslate nohighlight">\(C^{-1}\)</span>. The covariance is scaled down by 10,000. However, it is important not to go too far and start interpreting this Gaussian-shaped function as a probability: it does not normalize to 1, and it is a coincidence that for <em>linear-conditional</em> Gaussians, the likelihood turns out to be Gaussian-shaped as well.</p>
@@ -923,7 +925,7 @@ L(x_k;z_k) \doteq \exp\{-0.5 (x_k-C^{-1}z_k)C^T R^{-1}C(x_k-C^{-1}z_k)\}
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-proximity-sensor">4.3.1. A proximity sensor</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-range-sensor">4.3.2. A Range Sensor</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#negative-information">4.3.3. Negative Information</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-case-of-no-beacons-in-sensing-range">4.3.3. The Case of No Beacons in Sensing Range</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-gps-like-location-sensor">4.3.4. A GPS-Like Location Sensor</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simulating-states-and-measurements">4.3.5. Simulating States <em>and</em> Measurements</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gps-style-likelihoods">4.3.6. GPS-style Likelihoods</a></li>

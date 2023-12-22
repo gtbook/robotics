@@ -470,7 +470,7 @@ document.write(`
 <section class="tex2jax_ignore mathjax_ignore" id="actions-over-time">
 <h1><span class="section-number">3.2. </span>Actions over time<a class="headerlink" href="#actions-over-time" title="Permalink to this heading">#</a></h1>
 <blockquote>
-<div><p>We can use probability language to describe systems with uncertainty in the effects of actions.</p>
+<div><p>We can use the language of probability to describe systems with uncertainty in the effects of actions.</p>
 </div></blockquote>
 <a class="reference internal image-reference" href="_images/S32-iRobot_vacuuming_robot-04.jpg"><img alt="Splash image with vacuuming robot in action" class="align-center" src="_images/S32-iRobot_vacuuming_robot-04.jpg" style="width: 40%;" /></a>
 <p>In the real world, robots do not always execute actions perfectly, for a
@@ -483,13 +483,13 @@ Recall that in Chapter 2 we used conditional probabilities to model
 the effects of uncertainty in sensing at a specific moment in time.
 Here, we use conditional probabilities to model the uncertainty in state transitions when
 actions are executed.</p>
-<p>We can model this graphically, using directed edges to specify conditional
+<p>We can model this using graphs, with directed edges that specify conditional
 probabilities on variables.
 We can use these graphical models to generate sample system trajectories
 for a fixed sequence of actions.
 Such sample trajectories can be used for planning, as we will see later in the chapter.
 In addition, the graphical model approach allows us to easily extend probabilistic actions to
-factored state representations.</p>
+factored state representations, which can provide significant computational advantages.</p>
 <section id="primitive-actions">
 <h2><span class="section-number">3.2.1. </span>Primitive Actions<a class="headerlink" href="#primitive-actions" title="Permalink to this heading">#</a></h2>
 <p>We will assume that our robot is equipped with navigation software that implements four
@@ -623,16 +623,27 @@ physics. For example, how could we model the game “Portal”?</p></li>
 <section id="computing-the-posterior-distribution-for-a-sequence-of-actions">
 <h2><span class="section-number">3.2.3. </span>Computing the Posterior Distribution for a Sequence of Actions<a class="headerlink" href="#computing-the-posterior-distribution-for-a-sequence-of-actions" title="Permalink to this heading">#</a></h2>
 <p>Suppose we apply a sequence of actions <span class="math notranslate nohighlight">\(a_1 \dots a_t\)</span>
-and we wish to compute the probability distribution associated to the resulting state <span class="math notranslate nohighlight">\(X_{t+1}\)</span>?
-We can accomplish this by applying the law of total probability and conditioning each
-term on the applied action <span class="math notranslate nohighlight">\(a_1\)</span>.
-First, recall the law of total probability:</p>
+and we wish to compute the probability distribution associated to the resulting state <span class="math notranslate nohighlight">\(X_{t+1}\)</span>.
+We can accomplish this by applying the law of total probability.</p>
+<p>The <strong>law of total probability</strong> provides a convenient way to compute the probability of an
+event by considering all of the different ways the event could occur. Suppose
+we have a set of events <span class="math notranslate nohighlight">\({\cal B} = \{B_1, \dots , B_n\}\)</span> such that <span class="math notranslate nohighlight">\(B_i \cap B_j = \emptyset\)</span> when <span class="math notranslate nohighlight">\(i \neq j\)</span>
+and with <span class="math notranslate nohighlight">\(\cup B_i = \Omega\)</span>, i.e., the set of events <span class="math notranslate nohighlight">\({\cal B}\)</span> form a partition of the sample space.
+To compute the probability of an event <span class="math notranslate nohighlight">\(A\)</span>, the law of total probability is given by</p>
+<div class="math notranslate nohighlight">
+\[
+P(A) = \sum_{i} P(A | B_i ) P(B_i)
+\]</div>
+<p>We merely sum the conditional probabilities <span class="math notranslate nohighlight">\(P(A | B_i)\)</span> for each event <span class="math notranslate nohighlight">\(B_i\)</span>, weighted by the probability
+of the event <span class="math notranslate nohighlight">\(B_i\)</span>.</p>
+<p>We can use the law of total probability to compute the probability that the robot
+is in state <span class="math notranslate nohighlight">\(x_{t+1}\)</span> at time <span class="math notranslate nohighlight">\(t+1\)</span> by conditioning on the possible states for time <span class="math notranslate nohighlight">\(t\)</span>.:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 P(X_{t+1} = x_{t+1} ) = \sum_{x_t} P(X_{t+1} | X_t = x_t) P(X_t = x_t) \\
 \end{split}\]</div>
 <p>Now, condition every term in the above equation on the sequence of actions
-<span class="math notranslate nohighlight">\(a_1 \dots a_t\)</span>.</p>
+<span class="math notranslate nohighlight">\(a_1 \dots a_t\)</span>, and we obtain</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 P(X_{t+1} = x_{t+1} | a_1 \dots a_t) = \sum_{x_t} P(X_{t+1} | X_t = x_t, a_1 \dots a_t) P(X_t = x_t |a_1 \dots a_t) \\
@@ -640,8 +651,9 @@ P(X_{t+1} = x_{t+1} | a_1 \dots a_t) = \sum_{x_t} P(X_{t+1} | X_t = x_t, a_1 \do
 <p>This expression may seem complex, but it can be simplified by making the following observation:
 <em>If we know that the robot is in a specific state <span class="math notranslate nohighlight">\(x_t\)</span> at time <span class="math notranslate nohighlight">\(t\)</span>, then the next state will depend only
 on the action executed at time <span class="math notranslate nohighlight">\(t\)</span>; the previously executed actions will not affect our belief
-about <span class="math notranslate nohighlight">\(X_{t+1}\)</span>.</em>  For example, if the robot executes the action <em>move down</em> knowing with certainty that it is in the living room at time <span class="math notranslate nohighlight">\(t\)</span>,
-the sequence of actions that brought the robot to the living room (i.e., actions <span class="math notranslate nohighlight">\(a_1 \dots a_{t-1}\)</span>) do not affect our belief
+about <span class="math notranslate nohighlight">\(X_{t+1}\)</span>.</em><br />
+For example, if the robot executes the action <em>move down</em> knowing with certainty that it is in the living room at time <span class="math notranslate nohighlight">\(t\)</span>,
+the sequence of actions that brought the robot to the living room (i.e., actions <span class="math notranslate nohighlight">\(a_1 \dots a_{t-1}\)</span>) does not affect our belief
 about whether the robot will arrive to the hallway.
 Mathematically, we can write this relationship as follows:</p>
 <div class="math notranslate nohighlight">
@@ -654,17 +666,18 @@ at time <em>t</em>.
 Therefore, we have</p>
 <div class="math notranslate nohighlight">
 \[ P(X_t = x_t |a_1 \dots a_t) =  P(X_t = x_t |a_1 \dots a_{t-1})\]</div>
-<p>Applying these two simplifications, we obtain the final form for our posterior:
-$<span class="math notranslate nohighlight">\(
+<p>Applying these two simplifications, we obtain the final form for our posterior:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
 P(X_{t+1} = x_{t+1} | a_1 \dots a_t) = \sum_{x_t} P(X_{t+1} | X_t = x_t, a_t) P(X_t = x_t |a_1 \dots a_{t-1}) \\
-\)</span>$</p>
+\end{split}\]</div>
 <p>We can think of the terms in this expression as follows:</p>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(P(X_{t+1} = x_{t+1} | a_1 \dots a_t)\)</span> is the posterior</p></li>
 <li><p><span class="math notranslate nohighlight">\(P(X_{t+1} | X_t = x_t, a_t)\)</span> is the motion model</p></li>
 <li><p><span class="math notranslate nohighlight">\(P(X_t = x_t |a_1 \dots a_{t-1})\)</span> is the prior.</p></li>
 </ul>
-<p>For the initial state, when <span class="math notranslate nohighlight">\(t=0\)</span>, no actions have yet been applied, and the prior is merely
+<p>For the initial state, no actions have yet been applied, and the prior is merely
 the probability distribution at the initial state <span class="math notranslate nohighlight">\(P(X_1 = x_1)\)</span>.
 Specifically, we can compute the posterior at time <span class="math notranslate nohighlight">\(t=2\)</span> by</p>
 <div class="math notranslate nohighlight">
@@ -678,12 +691,15 @@ P(X_{2} = x_{2} | a_1 ) = \sum_{x_1} P(X_{2} | X_1 = x_1, a_1) P(X_1 = x_1 ) \\
 five times, once for each of the possible next states (<span class="math notranslate nohighlight">\(L,K,O,H,D\)</span>).
 This complete distribution is called the belief state, defined as</p>
 <div class="math notranslate nohighlight">
-\[b_{t+1} = \left[ P(X_{t+1} = L | a_1, \dots a_t),
-P(X_{t+1} = K | a_1, \dots a_t),
-P(X_{t+1} = O | a_1, \dots a_t),
-P(X_{t+1} = H | a_1, \dots a_t),
-P(X_{t+1} = D | a_1, \dots a_t) \right]
+\[b_{t+1} = \left[ 
+P(X_{t+1} = L | a_{1:t}),
+P(X_{t+1} = K | a_{1:t}),
+P(X_{t+1} = O | a_{1:t}),
+P(X_{t+1} = H | a_{1:t}),
+P(X_{t+1} = D | a_{1:t}) \right]
 \]</div>
+<p>in which we have simplified notation by using the notation
+<span class="math notranslate nohighlight">\(a_{1:t} = a_1, \dots, a_t\)</span>.</p>
 <p>We can write the equations for the belief state in a compact form by writing the conditional probability tables as
 transition matrices.
 To do so, for each action, we merely gather the corresponding rows from the complete conditional probability
@@ -749,7 +765,7 @@ the probabilistic transitions between states, as shown below:</p>
 </div>
 <p>Each node in this graph denotes a random variable, and therefore each node has an associated probability distribution.
 If we know the distribution for the initial state <span class="math notranslate nohighlight">\(X_1\)</span>, we can iteratively compute the distributions for
-<span class="math notranslate nohighlight">\(X_k\)</span> for all <span class="math notranslate nohighlight">\(k &gt; 1\)</span> by evaluating the conditional distributions associated to the directed edges in the graph.</p>
+<span class="math notranslate nohighlight">\(X_t\)</span> for all <span class="math notranslate nohighlight">\(t &gt; 1\)</span> by evaluating the conditional distributions associated to the directed edges in the graph.</p>
 <p>Our robot vacuum cleaner is slightly more sophisticated than this simple Markov chain, since
 the robot has the ability to execute actions, and these actions affect the propagation
 of probabilities through the chain.
@@ -757,9 +773,9 @@ This type of system is sometimes called a <strong>controlled Markov chain</stron
 a control input (the actions) into the usual Markov chain.</p>
 <p>Graphically, we can represent such a system by augmenting the graph above to include nodes that denote actions.
 We use a <em>box</em> to denote nodes whose values are known.
-Since the robot knows which actions it will execute, action nodes are denoted by boxes.
+Since the robot knows which actions it executes, action nodes are denoted by boxes.
 For our vacuuming robot, we also know the value of the initial state,
-since robot always begins in the office.
+since the robot always begins in the office.
 Therefore, we also use a box to denote the initial state in this graph.</p>
 <p>As an example, the code below builds the controlled Markov chain for our system up to time <span class="math notranslate nohighlight">\(t=2\)</span>.
 By applying the belief transition equation above, we can compute the probabililty distribution for <span class="math notranslate nohighlight">\(X_2\)</span>,
@@ -776,8 +792,7 @@ since the action <span class="math notranslate nohighlight">\(a_1\)</span> and t
 <div class="cell_output docutils container">
 <img alt="_images/39ee1d3d1ef9c3795879cb38d917239ba1cb8c282af0063646799a67a0a8b622.svg" src="_images/39ee1d3d1ef9c3795879cb38d917239ba1cb8c282af0063646799a67a0a8b622.svg" /></div>
 </div>
-<p>For the specific example of</p>
-<p>Given values for the parent variables, we can examine the corresponding transition probability. For example, if we start from the <span class="math notranslate nohighlight">\(X_1=\text{Office}\)</span> and attempt to go right, i.e., action <span class="math notranslate nohighlight">\(A_0=\text{R}\)</span>, we retrieve the following PMF over the next state <span class="math notranslate nohighlight">\(X_2\)</span>:</p>
+<p>Given values for the parent variables, we can examine the corresponding transition probability. For example, if we start from the <span class="math notranslate nohighlight">\(X_1=\text{Office}\)</span> and attempt to go right, i.e., action <span class="math notranslate nohighlight">\(a_1=\text{R}\)</span>, we retrieve the following PMF over the next state <span class="math notranslate nohighlight">\(X_2\)</span>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">values</span> <span class="o">=</span> <span class="n">VARIABLES</span><span class="o">.</span><span class="n">assignment</span><span class="p">({</span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span><span class="s2">&quot;Office&quot;</span><span class="p">,</span> <span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="s2">&quot;R&quot;</span><span class="p">})</span>
@@ -824,7 +839,7 @@ Try varying the value of <span class="math notranslate nohighlight">\(N\)</span>
 <section id="forward-simulation">
 <h2><span class="section-number">3.2.6. </span>Forward Simulation<a class="headerlink" href="#forward-simulation" title="Permalink to this heading">#</a></h2>
 <p>We can use simulation in a graphical model to explore what a sequence of
-actions will yield as outcome.
+actions might yield as an outcome.
 To sample from a <em>conditional</em> distribution <span class="math notranslate nohighlight">\(p(X|Y)\)</span> we need to make
 sure we sample the variable <span class="math notranslate nohighlight">\(Y\)</span> beforehand, and then proceed simply by
 selecting the appropriate PMF depending on the value of <span class="math notranslate nohighlight">\(Y\)</span>. We can then
@@ -832,7 +847,7 @@ proceed as before using the inverse transform sampling method.</p>
 <p>Forward sampling in a Markov chain simply repeats these steps in
 succession, proceeding from left to right.
 Simulating a robot <em>given</em> an initial state <span class="math notranslate nohighlight">\(X_1\)</span> and
-sequence of actions <span class="math notranslate nohighlight">\(A_{1},A_{2},\ldots\)</span> is then equivalent to sampling
+sequence of actions <span class="math notranslate nohighlight">\(a_{1}, a_{2},\ldots\)</span> is then equivalent to sampling
 from this Markov chain:</p>
 <ol class="arabic">
 <li><p>Set <span class="math notranslate nohighlight">\(k=1\)</span>.</p></li>
@@ -841,10 +856,11 @@ from this Markov chain:</p>
 <div class="math notranslate nohighlight">
 \[P(X_{k+1}|X_{k}=x_{k},A_{k}=a_{k}).\]</div>
 </li>
-<li><p>Increase <span class="math notranslate nohighlight">\(k\)</span> and return to step <span class="math notranslate nohighlight">\(2\)</span>.</p></li>
+<li><p>Increment <span class="math notranslate nohighlight">\(k\)</span> and return to step <span class="math notranslate nohighlight">\(2\)</span>.</p></li>
 </ol>
-<p>Below we show how to code this up and show  4 different “rollouts” by simulating in this way. After
-that, we can approximate the PMF of the final state by construction a
+<p>Below we show how to code this up and show  4 different <strong>rollouts</strong> by simulating in this way.
+Rollouts will be discussed in more detail in Section 3.5.
+After that, we can approximate the PMF of the final state by constructing a
 histogram over the possible values of the state:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -885,10 +901,16 @@ the world’s best players of the game of Go.</p>
 </div></blockquote>
 <p>A Markov chain is a special case of the more general <strong>Bayes network</strong>.
 A Bayes net is a directed <em>acyclic</em> graph (DAG) describing a factored
-probability distribution a set of random variables.
-The joint distribution on the set of all variables is given as</p>
+probability distribution over a set of random variables.
+By the term <em>factored probability distribution</em>, we mean that the
+probability distribution is expressed as a product of terms, each of which is
+called a factor.</p>
+<p>For Bayes nets, the joint probability distribution for a set
+of random variables, <span class="math notranslate nohighlight">\(X_1, \dots, X_n\)</span> is expressed in terms
+of conditional probabilities for the individual variables <span class="math notranslate nohighlight">\(X_i\)</span>
+as</p>
 <div class="math notranslate nohighlight">
-\[P(\{X_{i}\})=\prod_{i=1}^{n}P(X_{i}|\Pi_{i})\]</div>
+\[P(X_1, \dots , X_n)=\prod_{i=1}^{n}P(X_{i}|\Pi_{i})\]</div>
 <p>where <span class="math notranslate nohighlight">\(n\)</span> is the number
 of variables, and <span class="math notranslate nohighlight">\(\Pi_{i}\)</span> denotes the set of parents for variable
 <span class="math notranslate nohighlight">\(X_{i}\)</span>. An example of a Bayes net is shown in the Figure below,
@@ -918,21 +940,21 @@ we multiply the conditionals does not matter, but we typically prefer to put the
 <img alt="_images/12f265cdf0e20ed01de7ef05320a4fd2f80167cdebfdd77aa86334c591bd5c9c.svg" src="_images/12f265cdf0e20ed01de7ef05320a4fd2f80167cdebfdd77aa86334c591bd5c9c.svg" /></div>
 </div>
 <p>Note that the above graph has cycles, but the cycles are only in the underlying <em>undirected</em> graph, not in the directed graph. Directed cycles, i.e. cycles with a consistent direction, are not allowed.</p>
-<p>A Bayes net can be a very efficient representation of complex
+<p>Bayes nets can be very efficient representations of complex
 probability distributions, as they encode the dependence and especially
 independence relationships between the variables.
 The Bayes net above was created assuming binary variables, and hence did not take
 a lot of effort to specify, but as we saw above, even for relatively small state spaces
 the complexity of specifying CPTs can be daunting.</p>
-<p>For example, if we
-were to construct a full table of probabilities for each possible
+<p>If we were to construct a full table of probabilities for each possible
 outcome of the variables <span class="math notranslate nohighlight">\(W\)</span>,<span class="math notranslate nohighlight">\(X\)</span>,<span class="math notranslate nohighlight">\(Y\)</span>, and <span class="math notranslate nohighlight">\(Z\)</span>, the table could be quite
-long. For example, if we assume they all have 10 possible values, then
-the full joint has <span class="math notranslate nohighlight">\(10^{4}\)</span> entries, i.e., <span class="math notranslate nohighlight">\(10,000\)</span> unique values. You
+long. For example, if we assume they all have 10 possible values,
+then the table required to represent the full joint distribution will have <span class="math notranslate nohighlight">\(10^{4}\)</span> entries,
+i.e., <span class="math notranslate nohighlight">\(10,000\)</span> unique values. You
 can save a tiny bit, because they have to sum up to 1, so strictly
 speaking we need only <span class="math notranslate nohighlight">\(9,999\)</span> values. In contrast, we can tally how many
 entries all four CPT tables have for the Bayes net above.
-In the table below we did just that:</p>
+This is shown in the following table.</p>
 <table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>CPT</p></th>
@@ -957,7 +979,7 @@ In the table below we did just that:</p>
 <p>For example, <span class="math notranslate nohighlight">\(P(X|Y,Z)\)</span> has 900 entries, i.e., 9
 (independent) entries for each of 100 possible combinations of <span class="math notranslate nohighlight">\(Y\)</span> and
 <span class="math notranslate nohighlight">\(Z\)</span>. Hence, the total number of parameters we need is only <span class="math notranslate nohighlight">\(1,899\)</span>,
-which is way less than <span class="math notranslate nohighlight">\(9,999\)</span>.</p>
+which is significantly less than <span class="math notranslate nohighlight">\(9,999\)</span>.</p>
 </section>
 <section id="factored-state-representations">
 <h2><span class="section-number">3.2.8. </span>Factored State Representations<a class="headerlink" href="#factored-state-representations" title="Permalink to this heading">#</a></h2>
@@ -1013,12 +1035,12 @@ actions to factored state representations. The code below shows one way to do it
 <div class="cell_output docutils container">
 <img alt="_images/31569d3db2125738e94e18b4eac5022ae3a8f4b84ee978ea7d0387128d36de13.svg" src="_images/31569d3db2125738e94e18b4eac5022ae3a8f4b84ee978ea7d0387128d36de13.svg" /></div>
 </div>
-<p>You can see that under the transition models chosen, there are now two semi-independent Markov chains. In fact, as the action sequence is <em>given</em>, the chains are truly independent.</p>
+<p>You can see that under the transition models chosen, there are now Markov chains, and these are indpendent when the action sequence is <em>given</em>.</p>
 <section id="id1">
 <h3><span class="section-number">3.2.8.1. </span>Exercise<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h3>
-<p>Note that  do you above model makes a number of strong statements about the nature of the worlds:</p>
+<p>Note that the above model makes a number of strong statements about the nature of the world:</p>
 <ol class="arabic simple">
-<li><p>The next battery state does not depend on where we are in the world. This seems like an OK assumption. Still, can you think of situations where this is not a realistic assumptions?</p></li>
+<li><p>The next battery state does not depend on where we are in the world. This seems like an OK assumption. Still, can you think of situations where this is not a realistic assumption?</p></li>
 <li><p>The next state does not depend on the battery life. Maybe this is not so defensible: clearly, if the battery is empty the robot cannot move, and the next state is the same as the previous state. It is worthwhile to think about what you would change above to make a more realistic model of the world.</p></li>
 </ol>
 </section>
@@ -1033,7 +1055,7 @@ actions to factored state representations. The code below shows one way to do it
 <li><p><code class="docutils literal notranslate"><span class="pre">add(self:,</span> <span class="pre">key:</span> <span class="pre">Tuple[int,</span> <span class="pre">int],</span> <span class="pre">parents:</span> <span class="pre">List[Tuple[int,</span> <span class="pre">int]],</span> <span class="pre">spec:</span> <span class="pre">str)</span> <span class="pre">-&gt;</span> <span class="pre">None</span></code>: adds a conditional with the same arguments as the <code class="docutils literal notranslate"><span class="pre">gtsam.DiscreteConditional</span></code> constructor.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">at(self,</span> <span class="pre">i:</span> <span class="pre">int)</span> <span class="pre">-&gt;</span> <span class="pre">gtsam.DiscreteConditional</span></code>: retrieves the <span class="math notranslate nohighlight">\(i^{th}\)</span> conditional added.</p></li>
 </ul>
-<p>We used a sleight of hand above to extend the battery depletion model to depend on the navigation action. The following is a but of python code that replicates our specification four times:</p>
+<p>We used a sleight of hand above to extend the battery depletion model to depend on the navigation action. The following is a bit of python code that replicates our specification four times:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">spec_b</span><span class="p">]</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span>
@@ -1046,7 +1068,7 @@ actions to factored state representations. The code below shows one way to do it
 </div>
 </div>
 </div>
-<p>We then made sure to specify the action <em>before</em> the previous battery state, so that the string above works out. Below we pretty-print to make verify this came out right:</p>
+<p>We then made sure to specify the action <em>before</em> the previous battery state, so that the string above works out. Below we pretty-print to  verify that this came out right:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pretty</span><span class="p">(</span><span class="n">gtsam</span><span class="o">.</span><span class="n">DiscreteConditional</span><span class="p">(</span><span class="n">B</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="n">A</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">B</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">spec_b</span><span class="p">]</span><span class="o">*</span><span class="mi">4</span><span class="p">)))</span>

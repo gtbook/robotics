@@ -439,7 +439,7 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#maximum-likelihood-parameter-estimation">4.6.1. Maximum Likelihood Parameter Estimation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ml-code-example">4.6.2. ML Code Example</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#application-measurement-models">4.6.3. Application: Measurement Models</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extending-to-multi-dimensional-systems">4.6.3. Extending to multi-dimensional systems</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multivariate-linear-regression">4.6.4. Multivariate Linear Regression</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multivariate-ml-code-example">4.6.5. Multivariate ML Code Example</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#application-motion-model-estimation">4.6.6. Application: Motion Model Estimation</a></li>
@@ -462,35 +462,32 @@ document.write(`
 <div><p>We can “learn” measurement and motion models.</p>
 </div></blockquote>
 <a class="reference internal image-reference" href="_images/S46-Warehouse_robots-09.jpg"><img alt="Splash image with various evolutions of warehouse robots" class="align-center" src="_images/S46-Warehouse_robots-09.jpg" style="width: 40%;" /></a>
-<div class="cell tag_remove-input docutils container">
-<div class="cell_output docutils container">
-<div class="output text_html">
-        <div align='center'>
-        <img src='https://github.com/gtbook/robotics/blob/main/Art/steampunk/S46-Warehouse%20robots-06.jpg?raw=1' style='height:256 width:100%'/>
-        </div>
-        </div></div>
-</div>
-<p>We will limit ourselves to learning linear conditional Gaussians from data.
+<p>In this section, we will limit ourselves to learning linear conditional Gaussians from data.
 In Section 4.1, we discussed three different ways to represent densities over a two dimensional state
 <span class="math notranslate nohighlight">\(x\in\mathbb{R}^2\)</span>: Gaussian densities, finite element approximations, and samples.
 In Section 4.4 we presented three different Bayes filters stemming from each of these choices.
 However, in each case the motion model was the same: a conditional Gaussian where the mean was a <em>linear</em> function of the previous state. In this section we will investigate whether we can learn both the linear mapping as well as the noise parameters, from data.</p>
 <section id="maximum-likelihood-parameter-estimation">
 <h2><span class="section-number">4.6.1. </span>Maximum Likelihood Parameter Estimation<a class="headerlink" href="#maximum-likelihood-parameter-estimation" title="Permalink to this heading">#</a></h2>
-<p>Let us first consider a Gaussian measurement model, where the measurement prediction is linear, i.e.,</p>
+<p>Let us first consider a one dimensional system (i.e., <span class="math notranslate nohighlight">\(x_k \in \mathbb{R}\)</span> is a scalar),
+and a sensor model that is linear with additive Gaussian noise:</p>
 <div class="math notranslate nohighlight">
 \[
 z_k = h(x_k) + n_k = C x_k + n_k
 \]</div>
-<p>with <span class="math notranslate nohighlight">\(n_k\)</span> zero-mean, Gaussian noise with covariance <span class="math notranslate nohighlight">\(R\)</span>. In the scalar case, both <span class="math notranslate nohighlight">\(C\)</span> and <span class="math notranslate nohighlight">\(R=\sigma^2\)</span> are scalars, and estimating them will be similar to the Gaussian parameter estimation from Section 2.6. Remember that there we estimated a sample mean <span class="math notranslate nohighlight">\(\hat{\mu}\)</span> from a set of <span class="math notranslate nohighlight">\(N\)</span> data points <span class="math notranslate nohighlight">\(x_i\)</span>, like so:</p>
+<p>Here, <span class="math notranslate nohighlight">\(n_k\)</span> denotes zero-mean, Gaussian noise with covariance <span class="math notranslate nohighlight">\(R\)</span>.</p>
+<p>In the one dimensional case, both <span class="math notranslate nohighlight">\(C\)</span> and <span class="math notranslate nohighlight">\(R=\sigma^2\)</span> are scalars, and estimating them will be similar to the Gaussian parameter estimation from Section 2.6. Remember that there we estimated a sample mean <span class="math notranslate nohighlight">\(\hat{\mu}\)</span> from a set of <span class="math notranslate nohighlight">\(N\)</span> data points, by simply computing the average of the data values:</p>
 <div class="math notranslate nohighlight">
-\[\hat{\mu} = \frac{1}{N} \sum_i x_i.\]</div>
+\[\hat{\mu} = \frac{1}{N} \sum_i z_i.\]</div>
 <p>The underlying reason is that this minimizes the negative log likelihood (nll) of <span class="math notranslate nohighlight">\(\mu\)</span> given the data <span class="math notranslate nohighlight">\(X\)</span> by</p>
 <div class="math notranslate nohighlight">
-\[\hat{\mu} = \arg \min_\mu \sum_i \text{nll}(\mu; x_i) = \arg \min_\mu \sum_i \frac{1}{2\sigma^2} \|\mu - x_i\|^2,\]</div>
-<p>hence this is a <em>maximum likelihood</em> (ML) estimator of <span class="math notranslate nohighlight">\(\mu\)</span>. If we follow the same scheme, the negative log likelihood of <span class="math notranslate nohighlight">\(C\)</span> given the data for our measurement model is</p>
+\[\hat{\mu} = \arg \min_\mu \sum_i \text{nll}(\mu; z_i) = \arg \min_\mu \sum_i \frac{1}{2\sigma^2} (\mu - z_i)^2,\]</div>
+<p>hence this is a <em>maximum likelihood</em> (ML) estimator of <span class="math notranslate nohighlight">\(\mu\)</span>.</p>
+<p>Suppose we are given a set of ground truth values <span class="math notranslate nohighlight">\(\{x_k\}\)</span> for the state along with corresponding
+measurement values <span class="math notranslate nohighlight">\(\{z_k\}\)</span>.
+If we generalize the scheme from Chapter 2, the negative log likelihood of <span class="math notranslate nohighlight">\(C\)</span> given the data for our measurement model becomes</p>
 <div class="math notranslate nohighlight">
-\[\hat{C} = \arg \min_C \sum_k \text{nll}(C; x_k, z_k) = \arg \min_C \sum_k \frac{1}{2\sigma^2} \|C x_k - z_k\|^2.\]</div>
+\[\hat{C} = \arg \min_C \sum_k \text{nll}(C; x_k, z_k) = \arg \min_C \sum_k \frac{1}{2\sigma^2} (C x_k - z_k)^2.\]</div>
 <p>Taking the derivative with respect to <span class="math notranslate nohighlight">\(C\)</span> and setting to zero we have</p>
 <div class="math notranslate nohighlight">
 \[\sum_k x_k(\hat{C} x_k - z_k) = 0,\]</div>
@@ -503,7 +500,9 @@ z_k = h(x_k) + n_k = C x_k + n_k
 </section>
 <section id="ml-code-example">
 <h2><span class="section-number">4.6.2. </span>ML Code Example<a class="headerlink" href="#ml-code-example" title="Permalink to this heading">#</a></h2>
-<p>Let us simulate some states randomly from the <span class="math notranslate nohighlight">\(x\)</span> direction in the warehouse, i.e., between 0 and 100 meters, and then the measurement <span class="math notranslate nohighlight">\(z\)</span> from those sampled <span class="math notranslate nohighlight">\(x\)</span> coordinates, and then plot them against each other:</p>
+<p>Consider a one dimensional version of the warehouse problem in which the robot
+moves only along the <span class="math notranslate nohighlight">\(x\)</span> axis.
+Let us simulate some states randomly from the <span class="math notranslate nohighlight">\(x\)</span> direction in the warehouse, i.e., between 0 and 100 meters, and then the measurement <span class="math notranslate nohighlight">\(z\)</span> from those sampled <span class="math notranslate nohighlight">\(x\)</span> coordinates, and then plot them against each other:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">C</span> <span class="o">=</span> <span class="mi">100</span> <span class="c1"># scaling from meters to centimeters</span>
@@ -516,7 +515,7 @@ z_k = h(x_k) + n_k = C x_k + n_k
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/97ce60a3eb3d4057d0f8498dfae2825d411323965876899d722d2ba4024b5c83.png" src="_images/97ce60a3eb3d4057d0f8498dfae2825d411323965876899d722d2ba4024b5c83.png" />
+<img alt="_images/76c517fb586b2bf2d0eb249481e1e60b7f47a910953ed65da77df677ef15d943.png" src="_images/76c517fb586b2bf2d0eb249481e1e60b7f47a910953ed65da77df677ef15d943.png" />
 </div>
 </div>
 <p>It is pretty clear that the slope is 100. Can our math corroborate?</p>
@@ -528,7 +527,7 @@ z_k = h(x_k) + n_k = C x_k + n_k
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>estimated C = 99.9688319133411 (cm/m)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>estimated C = 100.01151974501859 (cm/m)
 </pre></div>
 </div>
 </div>
@@ -542,40 +541,46 @@ z_k = h(x_k) + n_k = C x_k + n_k
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>estimated R=825.9854339622482 (cm^2), stddev=28.73996231664628 (cm)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>estimated R=792.3661821850809 (cm^2), stddev=28.148999665797735 (cm)
 </pre></div>
 </div>
 </div>
 </div>
 </section>
-<section id="application-measurement-models">
-<h2><span class="section-number">4.6.3. </span>Application: Measurement Models<a class="headerlink" href="#application-measurement-models" title="Permalink to this heading">#</a></h2>
+<section id="extending-to-multi-dimensional-systems">
+<h2><span class="section-number">4.6.3. </span>Extending to multi-dimensional systems<a class="headerlink" href="#extending-to-multi-dimensional-systems" title="Permalink to this heading">#</a></h2>
 <blockquote>
-<div><p>Measurement models can be easy under certain assumptions.</p>
+<div><p>For multi-dimensional systems, if the undertainties for the various dimensions are independent, we can solve the parameter estimation problems independently.</p>
 </div></blockquote>
-<p>In the warehouse example, for the GPS-like sensor, we assumed that the <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> were measured directly and that the noise on them was uncorrelated. Under that assumption we are really talking about estimating a 1D scaling factor <span class="math notranslate nohighlight">\(C\)</span> and scalar variance <span class="math notranslate nohighlight">\(\sigma^2\)</span> for both components, and we can use the code above to do so for <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> independently.</p>
+<p>In the warehouse example, for the GPS-like sensor, we assumed that the <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> were measured directly and that the noise on them was uncorrelated, and that the noise for each dimension had variance <span class="math notranslate nohighlight">\(\sigma^2\)</span>.
+When this assumption holds, the parameter estimation problem is to estimate the
+independent 1D scaling factors <span class="math notranslate nohighlight">\(C_x\)</span> and <span class="math notranslate nohighlight">\(C_y\)</span>, and the scalar variance <span class="math notranslate nohighlight">\(\sigma^2\)</span>
+We can use the code above to do so for <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> independently.</p>
 </section>
 <section id="multivariate-linear-regression">
 <h2><span class="section-number">4.6.4. </span>Multivariate Linear Regression<a class="headerlink" href="#multivariate-linear-regression" title="Permalink to this heading">#</a></h2>
-<p>For more general measurement processes or motion models, we typically needed heavier machinery. The scalar case above is an instance of <em>linear regression</em>, and it can be generalized to the multivariate case. Let us assume a multivariate linear measurement model</p>
+<p>For more general measurement processes or motion models, we typically need heavier machinery. The scalar case above is an instance of <em>linear regression</em>, and it can be generalized to the multivariate case. Let us assume a multivariate linear measurement model</p>
 <div class="math notranslate nohighlight">
 \[z_k = H x_k + n_k\]</div>
 <p>where now <span class="math notranslate nohighlight">\(z_k\in\mathbb{R}^m\)</span>, <span class="math notranslate nohighlight">\(x_k\in\mathbb{R}^n\)</span>, and <span class="math notranslate nohighlight">\(H\)</span> an <span class="math notranslate nohighlight">\(m \times n\)</span> matrix. Again, <span class="math notranslate nohighlight">\(n_k\)</span> is assumed zero mean Gaussian, with covariance matrix <span class="math notranslate nohighlight">\(R\)</span>.</p>
-<p>The negative log likelihood of <span class="math notranslate nohighlight">\(C\)</span> given the data for our measurement model is</p>
+<p>The negative log likelihood of <span class="math notranslate nohighlight">\(H\)</span> given the data for our measurement model is</p>
 <div class="math notranslate nohighlight">
 \[\hat{H} = \arg \min_H \sum_k \text{nll}(H; x_k, z_k) = \arg \min_H \sum_k \frac{1}{2} (H x_k - z_k)^T R^{-1}(H x_k - z_k).\]</div>
 <p>Unfortunately, the estimation process for arbitrary <span class="math notranslate nohighlight">\(R\)</span> is out of scope for this text. But if we assume <em>isotropic</em> noise with covariance matrix <span class="math notranslate nohighlight">\(I \sigma^2\)</span>, then the optimization problem simplifies to</p>
 <div class="math notranslate nohighlight">
-\[\hat{H} = \arg \min_H \frac{1}{2\sigma^2} \sum_k \sum_i |H_i x_k - z_{ki}|^2,\]</div>
+\[\hat{H} = \arg \min_H \frac{1}{2\sigma^2} \sum_k \sum_i (H_i x_k - z_{ki})^2,\]</div>
 <p>where <span class="math notranslate nohighlight">\(H_i\)</span> is the <span class="math notranslate nohighlight">\(i^th\)</span> row of <span class="math notranslate nohighlight">\(H\)</span>. Making use of the fact that the scalar <span class="math notranslate nohighlight">\(H_i x_k\)</span> can be re-written as <span class="math notranslate nohighlight">\(x_k^T H_i^T\)</span>, and then setting the derivative with respect to <span class="math notranslate nohighlight">\(H_i^T\)</span> to zero we have, for all <span class="math notranslate nohighlight">\(i\)</span>:</p>
 <div class="math notranslate nohighlight">
 \[\sum_k x_k (x_k^T \hat{H}_i^T - z_{ki}) = 0,\]</div>
-<p>yielding the following expression for the <span class="math notranslate nohighlight">\(i^th\)</span> row of <span class="math notranslate nohighlight">\(H\)</span>:</p>
+<p>yielding the following expression for the <span class="math notranslate nohighlight">\(i^{th}\)</span> row of <span class="math notranslate nohighlight">\(H\)</span>:</p>
 <div class="math notranslate nohighlight">
 \[
 \hat{H}_i^T = (\sum_k x_k x_k^T)^{-1} \sum_k x_k z_{ki}.
 \]</div>
-<p>Note the resemblance with the scalar case, but be mindful that the quantity in parentheses is an <span class="math notranslate nohighlight">\(n\times n\)</span> matrix, that needs to be inverted. It is interesting, though, that the <span class="math notranslate nohighlight">\(i^th\)</span> row of <span class="math notranslate nohighlight">\(H\)</span> is formed as sum of the input vectors <span class="math notranslate nohighlight">\(x_k\)</span>, weighted by the <span class="math notranslate nohighlight">\(i^th\)</span> element of the measurement. Finally, we can collect the above for all <span class="math notranslate nohighlight">\(i\)</span> and write:</p>
+<p>Note the resemblance with the scalar case, but be mindful that the quantity in parentheses is an <span class="math notranslate nohighlight">\(n\times n\)</span> matrix whose inverse will exist only if its rank is equal to the dimensionality of the system, <span class="math notranslate nohighlight">\(n\)</span>.
+This rank condition is farily easy to satisfy, and is essentially a requirement that the data set
+be sufficiently rich.
+It is interesting to note that the <span class="math notranslate nohighlight">\(i^{th}\)</span> row of <span class="math notranslate nohighlight">\(\hat{H}\)</span> is formed as sum of the input vectors <span class="math notranslate nohighlight">\(x_k\)</span>, weighted by the <span class="math notranslate nohighlight">\(i^{th}\)</span> element of the measurement. Finally, we can collect the above for all <span class="math notranslate nohighlight">\(i\)</span> and write:</p>
 <div class="math notranslate nohighlight">
 \[
 \hat{H}^T = (\sum_k x_k x_k^T)^{-1} \sum_k x_k z_k^T.
@@ -583,7 +588,8 @@ z_k = h(x_k) + n_k = C x_k + n_k
 <p>After this, we can again recover the variance <span class="math notranslate nohighlight">\(\sigma^2\)</span> by</p>
 <div class="math notranslate nohighlight">
 \[\widehat{\sigma^2} = \frac{1}{(m N-m n)} \sum_k \sum_i |\hat{H}_i x_k - z_{ki}|^2.\]</div>
-<p>Above we would divide by <span class="math notranslate nohighlight">\(m N\)</span> as that is how many elements there are in the double sum. However, to get an unbiased estimate we need to subtract <em>m n</em> from the denominator as that is how many entries we already estimated with <span class="math notranslate nohighlight">\(H\)</span>.</p>
+<p>in which <span class="math notranslate nohighlight">\(N\)</span> is the number of data points.
+Above we would divide by <span class="math notranslate nohighlight">\(m N\)</span> as that is how many elements there are in the double sum. However, to get an unbiased estimate we need to subtract <span class="math notranslate nohighlight">\(mn\)</span> from the denominator as that is how many entries we already estimated with <span class="math notranslate nohighlight">\(H\)</span>.</p>
 </section>
 <section id="multivariate-ml-code-example">
 <h2><span class="section-number">4.6.5. </span>Multivariate ML Code Example<a class="headerlink" href="#multivariate-ml-code-example" title="Permalink to this heading">#</a></h2>
@@ -610,9 +616,9 @@ z_k = h(x_k) + n_k = C x_k + n_k
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>H_optimal=
-[[10.02 19.87]
- [30.   40.12]
- [49.98 59.95]]
+[[ 9.97 19.99]
+ [30.07 39.88]
+ [50.01 60.02]]
 </pre></div>
 </div>
 </div>
@@ -625,7 +631,7 @@ z_k = h(x_k) + n_k = C x_k + n_k
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>31.823266461745636
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>29.456113624744997
 </pre></div>
 </div>
 </div>
@@ -634,7 +640,7 @@ z_k = h(x_k) + n_k = C x_k + n_k
 <section id="application-motion-model-estimation">
 <h2><span class="section-number">4.6.6. </span>Application: Motion Model Estimation<a class="headerlink" href="#application-motion-model-estimation" title="Permalink to this heading">#</a></h2>
 <blockquote>
-<div><p>A linear process model can be estimated from perfect data.</p>
+<div><p>Linear regression can be used to estimate all of the parameters of a general linear motion model.</p>
 </div></blockquote>
 <p>Assuming we have a dataset of triplets <span class="math notranslate nohighlight">\(x_k, u_k, x_{k+1}\)</span>, i.e., the current state <span class="math notranslate nohighlight">\(x_k\in\mathbb{R}^n\)</span>, the control <span class="math notranslate nohighlight">\(u_k\in\mathbb{R}^p\)</span>, and the next state <span class="math notranslate nohighlight">\(x_{k+1}\in\mathbb{R}^n\)</span>. Note the similarities with the reinforcement learning setup in Section 3.6! If we assume a <em>linear process model</em> then we should have:</p>
 <div class="math notranslate nohighlight">
@@ -685,10 +691,10 @@ x_{k+1} = \begin{bmatrix} A &amp; B \end{bmatrix} \begin{bmatrix} x_k \\ u_k \en
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>A_optimal=
 [[ 1.    0.01]
- [-0.    1.  ]]
+ [-0.    1.01]]
 B_optimal=
-[[1.   0.03]
- [0.01 1.  ]]
+[[0.99 0.  ]
+ [0.02 1.  ]]
 </pre></div>
 </div>
 </div>
@@ -701,7 +707,7 @@ B_optimal=
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1.9955431259395242
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2.004058382005128
 </pre></div>
 </div>
 </div>
@@ -710,13 +716,13 @@ B_optimal=
 <section id="expectation-maximization">
 <h2><span class="section-number">4.6.7. </span>Expectation Maximization<a class="headerlink" href="#expectation-maximization" title="Permalink to this heading">#</a></h2>
 <blockquote>
-<div><p>If we do <em>not</em> observe the state, we need to all this in expectation.</p>
+<div><p>We can estimate unknown parameters even if we don’t have access to ground truth state values.</p>
 </div></blockquote>
 <p>The above assumed that we had perfect knowledge of the state <span class="math notranslate nohighlight">\(x_k\)</span> at all times. But what if we only had access to the controls <span class="math notranslate nohighlight">\(U\)</span> and measurements <span class="math notranslate nohighlight">\(Z\)</span>? A natural idea is to try and estimate the states with the techniques from Section 4.4, and then somehow use the posterior density <span class="math notranslate nohighlight">\(p(X|U,Z)\)</span> to estimate any unknown parameters <span class="math notranslate nohighlight">\(\Theta\)</span>. However, the estimation problem itself <em>uses</em> the parameters, so we have a chicken and egg problem!</p>
 <p>The <strong>expectation-maximization</strong> or <strong>EM algorithm</strong> is an algorithm that allows us to estimate measurement and motion models <em>even when the state is only observed from measurements</em>. We do need <em>some</em> initial estimate <span class="math notranslate nohighlight">\(\Theta^1\)</span> for the parameters <span class="math notranslate nohighlight">\(\Theta\)</span>, and the idea is to then alternate between two steps:</p>
 <ul class="simple">
 <li><p>E-step: calculate the density <span class="math notranslate nohighlight">\(p(X|U,Z;\Theta^t)\)</span> on hidden states <span class="math notranslate nohighlight">\(X\)</span>, <em>given</em> the guess <span class="math notranslate nohighlight">\(\Theta^t\)</span>.</p></li>
-<li><p>M-Step: maximize the <em>expected</em> log-likelihood <span class="math notranslate nohighlight">\(Q(\Theta^{t+1})\)</span> with respect to <span class="math notranslate nohighlight">\(\Theta^{t+1}\)</span> under this density.</p></li>
+<li><p>M-Step: maximize the <em>expected</em> log-likelihood with respect to <span class="math notranslate nohighlight">\(\Theta^{t+1}\)</span> under this density.</p></li>
 </ul>
 <p>We do not discuss the detailed derivations here, but we do want to mention that a particularly simple variant of EM is to use a particle filter in the E-step. We can then simply “pretend” that the samples form a large dataset, and perform the above estimation procedures in the M-step. This is an instance of a so-called <strong>Monte Carlo EM</strong> algorithm, and the amazing fact is that this then actually converges to an ML estimate for the unknown parameters <span class="math notranslate nohighlight">\(\Theta\)</span>.</p>
 </section>
@@ -787,7 +793,7 @@ B_optimal=
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#maximum-likelihood-parameter-estimation">4.6.1. Maximum Likelihood Parameter Estimation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ml-code-example">4.6.2. ML Code Example</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#application-measurement-models">4.6.3. Application: Measurement Models</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extending-to-multi-dimensional-systems">4.6.3. Extending to multi-dimensional systems</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multivariate-linear-regression">4.6.4. Multivariate Linear Regression</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multivariate-ml-code-example">4.6.5. Multivariate ML Code Example</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#application-motion-model-estimation">4.6.6. Application: Motion Model Estimation</a></li>

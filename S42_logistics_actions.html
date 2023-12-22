@@ -479,7 +479,7 @@ document.write(`
 <section id="example">
 <h2><span class="section-number">4.2.2. </span>Example<a class="headerlink" href="#example" title="Permalink to this heading">#</a></h2>
 <blockquote>
-<div><p>Three wheels are enough!</p>
+<div><p>A mobile robot with three omni wheels can move in any direction.</p>
 </div></blockquote>
 <p>As an example, let us imagine that our warehouse robot is circular and has three omni wheels mounted on its rim. The coordinates of each wheel, in body coordinates, are</p>
 <div class="math notranslate nohighlight">
@@ -490,7 +490,8 @@ p^i_y &amp;= R \sin(\theta^i) \\
 \theta^i &amp;= i \frac{2\pi}{3}
 \end{aligned}
 \end{split}\]</div>
-<p>where <span class="math notranslate nohighlight">\(R\)</span> is the radius of the robot. The angle <span class="math notranslate nohighlight">\(\theta^i\)</span> is angle between the robot’s x-axis and the wheel’s axis.</p>
+<p>where <span class="math notranslate nohighlight">\(R\)</span> is the radius of the robot. The angle <span class="math notranslate nohighlight">\(\theta^i\)</span> is angle between the robot’s x-axis and the wheel’s axis.
+As we will see below, this configuration of wheels allows the robot to move instantaneously in any direction in the plane.</p>
 <p>In code, we create a small function:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -541,7 +542,7 @@ p^i_y &amp;= R \sin(\theta^i) \\
 <section id="kinematics-of-omni-wheels">
 <h2><span class="section-number">4.2.3. </span>Kinematics of Omni Wheels<a class="headerlink" href="#kinematics-of-omni-wheels" title="Permalink to this heading">#</a></h2>
 <blockquote>
-<div><p>From robot velocity to wheel velocity.</p>
+<div><p>Relating the robot velocity to the wheel velocities.</p>
 </div></blockquote>
 <p>Kinematics is the study of motion, without regard for the forces required to cause the motion.
 In particular, for our omni-directional robot kinematics addresses the question “What should the individual wheel velocities be given that we want the robot to move with a certain velocity?”</p>
@@ -726,10 +727,10 @@ Using matrix method:
 <section id="omni-directional-movement-in-practice">
 <h2><span class="section-number">4.2.5. </span>Omni-directional Movement in Practice<a class="headerlink" href="#omni-directional-movement-in-practice" title="Permalink to this heading">#</a></h2>
 <blockquote>
-<div><p>Additional transforms might be required.</p>
+<div><p>Expressing motion relative to a reference coordinate frame.</p>
 </div></blockquote>
 <p>To summarize, given a velocity, <span class="math notranslate nohighlight">\(v\)</span>, in the robot’s body coordinates,
-we compute the corresponding vector angular wheel velocities using the Jacobian mapping, <span class="math notranslate nohighlight">\(\omega = Jv\)</span>.
+we compute the corresponding vector of angular wheel velocities using the Jacobian mapping, <span class="math notranslate nohighlight">\(\omega = Jv\)</span>.
 The above exposition can be directly generalized to an arbitrary number of wheels, mounted in arbitrary locations. Some care needs to be taken that the chosen configuration is not singular, which would result in the robot being able to move only in one particular direction (or not at all!).</p>
 <p>In general, we would like to be able to specify the robot’s direction of motion relative
 to arbitrary coordinate frames, e.g., to a fixed warehouse coordinate frame,
@@ -747,10 +748,10 @@ However, if we were to include the robot’s orientation in the state representa
 <p>Modeling with continuous densities can be done with <em>continuous</em> dynamic Bayes nets (DBNs).
 Omni wheels are notoriously flaky in the execution, especially on uneven ground or carpet.
 Hence, it is important to model the uncertainty associated with commanded movements.
-Because we are modeling our robot as a discrete-time system,
-we let <span class="math notranslate nohighlight">\(u_k = v \Delta T\)</span> denote the displacement that occurs when the robot
-moves with velocity <span class="math notranslate nohighlight">\(v\)</span> for time <span class="math notranslate nohighlight">\(\Delta T\)</span>.
-Since the velocity can be in any direction, <span class="math notranslate nohighlight">\(u_k\in\mathbb{R}^2\)</span>.
+If we are model our robot as a discrete-time system,
+<span class="math notranslate nohighlight">\(u_k = v \Delta T\)</span> is the displacement that occurs when the robot
+moves with constant velocity <span class="math notranslate nohighlight">\(v\)</span> for time <span class="math notranslate nohighlight">\(\Delta T\)</span>.
+Since the velocity can be in any direction, we have <span class="math notranslate nohighlight">\(u_k\in\mathbb{R}^2\)</span>.
 In the absence of uncertainty, our motion model would simply
 be <span class="math notranslate nohighlight">\(x_{k+1} = x_k + u_k\)</span>.</p>
 <p>Given the uncertainty inherent to the use of omni-wheels, we will instead develop a probabilistic
@@ -760,8 +761,8 @@ Recall that we created a DBN with discrete actions, states, and measurements in 
 \[
 p(X|U) = p(x_1) \prod_{k=2}^{N} p(x_{k}|x_{k-1}, u_{k-1})
 \]</div>
-<p>where we assumed the <strong>control variables</strong> <span class="math notranslate nohighlight">\(U\doteq\{u_k\}_{k=1}^{N-1}\)</span> as <em>given</em> to us.</p>
-<p>Let us assume we <em>know</em> that the robot starts out in the warehouse at coordinates <span class="math notranslate nohighlight">\(\mu_1 =(20,10)\)</span>, with some noise/error in position of magnitude on the order of plus or minus half a meter. We can encode this knowledge into a continuous Gaussian prior as</p>
+<p>where we assume that the <strong>control variables</strong> <span class="math notranslate nohighlight">\(U\doteq\{u_k\}_{k=1}^{N-1}\)</span> are <em>given</em> to us.</p>
+<p>Let us assume we <em>know</em> that the robot starts out in the warehouse at coordinates <span class="math notranslate nohighlight">\(\mu_1 =(20,10)^T\)</span>, with some noise/error in position of magnitude on the order of plus or minus half a meter. We can encode this knowledge into a continuous Gaussian prior as</p>
 <div class="math notranslate nohighlight">
 \[p(x_1) = \mathcal{N}(x_1;\mu=\mu_1,\Sigma=P) \propto \exp\{ - \frac{1}{2} (x_1-\mu_1)^TP^{-1}(x_1-\mu_1) \}\]</div>
 <p>with the covariance matrix <span class="math notranslate nohighlight">\(P=\text{diag}(0.5^2,0.5^2)\)</span>.</p>
@@ -783,13 +784,14 @@ given <span class="math notranslate nohighlight">\(x_k\)</span> and <span class=
 p(x_{k+1}|x_{k}, u_k) = \mathcal{N}(x_{k_1}; x_{k} +  u_k, \Sigma)
 \]</div>
 <p>i.e., the conditional distribution for the next state is a Gaussian, with mean equal to the
-nominal (i.e., noise-free) next state <span class="math notranslate nohighlight">\(x_k + u_k\)</span>, and variance equal to the noise variance.</p>
+nominal (i.e., noise-free) next state <span class="math notranslate nohighlight">\(x_k + u_k\)</span>, and variance equal to the variance of the uncertainty
+in the motion model.</p>
 <p>It is easy to generalize this motion model to linear systems of the form</p>
 <div class="math notranslate nohighlight">
 \[
 x_{k+1} = A x_k + B u_k + w_k
 \]</div>
-<p>which is the general form for a linear time-invariant (LTI)) system with additive noise.
+<p>which is the general form for a linear time-invariant (LTI) system with additive noise.
 The matrix <span class="math notranslate nohighlight">\(A \in \mathbb{R}^{n \times n}\)</span> is called the system matrix,
 and the matrix <span class="math notranslate nohighlight">\(B\)</span> maps control input <span class="math notranslate nohighlight">\(u_k\)</span> to a vector in the state space.
 The motion model for this general LTI system is given by</p>
@@ -797,7 +799,7 @@ The motion model for this general LTI system is given by</p>
 \[
 p(x_{k+1}|x_{k}, u_k) = \mathcal{N}(x_{k+1};\mu=A x_{k} + B u_k, \Sigma=Q)
 \]</div>
-<p>where <span class="math notranslate nohighlight">\(Q\)</span> is the traditional symbol used for motion model covariance. If we assume the robot executes actions <span class="math notranslate nohighlight">\(u_k\)</span> with a standard deviation of 0.2m, then we will have <span class="math notranslate nohighlight">\(Q=\text{diag}(0.2^2,0.2^2)\)</span>.</p>
+<p>where <span class="math notranslate nohighlight">\(Q\)</span> is the traditional symbol used for motion model covariance. If we assume the robot executes action <span class="math notranslate nohighlight">\(u_k\)</span> with a standard deviation of 0.2m, then we will have <span class="math notranslate nohighlight">\(Q=\text{diag}(0.2^2,0.2^2)\)</span>.</p>
 </section>
 <section id="gaussian-dbns-in-code">
 <h2><span class="section-number">4.2.7. </span>Gaussian DBNs in Code<a class="headerlink" href="#gaussian-dbns-in-code" title="Permalink to this heading">#</a></h2>
@@ -806,8 +808,8 @@ p(x_{k+1}|x_{k}, u_k) = \mathcal{N}(x_{k+1};\mu=A x_{k} + B u_k, \Sigma=Q)
 \[\frac{1}{2 \sigma^2} \|x - \mu\|^2.\]</div>
 <p>with a named constructor <code class="docutils literal notranslate"><span class="pre">FromMeanAndStddev</span></code> that takes <span class="math notranslate nohighlight">\(\mu\)</span> and <span class="math notranslate nohighlight">\(\sigma\)</span>. For their part, Gaussian <em>conditional</em> densities are specified using the class <code class="docutils literal notranslate"><span class="pre">GaussianConditional</span></code>, which correspond to a negative log-probability given by</p>
 <div class="math notranslate nohighlight">
-\[\frac{1}{2 \sigma^2} \|x - (A_1 p_1 + A_2 p_2 + b))\|^2.\]</div>
-<p>i.e., the mean on <span class="math notranslate nohighlight">\(x\)</span> is a linear function of the conditioning variables <span class="math notranslate nohighlight">\(p_1\)</span> and <span class="math notranslate nohighlight">\(p_2\)</span>. Again, a named constructor <code class="docutils literal notranslate"><span class="pre">FromMeanAndStddev</span></code> is there to assist us. Details in the GTSAM 101 section at the end of this section, as always.</p>
+\[\frac{1}{2 \sigma^2} \|x - (A_1 p_1 + A_2 p_2 + b)\|^2.\]</div>
+<p>i.e., the mean on <span class="math notranslate nohighlight">\(x\)</span> is a linear function of the conditioning variables <span class="math notranslate nohighlight">\(p_1\)</span> and <span class="math notranslate nohighlight">\(p_2\)</span>. Again, a named constructor <code class="docutils literal notranslate"><span class="pre">FromMeanAndStddev</span></code> is there to assist us. Details are given in the GTSAM 101 section at the end of this section, as always.</p>
 <p>All of the above is used in the following piece of code, which builds the dynamic Bayes net:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">

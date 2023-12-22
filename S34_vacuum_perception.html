@@ -439,7 +439,7 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inference-in-bayes-nets">3.4.1. Inference in Bayes Nets</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#full-posterior-inference">3.4.1.1. Full Posterior Inference</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#maximum-probable-explanation">3.4.1.2. Maximum Probable Explanation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#most-probable-explanation">3.4.1.2. Most Probable Explanation</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#efficiency-not">3.4.1.3. Efficiency (Not!)</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#maximum-a-posteriori-estimation">3.4.1.4. Maximum a Posteriori estimation</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">3.4.1.5. Exercises</a></li>
@@ -523,27 +523,27 @@ document.write(`
 <section class="tex2jax_ignore mathjax_ignore" id="perception-with-graphical-models">
 <h1><span class="section-number">3.4. </span>Perception with Graphical Models<a class="headerlink" href="#perception-with-graphical-models" title="Permalink to this heading">#</a></h1>
 <blockquote>
-<div><p>Perception for dynamic Bayes nets is equivalent to inference in hidden Markov models or HMMs.</p>
+<div><p>Perception for dynamic Bayes nets is equivalent to inference in hidden Markov models (HMMs).</p>
 </div></blockquote>
 <a class="reference internal image-reference" href="_images/S34-iRobot_vacuuming_robot-05.jpg"><img alt="Splash image with deeply contemplative robot" class="align-center" src="_images/S34-iRobot_vacuuming_robot-05.jpg" style="width: 40%;" /></a>
 <p>Bayes nets are great for <em>modeling</em>, but for inferring the state of the robot over time we need better data structures.
-We first more formally define what we mean by inference, and introduce MAP and MPE inference.
+In this section, we more formally define what we mean by inference, and introduce MAP and MPE inference.
 We then define hidden Markov models, and highlight their connection with robot
 localization over time.
-We then show how to efficiently perform inference by converting any Bayes net (with evidence) to a factor graph.
-We show both full posterior inference, MPE, and MAP estimation for HMMs.</p>
+Finally, we show how to efficiently perform inference by converting any Bayes net (with evidence) to a factor graph
+and performing full posterior inference, MPE, and MAP estimation for HMMs.</p>
 <section id="inference-in-bayes-nets">
 <h2><span class="section-number">3.4.1. </span>Inference in Bayes Nets<a class="headerlink" href="#inference-in-bayes-nets" title="Permalink to this heading">#</a></h2>
 <blockquote>
-<div><p>Inference can mean full posterior inference, maximum probable explanation, or maximum a posteriori inference.</p>
+<div><p>Inference can mean full posterior inference, most probable explanation, or maximum a posteriori inference.</p>
 </div></blockquote>
-<p><strong>Inference</strong> is the process of obtaining knowledge about a subset of
+<p><strong>Inference</strong> is the process of determining knowledge about a subset of
 variables given the known values for another subset of variables. In
 this section we will talk about how to do inference when the joint
 distribution is specified using a Bayes net, but we will not take
-advantage of the sparse structure of the network. Hence, the algorithms
+advantage of the specific sparse structure of the network. Hence, the algorithms
 below are completely general, for any (discrete) joint probability
-distribution, as long as you can evaluate the joint.</p>
+distribution, as long as you can evaluate the joint distribution.</p>
 <section id="full-posterior-inference">
 <h3><span class="section-number">3.4.1.1. </span>Full Posterior Inference<a class="headerlink" href="#full-posterior-inference" title="Permalink to this heading">#</a></h3>
 <p>The simplest case occurs when we can <em>partition</em> the variables into two
@@ -583,7 +583,7 @@ As before, let us assume that each variable can take on 10 different outcomes, a
 <tbody>
 <tr class="row-even"><td class="text-center"><p>1</p></td>
 <td class="text-center"><p>1</p></td>
-<td class="text-center"><p><em>P(W=2|X=1, Z=7)P(X=1\Y=1, Z=7)P(Y=1\Z=7)P(Z=7)</em></p></td>
+<td class="text-center"><p><em>P(W=2|X=1, Z=7)P(X=1|Y=1, Z=7)P(Y=1|Z=7)P(Z=7)</em></p></td>
 </tr>
 <tr class="row-odd"><td class="text-center"><p>1</p></td>
 <td class="text-center"><p>2</p></td>
@@ -605,9 +605,9 @@ As before, let us assume that each variable can take on 10 different outcomes, a
 </table>
 <p>We normalize by calculating <span class="math notranslate nohighlight">\(\sum_{x, y} P(W=2, X=x, Y=y, Z=7)\)</span> by summing over all these entries, and subsequently dividing all entries by the sum.</p>
 </section>
-<section id="maximum-probable-explanation">
-<h3><span class="section-number">3.4.1.2. </span>Maximum Probable Explanation<a class="headerlink" href="#maximum-probable-explanation" title="Permalink to this heading">#</a></h3>
-<p>A common inference problem associated with Bayes nets is the <strong>most
+<section id="most-probable-explanation">
+<h3><span class="section-number">3.4.1.2. </span>Most Probable Explanation<a class="headerlink" href="#most-probable-explanation" title="Permalink to this heading">#</a></h3>
+<p>A common inference problem associated with Bayes nets is determining the <strong>most
 probable explanation</strong> or MPE for <span class="math notranslate nohighlight">\(\mathcal{X}\)</span>: given the values
 <span class="math notranslate nohighlight">\(\mathfrak{z}\)</span> for <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span>, what is the most probable joint
 assignment to the other variables <span class="math notranslate nohighlight">\(\mathcal{X}\)</span>? While the posterior
@@ -623,29 +623,30 @@ posterior values.</p>
 </section>
 <section id="efficiency-not">
 <h3><span class="section-number">3.4.1.3. </span>Efficiency (Not!)<a class="headerlink" href="#efficiency-not" title="Permalink to this heading">#</a></h3>
-<p>In both these inference problems, the simple algorithm outlined above is
-<em>not</em> efficient. In the example the table is 100 entries long, and in
+<p>In both the full posterior and MPE inference problems, the simple algorithms outlined above are
+<em>not</em> efficient. In the example the table contains 100 entries, and in
 general the number of entries is exponential in the size of
 <span class="math notranslate nohighlight">\(\mathcal{X}\)</span>. However, when inspecting the entries in the table
 there are already some obvious ways to save: for example, <span class="math notranslate nohighlight">\(P(Z=7)\)</span> is a
-common factor in all entries, so clearly we should not even bother
+common factor in all entries, so clearly we need not bother
 multiplying it in. Below we will discuss methods to fully
 exploit the structure of the Bayes net to perform efficient inference.</p>
 <p>If we had an efficient way to do inference, an MPE estimate would be a
 great way to estimate the trajectory of a robot over time. For example,
 using the “robot” dynamic Bayes net example from the last section, let us
-assume that we are given the value of all observations <span class="math notranslate nohighlight">\(O\)</span> and actions
-<span class="math notranslate nohighlight">\(A\)</span>. Then the MPE would simply be a trajectory of robot states through
-the grid. This is an example of robot localization over time, and is a
-key capability of a mobile robot. However, it will have to wait until we
-can do efficient inference.</p>
+assume that we are given the value of all observations and actions.
+Then the MPE would simply be a trajectory of robot states.
+This is an example of robot localization over time, and is a
+key capability of a mobile robot.</p>
 </section>
 <section id="maximum-a-posteriori-estimation">
 <h3><span class="section-number">3.4.1.4. </span>Maximum a Posteriori estimation<a class="headerlink" href="#maximum-a-posteriori-estimation" title="Permalink to this heading">#</a></h3>
-<p>Finally, another well known inference problem is the <strong>maximum a
+<p>Finally, another well known inference problem is determining the <strong>maximum a
 posteriori</strong> or MAP estimate: given the values of some variables
-<span class="math notranslate nohighlight">\(\mathcal{Z}\)</span>, what is the most probable joint assignment to a <em>subset</em>
-<span class="math notranslate nohighlight">\(\mathcal{X}\)</span> of the other variables? In this case the variables are
+<span class="math notranslate nohighlight">\(\mathcal{Z}\)</span>, what joint assignment to a <em>subset</em>
+<span class="math notranslate nohighlight">\(\mathcal{X}\)</span> of the other variables maximizes the posterior
+<span class="math notranslate nohighlight">\(P(\mathcal{X}|\mathcal{Z}=\mathfrak{z})\)</span>?
+In this case the variables are
 partitioned into three sets: the variables of interest <span class="math notranslate nohighlight">\(\mathcal{X}\)</span>,
 the nuisance variables <span class="math notranslate nohighlight">\(\mathcal{Y}\)</span>, and the observed variables
 <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span>:</p>
@@ -681,9 +682,9 @@ Hint: this is similar to the first exercise above.</p></li>
 <section id="hidden-markov-models">
 <h2><span class="section-number">3.4.2. </span>Hidden Markov Models<a class="headerlink" href="#hidden-markov-models" title="Permalink to this heading">#</a></h2>
 <blockquote>
-<div><p>HMMs are a general framework for perception over time.</p>
+<div><p>HMMs provide a general framework for perception over time.</p>
 </div></blockquote>
-<p>Here we will generalize from robots to arbitrary state and observation spaces. In the previous section we discussed dynamic Bayes networks to model how a robot state evolves over time by taking actions, and how measurements result in a particular state. In this section we will ask <em>how we can recover the state of the robot given only the observations</em>, i.e. without knowing the states: the state is “hidden”. Here we will consider a general framework to answer this question.</p>
+<p>In the previous section we discussed dynamic Bayes networks to model how a robot state evolves over time by taking actions, and how measurements result in a particular state. In this section we will ask <em>how we can recover the state of the robot given only the observations</em>, i.e. without knowing the states: the state is “hidden”. Here we will consider a general framework to answer this question.</p>
 <p>A <strong>hidden Markov model</strong> or HMM is a dynamic Bayes net that has two
 types of variables: states <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> and measurements <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span>.
 The states <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> are connected sequentially and satisfy the what
@@ -703,7 +704,7 @@ Markov model.</p>
 <a href="#fig:unrolledHMM" data-reference-type="ref" data-reference="fig:unrolledHMM">1</a>
 shows an example of an HMM for three time steps, i.e..,
 <span class="math notranslate nohighlight">\(\mathcal{X}=\{X_1, X_2, X_3\}\)</span> and
-<span class="math notranslate nohighlight">\(\mathcal{Z}=\{Z_1, Z_2, Z_3\}\)</span>. As we discussed, in a Bayes net
+<span class="math notranslate nohighlight">\(\mathcal{Z}=\{Z_1, Z_2, Z_3\}\)</span>. As discussed above, in a Bayes net
 each node is associated with a conditional distribution: the Markov
 chain has the prior <span class="math notranslate nohighlight">\(P(X_1)\)</span> and transition probabilities
 <span class="math notranslate nohighlight">\(P(X_2|X_1)\)</span> and <span class="math notranslate nohighlight">\(P(X_3|X_2)\)</span>, whereas the measurements <span class="math notranslate nohighlight">\(Z_{t}\)</span>
@@ -744,10 +745,8 @@ joint distribution <span class="math notranslate nohighlight">\(P(\mathcal{X}, \
 <blockquote>
 <div><p>Inference is easy to implement naively, but hopelessly inefficient.</p>
 </div></blockquote>
-<p>In inference, we might want to infer the maximum probable explanation
-(MPE) for the states <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> given values
-<span class="math notranslate nohighlight">\(\mathfrak{z}=\{z_1, z_2, z_3\}\)</span> for <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span>. As we saw
-before, one way to perform inference is to apply Bayes’ rule to obtain an expression for the <em>posterior</em> probability distribution over
+<p>As we saw above,
+one way to perform inference is to apply Bayes’ rule to obtain an expression for the <em>posterior</em> probability distribution over
 the state trajectory <span class="math notranslate nohighlight">\(\mathcal{X}\)</span>, given the measurements
 <span class="math notranslate nohighlight">\(\mathcal{Z}=\mathfrak{z}\)</span>:</p>
 <div class="math notranslate nohighlight">
@@ -772,7 +771,7 @@ Unfortunately the number of entries in this giant table is
 <em>exponential</em> in the number of states. Not only is this computationally
 prohibitive for long trajectories, but intuitively it is clear that for
 many of these trajectories we are computing the same values over and
-over again. In fact, there are three different approaches to improve on
+over again. There are three different approaches to improve on
 this:</p>
 <ol class="arabic simple">
 <li><p>Branch &amp; bound</p></li>
@@ -780,7 +779,7 @@ this:</p>
 <li><p>Inference using factor graphs</p></li>
 </ol>
 <p>Branch and bound is a powerful technique but will not generalize to
-continuous variables, like the other two approaches will. And, we will
+continuous variables; the other two approaches will. And, we will
 see that dynamic programming, which underlies the classical inference
 algorithms in the HMM literature, is just a special case of the last
 approach. Hence, here we will dive in and immediately go for the most
@@ -789,7 +788,7 @@ general approach: inference in factor graphs.</p>
 <section id="factor-graphs">
 <h2><span class="section-number">3.4.4. </span>Factor Graphs<a class="headerlink" href="#factor-graphs" title="Permalink to this heading">#</a></h2>
 <blockquote>
-<div><p>Factor graphs are <em>the</em> correct representation in which do inference.</p>
+<div><p>Factor graphs are an excellent representation in which do inference.</p>
 </div></blockquote>
 <p>We first introduce the notion of factors.
 Again referring to the example from Figure
@@ -797,8 +796,8 @@ Again referring to the example from Figure
 let us consider the posterior.
 Since the measurements <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span> are <em>known</em>, the posterior is
 proportional to the product of six <strong>factors</strong>, three of which derive
-from the the Markov chain, and three are likelihood factors as defined
-before:</p>
+from the Markov chain, and three of which are likelihood factors as defined
+above:</p>
 <div class="math notranslate nohighlight">
 \[
 P(\mathcal{X}|\mathcal{Z})\propto P(X_1)L(X_1; z_1)P(X_2|X_1)L(X_2; z_2)P(X_3|X_2)L(X_3; z_3)
@@ -817,7 +816,7 @@ are seen as functions of <em>just</em> the state <span class="math notranslate n
 </figure>
 <p>This motivates a different graphical model, a <strong>factor graph</strong>, in which
 we only represent the <em>hidden</em> variables <span class="math notranslate nohighlight">\(X_1\)</span>, <span class="math notranslate nohighlight">\(X_2\)</span>, and <span class="math notranslate nohighlight">\(X_3\)</span>,
-connected to factors that encode probabilistic information on them. For
+connected to factors that encode probabilistic information. For
 our example with three hidden states, the corresponding factor graph is
 shown in Figure
 <a href="#fig: HMM-FG" data-reference-type="ref" data-reference="fig: HMM-FG">2</a> above.
@@ -867,7 +866,7 @@ we have:</p>
 <section id="converting-bayes-nets-into-factor-graphs">
 <h2><span class="section-number">3.4.5. </span>Converting Bayes Nets into Factor Graphs.<a class="headerlink" href="#converting-bayes-nets-into-factor-graphs" title="Permalink to this heading">#</a></h2>
 <blockquote>
-<div><p>It is trivial to convert Bayes nets with given variables into factor graphs.</p>
+<div><p>It is trivial to convert Bayes nets into factor graphs.</p>
 </div></blockquote>
 <figure id="fig:conversion">
 <img src="https://raw.githubusercontent.com/gtbook/robotics/main/Figures3/hmm-v2.png?raw=1" style="width:12cm" alt="">
@@ -880,7 +879,7 @@ we have:</p>
 <p>Every Bayes net can be trivially converted to a factor graph, as shown above.
 Recall that every node in a Bayes net denotes a conditional density on the
 corresponding variable and its parent nodes. Hence, the conversion is
-quite simple: every Bayes net node splits in <em>both</em> a variable node and
+quite simple: every Bayes net node maps to <em>both</em> a variable node and
 a factor node in the corresponding factor graph. The factor is connected
 to the variable node, as well as the variable nodes corresponding to the
 parent nodes in the Bayes net. If some nodes in the Bayes net are
@@ -905,7 +904,8 @@ parameter in the corresponding factor.</p>
 </div>
 </div>
 </div>
-<p>Now we create the factorgraph, first adding the prior <span class="math notranslate nohighlight">\(\phi(X_1)=P(X_1)\)</span> on <span class="math notranslate nohighlight">\(X_1\)</span>, then the binary factors <span class="math notranslate nohighlight">\(\phi(X_k, X_{k+1}) = P(X_{k+1}|X_k, A_k=a_k)\)</span>, and then the measurements likelihood factors <span class="math notranslate nohighlight">\(\phi(X_k; Z_k=z_k) \propto P(Z_k=z_k|X_k)\)</span>:</p>
+<p>Now we create the factor graph, first adding the prior <span class="math notranslate nohighlight">\(\phi(X_1)=P(X_1)\)</span> on <span class="math notranslate nohighlight">\(X_1\)</span>, then the binary factors <span class="math notranslate nohighlight">\(\phi(X_k, X_{k+1}) = P(X_{k+1}|X_k, A_k=a_k)\)</span>,
+and finally, the measurement likelihood factors <span class="math notranslate nohighlight">\(\phi(X_k; Z_k=z_k) \propto P(Z_k=z_k|X_k)\)</span>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">graph</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">DiscreteFactorGraph</span><span class="p">()</span>
@@ -927,7 +927,7 @@ parameter in the corresponding factor.</p>
 <div class="cell_output docutils container">
 <img alt="_images/f32e9c2472cd645146e56d47c36421ff0dca4a65057a6808a22dbb5eb8262fd1.svg" src="_images/f32e9c2472cd645146e56d47c36421ff0dca4a65057a6808a22dbb5eb8262fd1.svg" /></div>
 </div>
-<p>Note that discrete distributions and conditionals, like <span class="math notranslate nohighlight">\(P(X_1)\)</span> above, are perfectly fine factors, and in fact <em>derive</em> from the factor type in GTSAM. This is what allows us to add them directly the graph as is. Note that in a real implementation we might not take the detour to first construct the conditionals as above: we did so because they were conveniently available here, but typically we would construct factors directly.</p>
+<p>Note that discrete distributions like <span class="math notranslate nohighlight">\(P(X_1)\)</span> and conditionals, above, are perfectly fine factors, and in fact <em>derive</em> from the factor type in GTSAM. This is what allows us to add them directly the graph as is. Note that in a real implementation we might not take the detour to first construct the conditionals as above: we did so because they were conveniently available here, but typically we would construct factors directly.</p>
 </section>
 </section>
 <section id="computing-with-factor-graphs">
@@ -946,8 +946,8 @@ results. The factor graph represents the unnormalized posterior, i.e.,
 explanation or MPE, as we will do below. In the case of discrete
 variables, graph search methods can be applied, but we will use a
 different approach.</p>
-<p>While local or global maxima of the posterior are often of most
-interest, <strong>sampling</strong> from a probability density can be used to
+<p>While finding the maximum of the posterior is often of most
+interest, <strong>sampling</strong> from a probability distribution can be used to
 visualize, explore, and compute statistics and expected values
 associated with the posterior. However, the ancestral sampling method we
 discussed earlier only applies to directed acyclic graphs. There are
@@ -957,7 +957,7 @@ such method is Gibbs sampling, which proceeds by sampling one variable
 at a time from its conditional density given all other variables it is
 connected to via factors. This assumes that this conditional density can
 be easily obtained, which is in fact true for discrete variables.</p>
-<p>Below we use factor graphs as the organizing principle for probabilistic
+<p>In this book, we use factor graphs as the organizing structure for probabilistic
 inference. In later chapters we will expand their use to continuous
 variables, and will see that factor graphs aptly describe the
 independence assumptions and sparse nature of the large nonlinear
@@ -968,7 +968,7 @@ incremental inference, and lead naturally to distributed and/or parallel
 versions of robotics.</p>
 <section id="naive-mpe-with-gtsam">
 <h3><span class="section-number">3.4.6.1. </span>Naive MPE with GTSAM<a class="headerlink" href="#naive-mpe-with-gtsam" title="Permalink to this heading">#</a></h3>
-<p>Because our factor graph is so small, it does not hurt to show off how easy it is to implement the naive algorithm. We just loop over all possible state trajectories, and keep track of the one with the highest value:</p>
+<p>Because our factor graph is so small, it does not hurt to show off how easy it is to implement the naive algorithm to find the MPE. We just loop over all possible state trajectories, and keep track of the one with the highest value:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mpe_value</span> <span class="o">=</span> <span class="mi">0</span>
@@ -1012,7 +1012,7 @@ versions of robotics.</p>
 <div><p>Max-product on HMMs, also known as the Viterbi algorithm, is a dynamic-programming algorithm for finding the MPE.</p>
 </div></blockquote>
 <p>In this section we discuss an algorithm that is much faster than the naive algorithm to find the MPE.
-Given a factor graph, the <strong>max-product algorithm</strong> is an <span class="math notranslate nohighlight">\(O(n)\)</span> algorithm
+Given a factor graph of size <span class="math notranslate nohighlight">\(n\)</span>, the <strong>max-product algorithm</strong> is an <span class="math notranslate nohighlight">\(O(n)\)</span> algorithm
 to find the maximum probable explanation or MPE.
 We will use the example from Figure
 <a href="#fig: HMM-FG" data-reference-type="ref" data-reference="fig: HMM-FG">2</a>
@@ -1054,11 +1054,11 @@ to give the intuition. To find the MPE for <span class="math notranslate nohighl
 \[
 g_1(X_2) = \arg \max_{X_1} \phi_1(X_1)\phi_2(X_1)\phi_3(X_1, X_2)
 \]</div>
-<p>where the <em>lookup table</em> can be created at the same time that we compute <span class="math notranslate nohighlight">\(\tau(X_2)\)</span>.</p>
-<p>The above shows the general principle for max-product by <em>eliminating</em> <span class="math notranslate nohighlight">\(X_1\)</span>, and we must do the same computation for all other variables as well.
+<p>where a <em>lookup table</em> can be created at the same time that we compute <span class="math notranslate nohighlight">\(\tau(X_2)\)</span>.</p>
+<p>The above shows the general principle for max-product by <em>eliminating</em> <span class="math notranslate nohighlight">\(X_1\)</span>. We must do the same computation for all other variables as well.
 Below we use the factor graph to illustrate how the max-product algorithm
-proceeds one variable at a time, using “Bayes-net-style” directed edges to represent the lookup tables <span class="math notranslate nohighlight">\(g_k(X_{k+1})\)</span>, and factors to represent the <span class="math notranslate nohighlight">\(\tau(.)\)</span> functions, as indeed they <em>are</em> factors. Because at every step, one variable is eliminated from the maximization, the max-product algorithm is in fact an instance of the <strong>elimination algorithm</strong>, which we will see pop up in many different guises.</p>
-<p>We proceed from left to right, i.e. we start with state <span class="math notranslate nohighlight">\(X_1\)</span> and proceed until we
+proceeds one variable at a time, using “Bayes-net-style” directed edges to represent the lookup tables <span class="math notranslate nohighlight">\(g_k(X_{k+1})\)</span>, and factors to represent the <span class="math notranslate nohighlight">\(\tau(\cdot)\)</span> functions, as indeed they <em>are</em> factors. Because at every step, one variable is eliminated from the maximization, the max-product algorithm is in fact an instance of the <strong>elimination algorithm</strong>, which we will see pop up in many different guises.</p>
+<p>We proceed from left to right, i.e. we start with state <span class="math notranslate nohighlight">\(X_1\)</span> and proceed until we have
 processed all states. We will tackle the three steps one by one in ths subsections below:</p>
 <section id="eliminating-x-1">
 <h3><span class="section-number">3.4.7.1. </span>Eliminating <span class="math notranslate nohighlight">\(X_1\)</span><a class="headerlink" href="#eliminating-x-1" title="Permalink to this heading">#</a></h3>
@@ -1106,7 +1106,7 @@ obtaining the <strong>reduced graph</strong></p>
 eliminated <span class="math notranslate nohighlight">\(X_1\)</span> from consideration, and obtained a reduced problem
 that only depends on the remaining states <span class="math notranslate nohighlight">\(X_2\)</span> and <span class="math notranslate nohighlight">\(X_3\)</span>. You can
 intuitively see that this algorithm will terminate after <span class="math notranslate nohighlight">\(n\)</span> steps, and
-in fact you could prove it by induction. In addition, the lookup table
+in fact you could prove this by induction. In addition, the lookup table
 <span class="math notranslate nohighlight">\(g_1\)</span> gives us a way that, once we know what the optimal value for
 <span class="math notranslate nohighlight">\(X_2\)</span> is, we can just read off the optimal value for <span class="math notranslate nohighlight">\(X_1\)</span>. This is
 what we will do, in <em>reverse</em> elimination order, after the algorithm
@@ -1127,8 +1127,8 @@ to <span class="math notranslate nohighlight">\(X_2\)</span>,</p>
 <p>which now includes the factor <span class="math notranslate nohighlight">\(\tau(X_2)\)</span> from the previous step.
 Note that since we started from the reduced graph,
 the product factor is guaranteed to not depend on the first state
-<span class="math notranslate nohighlight">\(X_1\)</span>: that was eliminated! In fact, we can now in turn eliminate
-<span class="math notranslate nohighlight">\(X_2\)</span> from the problem, by looking at all possible values <span class="math notranslate nohighlight">\(x_3\)</span> of
+<span class="math notranslate nohighlight">\(X_1\)</span>: the state <span class="math notranslate nohighlight">\(X_1\)</span> was already eliminated! In fact, we can now in turn eliminate
+<span class="math notranslate nohighlight">\(X_2\)</span>, by looking at all possible values <span class="math notranslate nohighlight">\(x_3\)</span> of
 <span class="math notranslate nohighlight">\(X_3\)</span>, and creating a lookup table <span class="math notranslate nohighlight">\(g_2\)</span> for the best possible value
 of <span class="math notranslate nohighlight">\(X_2\)</span>, given <span class="math notranslate nohighlight">\(X_3\)</span>,</p>
 <div class="math notranslate nohighlight">
@@ -1186,7 +1186,7 @@ and we recover the MPE in one single backward pass.</p>
 </section>
 <section id="summary-max-product">
 <h3><span class="section-number">3.4.7.5. </span>Summary: Max-Product<a class="headerlink" href="#summary-max-product" title="Permalink to this heading">#</a></h3>
-<p>The complete HMM max-product algorithm for any value of <span class="math notranslate nohighlight">\(n\)</span> is given below,
+<p>The complete HMM max-product algorithm for any value of <span class="math notranslate nohighlight">\(n\)</span> is given in the pseudocode below,
 where we used the shorthand notation <span class="math notranslate nohighlight">\(\Phi_{j:n}\doteq\phi(X_{j}, \ldots, X_{n})\)</span>
 to denote a reduced factor graph.
 The algorithm proceeds by eliminating one hidden state <span class="math notranslate nohighlight">\(X_{j}\)</span> at
@@ -1223,7 +1223,7 @@ recover the MPE in reverse elimination order.</p>
 </section>
 <section id="complexity">
 <h3><span class="section-number">3.4.7.6. </span>Complexity<a class="headerlink" href="#complexity" title="Permalink to this heading">#</a></h3>
-<p>The complexity of max-product is <em>linear</em> in the number of nodes, which is a nice improvement over exponential. The complexity of every elimination step is quadratic in the number of states, because we have to form the product factors and then maximize over them.</p>
+<p>The complexity of max-product is <em>linear</em> in the number of nodes, which is a nice improvement over exponential complexity. The complexity of every elimination step is quadratic in the number of states, because we have to form the product factors and then maximize over them.</p>
 </section>
 <section id="max-product-in-gtsam">
 <h3><span class="section-number">3.4.7.7. </span>Max-product in GTSAM<a class="headerlink" href="#max-product-in-gtsam" title="Permalink to this heading">#</a></h3>
@@ -1254,18 +1254,17 @@ recover the MPE in reverse elimination order.</p>
 <section id="the-sum-product-algorithm-for-hmms">
 <h2><span class="section-number">3.4.8. </span>The Sum-Product Algorithm for HMMs<a class="headerlink" href="#the-sum-product-algorithm-for-hmms" title="Permalink to this heading">#</a></h2>
 <blockquote>
-<div><p>Sum-product on HMMs, also known as the Forward-Backward algorithm algorithm, is a dynamic-programming algorithm for doing full posterior inference.</p>
+<div><p>Sum-product on HMMs, also known as the Forward-Backward algorithm, is a dynamic-programming algorithm for doing full posterior inference.</p>
 </div></blockquote>
 <p>The sum-product algorithm for HMMs is a slight tweak on the max-product
 algorithm that instead produces a Bayes net that calculates the
 posterior probability <span class="math notranslate nohighlight">\(P(\mathcal{X}|\mathcal{Z})\)</span>. Whereas the
 max-product produces a DAG of lookup tables, the sum-product produces a
 DAG of conditionals, i.e., a Bayes net. This is particularly interesting
-if one is not content with a maximum probable explanation or MPE, but
-instead wants the <strong>full Bayesian probability distribution</strong> of which
-assignments to the states are more probable than others. The fact that
-we recover this distribution in the form of a Bayes net again is
-satisfying, because as we saw that is an economical representation of a
+if one is not content with a most probable explanation or MPE, but
+instead wants the <strong>full Bayesian probability distribution</strong>.
+The fact that we recover this distribution in the form of a Bayes net again is
+satisfying, because, as we have seen, that is an economical representation of a
 probability distribution.</p>
 <p>One might wonder about the wisdom of all this: we started with a Bayes
 net, converted to a factor graph, and now end up with a Bayes net again?
@@ -1276,7 +1275,8 @@ posterior <span class="math notranslate nohighlight">\(P(\mathcal{X}|\mathcal{Z}
 random variables in <span class="math notranslate nohighlight">\(\mathcal{X}\)</span>, hence it is much smaller. Finally, in
 many practical cases we do not even bother with the modeling step, but
 construct the factor graph directly from the measurements.</p>
-<p>Again, the key is that we can compute the posterior recursively from the product of factors, in dynamic programming style:</p>
+<p>Again, the key is that we can compute the posterior recursively from the product of factors, in dynamic programming style.
+For the example above, this gives</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 \begin{aligned}
@@ -1287,11 +1287,11 @@ P(\mathcal{X}|\mathcal{Z}) &amp;\propto \prod\phi_{i}(\mathcal{X}_{i})
 \\ &amp;= P(X_1|X_2, \mathcal{Z}) ~~ P(X_2, X_3|\mathcal{Z})
 \end{aligned}
 \end{split}\]</div>
-<p>where the last equality invoked recursion to calculate the posterior <span class="math notranslate nohighlight">\(P(X_2, X_3|\mathcal{Z})\)</span> on the remaining variables from the remain factors. Below we assume the dependence on the given measurements <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span> (and actions, if appropriate) as implied, and drop <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span> from the equations.</p>
+<p>where the last equality invoked recursion to calculate the posterior <span class="math notranslate nohighlight">\(P(X_2, X_3|\mathcal{Z})\)</span> on the remaining variables from the remaining factors. Below we assume the dependence on the given measurements <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span> (and actions, if appropriate) as implied, and drop <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span> from the equations to simplify notation.</p>
 <p>In contrast to max-product, we now define the factor <span class="math notranslate nohighlight">\(\tau\)</span> obtained by <em>summing</em> over the variable that is being eliminated</p>
 <div class="math notranslate nohighlight">
 \[
-\tau(X_2)\doteq \sum_{X_1} \phi_1(X_1)\phi_2(X_1)\phi_3(X_1, X_2)
+\tau(X_2)\doteq \sum_{x_1} \phi_1(X_1=x_1)\phi_2(X_1=x_1)\phi_3(X_1=x_1, X_2)
 \]</div>
 <p>and, from the definition of conditional probability:</p>
 <div class="math notranslate nohighlight">
@@ -1320,7 +1320,7 @@ normalization constant is simply equal to <span class="math notranslate nohighli
 \[
 P(X_{j}|X_{j+1})=\frac{\phi(X_{j}, X_{j+1})}{\tau(X_{j+1})}
 \]</div>
-<p>The entire algorithm is is listed below:</p>
+<p>The entire algorithm in pseudocode is listed below:</p>
 <hr class="docutils" />
 <p><code class="docutils literal notranslate"><span class="pre">SumProductHMM</span></code> (<span class="math notranslate nohighlight">\(\Phi_{1:n}\)</span>):</p>
 <ul class="simple">
@@ -1344,8 +1344,8 @@ P(X_{j}|X_{j+1})=\frac{\phi(X_{j}, X_{j+1})}{\tau(X_{j+1})}
 is no back-substitution step. However, one might consider ancestral
 sampling as a type of back-substitution: the reverse elimination order
 is always a topological sort of the resulting Bayes net! Hence, after
-the sum-product algorithm, we can sample as many realizations from the
-posterior as we want: rather than just one MPE, we now have thousands of
+applying the sum-product algorithm, we can sample as many realizations from the
+posterior as we want: rather than just one MPE, we now have access to all
 plausible explanations, and ancestral sampling will yield them in
 exactly the correct frequencies.</p>
 <section id="sidebar">
@@ -1358,13 +1358,15 @@ real-valued function <span class="math notranslate nohighlight">\(f(\mathcal{X})
 E_{P(\mathcal{X}|\mathcal{Z})}[f(x)]\approx\sum f(\mathcal{X}^{(s)})
 \]</div>
 <p>For example, we can calculate the posterior mean of how far the robot
-traveled, either in Euclidean or Manhattan distance. These estimators
-will have less variability than just calculating the distance for the
-MPE, as they average over the entire probability distribution.</p>
+traveled, either in Euclidean or Manhattan distance, using this approach.
+Doing this will provide a more reliable estiate than merely
+calculating the distance for the MPE,
+since this approach averages over the entire probability distribution rather
+than just using a single (albeit most probable) estimate.</p>
 </section>
 <section id="sum-product-in-gtsam">
 <h3><span class="section-number">3.4.8.2. </span>Sum-Product in GTSAM<a class="headerlink" href="#sum-product-in-gtsam" title="Permalink to this heading">#</a></h3>
-<p>In GTSAM, calling <code class="docutils literal notranslate"><span class="pre">sumProduct</span></code> yields a Bayes net, which encodes the full posterior:</p>
+<p>In GTSAM, calling <code class="docutils literal notranslate"><span class="pre">sumProduct</span></code> yields a Bayes net, which encodes the full posterior distribution:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">posterior</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">sumProduct</span><span class="p">()</span>
@@ -1475,11 +1477,11 @@ MPE, as they average over the entire probability distribution.</p>
 </table>
 </div></div></div>
 </div>
-<p>These approximate marginals say how probable it is that the robot was in a particular room at a particular time step. This is much richer information that what is available in the MPE, which is just a point estimate for the trajectory. In the next section we will see how to go even further, and compute approximate costs associated with taking actions.</p>
+<p>These approximate marginals say how probable it is that the robot was in a particular room at a particular time step. This is much richer information that what is available in the MPE, which is just a point estimate for the trajectory.</p>
 </section>
 <section id="id2">
 <h3><span class="section-number">3.4.8.3. </span>Exercise<a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h3>
-<p>Execute the cell above multiple times and observe you <em>do</em> get different realizations (almost) every time, but that the approximate marginals stay roughly the same.</p>
+<p>Execute the code above multiple times and observe that you <em>do</em> get different realizations (almost) every time, but that the approximate marginals stay roughly the same.</p>
 </section>
 </section>
 <section id="gtsam-101">
@@ -1494,7 +1496,8 @@ To add factors, we can use the following methods:</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">add(self,</span> <span class="pre">j:</span> <span class="pre">Tuple[int,</span> <span class="pre">int],</span> <span class="pre">spec:</span> <span class="pre">List[float])</span> <span class="pre">-&gt;</span> <span class="pre">None</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">add(self,</span> <span class="pre">keys:</span> <span class="pre">List[Tuple[int,</span> <span class="pre">int]],</span> <span class="pre">spec:</span> <span class="pre">str)</span> <span class="pre">-&gt;</span> <span class="pre">None</span></code></p></li>
 </ol>
-<p>These are very similar to the <code class="docutils literal notranslate"><span class="pre">gtsam.DiscreteBayesNet</span></code> methods, but in factor graphs distinction between frontal and parent values, so we just have a key, or a list of keys as in the last method.</p>
+<p>These are very similar to the <code class="docutils literal notranslate"><span class="pre">gtsam.DiscreteBayesNet</span></code> methods, but in factor graphs there is a
+distinction between frontal and parent values, so we just have a key, or a list of keys as in the last method.</p>
 <p>Two key factor graph methods we used above are <code class="docutils literal notranslate"><span class="pre">optimize</span></code>, <code class="docutils literal notranslate"><span class="pre">maxProduct</span></code> and <code class="docutils literal notranslate"><span class="pre">sumProduct</span></code>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">-</span> <span class="n">optimize</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gtsam</span><span class="p">::</span><span class="n">DiscreteValues</span>
 <span class="o">-</span> <span class="n">sumProduct</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">DiscreteBayesNet</span>
@@ -1505,7 +1508,7 @@ To add factors, we can use the following methods:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">-</span> <span class="n">maxProduct</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">DiscreteLookupDAG</span>
 </pre></div>
 </div>
-<p>It returns a <code class="docutils literal notranslate"><span class="pre">DiscreteLookupDAG</span></code> instance, which, similarly to a Besy net is a DAG, but instead contains lookup tables, not conditionals:</p>
+<p>It returns a <code class="docutils literal notranslate"><span class="pre">DiscreteLookupDAG</span></code> instance, which, similarly to a Bayes net is a DAG, but instead contains lookup tables, not conditionals:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dag</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">maxProduct</span><span class="p">()</span>
@@ -1519,7 +1522,7 @@ To add factors, we can use the following methods:</p>
 </div>
 </div>
 </div>
-<p>It’s mostly an internal data structure, and is not yet very “inspectable” in python. However, you can ask it to <code class="docutils literal notranslate"><span class="pre">argmax</span></code>, which is exactly what happens <em>inside</em> <code class="docutils literal notranslate"><span class="pre">optimize</span></code>:</p>
+<p>It’s mostly an internal data structure, and is not yet very “inspectable” in python. However, you can ask it to compute the <code class="docutils literal notranslate"><span class="pre">argmax</span></code>, which is exactly what happens <em>inside</em> <code class="docutils literal notranslate"><span class="pre">optimize</span></code>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pretty</span><span class="p">(</span><span class="n">dag</span><span class="o">.</span><span class="n">argmax</span><span class="p">())</span>
@@ -1608,7 +1611,7 @@ To add factors, we can use the following methods:</p>
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inference-in-bayes-nets">3.4.1. Inference in Bayes Nets</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#full-posterior-inference">3.4.1.1. Full Posterior Inference</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#maximum-probable-explanation">3.4.1.2. Maximum Probable Explanation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#most-probable-explanation">3.4.1.2. Most Probable Explanation</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#efficiency-not">3.4.1.3. Efficiency (Not!)</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#maximum-a-posteriori-estimation">3.4.1.4. Maximum a Posteriori estimation</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">3.4.1.5. Exercises</a></li>
