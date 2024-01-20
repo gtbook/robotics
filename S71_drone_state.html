@@ -441,8 +441,10 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rotations-in-3d-aka-so-3">7.1.1. Rotations in 3D aka SO(3)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#d-rigid-transforms-aka-se-3">7.1.2. 3D Rigid transforms aka SE(3)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-group-se-3-in-gtsam">7.1.3. The Group <span class="math notranslate nohighlight">\(SE(3)\)</span> in GTSAM</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#angular-velocity">7.1.4. Angular Velocity</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-group-se-3">7.1.3. The Group <span class="math notranslate nohighlight">\(SE(3)\)</span></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#se-3-in-gtsam">7.1.4. <span class="math notranslate nohighlight">\(SE(3)\)</span> in GTSAM</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#velocity">7.1.5. Velocity</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">7.1.6. Summary</a></li>
 </ul>
             </nav>
         </div>
@@ -458,58 +460,62 @@ document.write(`
 <section class="tex2jax_ignore mathjax_ignore" id="moving-in-three-dimensions">
 <h1><span class="section-number">7.1. </span>Moving in Three Dimensions<a class="headerlink" href="#moving-in-three-dimensions" title="Permalink to this heading">#</a></h1>
 <blockquote>
-<div><p>Motion in 3D has 6 DOF.</p>
+<div><p>Motion in 3D has 6 degrees of freedom.</p>
 </div></blockquote>
 <a class="reference internal image-reference" href="_images/S71-Autonomous_camera_drone-03.jpg"><img alt="Splash image with steampunk drones in various orientations" class="align-center" src="_images/S71-Autonomous_camera_drone-03.jpg" style="width: 40%;" /></a>
-<p>In Section 6.1 we introduced the space of 2D rigid transformations <span class="math notranslate nohighlight">\(SE(2)\)</span>, and showed how matrices can be used to represent both
+<p>In Section 6.1 we introduced the space of 2D rigid transformations <span class="math notranslate nohighlight">\(SE(2)\)</span>, and showed how <span class="math notranslate nohighlight">\(3 \times 3\)</span> matrices can be used to simultaneously represent
 rotation and translation in two dimensions.
 At that time, we promised that this could be easily generalized to the case of rotation and
 translation in three dimensions.  In this section, we deliver on that promise, and introduce two new spaces:
 the 3D rotations <span class="math notranslate nohighlight">\(SO(3)\)</span> and 3D rigid transformations <span class="math notranslate nohighlight">\(SE(3)\)</span>.</p>
 <p>In addition to representing the <em>pose</em> of a drone in 3D we are also interested in
 representing velocity.
-This includes the both the linear velocity of the drone, which corresponds to the velocity
-of the origin of the body-attached frame, as well as the rate of change in the orientation of the
-body-attached frame.</p>
+We will discuss both linear and angular velocity, i.e., the rate of change in the orientation of one coordinate frame with respect to another.</p>
+<p>The discussion below holds for generic coordinate frames, but because this is the drone chapter, we introduce two frames here that make things a bit more tangible:</p>
+<ul class="simple">
+<li><p>the <strong>navigation frame</strong> <span class="math notranslate nohighlight">\(N\)</span>, which you can think of as attached to the Earth;</p></li>
+<li><p>the <strong>body frame</strong> <span class="math notranslate nohighlight">\(B\)</span>, which you can think of as rigidly attached to the drone.</p></li>
+</ul>
+<p>In the next section different conventions for these coordinate frames are discussed in more detail, but below we simply use the subscripts “n” and “s” in the definitions and examples, irrespective of which convention is used.</p>
 <section id="rotations-in-3d-aka-so-3">
 <h2><span class="section-number">7.1.1. </span>Rotations in 3D aka SO(3)<a class="headerlink" href="#rotations-in-3d-aka-so-3" title="Permalink to this heading">#</a></h2>
 <p>In Section 6.1, we constructed a rotation matrix <span class="math notranslate nohighlight">\(R^0_1 \in SO(2)\)</span>
 by projecting the axes of Frame 1 onto Frame 0.
-The extension to 3D is indeed straightforward.
-Again, we merely project the axes of Frame 1 onto Frame 0,
-but in the 3D case, each frame is equipped with an additional <span class="math notranslate nohighlight">\(z\)</span>-axis:</p>
+The extension to 3D is straightforward.
+Using the navigation and body coordinate frames defined above, let us project the axes <span class="math notranslate nohighlight">\((x_b, y_b, z_b)\)</span> of the body frame <span class="math notranslate nohighlight">\(B\)</span> onto the axes <span class="math notranslate nohighlight">\((x_n,y_n, z_n)\)</span> of the navigation frame <span class="math notranslate nohighlight">\(N\)</span>.
+Of course, in the 3D case each frame is equipped with an additional <span class="math notranslate nohighlight">\(z\)</span>-axis:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
-R_{1}^{0}
+R_{b}^{n}
 =\begin{bmatrix}
-x_1 \cdot x_0 &amp; y_1 \cdot x_0 &amp; z_1 \cdot x_0 \\
-x_1 \cdot y_0 &amp; y_1 \cdot y_0 &amp; z_1 \cdot y_0 \\
-x_1 \cdot z_0 &amp; y_1 \cdot z_0 &amp; z_1 \cdot z_0 \\
+x_b \cdot x_n &amp; y_b \cdot x_n &amp; z_b \cdot x_n \\
+x_b \cdot y_n &amp; y_b \cdot y_n &amp; z_b \cdot y_n \\
+x_b \cdot z_n &amp; y_b \cdot z_n &amp; z_b \cdot z_n \\
 \end{bmatrix}
 \end{split}\]</div>
 <p>The expression for rotational coordinate transformations is now exactly the
 same as in Chapter 6.
-Given a point <span class="math notranslate nohighlight">\(p\)</span> with coordinates expressed relative to the body-attached
-frame B, we compute its coordinates <span class="math notranslate nohighlight">\(p^s\)</span> in the “spatial” frame <span class="math notranslate nohighlight">\(S\)</span>:</p>
+Given a point <span class="math notranslate nohighlight">\(p\)</span> with coordinates expressed relative to the body
+frame <span class="math notranslate nohighlight">\(B\)</span>, we compute its coordinates <span class="math notranslate nohighlight">\(p^n\)</span> in the navigation frame <span class="math notranslate nohighlight">\(N\)</span> as follows:</p>
 <div class="math notranslate nohighlight">
 \[
-p^s = R^s_b p^b
+p^n = R^n_b p^b
 \]</div>
 <p>Extending the semantics from 2D rotations in <span class="math notranslate nohighlight">\(SO(2)\)</span> to 3D rotations represented by <span class="math notranslate nohighlight">\(SO(3)\)</span>,
 the columns
-of <span class="math notranslate nohighlight">\(R_{b}^{s}\)</span> represent the axes of frame <span class="math notranslate nohighlight">\(B\)</span> in the <span class="math notranslate nohighlight">\(S\)</span> coordinate
+of <span class="math notranslate nohighlight">\(R_{b}^{n}\)</span> represent the axes of frame <span class="math notranslate nohighlight">\(B\)</span> in the <span class="math notranslate nohighlight">\(N\)</span> coordinate
 frame:</p>
 <div class="math notranslate nohighlight">
 \[
-R_{b}^{s}=\left[\begin{array}{ccc}
-\hat{x}_{b}^{s} &amp; \hat{y}_{b}^{s} &amp; \hat{z}_{b}^{s}\end{array}\right]
+R_{b}^{n}=\left[\begin{array}{ccc}
+\hat{x}_{b}^{n} &amp; \hat{y}_{b}^{n} &amp; \hat{z}_{b}^{n}\end{array}\right]
 \]</div>
 <p>The 3D rotations together with composition constitute the <strong>special
 orthogonal group</strong> <span class="math notranslate nohighlight">\(SO(3)\)</span>, hence the abbreviation “SO”. It is made up of all <span class="math notranslate nohighlight">\(3\times3\)</span> orthonormal
 matrices with determinant <span class="math notranslate nohighlight">\(+1\)</span>. This group has matrix multiplication as its
 composition operation,
-but unlike in 2D  <em>3D rotations do not commute</em>, i.e., in general <span class="math notranslate nohighlight">\(R_{2}R_{1}\neq R_{1}R_{2}\)</span>.
-The group so obtained it is called “special” because of the +1 determinant. Orthonormal matrices have either a -1 or +1 determinant, but those with -1 are <em>reflections</em>, which we specifically exclude here.</p>
+but unlike in two dimensions, <em>3D rotations do not commute</em>, i.e., in general <span class="math notranslate nohighlight">\(R_{2}R_{1}\neq R_{1}R_{2}\)</span>.
+The group so obtained it is called “special” because of the +1 determinant. Orthonormal matrices either have a -1 or +1 determinant, but those with -1 are <em>reflections</em>, which we specifically exclude here.</p>
 <p>It is often useful to refer to rotations about one of the coordinate axes.
 These basic rotation matrices are given by</p>
 <div class="math notranslate nohighlight">
@@ -544,28 +550,28 @@ a rotation about an implicit <span class="math notranslate nohighlight">\(z\)</s
 <section id="d-rigid-transforms-aka-se-3">
 <h2><span class="section-number">7.1.2. </span>3D Rigid transforms aka SE(3)<a class="headerlink" href="#d-rigid-transforms-aka-se-3" title="Permalink to this heading">#</a></h2>
 <p>In a similar way we can extend the group of 2D rigid transforms <span class="math notranslate nohighlight">\(SE(2)\)</span> to the case
-of rotation and translation in 3D.
+of rotation and translation in three dimensions.
 Suppose a point <span class="math notranslate nohighlight">\(p\)</span> is rigidly attached to frame <span class="math notranslate nohighlight">\(B\)</span>, and
-we wish to determine its coordinates with respect to the reference frame <span class="math notranslate nohighlight">\(S\)</span>.
+we wish to determine its coordinates with respect to the navigation frame <span class="math notranslate nohighlight">\(N\)</span>.
 If the coordinates of <span class="math notranslate nohighlight">\(p\)</span> with respect to frame <span class="math notranslate nohighlight">\(B\)</span> are given by <span class="math notranslate nohighlight">\(p^b\)</span>,
-then we can express it in frame <span class="math notranslate nohighlight">\(S\)</span> as follows:</p>
+then we can express it in frame <span class="math notranslate nohighlight">\(N\)</span> as follows:</p>
 <div class="math notranslate nohighlight">
 \[
-p^{s}=R_{b}^{s}p^{b}+t_{b}^{s}
+p^{n}=R_{b}^{n}p^{b}+t_{b}^{n}
 \]</div>
-<p>Above <span class="math notranslate nohighlight">\(R^s_b \in SO(3)\)</span> is the rotation matrix that specifies the orientation
-of frame <span class="math notranslate nohighlight">\(B\)</span> w.r.t. frame <span class="math notranslate nohighlight">\(S\)</span>,
-and  <span class="math notranslate nohighlight">\(t^s_b \in \mathbb{R}^3\)</span> gives the location of the origin
-of frame <span class="math notranslate nohighlight">\(B\)</span> w.r.t. frame <span class="math notranslate nohighlight">\(S\)</span> (specified in the coordinates of frame <span class="math notranslate nohighlight">\(S\)</span>).</p>
+<p>Above <span class="math notranslate nohighlight">\(R^n_b \in SO(3)\)</span> is the rotation matrix that specifies the orientation
+of frame <span class="math notranslate nohighlight">\(B\)</span> w.r.t. frame <span class="math notranslate nohighlight">\(N\)</span>,
+and  <span class="math notranslate nohighlight">\(t^n_b \in \mathbb{R}^3\)</span> gives the location of the origin
+of frame <span class="math notranslate nohighlight">\(B\)</span> specified in the coordinates of frame <span class="math notranslate nohighlight">\(N\)</span>.</p>
 <p>We denote this transform by
-<span class="math notranslate nohighlight">\(T_{b}^{s}\doteq\left(R_{b}^{s},\,t_{b}^{s}\right)\)</span>. These transforms <span class="math notranslate nohighlight">\(T_{b}^{s}\)</span> are elements of
+<span class="math notranslate nohighlight">\(T_{b}^{n}\doteq\left(R_{b}^{n},\,t_{b}^{n}\right)\)</span>. These transforms <span class="math notranslate nohighlight">\(T_{b}^{n}\)</span> are elements of
 the  <strong>special Euclidean group</strong> <span class="math notranslate nohighlight">\(SE(3)\)</span>. Similarly to the previous chapter we can view the
 group <span class="math notranslate nohighlight">\(SE(3)\)</span> as a subgroup of the general linear group <span class="math notranslate nohighlight">\(GL(4)\)</span> of degree 4,
 by embedding the rotation and translation into a <span class="math notranslate nohighlight">\(4\times4\)</span> invertible matrix defined as</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
-T_{b}^{s}=\begin{bmatrix}
-R_{b}^{s} &amp; t_{b}^{s}\\
+T_{b}^{n}=\begin{bmatrix}
+R_{b}^{n} &amp; t_{b}^{n}\\
 0 &amp; 1
 \end{bmatrix}.
 \end{split}\]</div>
@@ -576,7 +582,7 @@ multiplication:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 \begin{bmatrix}
-R_{b}^{s} &amp; t_{b}^{s}\\
+R_{b}^{n} &amp; t_{b}^{n}\\
 0 &amp; 1
 \end{bmatrix}
 \begin{bmatrix}
@@ -584,36 +590,44 @@ p^{b}\\
 1
 \end{bmatrix}
 =\begin{bmatrix}
-R_{b}^{s}p^{b}+t_{b}^{s}\\
+R_{b}^{n}p^{b}+t_{b}^{n}\\
 1
 \end{bmatrix}
 \end{split}\]</div>
+<p>Note that both ways of defining and applying 3D rigid transformations are equivalent: sometimes it is more convenient to use one over the other. It should be apparent from the context as to which flavor we use.</p>
 </section>
-<section id="the-group-se-3-in-gtsam">
-<h2><span class="section-number">7.1.3. </span>The Group <span class="math notranslate nohighlight">\(SE(3)\)</span> in GTSAM<a class="headerlink" href="#the-group-se-3-in-gtsam" title="Permalink to this heading">#</a></h2>
+<section id="the-group-se-3">
+<h2><span class="section-number">7.1.3. </span>The Group <span class="math notranslate nohighlight">\(SE(3)\)</span><a class="headerlink" href="#the-group-se-3" title="Permalink to this heading">#</a></h2>
 <blockquote>
-<div><p><code class="docutils literal notranslate"><span class="pre">Pose3</span></code> is a non-commutative group which acts on <code class="docutils literal notranslate"><span class="pre">Point3</span></code>.</p>
+<div><p><span class="math notranslate nohighlight">\(SE(3)\)</span> is a non-commutative group.</p>
 </div></blockquote>
-<p><span class="math notranslate nohighlight">\(SE(3)\)</span> is a group, as the following properties all hold:</p>
+<p>Unsurprisingly, <span class="math notranslate nohighlight">\(SE(3)\)</span> is also a group, as the following properties all hold:</p>
 <ol class="arabic simple">
 <li><p><strong>Closure</strong>: For all transforms <span class="math notranslate nohighlight">\(T, T' \in SE(3)\)</span>, their product is also in <span class="math notranslate nohighlight">\(SE(3)\)</span>, i.e., <span class="math notranslate nohighlight">\(T T' \in SE(3)\)</span>.</p></li>
-<li><p><strong>Identity Element</strong>: The <span class="math notranslate nohighlight">\(4\times 4\)</span> identity matrix <span class="math notranslate nohighlight">\(I\)</span> is included in the group, and for
+<li><p><strong>Identity</strong>: The <span class="math notranslate nohighlight">\(4\times 4\)</span> identity matrix <span class="math notranslate nohighlight">\(I\)</span> is included in the group, and for
 all <span class="math notranslate nohighlight">\(T \in SE(3)\)</span> we have <span class="math notranslate nohighlight">\(T I = I T = T\)</span>.</p></li>
 <li><p><strong>Inverse</strong>: For every <span class="math notranslate nohighlight">\(T \in SE(3)\)</span> there exists <span class="math notranslate nohighlight">\(T^{-1} \in SE(3)\)</span> such that <span class="math notranslate nohighlight">\(T^{-1}T = T T^{-1} = I\)</span>.</p></li>
 <li><p><strong>Associativity</strong>: For all <span class="math notranslate nohighlight">\(T_1, T_2, T_3 \in SE(3)\)</span>, <span class="math notranslate nohighlight">\((T_1 T_2) T_3 = T_1 (T_2 T_3)\)</span>.</p></li>
 </ol>
-<p>3D rigid transforms do <em>not</em> commute. The inverse <span class="math notranslate nohighlight">\(T^{-1}\)</span> is given by:</p>
+<p>The inverse <span class="math notranslate nohighlight">\(T^{-1}\)</span> is given by:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 T^{-1} = \begin{bmatrix}R &amp; d\\0_2 &amp; 1\end{bmatrix}^{-1}
  = \begin{bmatrix}R^T &amp; -R^T d\\0_2 &amp; 1\end{bmatrix}
 \end{split}\]</div>
+<p>However, 3D rigid transforms do <em>not</em> commute. Hence, <span class="math notranslate nohighlight">\(SE(3)\)</span> is a <strong>non-commutative group</strong>. In fact, so is the group <span class="math notranslate nohighlight">\(SO(3)\)</span>: 3D rotations only commute when they represent rotations along the same axis. A special case is the set of 2D rotations from the last chapter, which are all around the imagined z-axis: this explains why rotations in 2D commute, but rotations in 3D do not, in general.</p>
+</section>
+<section id="se-3-in-gtsam">
+<h2><span class="section-number">7.1.4. </span><span class="math notranslate nohighlight">\(SE(3)\)</span> in GTSAM<a class="headerlink" href="#se-3-in-gtsam" title="Permalink to this heading">#</a></h2>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">Pose3</span></code> is a non-commutative group which acts on <code class="docutils literal notranslate"><span class="pre">Point3</span></code>.</p>
+</div></blockquote>
 <p>Again, all of this is built into GTSAM, where both 3D poses and 3D rigid transforms are represented by the type <code class="docutils literal notranslate"><span class="pre">Pose3</span></code>, with rotation matrices represented by <code class="docutils literal notranslate"><span class="pre">Rot3</span></code>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">R</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Rot3</span><span class="o">.</span><span class="n">Yaw</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span> <span class="c1"># rotation around Z-axis by 20 degrees</span>
-<span class="n">T</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose3</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;3D Pose </span><span class="si">{</span><span class="n">T</span><span class="si">}</span><span class="s2"> corresponding to transformation matrix:</span><span class="se">\n</span><span class="si">{</span><span class="n">T</span><span class="o">.</span><span class="n">matrix</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">T</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose3</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;3D Pose </span><span class="si">{</span><span class="n">T</span><span class="si">}</span><span class="se">\n</span><span class="s2">corresponding to the transformation matrix:</span><span class="se">\n\n</span><span class="si">{</span><span class="n">T</span><span class="o">.</span><span class="n">matrix</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -623,40 +637,42 @@ T^{-1} = \begin{bmatrix}R &amp; d\\0_2 &amp; 1\end{bmatrix}^{-1}
 	0.693062, -0.720878, 0;
 	0, 0, 1
 ]
-t: 1 2 3
- corresponding to transformation matrix:
-[[-0.72087779 -0.6930622   0.          1.        ]
- [ 0.6930622  -0.72087779  0.          2.        ]
- [ 0.          0.          1.          3.        ]
+t: 10 20 30
+
+corresponding to the transformation matrix:
+
+[[-0.72087779 -0.6930622   0.         10.        ]
+ [ 0.6930622  -0.72087779  0.         20.        ]
+ [ 0.          0.          1.         30.        ]
  [ 0.          0.          0.          1.        ]]
 </pre></div>
 </div>
 </div>
 </div>
-<p>3D transforms form a <em>non-commutative</em> group, as demonstrated here in code:</p>
+<p>We can verify the group properties for 3D transforms in code, as we do below, noting that the last assertion for commutativity yields <code class="docutils literal notranslate"><span class="pre">False</span></code>, as <span class="math notranslate nohighlight">\(SE(3)\)</span> is a <em>non-commutative</em> group:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">T</span> <span class="o">*</span> <span class="n">T</span><span class="p">,</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose3</span><span class="p">))</span> <span class="c1"># closure</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Closure:&quot;</span><span class="p">,</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">T</span> <span class="o">*</span> <span class="n">T</span><span class="p">,</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose3</span><span class="p">))</span> <span class="c1"># closure</span>
 <span class="n">I</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose3</span><span class="o">.</span><span class="n">Identity</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">T</span> <span class="o">*</span> <span class="n">I</span><span class="p">,</span> <span class="mf">1e-9</span><span class="p">))</span> <span class="c1"># identity</span>
-<span class="nb">print</span><span class="p">((</span><span class="n">T</span> <span class="o">*</span> <span class="n">T</span><span class="o">.</span><span class="n">inverse</span><span class="p">())</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">I</span><span class="p">,</span> <span class="mf">1e-9</span><span class="p">))</span> <span class="c1"># inverse</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Identity:&quot;</span><span class="p">,</span> <span class="n">T</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">T</span> <span class="o">*</span> <span class="n">I</span><span class="p">,</span> <span class="mf">1e-9</span><span class="p">))</span> <span class="c1"># identity</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Inverse:&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">T</span> <span class="o">*</span> <span class="n">T</span><span class="o">.</span><span class="n">inverse</span><span class="p">())</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">I</span><span class="p">,</span> <span class="mf">1e-9</span><span class="p">))</span> <span class="c1"># inverse</span>
 <span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">,</span> <span class="n">T3</span> <span class="o">=</span> <span class="n">T</span><span class="p">,</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose3</span><span class="p">(</span><span class="n">gtsam</span><span class="o">.</span><span class="n">Rot3</span><span class="o">.</span><span class="n">Roll</span><span class="p">(</span><span class="mf">0.1</span><span class="p">),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]),</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose3</span><span class="p">(</span><span class="n">gtsam</span><span class="o">.</span><span class="n">Rot3</span><span class="o">.</span><span class="n">Roll</span><span class="p">(</span><span class="mf">0.2</span><span class="p">),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(((</span><span class="n">T1</span> <span class="o">*</span> <span class="n">T2</span><span class="p">)</span><span class="o">*</span> <span class="n">T3</span><span class="p">)</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">T1</span> <span class="o">*</span> <span class="p">(</span><span class="n">T2</span> <span class="o">*</span> <span class="n">T3</span><span class="p">),</span> <span class="mf">1e-9</span><span class="p">))</span> <span class="c1"># associative</span>
-<span class="nb">print</span><span class="p">((</span><span class="n">T1</span> <span class="o">*</span> <span class="n">T2</span><span class="p">)</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">T2</span> <span class="o">*</span> <span class="n">T1</span><span class="p">,</span> <span class="mf">1e-9</span><span class="p">))</span> <span class="c1"># NOT commutative</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Associativity:&quot;</span><span class="p">,</span> <span class="p">((</span><span class="n">T1</span> <span class="o">*</span> <span class="n">T2</span><span class="p">)</span><span class="o">*</span> <span class="n">T3</span><span class="p">)</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">T1</span> <span class="o">*</span> <span class="p">(</span><span class="n">T2</span> <span class="o">*</span> <span class="n">T3</span><span class="p">),</span> <span class="mf">1e-9</span><span class="p">))</span> <span class="c1"># associative</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Commutativity:&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">T1</span> <span class="o">*</span> <span class="n">T2</span><span class="p">)</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">T2</span> <span class="o">*</span> <span class="n">T1</span><span class="p">,</span> <span class="mf">1e-9</span><span class="p">))</span> <span class="c1"># NOT commutative</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>True
-True
-True
-True
-False
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Closure: True
+Identity: True
+Inverse: True
+Associativity: True
+Commutativity: False
 </pre></div>
 </div>
 </div>
 </div>
-<p>Finally, 3D transforms can act on 3D points, which we can do using matrix multiplication, or using the <code class="docutils literal notranslate"><span class="pre">Pose3.transformFrom</span></code> method:</p>
+<p>Finally, 3D transforms can <em>act</em> on 3D points, which we can do using matrix multiplication, or using the <code class="docutils literal notranslate"><span class="pre">Pose3.transformFrom</span></code> method:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">P1</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Point3</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
@@ -666,27 +682,32 @@ False
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>P0 = [-3.21400437  0.50261322  6.          1.        ]
-P0 = [-3.21400437  0.50261322  6.        ]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>P0 = [ 5.78599563 18.50261322 33.          1.        ]
+P0 = [ 5.78599563 18.50261322 33.        ]
 </pre></div>
 </div>
 </div>
 </div>
 <p>You can see from the code snippet above that both approaches yield the same numerical values for the first three coordinates.</p>
 </section>
-<section id="angular-velocity">
-<h2><span class="section-number">7.1.4. </span>Angular Velocity<a class="headerlink" href="#angular-velocity" title="Permalink to this heading">#</a></h2>
+<section id="velocity">
+<h2><span class="section-number">7.1.5. </span>Velocity<a class="headerlink" href="#velocity" title="Permalink to this heading">#</a></h2>
 <p>The linear velocity <span class="math notranslate nohighlight">\(v\)</span> of the origin of a moving frame is easy to understand.
-This velocity is obtained merely by computing the derivative of the coordinate vector for the frame’s origin.
-The derivative of orientation is more interesting.</p>
-<p>We begin by introducing the family of <span class="math notranslate nohighlight">\(3 \times 3\)</span> skew symmetric matrices, denoted by <span class="math notranslate nohighlight">\(\mathfrak{so}(3)\)</span>.
-The relationship between <span class="math notranslate nohighlight">\(\mathfrak{so}(3)\)</span> and <span class="math notranslate nohighlight">\(SO(3)\)</span> will become apparent shortly.
-A matrix <span class="math notranslate nohighlight">\(S\)</span> is said to be a <strong>skew symmetric matrix</strong> if</p>
+This velocity is obtained merely by computing the derivative of the translation <span class="math notranslate nohighlight">\(t\)</span> of the frame’s origin:</p>
 <div class="math notranslate nohighlight">
 \[
-S + S^T = 0
+v \doteq \frac{d}{dt}t
 \]</div>
-<p>If we examine this equation for each element of <span class="math notranslate nohighlight">\(S\)</span>, we obtain nine equations,</p>
+<p>We omit coordinate frame indices here to not clutter the notation.</p>
+<p>The derivative <span class="math notranslate nohighlight">\(\dot{R}\)</span> of orientation is more interesting.
+We begin by introducing the family of <span class="math notranslate nohighlight">\(3 \times 3\)</span> skew symmetric matrices, denoted by <span class="math notranslate nohighlight">\(\mathfrak{so}(3)\)</span>.
+The relationship between <span class="math notranslate nohighlight">\(\mathfrak{so}(3)\)</span> and <span class="math notranslate nohighlight">\(SO(3)\)</span> will become apparent shortly.
+A matrix <span class="math notranslate nohighlight">\(N\)</span> is said to be a <strong>skew symmetric matrix</strong> if</p>
+<div class="math notranslate nohighlight">
+\[
+S = - S^T
+\]</div>
+<p>If we examine this equation for each element of <span class="math notranslate nohighlight">\(N\)</span>, we obtain nine equations,</p>
 <div class="math notranslate nohighlight">
 \[ s_{i,j} = - s_{j,i}, ~~~~ i,j = 1,2,3 \]</div>
 <p>When <span class="math notranslate nohighlight">\(i=j\)</span>, we have <span class="math notranslate nohighlight">\(s_{ii} = -s_{ii}\)</span>, which is satisfied only if <span class="math notranslate nohighlight">\(s_{ii} = 0\)</span>.
@@ -717,7 +738,7 @@ If we differentiate both sides of this equation, we obtain</p>
 \end{split}\]</div>
 <p>In other words, <span class="math notranslate nohighlight">\(R^T \dot{R} = - \dot{R}^T R\)</span> and hence the matrix <span class="math notranslate nohighlight">\(R^T \dot{R}\)</span> <em>is a skew symmetric matrix</em></p>
 <div class="math notranslate nohighlight">
-\[R^T \dot{R} = \hat{\omega}\]</div>
+\[\hat{\omega} = R^T \dot{R}\]</div>
 <p>with <span class="math notranslate nohighlight">\(\omega\)</span> some three-vector. Multiplying by <span class="math notranslate nohighlight">\(R\)</span> on both sides immediately gives an equation of <span class="math notranslate nohighlight">\(\dot{R}\)</span> in terms of <span class="math notranslate nohighlight">\(\omega\)</span>:</p>
 <div class="math notranslate nohighlight">
 \[\dot{R} = R \hat{\omega}.\]</div>
@@ -726,6 +747,10 @@ will be used below in our formulation of drone dynamics.
 The vector <span class="math notranslate nohighlight">\(\omega\)</span> is called the <strong>angular velocity</strong>,
 and is the same angular velocity that you may have
 learned in an introductory physics course.</p>
+</section>
+<section id="summary">
+<h2><span class="section-number">7.1.6. </span>Summary<a class="headerlink" href="#summary" title="Permalink to this heading">#</a></h2>
+<p>Now that we know how to talk about 3D rotations, 3D rigid transformations, <em>and</em> their rate of change, we are ready to use all that machinery to describe how drones move in 3D. The next section tackles this.</p>
 </section>
 </section>
 
@@ -795,8 +820,10 @@ learned in an introductory physics course.</p>
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rotations-in-3d-aka-so-3">7.1.1. Rotations in 3D aka SO(3)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#d-rigid-transforms-aka-se-3">7.1.2. 3D Rigid transforms aka SE(3)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-group-se-3-in-gtsam">7.1.3. The Group <span class="math notranslate nohighlight">\(SE(3)\)</span> in GTSAM</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#angular-velocity">7.1.4. Angular Velocity</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-group-se-3">7.1.3. The Group <span class="math notranslate nohighlight">\(SE(3)\)</span></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#se-3-in-gtsam">7.1.4. <span class="math notranslate nohighlight">\(SE(3)\)</span> in GTSAM</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#velocity">7.1.5. Velocity</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">7.1.6. Summary</a></li>
 </ul>
   </nav></div>
 
