@@ -443,13 +443,19 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#occupancy-and-cost-maps">7.5.3. Occupancy and Cost Maps</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#factor-graphs-for-trajectory-optimization">7.5.4. Factor Graphs for Trajectory Optimization</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#smoothing">7.5.5. Smoothing</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#translational-control">7.5.6. Translational Control</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-virtual-vectored-thrust">7.5.6.1. A Virtual Vectored Thrust</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vectoring-using-fast-rotational-dynamics">7.5.6.2. Vectoring using Fast Rotational Dynamics</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#calculating-motor-thrust-vectors">7.5.6.3. Calculating Motor Thrust Vectors</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-virtual-vectored-thrust">7.5.6. A Virtual Vectored Thrust</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#combining-feed-forward-and-feedback-control">7.5.7. Combining Feed-forward and Feedback Control</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">7.5.7.1. Exercises:</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#code-example">7.5.7. Code Example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#vectoring-using-fast-rotational-dynamics">7.5.8. Vectoring using Fast Rotational Dynamics</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#calculating-motor-thrust-vectors">7.5.8.1. Calculating Motor Thrust Vectors</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#code-example">7.5.9. Code Example</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise">7.5.9.1. Exercise</a></li>
+</ul>
+</li>
 </ul>
             </nav>
         </div>
@@ -461,7 +467,23 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <p><a href="https://colab.research.google.com/github/gtbook/robotics/blob/main/S75_drone_decision_theory.ipynb" target="_parent"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg" /></a></p>
+  <p><a href="https://colab.research.google.com/github/gtbook/robotics/blob/main/S75_drone_planning.ipynb" target="_parent"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg" /></a></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">show_executed</span><span class="p">(</span><span class="n">desired_rn</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">rn</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">nRb</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">K</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">step</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">line_3d</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">rn</span><span class="p">[:</span><span class="n">K</span><span class="p">:</span><span class="n">step</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="n">rn</span><span class="p">[:</span><span class="n">K</span><span class="p">:</span><span class="n">step</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">z</span><span class="o">=</span><span class="n">rn</span><span class="p">[:</span><span class="n">K</span><span class="p">:</span><span class="n">step</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">update_traces</span><span class="p">(</span><span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">))</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">add_scatter3d</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">desired_rn</span><span class="p">[:</span><span class="n">K</span><span class="p">:</span><span class="n">step</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="n">desired_rn</span><span class="p">[:</span><span class="n">K</span><span class="p">:</span><span class="n">step</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">z</span><span class="o">=</span><span class="n">desired_rn</span><span class="p">[:</span><span class="n">K</span><span class="p">:</span><span class="n">step</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">))</span>
+    <span class="n">scale</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;F&quot;</span><span class="p">,</span> <span class="s2">&quot;L&quot;</span><span class="p">,</span> <span class="s2">&quot;U&quot;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="mi">5</span><span class="p">):</span>
+        <span class="n">nTb</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose3</span><span class="p">(</span><span class="n">gtsam</span><span class="o">.</span><span class="n">Rot3</span><span class="p">(</span><span class="n">nRb</span><span class="p">[</span><span class="n">k</span><span class="p">]),</span> <span class="n">rn</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">add_traces</span><span class="p">(</span><span class="n">axes</span><span class="p">(</span><span class="n">nTb</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">labels</span><span class="p">))</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">scene_aspectmode</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fig</span>
+</pre></div>
+</div>
+</div>
+</div>
 <section class="tex2jax_ignore mathjax_ignore" id="trajectory-optimization">
 <h1><span class="section-number">7.5. </span>Trajectory Optimization<a class="headerlink" href="#trajectory-optimization" title="Permalink to this heading">#</a></h1>
 <blockquote>
@@ -508,14 +530,22 @@ X^* = \arg \min \sum_{k=1}^K \phi_k(X_k)^2  + \sum_{k=1}^{K-1} \psi_k(X_k, X_{k+
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a random cost map</span>
 <span class="n">W</span><span class="p">,</span> <span class="n">H</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">10</span>  <span class="c1"># 30m x 10m</span>
 <span class="n">cost_map</span> <span class="o">=</span> <span class="n">create_random_map</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">num_obstacles</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
-<span class="n">px</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">cost_map</span><span class="p">,</span> <span class="n">color_continuous_scale</span><span class="o">=</span><span class="s1">&#39;Reds&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="c1">#| caption: Cost map with randomly generated obstacles, at 10cm resolution.</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Cost map with randomly generated obstacles, at 10cm resolution.</span>
 <span class="c1">#| label: fig:obstacles</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">cost_map</span><span class="p">,</span> <span class="n">color_continuous_scale</span><span class="o">=</span><span class="s1">&#39;Reds&#39;</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">coloraxis_showscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">width</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/53a2a717dc46e12babfe6c95ea33bd9a0ef6798c09ed432e3ec308e488a3a671.png" src="_images/53a2a717dc46e12babfe6c95ea33bd9a0ef6798c09ed432e3ec308e488a3a671.png" />
+<img alt="_images/d515f40c43026e12415c760aede5120f0bd3abd59ef5f2eb202396641831cc54.png" src="_images/d515f40c43026e12415c760aede5120f0bd3abd59ef5f2eb202396641831cc54.png" />
 </div>
 </div>
 <p>To create differentiable factors <span class="math notranslate nohighlight">\(\phi_k(X_k)\)</span> that avoid high cost areas, we can smooth the cost map with a differentiable kernel, like a Gaussian. The cost map above is a torch tensor, representing a grayscale image 100 pixels tall and 300 pixels wide. Convolving an image with a kernel is relatively easy in pytorch, though we need to juggle some tensor dimensions because by convention, <code class="docutils literal notranslate"><span class="pre">conv2d</span></code> operates on <span class="math notranslate nohighlight">\(\text{batch} \times \text{channel} \times \text{height} \times \text{width}\)</span> tensors:</p>
@@ -526,14 +556,22 @@ X^* = \arg \min \sum_{k=1}^K \phi_k(X_k)^2  + \sum_{k=1}^{K-1} \psi_k(X_k, X_{k+
 <span class="n">kernel</span> <span class="o">=</span> <span class="n">gaussian_kernel</span><span class="p">(</span><span class="n">sigma</span><span class="o">*</span><span class="mi">10</span><span class="p">,</span> <span class="n">K</span><span class="p">)</span> <span class="c1"># multiply by 10 as map is 10cm resolution</span>
 <span class="n">batch</span> <span class="o">=</span> <span class="n">cost_map</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>  <span class="c1"># Add batch and channel dimensions</span>
 <span class="n">blurred</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">conv2d</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s1">&#39;same&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
-<span class="n">px</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">blurred</span><span class="p">,</span> <span class="n">color_continuous_scale</span><span class="o">=</span><span class="s1">&#39;Reds&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="c1">#| caption: Cost map blurred with 0.5 meter Gaussian kernel.</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Cost map blurred with 0.5 meter Gaussian kernel.</span>
 <span class="c1">#| label: fig:blurred</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">blurred</span><span class="p">,</span> <span class="n">color_continuous_scale</span><span class="o">=</span><span class="s1">&#39;Reds&#39;</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">coloraxis_showscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">width</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/98e5207bde52fb33b19b671580708f90896fdd29b634e229a4113bebd4aa9859.png" src="_images/98e5207bde52fb33b19b671580708f90896fdd29b634e229a4113bebd4aa9859.png" />
+<img alt="_images/e4769e4b38bdea81549d5877f1c5d307cadcd179003cec667beae9489798b88f.png" src="_images/e4769e4b38bdea81549d5877f1c5d307cadcd179003cec667beae9489798b88f.png" />
 </div>
 </div>
 <p>To get truly differentiable factors, however, it is better to construct a custom Gaussian kernel at the exact location we want to evaluate the cost. Remember we are trying to minimize a trajectory, by moving around a set of positions <span class="math notranslate nohighlight">\(X_k\)</span> at discrete time stamps <span class="math notranslate nohighlight">\(t_k\)</span>. In non-linear optimization, the story is always the same: evaluate the cost <em>and</em> its derivatives at a current guess, and then use the derivatives to move to a lower cost solution. However, if we smooth a discretized cost map, the result is still discretized, however smooth it looks to us. To get the <em>exact</em> value of the cost, and its derivatives, we can create a Gaussian kernel centered <em>exactly</em> at our current <em>continuous</em> position.</p>
@@ -632,12 +670,12 @@ X^* = \arg \min \sum_{k=1}^K \phi_k(X_k)^2  + \sum_{k=1}^{K-1} \psi_k(X_k, X_{k+
 <span class="n">initial_path</span> <span class="o">=</span> <span class="mi">10</span><span class="o">*</span><span class="n">gtsam</span><span class="o">.</span><span class="n">utilities</span><span class="o">.</span><span class="n">extractPoint2</span><span class="p">(</span><span class="n">initial</span><span class="p">)</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">cost_map</span><span class="p">,</span> <span class="n">color_continuous_scale</span><span class="o">=</span><span class="s1">&#39;Reds&#39;</span><span class="p">)</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">initial_path</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="n">initial_path</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lines+markers&#39;</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)))</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">coloraxis_showscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">10</span><span class="p">))</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">coloraxis_showscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">width</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/3f6d8203824b858dce1e676c2cabc2732c41cd90fe10caa78a80f787c3255420.png" src="_images/3f6d8203824b858dce1e676c2cabc2732c41cd90fe10caa78a80f787c3255420.png" />
+<img alt="_images/522d4b9ec10b7de55494b6ac6da40399802a200bc41ea6a74b99790d30452aea.png" src="_images/522d4b9ec10b7de55494b6ac6da40399802a200bc41ea6a74b99790d30452aea.png" />
 </div>
 </div>
 <p>Plotting this trajectory on the cost map shows that we are not lucky, however: we are definitely going through some obstacles. We can immediately create all obstacle cost factors now, and evaluate the cost to conform this is not a zero-cost path. Since these factors are non-linear, we store them in a <code class="docutils literal notranslate"><span class="pre">gtsam.NonlinearFactorGraph</span></code>:</p>
@@ -664,12 +702,12 @@ X^* = \arg \min \sum_{k=1}^K \phi_k(X_k)^2  + \sum_{k=1}^{K-1} \psi_k(X_k, X_{k+
 <span class="c1">#| label: fig:initial-errors</span>
 <span class="n">errors</span> <span class="o">=</span> <span class="o">-</span><span class="n">obstacle_factors</span><span class="o">.</span><span class="n">linearize</span><span class="p">(</span><span class="n">initial</span><span class="p">)</span><span class="o">.</span><span class="n">jacobian</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">errors</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="s1">&#39;Factor&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="s1">&#39;Error&#39;</span><span class="p">},</span> <span class="n">range_y</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">])</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">coloraxis_showscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">10</span><span class="p">))</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">coloraxis_showscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">10</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/d978e58060d96ef7048cbd94e5862fac731bb2350ba8fcdfb2a16ba78202fa9a.png" src="_images/d978e58060d96ef7048cbd94e5862fac731bb2350ba8fcdfb2a16ba78202fa9a.png" />
+<img alt="_images/edb6c429ae397ec285a7d6f7ec5aaf8b8bade3c01d0ca49455b9ee9bdab25b73.png" src="_images/edb6c429ae397ec285a7d6f7ec5aaf8b8bade3c01d0ca49455b9ee9bdab25b73.png" />
 </div>
 </div>
 <p>A complete trajectory optimization problem needs more than just obstacle factors, however. We also need to add start and goal factors, as well as smoothness factors. Start and goal factors make sure that we start at our current position, and tell our optimizer where we want to go. They can both be implemented as simple priors on the variables with keys <span class="math notranslate nohighlight">\(k=1\)</span> and <span class="math notranslate nohighlight">\(k=100\)</span>. Smoothness factors are implemented using a <code class="docutils literal notranslate"><span class="pre">gtsam.BetweenFactor</span></code>, and make sure that we obtain a smooth, continuous trajectory.</p>
@@ -725,12 +763,12 @@ X^* = \arg \min \sum_{k=1}^K \phi_k(X_k)^2  + \sum_{k=1}^{K-1} \psi_k(X_k, X_{k+
 <span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">blurred</span><span class="p">,</span> <span class="n">color_continuous_scale</span><span class="o">=</span><span class="s1">&#39;Reds&#39;</span><span class="p">)</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">initial_path</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="n">initial_path</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lines+markers&#39;</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)))</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">result_path</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="n">result_path</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lines+markers&#39;</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">)))</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">coloraxis_showscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">10</span><span class="p">))</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">coloraxis_showscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/a21f8eb1e57011aee9a0b01b9729d33311b55439d657aaad9db9a28906aa3efa.png" src="_images/a21f8eb1e57011aee9a0b01b9729d33311b55439d657aaad9db9a28906aa3efa.png" />
+<img alt="_images/f143b322d8d3d2d25a5a99301cc7cdea8f3e039b0df5acf522564f3ddd9e3dc9.png" src="_images/f143b322d8d3d2d25a5a99301cc7cdea8f3e039b0df5acf522564f3ddd9e3dc9.png" />
 </div>
 </div>
 <p>The error profile along this final trajectory is not entirely down to zero, as we have to navigate some tight obstacle configurations along the way. However, when plotted on the same scale it looks much better than for the initial trajectory:</p>
@@ -740,12 +778,12 @@ X^* = \arg \min \sum_{k=1}^K \phi_k(X_k)^2  + \sum_{k=1}^{K-1} \psi_k(X_k, X_{k+
 <span class="c1">#| label: fig:final-errors</span>
 <span class="n">errors</span> <span class="o">=</span> <span class="o">-</span><span class="n">obstacle_factors</span><span class="o">.</span><span class="n">linearize</span><span class="p">(</span><span class="n">result</span><span class="p">)</span><span class="o">.</span><span class="n">jacobian</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">errors</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="s1">&#39;Factor&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="s1">&#39;Error&#39;</span><span class="p">},</span> <span class="n">range_y</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">])</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">coloraxis_showscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">10</span><span class="p">))</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">coloraxis_showscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">10</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/a4bdad2e30c7cb0b4475c97ffb91370fbc8b0542a6768b172dfbc8d27b73f3c8.png" src="_images/a4bdad2e30c7cb0b4475c97ffb91370fbc8b0542a6768b172dfbc8d27b73f3c8.png" />
+<img alt="_images/43d9bf9c7933a59edee30e4267ed0b76db09adbf5cf5ba9910183e8f11b06410.png" src="_images/43d9bf9c7933a59edee30e4267ed0b76db09adbf5cf5ba9910183e8f11b06410.png" />
 </div>
 </div>
 </section>
@@ -757,10 +795,10 @@ X^* = \arg \min \sum_{k=1}^K \phi_k(X_k)^2  + \sum_{k=1}^{K-1} \psi_k(X_k, X_{k+
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Add height of 1.5 meters</span>
 <span class="n">xy</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">utilities</span><span class="o">.</span><span class="n">extractPoint2</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-<span class="n">trajectory</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">xy</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">xy</span><span class="p">),</span><span class="mi">1</span><span class="p">),</span> <span class="mf">1.5</span><span class="p">)])</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">xy</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">xy</span><span class="p">),</span><span class="mi">1</span><span class="p">),</span> <span class="mf">1.5</span><span class="p">)])</span>
 
 <span class="n">T</span> <span class="o">=</span> <span class="mf">20.0</span>
-<span class="n">smooth</span> <span class="o">=</span> <span class="n">SmoothTrajectory</span><span class="p">(</span><span class="n">trajectory</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">boundaries</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">smooth</span> <span class="o">=</span> <span class="n">SmoothTrajectory</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">boundaries</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -771,19 +809,19 @@ X^* = \arg \min \sum_{k=1}^K \phi_k(X_k)^2  + \sum_{k=1}^{K-1} \psi_k(X_k, X_{k+
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Discretized and smoothed trajectory.</span>
 <span class="c1">#| label: fig:smoothed</span>
 
-<span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span> <span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="mi">250</span><span class="p">)</span>
-<span class="n">smoothed</span> <span class="o">=</span> <span class="n">smooth</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="n">timestamps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span> <span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="mi">250</span><span class="p">)</span>
+<span class="n">desired_rn</span> <span class="o">=</span> <span class="n">smooth</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">timestamps</span><span class="p">)</span> <span class="c1"># desired trajectory in navigation frame</span>
 
 <span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">blurred</span><span class="p">,</span> <span class="n">color_continuous_scale</span><span class="o">=</span><span class="s1">&#39;Reds&#39;</span><span class="p">)</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">result_path</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="n">result_path</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">)))</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">10</span><span class="o">*</span><span class="n">smoothed</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="mi">10</span><span class="o">*</span><span class="n">smoothed</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">)))</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">10</span><span class="o">*</span><span class="n">desired_rn</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="mi">10</span><span class="o">*</span><span class="n">desired_rn</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">)))</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">10</span><span class="o">*</span><span class="n">smooth</span><span class="o">.</span><span class="n">points</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="mi">10</span><span class="o">*</span><span class="n">smooth</span><span class="o">.</span><span class="n">points</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;markers&#39;</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">)))</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">coloraxis_showscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">10</span><span class="p">))</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">coloraxis_showscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">width</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/c9e0f359397153e909f6f6cedcbf189af859aeead6e8ec189b9e164f658faa9e.png" src="_images/c9e0f359397153e909f6f6cedcbf189af859aeead6e8ec189b9e164f658faa9e.png" />
+<img alt="_images/e4ed8f6cbe96109e5c9908d46ac67d03757a45aaca396163f4b23ba5028e1242.png" src="_images/e4ed8f6cbe96109e5c9908d46ac67d03757a45aaca396163f4b23ba5028e1242.png" />
 </div>
 </div>
 <p>Finally, it is instructive to inspect the velocity and acceleration profiles as well:</p>
@@ -791,34 +829,32 @@ X^* = \arg \min \sum_{k=1}^K \phi_k(X_k)^2  + \sum_{k=1}^{K-1} \psi_k(X_k, X_{k+
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: smoothed trajectory as time series.</span>
 <span class="c1">#| label: fig:smoothed-series</span>
-<span class="n">velocities</span> <span class="o">=</span> <span class="n">smooth</span><span class="o">.</span><span class="n">velocities</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
-<span class="n">accelerations</span> <span class="o">=</span> <span class="n">smooth</span><span class="o">.</span><span class="n">accelerations</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="n">desired_vn</span> <span class="o">=</span> <span class="n">smooth</span><span class="o">.</span><span class="n">velocities</span><span class="p">(</span><span class="n">timestamps</span><span class="p">)</span> <span class="c1"># desired velocity in navigation frame</span>
+<span class="n">desired_an</span> <span class="o">=</span> <span class="n">smooth</span><span class="o">.</span><span class="n">accelerations</span><span class="p">(</span><span class="n">timestamps</span><span class="p">)</span> <span class="c1"># desired acceleration in navigation frame</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">pls</span><span class="o">.</span><span class="n">make_subplots</span><span class="p">(</span><span class="n">rows</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">shared_xaxes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">velocities</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;vx&#39;</span><span class="p">),</span> <span class="n">row</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">accelerations</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;ax&#39;</span><span class="p">),</span> <span class="n">row</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">velocities</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;vy&#39;</span><span class="p">),</span> <span class="n">row</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">accelerations</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;ay&#39;</span><span class="p">),</span> <span class="n">row</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">coloraxis_showscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span> <span class="n">height</span> <span class="o">=</span> <span class="mi">300</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">timestamps</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">desired_vn</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;vx&#39;</span><span class="p">),</span> <span class="n">row</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">timestamps</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">desired_an</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;ax&#39;</span><span class="p">),</span> <span class="n">row</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">timestamps</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">desired_vn</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;vy&#39;</span><span class="p">),</span> <span class="n">row</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">timestamps</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">desired_an</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;ay&#39;</span><span class="p">),</span> <span class="n">row</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">coloraxis_showscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">10</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/6ec185545cae7fa517d946a9536c8deb4196085d5ea8e55e9be86b98d873633d.png" src="_images/6ec185545cae7fa517d946a9536c8deb4196085d5ea8e55e9be86b98d873633d.png" />
+<img alt="_images/6e558f1c9e311f80a391a492e885f4113a4a8d9a3f7c75e9fb2164138359cd72.png" src="_images/6e558f1c9e311f80a391a492e885f4113a4a8d9a3f7c75e9fb2164138359cd72.png" />
 </div>
 </div>
 <p>You can see that, for our chosen T=20, the drone flies at velocities between 1 and 1.6 m/s, which is what we expected for T=20.</p>
 </section>
-<section id="translational-control">
-<h2><span class="section-number">7.5.6. </span>Translational Control<a class="headerlink" href="#translational-control" title="Permalink to this heading">#</a></h2>
+<section id="a-virtual-vectored-thrust">
+<h2><span class="section-number">7.5.6. </span>A Virtual Vectored Thrust<a class="headerlink" href="#a-virtual-vectored-thrust" title="Permalink to this heading">#</a></h2>
 <blockquote>
-<div><p>Control is getting what you want.</p>
+<div><p>What we want, in theory…</p>
 </div></blockquote>
 <p>We control the position of the drone using a 3DOF vectored thrust input: thrust magnitude, roll, and pitch. The idea outlined here is a simplified version of the geometric controller in</p>
 <blockquote>
 <div><p>K. Gamagedara, M. Bisheban, E. Kaufman, T. Lee, “Geometric Controls of a Quadrotor UAV with Decoupled Yaw Control,” in <em>2019 American Control Conference (ACC)</em>, Philadelphia, PA, USA, July 10-12, 2019.</p>
 </div></blockquote>
-<section id="a-virtual-vectored-thrust">
-<h3><span class="section-number">7.5.6.1. </span>A Virtual Vectored Thrust<a class="headerlink" href="#a-virtual-vectored-thrust" title="Permalink to this heading">#</a></h3>
 <p>The idea is rather simple. Remember the translational equations of motion from Section 7.2:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
@@ -834,27 +870,33 @@ T^n = m \dot v^n_d - m g^n.
 <p>All of this is implemented in the <code class="docutils literal notranslate"><span class="pre">vectored_thrust</span></code> function below, and they are shown below that, sampled at regular intervals along our optimized trajectory.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a function to calculate the vectored thrust:</span>
-<span class="k">def</span> <span class="nf">vectored_thrust</span><span class="p">(</span><span class="n">accelerations</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">mass</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">g</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">9.81</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the vectored thrust for the desired accelerations.&quot;&quot;&quot;</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Drone parameters used below.</span>
+<span class="k">class</span> <span class="nc">Params</span><span class="p">:</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="mf">9.81</span>
+    <span class="n">mass</span> <span class="o">=</span> <span class="mf">1.0</span>
     <span class="n">gn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">g</span><span class="p">])</span> <span class="c1"># gravity vector in navigation frame.</span>
-    <span class="k">return</span> <span class="n">mass</span> <span class="o">*</span> <span class="p">(</span><span class="n">accelerations</span> <span class="o">-</span> <span class="n">gn</span><span class="p">)</span>
+    <span class="c1"># Moment of inertia for pitch and roll, values copied from Section 7.2:</span>
+    <span class="n">I_xy</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="mf">0.15</span> <span class="o">*</span> <span class="n">mass</span> <span class="o">*</span> <span class="mf">0.1</span><span class="o">**</span><span class="mi">2</span>  <span class="c1"># All 4 motors contribute to I_xy</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">vectored_thrust</span><span class="p">(</span><span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the vectored thrust at timestamp k.&quot;&quot;&quot;</span>
+    <span class="n">an_d</span> <span class="o">=</span> <span class="n">desired_an</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="c1"># desired acceleration in navigation frame</span>
+    <span class="k">return</span> <span class="n">Params</span><span class="o">.</span><span class="n">mass</span> <span class="o">*</span> <span class="p">(</span><span class="n">an_d</span> <span class="o">-</span> <span class="n">Params</span><span class="o">.</span><span class="n">gn</span><span class="p">)</span>
 
-<span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span> <span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
-<span class="n">a_d</span> <span class="o">=</span> <span class="n">smooth</span><span class="o">.</span><span class="n">accelerations</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
-
-<span class="c1"># now calculate all the vectors:</span>
-<span class="n">vectors</span> <span class="o">=</span> <span class="n">vectored_thrust</span><span class="p">(</span><span class="n">a_d</span><span class="p">,</span> <span class="n">mass</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;vectors.shape = </span><span class="si">{</span><span class="n">vectors</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;vectors[0] = </span><span class="si">{</span><span class="n">vectors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;vectors[-1] = </span><span class="si">{</span><span class="n">vectors</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># now calculate all the desired thrust vectors:</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;desired_thrust[0] = </span><span class="si">{</span><span class="n">vectored_thrust</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;desired_thrust[-1] = </span><span class="si">{</span><span class="n">vectored_thrust</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>vectors.shape = (50, 3)
-vectors[0] = [ 0.25988069 -0.34011288  9.81      ]
-vectors[-1] = [-0.18333472  0.19575027  9.81      ]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>desired_thrust[0] = [ 0.25988069 -0.34011288  9.81      ]
+desired_thrust[-1] = [-0.18333472  0.19575027  9.81      ]
 </pre></div>
 </div>
 </div>
@@ -863,13 +905,13 @@ vectors[-1] = [-0.18333472  0.19575027  9.81      ]
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Smoothed trajectory with vectored thrust vectors.</span>
 <span class="c1">#| label: fig:vectored-thrust</span>
-<span class="c1"># Draw vectors with plotly as a set of vectors on top of a down-sampled smoothed trajectory (every 10 steps), using scatter3d:</span>
-<span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span> <span class="o">=</span> <span class="n">smoothed</span><span class="p">[::</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">smoothed</span><span class="p">[::</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">smoothed</span><span class="p">[::</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span> <span class="o">=</span> <span class="n">desired_rn</span><span class="p">[::</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">desired_rn</span><span class="p">[::</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">desired_rn</span><span class="p">[::</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
 
-<span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">scatter_3d</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">Y</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="n">Z</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">t</span><span class="p">,</span> <span class="n">color_continuous_scale</span><span class="o">=</span><span class="s1">&#39;Viridis&#39;</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">scatter_3d</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">Y</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="n">Z</span><span class="p">)</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">update_traces</span><span class="p">(</span><span class="n">marker</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
 
 <span class="c1"># Add thrust vectors as 3d arrows</span>
+<span class="n">vectors</span> <span class="o">=</span> <span class="n">vectored_thrust</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">250</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
 <span class="n">Tx</span><span class="p">,</span> <span class="n">Ty</span><span class="p">,</span> <span class="n">Tz</span> <span class="o">=</span> <span class="mf">0.2</span><span class="o">*</span><span class="n">vectors</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="mf">0.2</span><span class="o">*</span><span class="n">vectors</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="mf">0.2</span><span class="o">*</span><span class="n">vectors</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)):</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter3d</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">Tx</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span> <span class="n">y</span><span class="o">=</span><span class="p">[</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">Ty</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span> <span class="n">z</span><span class="o">=</span><span class="p">[</span><span class="n">Z</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">Z</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">Tz</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span>
@@ -885,13 +927,111 @@ vectors[-1] = [-0.18333472  0.19575027  9.81      ]
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/a3c33c6487cd8d187f08c1efcc33de6f84b105049dad1ce4cc72e57d7169631c.png" src="_images/a3c33c6487cd8d187f08c1efcc33de6f84b105049dad1ce4cc72e57d7169631c.png" />
+<img alt="_images/f74dafd3933d37956de4d00e017c8faf701c8f120726f9b96625c94eb271933d.png" src="_images/f74dafd3933d37956de4d00e017c8faf701c8f120726f9b96625c94eb271933d.png" />
 </div>
 </div>
 <p>The figure above shows the desired vectored thrust for the optimized trajectory from before. If you execute this section’s notebook on colab you would be able to rotate the figure and ascertain that all thrust vectors, even if they are of different lengths, all have exactly the same vertical projection magnitude. This is of course by design, to cancel out gravity in the absence of any requested vertical height changes.</p>
 </section>
+<section id="combining-feed-forward-and-feedback-control">
+<h2><span class="section-number">7.5.7. </span>Combining Feed-forward and Feedback Control<a class="headerlink" href="#combining-feed-forward-and-feedback-control" title="Permalink to this heading">#</a></h2>
+<blockquote>
+<div><p>What we want, in practice!</p>
+</div></blockquote>
+<p>The virtual thrust vector is an example of a <strong>feed-forward control</strong> strategy. Given the planned trajectory, we <em>calculate</em> what we think should happen at every moment. The above could work <em>if</em> we are perfectly tracking the planned trajectory.
+However, inevitably small errors will occur, maybe through wind, or model inaccuracies, or small variations in motor thrust. In fact, motors might hit their thrust limits and not be able to deliver the desired thrust completely. More importantly the pitch/roll controller (see below) that is supposed to deliver the thrust vector direction will have a small but consequential lag. All this means that errors <em>will</em> occur and we have to deal with them.</p>
+<p>To make this work, we need to incorporate <strong>feedback control</strong> terms that correct for tracking errors. To do so, we add two terms to reduce both positional and velocity errors:</p>
+<div class="math notranslate nohighlight">
+\[
+T^n = m \dot v^n_d - m g^n - K_x (X - X_d) - K_v (\dot X - \dot X_d)
+\]</div>
+<p>This now requires tuning two additional parameters, <span class="math notranslate nohighlight">\(K_x\)</span> and <span class="math notranslate nohighlight">\(K_v\)</span>, for the <em>proportional</em> and <em>derivative</em> control terms respectively. However, without these terms we have no hopes of staying on track.</p>
+<p>The proposed controller is relatively easy to implement in code:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">thrust_controller</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">rn</span><span class="p">,</span> <span class="n">vn</span><span class="p">,</span> <span class="n">Kx</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">Kv</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the vectored thrust at timestamp k, adjusted for tracking errors.&quot;&quot;&quot;</span>
+    <span class="n">Tn</span> <span class="o">=</span> <span class="n">vectored_thrust</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+    <span class="n">Tn</span> <span class="o">-=</span> <span class="n">Kx</span> <span class="o">*</span> <span class="p">(</span><span class="n">rn</span> <span class="o">-</span> <span class="n">desired_rn</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+    <span class="n">Tn</span> <span class="o">-=</span> <span class="n">Kv</span> <span class="o">*</span> <span class="p">(</span><span class="n">vn</span> <span class="o">-</span> <span class="n">desired_vn</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">Tn</span>
+
+<span class="c1"># Usage example:</span>
+<span class="n">Tn</span> <span class="o">=</span> <span class="n">thrust_controller</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">rn</span> <span class="o">=</span> <span class="n">desired_rn</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">vn</span> <span class="o">=</span> <span class="n">desired_vn</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Tn = </span><span class="si">{</span><span class="n">Tn</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Tn = [ 0.24842873 -0.33362862  9.81      ]
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can set up a small simulation to see how this controller behaves in practice. Note that we ignore the drone rotation here.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">K</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">desired_rn</span><span class="p">)</span>
+<span class="n">delta_t</span> <span class="o">=</span> <span class="n">T</span> <span class="o">/</span> <span class="n">K</span> <span class="c1"># time between samples</span>
+<span class="n">rn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">K</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="nb">float</span><span class="p">)</span> <span class="c1"># allocate storage for time series</span>
+
+<span class="c1"># We initialize at the desired position and velocity for k=0:</span>
+<span class="n">rn</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">desired_rn</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">vn</span> <span class="o">=</span> <span class="n">desired_vn</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+<span class="c1"># integrate forward</span>
+<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">K</span><span class="p">):</span>
+    <span class="c1"># Calculate vectored thrust:</span>
+    <span class="n">Tn</span> <span class="o">=</span> <span class="n">thrust_controller</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">rn</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">vn</span><span class="p">,</span> <span class="n">Kx</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">Kv</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+
+    <span class="c1"># DYNAMICS:</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">Tn</span> <span class="o">/</span> <span class="n">Params</span><span class="o">.</span><span class="n">mass</span> <span class="o">+</span> <span class="n">Params</span><span class="o">.</span><span class="n">gn</span>
+    <span class="n">vn</span> <span class="o">+=</span> <span class="n">a</span> <span class="o">*</span> <span class="n">delta_t</span>
+
+    <span class="c1"># KINEMATICS:</span>
+    <span class="n">rn</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">rn</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">+</span> <span class="n">vn</span> <span class="o">*</span> <span class="n">delta_t</span>  <span class="c1"># integrate position</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Plotting the executed trajectory below shows we are almost tracking perfectly now:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: planned vs executed.</span>
+<span class="c1">#| label: fig:smoothed</span>
+<span class="n">executed</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">rn</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">blurred</span><span class="p">,</span> <span class="n">color_continuous_scale</span><span class="o">=</span><span class="s1">&#39;Reds&#39;</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">executed</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="n">executed</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)))</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">10</span><span class="o">*</span><span class="n">desired_rn</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="mi">10</span><span class="o">*</span><span class="n">desired_rn</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">)))</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">coloraxis_showscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/96bb3c2e2db92b7cee7cc37d41b35821f97e40dd44099f1f3bbfcc26da8fbab7.png" src="_images/96bb3c2e2db92b7cee7cc37d41b35821f97e40dd44099f1f3bbfcc26da8fbab7.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nRb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">),(</span><span class="n">K</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span> <span class="c1"># level attitude</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">show_executed</span><span class="p">(</span><span class="n">desired_rn</span><span class="p">,</span> <span class="n">rn</span><span class="p">,</span> <span class="n">nRb</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">scene_camera</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">eye</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">x</span><span class="o">=-</span><span class="mi">4</span><span class="p">,</span> <span class="n">y</span><span class="o">=-</span><span class="mf">3.5</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mf">2.5</span><span class="p">)),</span> <span class="n">width</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/a74e2294eab3a8e4b3a54e88ae3b0cce70ed6bb7256107926a8c8ed9494eb02e.png" src="_images/a74e2294eab3a8e4b3a54e88ae3b0cce70ed6bb7256107926a8c8ed9494eb02e.png" />
+</div>
+</div>
+<section id="exercises">
+<h3><span class="section-number">7.5.7.1. </span>Exercises:<a class="headerlink" href="#exercises" title="Permalink to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Try setting the proportional and derivative constants <span class="math notranslate nohighlight">\(K_x\)</span> and <span class="math notranslate nohighlight">\(K_v\)</span> to 0, in isolation or both. Describe to yourself what happens.</p></li>
+<li><p>Try setting one or the other to a very high value (1000). What is happening then?</p></li>
+</ul>
+</section>
+</section>
 <section id="vectoring-using-fast-rotational-dynamics">
-<h3><span class="section-number">7.5.6.2. </span>Vectoring using Fast Rotational Dynamics<a class="headerlink" href="#vectoring-using-fast-rotational-dynamics" title="Permalink to this heading">#</a></h3>
+<h2><span class="section-number">7.5.8. </span>Vectoring using Fast Rotational Dynamics<a class="headerlink" href="#vectoring-using-fast-rotational-dynamics" title="Permalink to this heading">#</a></h2>
 <p>While we cannot <em>instantaneously</em> produce the desired vectored thrust <span class="math notranslate nohighlight">\(T^n\)</span> at any given time, the dynamics of a quadrotor are fast enough that we can get rather close. Remember that the inertial matrix, which resists rotational acceleration, is typically small around the roll and pitch axes. Let us recall the the (approximate) rotational equations of motion:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
@@ -929,35 +1069,34 @@ T^b = (R^n_b)^T T^n.
 <p>The three control laws above constitute a simple yet effective controller for the drone, with <span class="math notranslate nohighlight">\(K_F\)</span> and <span class="math notranslate nohighlight">\(K_L\)</span> constants that govern how aggressive the controller is.The torque control laws above correspond to simple <strong>proportional</strong> controllers in control theory, with <span class="math notranslate nohighlight">\(-T_F\)</span> and <span class="math notranslate nohighlight">\(T_L\)</span> acting as errors to be driven to zero.  The higher the value of <span class="math notranslate nohighlight">\(K\)</span>, the faster the controller will try to remove those errors, but this could also lead to oscillations and even instabilities. While this is out of scope for the current text, we can obtain a more stable aggressive controller by adding a derivative term as well that is a function of the angular velocity.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># The following function implements the control law above:</span>
-<span class="k">def</span> <span class="nf">control_law</span><span class="p">(</span><span class="n">desired_thrust</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">nRb</span><span class="p">:</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Rot3</span><span class="p">,</span> <span class="n">K</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">attitude_controller</span><span class="p">(</span><span class="n">nT</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">nRb</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">K</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the vectored thrust for the desired thrust vector, given in nav frame.&quot;&quot;&quot;</span>
     <span class="c1"># Rotate the desired thrust vector to body frame:</span>
-    <span class="n">T_F</span><span class="p">,</span> <span class="n">T_L</span><span class="p">,</span> <span class="n">T_U</span> <span class="o">=</span> <span class="n">nRb</span><span class="o">.</span><span class="n">matrix</span><span class="p">()</span> <span class="o">@</span> <span class="n">desired_thrust</span>
+    <span class="n">T_F</span><span class="p">,</span> <span class="n">T_L</span><span class="p">,</span> <span class="n">T_U</span> <span class="o">=</span> <span class="n">nRb</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">nT</span>
 
     <span class="c1"># Calculate the desired roll and pitch torques:</span>
-    <span class="n">tau_x</span> <span class="o">=</span> <span class="n">K</span> <span class="o">*</span> <span class="n">T_F</span>
-    <span class="n">tau_y</span> <span class="o">=</span> <span class="o">-</span> <span class="n">K</span> <span class="o">*</span> <span class="n">T_L</span>
+    <span class="n">tau_x</span> <span class="o">=</span> <span class="o">-</span> <span class="n">K</span> <span class="o">*</span> <span class="n">T_L</span>
+    <span class="n">tau_y</span> <span class="o">=</span> <span class="n">K</span> <span class="o">*</span> <span class="n">T_F</span>
 
     <span class="c1"># Return alongside total thrust to be commanded:</span>
     <span class="k">return</span> <span class="n">tau_x</span><span class="p">,</span> <span class="n">tau_y</span><span class="p">,</span> <span class="n">T_U</span>
 
-<span class="n">nRb</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Rot3</span><span class="o">.</span><span class="n">Ypr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="c1"># Assume the robot is initially level</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;control[0] = </span><span class="si">{</span><span class="n">control_law</span><span class="p">(</span><span class="n">vectors</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="n">nRb</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;control[-1] = </span><span class="si">{</span><span class="n">control_law</span><span class="p">(</span><span class="n">vectors</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="n">nRb</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">nRb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="c1"># Assume the robot is initially level</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;vectors[0] = </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">vectors</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;control[0] = </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">attitude_controller</span><span class="p">(</span><span class="n">vectors</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="n">nRb</span><span class="p">),</span><span class="mi">4</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>control[0] = (0.25988068689634325, 0.3401128810104965, 9.810000000001013)
-control[-1] = (-0.18333471725321715, -0.195750274286965, 9.810000000001002)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>vectors[0] = [ 0.26 -0.34  9.81]
+control[0] = [0.034 0.026 9.81 ]
 </pre></div>
 </div>
 </div>
 </div>
-</section>
+<p>The example illustrates the behavior: we want to increase the thrust <span class="math notranslate nohighlight">\(T_F\)</span> in the X direction to <span class="math notranslate nohighlight">\(0.26\)</span>, so we will positively <em>pitch</em> around the Y-axis: counter-clockwise, pointing the Z-axis forward. Likewise, we want a thrust towards the right (<span class="math notranslate nohighlight">\(T^L-0.39\)</span>), so we need to roll counter-clockwise, as well, around the Forward/X axis.</p>
 <section id="calculating-motor-thrust-vectors">
-<h3><span class="section-number">7.5.6.3. </span>Calculating Motor Thrust Vectors<a class="headerlink" href="#calculating-motor-thrust-vectors" title="Permalink to this heading">#</a></h3>
+<h3><span class="section-number">7.5.8.1. </span>Calculating Motor Thrust Vectors<a class="headerlink" href="#calculating-motor-thrust-vectors" title="Permalink to this heading">#</a></h3>
 <p>Creating the requested torque and thrust by the control law is done by adjusting the individual motor thrusts <span class="math notranslate nohighlight">\(f_i\)</span>. Recalling the force-torque equation in Section 7.2, if we ensure <span class="math notranslate nohighlight">\(f_{1} + f_{3} = f_{2} + f_{4}\)</span> we obtain :</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
@@ -995,12 +1134,12 @@ f_4 = 0.25 \left( f - \tau_x/l - \tau_y/l \right)
     <span class="c1"># Return as a tuple</span>
     <span class="k">return</span> <span class="n">f_1</span><span class="p">,</span> <span class="n">f_2</span><span class="p">,</span> <span class="n">f_3</span><span class="p">,</span> <span class="n">f_4</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;motor_speeds[-1] = </span><span class="si">{</span><span class="n">control_to_motor_speeds</span><span class="p">(</span><span class="o">*</span><span class="n">control_law</span><span class="p">(</span><span class="n">vectors</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="n">nRb</span><span class="p">))</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;motor_speeds[-1] = </span><span class="si">{</span><span class="n">control_to_motor_speeds</span><span class="p">(</span><span class="o">*</span><span class="n">attitude_controller</span><span class="p">(</span><span class="n">vectors</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="n">nRb</span><span class="p">))</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>motor_speeds[-1] = (0.33335047416580066, 2.383094926235286, 2.521905073765215, 4.571649525834701)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>motor_speeds[-1] = (2.67052360380764, 2.503598033787886, 2.401401966212046, 2.2344763961922918)
 </pre></div>
 </div>
 </div>
@@ -1008,119 +1147,87 @@ f_4 = 0.25 \left( f - \tau_x/l - \tau_y/l \right)
 </section>
 </section>
 <section id="code-example">
-<h2><span class="section-number">7.5.7. </span>Code Example<a class="headerlink" href="#code-example" title="Permalink to this heading">#</a></h2>
-<p><strong>Jan ‘24: This section is not yet finalized, please check back later.</strong></p>
-<p>The proposed controller is relatively easy to implement in code.</p>
-<p>However, To make this work, we need to also correct for potential tracking errors. The above will work will <em>if</em> we are perfectly tracking the planned trajectory. Indeed, the trajectory optimization result tells us exactly what to do there. However, inevitably small errors will occur, and more importantly the pitch/roll controller that is supposed to deliver the thrust vector direction will have a small but consequential lag. Finally, motors might hit their thrust limits and not be able to deliver the desired thrust completely. All this means that errors <em>will</em> occur and we have to deal with them. To do so, we add two terms to reduce both positional and velocity errors:</p>
-<div class="math notranslate nohighlight">
-\[
-T^n = m \dot v^n_d - m g^n - K_x (X - X_d) - K_v (\dot X - \dot X_d)
-\]</div>
-<p>This now requires tuning two additional parameters, <span class="math notranslate nohighlight">\(K_x\)</span> and <span class="math notranslate nohighlight">\(K_v\)</span>, for the <em>proportional</em> and <em>derivative</em> control terms respectively. However, without these terms we have no hopes of staying on track.</p>
+<h2><span class="section-number">7.5.9. </span>Code Example<a class="headerlink" href="#code-example" title="Permalink to this heading">#</a></h2>
+<p>To simulate both controllers working together, we now also need to account for attitude below:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">K</span> <span class="o">=</span> <span class="mi">250</span>
-<span class="c1"># Calculate moment of inertia for pitch and roll, values copied from Section 7.2</span>
-<span class="n">g</span> <span class="o">=</span> <span class="mf">9.81</span>
-<span class="n">mass</span> <span class="o">=</span> <span class="mf">1.0</span>
-<span class="n">I_xy</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="mf">0.15</span> <span class="o">*</span> <span class="n">mass</span> <span class="o">*</span> <span class="mf">0.1</span><span class="o">**</span><span class="mi">2</span>  <span class="c1"># All 4 motors contribute to I_xy</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dt</span> <span class="o">=</span> <span class="n">delta_t</span><span class="o">/</span><span class="mi">10</span>
+<span class="n">nRb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">K</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="nb">float</span><span class="p">)</span> <span class="c1"># Now also store attitude</span>
 
-<span class="n">delta_t</span> <span class="o">=</span> <span class="n">T</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">smoothed</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Trajectory has </span><span class="si">{</span><span class="n">K</span><span class="si">}</span><span class="s2"> time steps, with a time step of </span><span class="si">{</span><span class="n">delta_t</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> seconds.&quot;</span><span class="p">)</span>
-
-<span class="c1"># allocate storage for time series</span>
-<span class="n">rn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="n">K</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="nb">float</span><span class="p">)</span>
-<span class="n">nRb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">K</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="nb">float</span><span class="p">)</span>
-
-<span class="c1"># We take the original position/velocity from the smoothed trajectory:</span>
-<span class="n">rn</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">smooth</span><span class="o">.</span><span class="n">evaluate</span><span class="p">([[</span><span class="mi">0</span><span class="p">]])</span>
-<span class="n">vn</span> <span class="o">=</span> <span class="n">smooth</span><span class="o">.</span><span class="n">velocities</span><span class="p">([[</span><span class="mi">0</span><span class="p">]])</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+<span class="c1"># We again initialize at the desired position and velocity for k=0:</span>
+<span class="n">rn</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">desired_rn</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">vn</span> <span class="o">=</span> <span class="n">desired_vn</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
 <span class="c1"># and have the drone face east (X-axis in navigation frame) initially:</span>
-<span class="n">nRb0</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Rot3</span><span class="o">.</span><span class="n">Ypr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-<span class="n">nRb</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">nRb0</span><span class="o">.</span><span class="n">matrix</span><span class="p">()</span>
+<span class="n">nRb0</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Rot3</span><span class="p">()</span>
+<span class="n">nRb</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 <span class="n">wb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="c1"># Initial angular velocity to zero</span>
 
 <span class="c1"># integrate forward</span>
 <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">K</span><span class="p">):</span>
-    <span class="n">t_k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">k</span> <span class="o">*</span> <span class="n">delta_t</span><span class="p">]])</span>
+    <span class="c1"># Calculate (corrected) vectored thrust:</span>
+    <span class="n">desired_Tn</span> <span class="o">=</span> <span class="n">thrust_controller</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">rn</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">vn</span><span class="p">,</span> <span class="n">Kx</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">Kv</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
 
-    <span class="c1"># Get desired position, velocity, acceleration in nav frame:</span>
-    <span class="n">rn_d</span> <span class="o">=</span> <span class="n">smooth</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">t_k</span><span class="p">)</span>
-    <span class="n">vn_d</span> <span class="o">=</span> <span class="n">smooth</span><span class="o">.</span><span class="n">velocities</span><span class="p">(</span><span class="n">t_k</span><span class="p">)</span>
-    <span class="n">an_d</span> <span class="o">=</span> <span class="n">smooth</span><span class="o">.</span><span class="n">accelerations</span><span class="p">(</span><span class="n">t_k</span><span class="p">)</span>
+    <span class="c1"># Inner loop: a fast roll/pitch controller:</span>
+    <span class="n">nRb_k</span> <span class="o">=</span> <span class="n">nRb</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+        <span class="c1"># Calculate roll/pitch/thrust controls:</span>
+        <span class="n">tau_x</span><span class="p">,</span> <span class="n">tau_y</span><span class="p">,</span> <span class="n">T_U</span> <span class="o">=</span> <span class="n">attitude_controller</span><span class="p">(</span><span class="n">desired_Tn</span><span class="p">,</span> <span class="n">nRb_k</span><span class="p">,</span> <span class="n">K</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="c1"># clip thrust to be between 0 and 20 Newtons:</span>
+        <span class="n">T_U</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">T_U</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
 
-    <span class="c1"># Calculate vectored thrust:</span>
-    <span class="n">nT</span> <span class="o">=</span> <span class="n">vectored_thrust</span><span class="p">(</span><span class="n">an_d</span><span class="p">,</span> <span class="n">mass</span><span class="p">,</span> <span class="n">g</span><span class="p">)</span>
-    <span class="c1"># print(f&quot;nT = {nT}&quot;)</span>
+        <span class="c1"># DYNAMICS: update angular velocity in body frame.</span>
+        <span class="n">wb</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">tau_x</span><span class="p">,</span> <span class="n">tau_y</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="n">dt</span> <span class="o">/</span> <span class="n">Params</span><span class="o">.</span><span class="n">I_xy</span>
 
-    <span class="c1"># Correct for tracking errors:</span>
-    <span class="n">nT</span> <span class="o">-=</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="p">(</span><span class="n">rn</span><span class="p">[:,</span> <span class="n">k</span><span class="p">]</span> <span class="o">-</span> <span class="n">rn_d</span><span class="p">)</span>
-    <span class="c1"># print positional error:</span>
-    <span class="c1"># print(f&quot;rn_d = {np.round(rn_d,2)}, rn = {np.round(rn,2)[:, k]}, error={np.round(rn[:, k] - rn_d,2)}&quot;)</span>
-    <span class="n">nT</span> <span class="o">-=</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="p">(</span><span class="n">vn</span> <span class="o">-</span> <span class="n">vn_d</span><span class="p">)</span>
-    <span class="c1"># print(f&quot;nT corrected = {np.round(nT,2)}&quot;)</span>
+        <span class="c1"># KINEMATICS: update attitude</span>
+        <span class="n">delta_R</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Rot3</span><span class="o">.</span><span class="n">Expmap</span><span class="p">(</span><span class="n">wb</span> <span class="o">*</span> <span class="n">dt</span><span class="p">)</span>  <span class="c1"># incremental rotation matrix</span>
+        <span class="n">nRb_k</span> <span class="o">=</span> <span class="n">nRb_k</span> <span class="o">@</span> <span class="n">delta_R</span><span class="o">.</span><span class="n">matrix</span><span class="p">()</span>  <span class="c1"># integrate attitude</span>
+    
+    <span class="c1"># Translational update:</span>
+    <span class="n">actual_Tn</span> <span class="o">=</span> <span class="n">nRb_k</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">T_U</span><span class="p">])</span> <span class="c1"># Not the ideal but the realized Tn</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">actual_Tn</span> <span class="o">/</span> <span class="n">Params</span><span class="o">.</span><span class="n">mass</span> <span class="o">+</span> <span class="n">Params</span><span class="o">.</span><span class="n">gn</span>
+    <span class="n">vn</span> <span class="o">+=</span> <span class="n">a</span> <span class="o">*</span> <span class="n">delta_t</span>
+    <span class="n">rn</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">rn</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">+</span> <span class="n">vn</span> <span class="o">*</span> <span class="n">delta_t</span>  <span class="c1"># integrate position</span>
 
-    <span class="c1"># Calculate controls:</span>
-    <span class="n">nRb_k</span> <span class="o">=</span> <span class="n">nRb</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">k</span><span class="p">]</span>
-    <span class="n">tau_x</span><span class="p">,</span> <span class="n">tau_y</span><span class="p">,</span> <span class="n">T_U</span> <span class="o">=</span> <span class="n">control_law</span><span class="p">(</span><span class="n">nT</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Rot3</span><span class="p">(</span><span class="n">nRb_k</span><span class="p">),</span> <span class="n">K</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">)</span>
-    <span class="c1"># print(f&quot;nT = {nT}, tau_x = {tau_x}, tau_y = {tau_y}, T_U = {T_U}&quot;)</span>
-
-    <span class="c1"># DYNAMICS:</span>
-    <span class="c1"># Update velocity in navigation frame.</span>
-    <span class="n">an</span> <span class="o">=</span> <span class="n">nRb_k</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">T_U</span><span class="p">])</span> <span class="o">/</span> <span class="n">mass</span>
-    <span class="n">an</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-=</span> <span class="n">g</span>
-    <span class="n">an</span> <span class="o">=</span> <span class="n">an_d</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="c1"># Currently using the desired acceleration!</span>
-    <span class="n">vn</span> <span class="o">+=</span> <span class="n">an</span> <span class="o">*</span> <span class="n">delta_t</span>
-
-    <span class="c1"># Update angular velocity in body frame.</span>
-    <span class="n">wb</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">tau_x</span><span class="p">,</span> <span class="n">tau_y</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="n">delta_t</span> <span class="o">/</span> <span class="n">I_xy</span>
-    <span class="n">wb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-    <span class="c1"># print(f&quot;vn = {np.round(vn,2)}, wb = {np.round(wb,2)}&quot;)</span>
-
-    <span class="c1"># KINEMATICS:</span>
-    <span class="n">rn</span><span class="p">[:,</span> <span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">rn</span><span class="p">[:,</span> <span class="n">k</span><span class="p">]</span> <span class="o">+</span> <span class="n">vn</span> <span class="o">*</span> <span class="n">delta_t</span>  <span class="c1"># integrate position</span>
-    <span class="c1"># print(f&quot;an = {an}, vn = {vn}, wb = {wb}, rn = {rn[:, k+1]}&quot;)</span>
-    <span class="n">delta_R</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Rot3</span><span class="o">.</span><span class="n">Expmap</span><span class="p">(</span>
-        <span class="n">wb</span> <span class="o">*</span> <span class="n">delta_t</span>
-    <span class="p">)</span>  <span class="c1"># calculate incremental rotation matrix</span>
-    <span class="n">nRb</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">nRb</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">k</span><span class="p">]</span> <span class="o">@</span> <span class="n">delta_R</span><span class="o">.</span><span class="n">matrix</span><span class="p">()</span>  <span class="c1"># integrate attitude</span>
-
-<span class="c1">#| caption: planned vs executed.</span>
+    <span class="n">nRb</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">nRb_k</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Note that in the code we now have an outer and an inner loop. The outer loop is for the “slow” translational dynamics, whereas the inner loop simulates the “fast” attitude dynamics. Such a <strong>cascaded controller</strong> is a typical design choice for drone applications.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: planned vs executed.</span>
 <span class="c1">#| label: fig:smoothed</span>
-<span class="n">executed</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">rn</span><span class="o">.</span><span class="n">T</span>
+<span class="n">executed</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">rn</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">blurred</span><span class="p">,</span> <span class="n">color_continuous_scale</span><span class="o">=</span><span class="s1">&#39;Reds&#39;</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">executed</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="n">executed</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)))</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">10</span><span class="o">*</span><span class="n">smoothed</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="mi">10</span><span class="o">*</span><span class="n">smoothed</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">)))</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">coloraxis_showscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">10</span><span class="p">))</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">10</span><span class="o">*</span><span class="n">desired_rn</span><span class="p">[:</span><span class="n">K</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="mi">10</span><span class="o">*</span><span class="n">desired_rn</span><span class="p">[:</span><span class="n">K</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">)))</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">executed</span><span class="p">[:</span><span class="n">K</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="n">executed</span><span class="p">[:</span><span class="n">K</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)))</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">coloraxis_showscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Trajectory has 250 time steps, with a time step of 0.080 seconds.
-</pre></div>
-</div>
-<img alt="_images/c745209c26c37283755a72ad2c8f8e491a440ae43c7b5e8e2056d0ed360f439c.png" src="_images/c745209c26c37283755a72ad2c8f8e491a440ae43c7b5e8e2056d0ed360f439c.png" />
+<img alt="_images/8691fa53262e5e43b8d8fd1571fa653904b68dcfaf5ee1d262c52d85ab9422de.png" src="_images/8691fa53262e5e43b8d8fd1571fa653904b68dcfaf5ee1d262c52d85ab9422de.png" />
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">line_3d</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">rn</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="n">rn</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">z</span><span class="o">=</span><span class="n">rn</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
-<span class="n">scale</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;F&quot;</span><span class="p">,</span> <span class="s2">&quot;L&quot;</span><span class="p">,</span> <span class="s2">&quot;U&quot;</span><span class="p">]</span>
-<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">K</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
-    <span class="n">nTb</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose3</span><span class="p">(</span><span class="n">gtsam</span><span class="o">.</span><span class="n">Rot3</span><span class="p">(</span><span class="n">nRb</span><span class="p">[:,:,</span><span class="n">k</span><span class="p">]),</span> <span class="n">rn</span><span class="p">[:,</span><span class="n">k</span><span class="p">]);</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">add_traces</span><span class="p">(</span><span class="n">axes</span><span class="p">(</span><span class="n">nTb</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">labels</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">show_executed</span><span class="p">(</span><span class="n">desired_rn</span><span class="p">,</span> <span class="n">rn</span><span class="p">,</span> <span class="n">nRb</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">margin</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
-<span class="n">camera</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">eye</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">x</span><span class="o">=-</span><span class="mi">10</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mf">1.5</span><span class="p">))</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">scene_camera</span><span class="o">=</span><span class="n">camera</span><span class="p">,</span> <span class="n">scene_aspectmode</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">scene_camera</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">eye</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">x</span><span class="o">=-</span><span class="mi">4</span><span class="p">,</span> <span class="n">y</span><span class="o">=-</span><span class="mf">3.5</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mf">2.5</span><span class="p">)),</span> <span class="n">width</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/93f6de4ce55b783cb8df95117f1b3d86af58ca0c3d60fa929554f57c95b683f8.png" src="_images/93f6de4ce55b783cb8df95117f1b3d86af58ca0c3d60fa929554f57c95b683f8.png" />
+<img alt="_images/c6046d0cfa57f7b415c8a2db7d90e26797397f42af60ea491e5bc4c515eed89f.png" src="_images/c6046d0cfa57f7b415c8a2db7d90e26797397f42af60ea491e5bc4c515eed89f.png" />
 </div>
 </div>
+<p>From the 3D plot above we see that the controller tracks the desired trajectory quite well.</p>
+<section id="exercise">
+<h3><span class="section-number">7.5.9.1. </span>Exercise<a class="headerlink" href="#exercise" title="Permalink to this heading">#</a></h3>
+<p>Try tuning up the velocity control constant <span class="math notranslate nohighlight">\(K_v\)</span>, say to <span class="math notranslate nohighlight">\(0.1\)</span>. What do you observe. Any theories?</p>
+</section>
 </section>
 </section>
 
@@ -1184,13 +1291,19 @@ T^n = m \dot v^n_d - m g^n - K_x (X - X_d) - K_v (\dot X - \dot X_d)
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#occupancy-and-cost-maps">7.5.3. Occupancy and Cost Maps</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#factor-graphs-for-trajectory-optimization">7.5.4. Factor Graphs for Trajectory Optimization</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#smoothing">7.5.5. Smoothing</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#translational-control">7.5.6. Translational Control</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-virtual-vectored-thrust">7.5.6.1. A Virtual Vectored Thrust</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vectoring-using-fast-rotational-dynamics">7.5.6.2. Vectoring using Fast Rotational Dynamics</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#calculating-motor-thrust-vectors">7.5.6.3. Calculating Motor Thrust Vectors</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-virtual-vectored-thrust">7.5.6. A Virtual Vectored Thrust</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#combining-feed-forward-and-feedback-control">7.5.7. Combining Feed-forward and Feedback Control</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">7.5.7.1. Exercises:</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#code-example">7.5.7. Code Example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#vectoring-using-fast-rotational-dynamics">7.5.8. Vectoring using Fast Rotational Dynamics</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#calculating-motor-thrust-vectors">7.5.8.1. Calculating Motor Thrust Vectors</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#code-example">7.5.9. Code Example</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise">7.5.9.1. Exercise</a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 
