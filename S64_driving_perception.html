@@ -571,7 +571,7 @@ The optimal estimate for the rotation matrix is given by</p>
 \]</div>
 <p>Interesting aside: this problem is known as the <em>orthogonal Procrustes problem</em> and its solution via SVD has been known since 1966, from <a class="reference external" href="https://doi.org/10.1007%2FBF02289451">a paper by Peter Schönemann</a>. Even more interesting is that Procrustes was a mythological greek villain who either stretched or cut his victims to size to fit their bed, analogous to how we make the rotation matrix above fit the data.</p>
 <p>The above solves the problem when there is only rotation, but we must also consider relative translation between the two point clouds.
-Fortunately, it turns out that the best possible translation estimate will always align both <em>centroids</em> of the point clouds. Hence, when there is translation present, we simply compute the matrix <span class="math notranslate nohighlight">\(H\)</span> from the <em>centered</em> points,</p>
+Fortunately, it turns out that the best possible translation estimate will always align the <em>centroids</em> of the two point clouds. Hence, when there is translation present, we simply compute the matrix <span class="math notranslate nohighlight">\(H\)</span> from the <em>centered</em> points,</p>
 <div class="math notranslate nohighlight">
 \[
 H = \sum_j (P^a_j-C^a) (P^b_j-C^b)^T
@@ -685,7 +685,7 @@ predict relative measurements <span class="math notranslate nohighlight">\(\tild
 \[
 \tilde{x}_{ij}\approx h(x_{i,}x_{j})=x_{j}-x_{i}
 \]</div>
-<p>and each factor in
+<p>and, taking <span class="math notranslate nohighlight">\(\sigma=1\)</span> for now, each factor in
 Figure
 <a href="#fig:PoseSLAMFG" data-reference-type="ref" data-reference="fig:PoseSLAMFG">1</a>
 could be written as</p>
@@ -693,7 +693,7 @@ could be written as</p>
 \[
 \phi(x_{i},x_{j})=\frac{1}{\sqrt{2\pi}}\exp\left\{ -\frac{1}{2}\left(x_{j}-x_{i}-\tilde{x}_{ij}\right)^{2}\right\} ,
 \]</div>
-<p>where we assume <span class="math notranslate nohighlight">\(\sigma=1\)</span> for now. By taking the negative log,
+<p>By taking the negative log,
 maximizing the posterior corresponds to minimizing the following sum of
 squares, where them sum ranges over all <span class="math notranslate nohighlight">\((i,j)\)</span> pairs for which we have a
 pairwise measurement:</p>
@@ -713,41 +713,48 @@ computing packages like MATLAB or numpy.</p>
 because poses are not simply vectors, and the measurements are not
 simply linear functions of the poses. Indeed, in PoseSLAM both the
 prediction <span class="math notranslate nohighlight">\(h(T_{i},T_{j})\)</span> and the measurement <span class="math notranslate nohighlight">\(\tilde{T}_{ij}\)</span>
-are relative poses. The measurement prediction function <span class="math notranslate nohighlight">\(h(.)\)</span> is given
-by
-$<span class="math notranslate nohighlight">\(
+are relative poses. The measurement prediction function <span class="math notranslate nohighlight">\(h(\cdot)\)</span> is given
+by</p>
+<div class="math notranslate nohighlight">
+\[
 h(T_{i},T_{j})=T_{i}^{-1}T_{j}
-\)</span>$
-and the
+\]</div>
+<p>and the
 measurement error to be minimized is</p>
 <div class="math notranslate nohighlight">
 \[
 \frac{1}{2}\left\Vert \log\left(\tilde{T}_{ij}^{-1}T_{i}^{-1}T_{j}\right)\right\Vert ^{2}
 \]</div>
-<p>where <span class="math notranslate nohighlight">\(\log:SE(2)\rightarrow\mathbb{R}^3\)</span> denotes a map from <span class="math notranslate nohighlight">\(SE(2)\)</span> to a
-three-dimensional local coordinate vector <span class="math notranslate nohighlight">\(\xi\)</span>, which will be defined
-in detail below.</p>
-<p>There are two ways out of the nonlinear quandary. The first is to
-realize that the only non-linearities stem from the <span class="math notranslate nohighlight">\(\sin\)</span> and <span class="math notranslate nohighlight">\(\cos\)</span>
-terms in the poses, associated with the unknown orientations
-<span class="math notranslate nohighlight">\(\theta_{i}\)</span>. Hence, one solution is to try and solve for the
+<p>where <span class="math notranslate nohighlight">\(\log:SE(2)\rightarrow\mathbb{R}^3\)</span> is a variation of the logarithm function
+that maps a pose in <span class="math notranslate nohighlight">\(SE(2)\)</span> to a
+three-dimensional local coordinate vector <span class="math notranslate nohighlight">\(\xi\)</span>;
+we will describe this in more detail below.</p>
+<p>There are two ways to deal with this nonlinear problem. The first is to
+realize that the only nonlinearities stem from the <span class="math notranslate nohighlight">\(\sin\)</span> and <span class="math notranslate nohighlight">\(\cos\)</span>
+that are associated with the unknown orientations
+<span class="math notranslate nohighlight">\(\theta_{i}\)</span>.
+Recognizing this, we could try to solve for the
 orientations first, and then solve for the translations using linear
 least squares, exactly as above. This approach is known as <strong>rotation
-averaging</strong> followed by linear translation recovery. Unfortunately it is
-sub-optimal as it does not consider the orientation and translation
+averaging</strong> followed by linear translation recovery. Unfortunately this approach is
+suboptimal, as it does not consider the orientation and translation
 simultaneously. However, it can serve to provide a (very) good initial
 estimate for nonlinear optimization, discussed below.</p>
 <p>Indeed, we will prefer to take a second route, which is to use
-<strong>nonlinear optimization</strong>, as discussed below.</p>
+<strong>nonlinear optimization</strong>, which we discuss below.</p>
 </section>
 <section id="nonlinear-optimization-for-poseslam">
 <h2><span class="section-number">6.4.7. </span>Nonlinear Optimization for PoseSLAM<a class="headerlink" href="#nonlinear-optimization-for-poseslam" title="Permalink to this heading">#</a></h2>
 <blockquote>
 <div><p>Linearize, solve, repeat…</p>
 </div></blockquote>
-<p>As discussed, the error expressions in PoseSLAM
-are <em>nonlinear</em>, and we cannot directly optimize over the poses
-<span class="math notranslate nohighlight">\(T_{i}\)</span>. Instead, we will locally linearize the problem and solve
+<p>At first glance, minimizing the measurement error might seem to be a straightforward
+nonlinear optimization problem: simply use your favorite nonlinear optimizer, e.g., with
+an initial estimate provided using the method in the previous section.
+This approach might well succeed in finding matrices <span class="math notranslate nohighlight">\(T_i\)</span> that minimize the error,
+but, unfortunately, there is no guarantee that <span class="math notranslate nohighlight">\(T_i \in SE(2)\)</span>, since
+this approach does not ensure that the upper right submatrix is a valid rotation matrix.</p>
+<p>Instead, we will locally linearize the problem and solve
 the corresponding linear problem using least-squares, and iterate this
 until convergence. We do this by, at each iteration, parameterizing a
 pose <span class="math notranslate nohighlight">\(T\)</span> by</p>
@@ -836,16 +843,16 @@ converges.</p></li>
 <blockquote>
 <div><p>GTSAM rocks PoseSLAM.</p>
 </div></blockquote>
-<p>For SLAM we typically use a specialized packages such as GTSAM that
+<p>For SLAM we typically use specialized packages such as GTSAM that
 exploit the sparsity of the factor graphs to dramatically
 speed up computation.
-GTSAM exploits sparsity to be computationally efficient. Typically
+Typically
 measurements only provide information on the relationship between a
 handful of variables, and hence the resulting factor graph will be
 sparsely connected. This is exploited by the algorithms implemented in
 GTSAM to reduce computational complexity. Even when graphs are too dense
 to be handled efficiently by direct methods, GTSAM provides iterative
-methods that are quite efficient regardless.</p>
+methods that are quite efficient.</p>
 <p>The following code, included in GTSAM as an example, creates the
 factor graph from Figure
 <a href="#fig:PoseSLAMFG" data-reference-type="ref" data-reference="fig:PoseSLAMFG">1</a>
@@ -870,17 +877,18 @@ in code:</p>
 </div>
 </div>
 </div>
-<p>Lines 1-4 create a nonlinear factor graph and add the unary factor
-<span class="math notranslate nohighlight">\(f_{0}(T_{1})\)</span>. As the vehicle travels through the world, it creates
-binary factors <span class="math notranslate nohighlight">\(f_{t}(T_{t},T_{t+1})\)</span> corresponding to odometry,
-added to the graph in lines 6-12 (Note that M_PI_2 refers to pi/2).
-But line 15 models a different event: a <strong>loop closure</strong>. For example,
+<p>The first block of code creates a nonlinear factor graph and adds the unary factor
+<span class="math notranslate nohighlight">\(f_{0}(T_{1})\)</span>.
+As the vehicle travels through the world, it adds
+binary factors <span class="math notranslate nohighlight">\(f_{t}(T_{t},T_{t+1})\)</span> corresponding to odometry measurements.
+Note that the final line of code models a different event: a <strong>loop closure</strong>.
+For example,
 the vehicle might recognize the same location using vision or a laser
 range finder, and calculate the geometric pose constraint to when it
 first visited this location. This is illustrated for poses <span class="math notranslate nohighlight">\(T_{5}\)</span>
 and <span class="math notranslate nohighlight">\(T_{2}\)</span>, and generates the (red) loop closing factor
 <span class="math notranslate nohighlight">\(f_{5}(T_{5},T_{2})\)</span>.</p>
-<p>Before we can optimize, we need to create an initial estimate to start from. In GTSAM, this is done via the <code class="docutils literal notranslate"><span class="pre">gtsam.Values</span></code> type:</p>
+<p>Before we can optimize, we need to create an initial estimate. In GTSAM, this is done via the <code class="docutils literal notranslate"><span class="pre">gtsam.Values</span></code> type:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create the initial estimate</span>
@@ -955,7 +963,7 @@ Value 5: (gtsam::Pose2)
 </div>
 </div>
 </div>
-<p>We can also inspect the result graphically. Looking at the result as printed above only gets us so far, and more importantly: it only shows us the maximum a posteriori (MAP) solution, but not the uncertainty around it. Luckily, GTSAM can also compute the <strong>posterior marginals</strong>, which show the uncertainty on each recovered pose as a Gaussian density <span class="math notranslate nohighlight">\(P(T_i|Z)\)</span>, taking into account all the measurements <span class="math notranslate nohighlight">\(Z\)</span>.</p>
+<p>We can also inspect the result graphically. Looking at the result as printed above only gets us so far, and more importantly, it only shows us the maximum a posteriori (MAP) solution, but not the uncertainty around it. Luckily, GTSAM can also compute the <strong>posterior marginals</strong>, which show the uncertainty on each recovered pose as a Gaussian density <span class="math notranslate nohighlight">\(P(T_i|Z)\)</span>, taking into account all the measurements <span class="math notranslate nohighlight">\(Z\)</span>.</p>
 <p>In code, we do this via the <code class="docutils literal notranslate"><span class="pre">gtsam.Marginals</span></code> object, and we can plot marginals with a special function <code class="docutils literal notranslate"><span class="pre">plot_pose2</span></code>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -973,10 +981,10 @@ Value 5: (gtsam::Pose2)
 </div>
 <p>The result is shown graphically in Figure
 <a href="#fig:example" data-reference-type="ref" data-reference="fig:example">2</a>,
-along with covariance ellipses shown in green. These covariance ellipses
+along with covariance ellipses. These covariance ellipses
 in 2D indicate the marginal over position, <em>over all possible
-orientations</em>, and show the area which contain 99% of the probability
-mass (in 1D this would correspond to one standard deviation). The graph
+orientations</em>, and show the area that contains 99% of the probability
+mass (in 1D this would correspond to three standard deviations). The graph
 shows in a clear manner that the uncertainty on pose <span class="math notranslate nohighlight">\(T_{5}\)</span> is now
 much less than if there would be only odometry measurements. The pose
 with the highest uncertainty, <span class="math notranslate nohighlight">\(T_{4}\)</span>, is the one furthest away from
@@ -988,8 +996,11 @@ the graph to a global coordinate frame.</p>
 <blockquote>
 <div><p>Take PoseSLAM, add landmarks.</p>
 </div></blockquote>
-<p>So far we optimized over one type of variable, but often we build a landmark map <em>simultaneously</em> with the trajectory, i.e., this is <em>true</em> SLAM. In the next chapter, we will more thoroughly examine the full 3d case, whereas here we will model landmarks with 2D points in the plane. That does not mean that they cannot be standings for real 3-D entities in the environment: they can be the location of trees, poles, building corners, the sides of windows, the location of a stop sign in traffic, even moving pedestrians in more advanced SLAM/tracking applications.</p>
-<p>How do we measure such landmarks? The most typical <em>type</em> of measurements are either <strong>range</strong> measurements, <strong>bearing</strong> measurements, or <strong>bearing-range</strong> measurements of coverage combine the former two. The details on how to obtain them are typically application-dependent, and below we will abstract away the sensor pre-processing details. For example, in the case of a LIDAR sensors, bearing range measurements can be obtained by pre-processing the every LIDAR scan, detecting prominent vertical structures for example. A real-life example that we will discuss below involves detecting and measuring the bearing/range to trees. Another often-used sensors in autonomous driving includes radar, which can often be modeled or idealized to give bearing range measurements as well.</p>
+<p>So far we optimized over one type of variable, but often we build a landmark map <em>simultaneously</em> with the trajectory, i.e., this is <em>true</em> SLAM. In the next chapter, we will more thoroughly examine the full 3D case, whereas here we will model landmarks with 2D points in the plane. That does not mean that they cannot represent real 3-D entities in the environment: they can be the location of trees, poles, building corners, the sides of windows, the location of a stop sign in traffic, even moving pedestrians in more advanced applications.</p>
+<p>How do we measure such landmarks? The most typical <em>type</em> of measurements are either <strong>range</strong> measurements, <strong>bearing</strong> measurements, or <strong>bearing-range</strong> measurements. The details on how to obtain them are typically application-dependent, and below we will abstract away the sensor preprocessing details. For example, in the case of a LIDAR sensor,
+bearing-range measurements can be obtained by preprocessing every LIDAR scan, detecting prominent vertical structures for example. A real-life example that we will discuss below involves detecting and measuring the bearing-range to trees.
+Radar is another often-used sensor for autonomous driving, and it can often be modeled or idealized to give
+bearing-range measurements as well.</p>
 <p>To illustrate SLAM with landmarks, we build a small toy example with 3 bearing-range measurements to two different landmarks:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1036,7 +1047,7 @@ the graph to a global coordinate frame.</p>
 <div class="cell_output docutils container">
 <img alt="_images/35852e950b8dcf156386c848756dd8b44906f077508eb7cdceeb36ed4fd7f7fa.svg" src="_images/35852e950b8dcf156386c848756dd8b44906f077508eb7cdceeb36ed4fd7f7fa.svg" /></div>
 </div>
-<p>We optimize again with LM, and show the marginals on both robot position and landmarrs, as before:</p>
+<p>We optimize again using Levenberg Marquardt, and show the marginals on both robot position and landmarks, as before:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">LevenbergMarquardtOptimizer</span><span class="p">(</span><span class="n">slam_graph</span><span class="p">,</span> <span class="n">slam_initial</span><span class="p">)</span>
@@ -1079,7 +1090,7 @@ the graph to a global coordinate frame.</p>
 <p>This is a much larger factor graph than any we have encountered before, and we can distinguish several features:</p>
 <ul class="simple">
 <li><p>There is a prominent backbone of truck poses, connected via odometry measurements.</p></li>
-<li><p>There are about 20 landmarks, some of which are seen briefly, others are seen for longer periods of time.</p></li>
+<li><p>There are about 20 landmarks, some of which are seen briefly, while others are seen for longer periods of time.</p></li>
 <li><p>The graph is very sparsely connected, and hence optimization will still be quite fast.</p></li>
 </ul>
 <p>Optimizing with <code class="docutils literal notranslate"><span class="pre">gtsam.LevenbergMarquardtOptimizer</span></code>, again…</p>
@@ -1094,7 +1105,7 @@ the graph to a global coordinate frame.</p>
 </div>
 </div>
 </div>
-<p>Below the plot both the initial estimate, which was created by adding random noise on top of the ground truth, and the optimized trajectory:</p>
+<p>Below we plot both the initial estimate, which was created by adding random noise on top of the ground truth, and the optimized trajectory:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">initial_poses</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">utilities</span><span class="o">.</span><span class="n">extractPose2</span><span class="p">(</span><span class="n">initial</span><span class="p">)</span>
@@ -1107,7 +1118,7 @@ the graph to a global coordinate frame.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/c83667dcd3ecacd2c76324ae181b22a660d89fc313a0b0d46df2e5efdfead1f9.png" src="_images/c83667dcd3ecacd2c76324ae181b22a660d89fc313a0b0d46df2e5efdfead1f9.png" />
+<img alt="_images/6a1e53ea95a547eb9da9a9de45d041217623f9a48810100bd75c2962858bcbab.png" src="_images/6a1e53ea95a547eb9da9a9de45d041217623f9a48810100bd75c2962858bcbab.png" />
 </div>
 </div>
 </section>

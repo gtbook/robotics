@@ -439,9 +439,8 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">7.4.1. Visual SLAM</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#integrating-the-imu">7.4.1.1. Integrating the IMU</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#incorporating-visual-measurements">7.4.1.2. Incorporating Visual Measurements</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integrating-the-imu">7.4.1. Integrating the IMU</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#incorporating-visual-measurements">7.4.1.1. Incorporating Visual Measurements</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#structure-from-motion">7.4.2. Structure from Motion</a></li>
@@ -463,16 +462,14 @@ document.write(`
 <div><p>When we do SLAM with cameras, we call it visual SLAM.</p>
 </div></blockquote>
 <a class="reference internal image-reference" href="_images/S74-Autonomous_camera_drone-04.jpg"><img alt="Splash image with strange drone presumably thinking about maps" class="align-center" src="_images/S74-Autonomous_camera_drone-04.jpg" style="width: 40%;" /></a>
-<section id="id1">
-<h2><span class="section-number">7.4.1. </span>Visual SLAM<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h2>
-<p>Visual SLAM <em>almost</em> the same problem as the “SLAM with Landmarks” problem from Section 6.4, but we will now use 3D poses and 3D points, and we will use the inertial measurements from the IMU to inform us about the movement of the platform. This is a typical pipeline on drones, phones, etc, everything with an IMU.</p>
+<p>Visual SLAM <em>almost</em> the same problem as the “SLAM with Landmarks” problem from Section 6.4, but we will now use 3D poses and 3D points, and we will use the inertial measurements from the IMU to inform us about the movement of the platform. This is a typical pipeline on drones, phones, etc., everything with an IMU.</p>
 <section id="integrating-the-imu">
-<h3><span class="section-number">7.4.1.1. </span>Integrating the IMU<a class="headerlink" href="#integrating-the-imu" title="Permalink to this heading">#</a></h3>
+<h2><span class="section-number">7.4.1. </span>Integrating the IMU<a class="headerlink" href="#integrating-the-imu" title="Permalink to this heading">#</a></h2>
 <p>We start off by encoding the information provided by the inertial measurement unit (IMU) in a factor graph.</p>
 <p>As an example in code, below we define a scenario with forward velocity 2m/s, while pitching up
-with angular velocity 30 degree/sec (negative in FLU). We set up a simulation using a build-in GTSAM class called the <code class="docutils literal notranslate"><span class="pre">ScenarioRunner</span></code>. To use this class, we need to define four things:</p>
+with angular velocity 30 degree/sec (negative in FLU). We set up a simulation using a built-in GTSAM class called the <code class="docutils literal notranslate"><span class="pre">ScenarioRunner</span></code>. To use this class, we need to define four things:</p>
 <ul class="simple">
-<li><p>a scenario: below we use a “constant twist” scenario which is very much like the example in Section 7.2: a constant angular and linear velocity specified in the body frame;</p></li>
+<li><p>a scenario: below we use a “constant twist” scenario, which is very much like the example in Section 7.2, a constant angular and linear velocity specified in the body frame</p></li>
 <li><p>noise parameters for the gyroscope and accelerometer</p></li>
 <li><p>the sample frequency, which we set at 10Hz</p></li>
 <li><p>bias parameters, to simulate how a bias actually corrupts the IMU measurements</p></li>
@@ -508,8 +505,8 @@ with angular velocity 30 degree/sec (negative in FLU). We set up a simulation us
 </div>
 </div>
 </div>
-<p>The plan is this: we will use the <code class="docutils literal notranslate"><span class="pre">runner</span></code> class to generate noisy measurements and then use GTSAM to optimize for the optimal trajectory given those measurements.</p>
-<p>With the <code class="docutils literal notranslate"><span class="pre">scenario</span></code> class, we can create some (good) initial values by calling the <code class="docutils literal notranslate"><span class="pre">scenario.navState</span></code> at <span class="math notranslate nohighlight">\(t=0\)</span> as well as every 5 steps, which is twice a second given our sampling time <span class="math notranslate nohighlight">\(dt=0.1\)</span>:</p>
+<p>Our approach will be to use the <code class="docutils literal notranslate"><span class="pre">runner</span></code> class to generate noisy measurements, and then use GTSAM to optimize for the optimal trajectory given those measurements.</p>
+<p>With the <code class="docutils literal notranslate"><span class="pre">scenario</span></code> class, we can create some (good) initial values by calling the <code class="docutils literal notranslate"><span class="pre">scenario.navState</span></code> at <span class="math notranslate nohighlight">\(t=0\)</span> as well as every 5 steps, which is twice per second, given our sampling time <span class="math notranslate nohighlight">\(dt=0.1\)</span>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define key naming scheme for GTSAM</span>
@@ -552,8 +549,8 @@ Adding navState 6 at t=3.0 with position [3.8 0.  3.8]
 </div>
 </div>
 <p>Now we will create the most complicated factor graph of the entire book, as it involves a factor that is connected to no less than five unknowns at every step. GTSAM contains a powerful, state of the art factor called the <code class="docutils literal notranslate"><span class="pre">ImuFactor</span></code> that allows us to accumulate IMU measurements and periodically add the resulting relative pose information to the graph.</p>
-<p>The accumulation of (high-rate) IMU measurements is done in a class called <code class="docutils literal notranslate"><span class="pre">PreintegratedImuMeasurements</span></code>, abbreviated “PIM”., which is done at 10Hz.
-Every 5 steps we then add an <code class="docutils literal notranslate"><span class="pre">ImuFactor</span></code> that is connected to two successive poses with keys <code class="docutils literal notranslate"><span class="pre">X(i)</span></code> and <code class="docutils literal notranslate"><span class="pre">X(i+1)</span></code> and their corresponding velocities with keys <code class="docutils literal notranslate"><span class="pre">V(i)</span></code> and <code class="docutils literal notranslate"><span class="pre">V(i+1)</span></code>, as well as the (single) bias unknown with key <code class="docutils literal notranslate"><span class="pre">B(0)</span></code>.</p>
+<p>The accumulation of (high-rate) IMU measurements is done in a class called <code class="docutils literal notranslate"><span class="pre">PreintegratedImuMeasurements</span></code>, abbreviated “PIM”, which is done at 10Hz.
+Every 5 steps we add an <code class="docutils literal notranslate"><span class="pre">ImuFactor</span></code> that is connected to two successive poses with keys <code class="docutils literal notranslate"><span class="pre">X(i)</span></code> and <code class="docutils literal notranslate"><span class="pre">X(i+1)</span></code> and their corresponding velocities with keys <code class="docutils literal notranslate"><span class="pre">V(i)</span></code> and <code class="docutils literal notranslate"><span class="pre">V(i+1)</span></code>, as well as the (single) bias unknown with key <code class="docutils literal notranslate"><span class="pre">B(0)</span></code>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create graph</span>
@@ -606,8 +603,8 @@ Every 5 steps we then add an <code class="docutils literal notranslate"><span cl
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>initial error: 19103402.766586408
-final error: 2.3568733609431908e-23
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>initial error: 24078995.075689774
+final error: 2.1726650927845105e-23
 </pre></div>
 </div>
 </div>
@@ -627,18 +624,19 @@ final error: 2.3568733609431908e-23
 <img alt="_images/23c1e848be5e8354d29d72fc17cb5f2fa451f7011524a7cf2139f26737e44b8a.png" src="_images/23c1e848be5e8354d29d72fc17cb5f2fa451f7011524a7cf2139f26737e44b8a.png" />
 </div>
 </div>
-</section>
 <section id="incorporating-visual-measurements">
-<h3><span class="section-number">7.4.1.2. </span>Incorporating Visual Measurements<a class="headerlink" href="#incorporating-visual-measurements" title="Permalink to this heading">#</a></h3>
+<h3><span class="section-number">7.4.1.1. </span>Incorporating Visual Measurements<a class="headerlink" href="#incorporating-visual-measurements" title="Permalink to this heading">#</a></h3>
 <p>TBD, but see <a class="reference external" href="https://gtbook.github.io/gtsam-examples/StereoVOExample_large.html">this example</a>.</p>
 </section>
 </section>
 <section id="structure-from-motion">
 <h2><span class="section-number">7.4.2. </span>Structure from Motion<a class="headerlink" href="#structure-from-motion" title="Permalink to this heading">#</a></h2>
 <p><img alt="Balbianello" src="https://github.com/gtbook/robotics/blob/main/Figures7/Balbianello.jpg?raw=1" /></p>
-<p>Structure from Motion, or SfM, is the problem of reconstructing 3D structure from multiple images, even when taken from different cameras or at different times. In the figure above we show one such sequence, 5 images of the “Balbianello” villa in Italy, situated on lake Como.</p>
-<p>SfM is almost the same problem as Visual SLAM, but typically there is no odometry between cameras. The optimization problem is also called <strong>Bundle Adjustment</strong>. Arguably, the most difficult problem associated with SfM is feature detection, data association, and initializing the optimization.</p>
-<p>Below we load the Balbianello data from file and create factor graph as well as an initial estimate.</p>
+<p>Structure from Motion, or SfM, is the problem of computing the 3D structure of a scene from multiple images, either taken from different cameras, or taken at different times as the camera moves in the environment. In the figure above we show one such image sequence, five images of the “Balbianello” villa in Italy, situated on lake Como.</p>
+<p>SfM is almost the same problem as Visual SLAM, but typically there is no odometry information to relate
+different camear views. The resulting optimization problem is sometimes called <strong>Bundle Adjustment</strong>.
+The most difficult problems associated with SfM are feature detection, data association, and initializing the optimization.</p>
+<p>Below we load the Balbianello data from a file and create a factor graph, as well as an initial estimate.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">filename</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">findExampleDataFile</span><span class="p">(</span><span class="s2">&quot;Balbianello.out&quot;</span><span class="p">)</span>
@@ -674,7 +672,7 @@ final error: 2.3568733609431908e-23
 </div>
 </div>
 </div>
-<p>The result of SfM is a sparse point cloud and a set of well-determined camera poses and camera calibration, which can be densified using multi-view stereo techniques. This is out of scope of this chapter, however, and below we simply extract the 3D points and display them in 3D with <code class="docutils literal notranslate"><span class="pre">plotly</span></code>.</p>
+<p>The result of SfM is a sparse point cloud and a set of well-determined camera poses, which can be “densified” using multi-view stereo techniques. This is out of scope of this book, however, and below we simply extract the 3D points and display them in 3D with <code class="docutils literal notranslate"><span class="pre">plotly</span></code>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">structure</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">utilities</span><span class="o">.</span><span class="n">extractPoint3</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
@@ -763,9 +761,8 @@ final error: 2.3568733609431908e-23
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">7.4.1. Visual SLAM</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#integrating-the-imu">7.4.1.1. Integrating the IMU</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#incorporating-visual-measurements">7.4.1.2. Incorporating Visual Measurements</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integrating-the-imu">7.4.1. Integrating the IMU</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#incorporating-visual-measurements">7.4.1.1. Incorporating Visual Measurements</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#structure-from-motion">7.4.2. Structure from Motion</a></li>

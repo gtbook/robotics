@@ -463,12 +463,12 @@ document.write(`
 <section class="tex2jax_ignore mathjax_ignore" id="sensing-for-drones">
 <h1><span class="section-number">7.3. </span>Sensing for Drones<a class="headerlink" href="#sensing-for-drones" title="Permalink to this heading">#</a></h1>
 <blockquote>
-<div><p>Drones like inertial sensing and cameras.</p>
+<div><p>Most drones use inertial sensing and cameras.</p>
 </div></blockquote>
 <a class="reference internal image-reference" href="_images/S73-Autonomous_camera_drone-01.jpg"><img alt="Splash image with steampunk drone sporting an oversized IMU" class="align-center" src="_images/S73-Autonomous_camera_drone-01.jpg" style="width: 40%;" /></a>
 <section id="inertial-measurement-units">
 <h2><span class="section-number">7.3.1. </span>Inertial Measurement Units<a class="headerlink" href="#inertial-measurement-units" title="Permalink to this heading">#</a></h2>
-<p><strong>Inertial measurement units</strong> (IMUs) measure how a rigid body moves through space, and have undergone revolutionary transformations in the last century. Whereas they were initially developed for military and later civilian navigation purposes, miniaturized (MEMS) versions of them are now built into most of the mobile computing devices people use every day. IMUs often bundle the following three sensors: gyroscopes, accelerometers, and magnetometers, which we discuss in turn below.</p>
+<p><strong>Inertial measurement units</strong> (IMUs) measure how a rigid body moves through space, and have undergone revolutionary transformations since their invention. Whereas they were initially developed for military and later civilian navigation purposes, miniaturized (MEMS) versions of them are now built into most of the mobile computing devices people use every day. IMUs often bundle the following three sensors: gyroscopes, accelerometers, and magnetometers, which we discuss in turn below.</p>
 <section id="gyroscopes">
 <h3><span class="section-number">7.3.1.1. </span>Gyroscopes<a class="headerlink" href="#gyroscopes" title="Permalink to this heading">#</a></h3>
 <p>A <strong>gyroscope</strong> measures <em>changes</em> in orientation around three orthogonal axes, i.e., an angular velocity <span class="math notranslate nohighlight">\(\omega\)</span>.
@@ -479,17 +479,19 @@ R^n_b(t) = R^n_b(0) \int_{\tau=0}^t \exp \hat{\omega}(\tau) d\tau
 \]</div>
 <p>Above, the exponential map <span class="math notranslate nohighlight">\(\exp \hat{\omega}(\tau)\)</span> is as defined in the previous section, where we have also shown how to numerically integrate forward in rotation space.</p>
 <p>Unfortunately, when the gyroscope measurements are corrupted by random noise, this noise is also integrated over time. In addition, gyroscopes also suffer from <strong>bias</strong>, a non-zero offset of the measurements that changes slowly over time. If we know this bias, e.g., by estimating it, then we can subtract it first. However, if we do <em>not</em> know the bias, the resulting error grows linearly over time when it is integrated.</p>
-<p>Both effects mean that we will gradually lose track of the correct attitude <span class="math notranslate nohighlight">\(R^n_b(t)\)</span>, a process known as “drift”.
-Good (expensive) gyroscopes are able to track the attitude for a long time, whereas cheaper (MEMS) gyroscopes as those found in drones (and phones) can drift away from a usable attitude estimate in 100s or even 10s of seconds.</p>
+<p>Both effects mean that we will gradually lose track of the correct attitude <span class="math notranslate nohighlight">\(R^n_b(t)\)</span>, a process known as <em>drift</em>.
+Good (expensive) gyroscopes are able to track the attitude for a long time, whereas cheaper (MEMS) gyroscopes,
+such as those found in many drones (and phones), can drift away from a usable attitude estimate in 100’s or even 10’s of seconds.</p>
 </section>
 <section id="accelerometers">
 <h3><span class="section-number">7.3.1.2. </span>Accelerometers<a class="headerlink" href="#accelerometers" title="Permalink to this heading">#</a></h3>
-<p>An <strong>accelerometer</strong> measures the linear acceleration in 3D. While GPS can provide a measurement of the absolute position <span class="math notranslate nohighlight">\(r^n(t)\)</span> of a drone, provided one is outdoors and in an open area, the errors associated with GPS are often large. Accelerometers are much more precise, but unfortunately do not provide absolute position: because they measure <em>forces</em> exerted upon them, any measurement they provide is essentially an acceleration, i.e., the second derivative of position. Hence, of course, the name “accelerometer”.</p>
-<p>In theory, we can <em>doubly</em> integrate the measured acceleration to obtain the position <span class="math notranslate nohighlight">\(r^n(t)\)</span>.
-However, because of the double integration, the effect of random noise and bias error is doubly compounded, making the use of an accelerometer for estimating a drone’s position rather tricky. It can be done, but it requires great care and careful initialization of the biases. In fact, aircraft equipped with <em>inertial navigation systems</em> typically have an “INS alignment procedure” where the aircraft remains stationary on the taxi-way for a short period prior to take-off. Even then, unless the accelerometer can be augmented with absolute sources of position, such as GPS, an INS is bound to diverge sooner or later.</p>
+<p>An <strong>accelerometer</strong> measures linear acceleration in 3D. While GPS can provide a measurement of the absolute position <span class="math notranslate nohighlight">\(r^n(t)\)</span> of a drone, provided one is outdoors and in an open area, the errors associated with GPS are often large. Accelerometers are much more precise, but unfortunately do not provide absolute position: because they measure <em>forces</em> exerted upon them, any measurement they provide is essentially an acceleration, i.e., the second derivative of position. Hence, of course, the name “accelerometer”.</p>
+<p>In theory, we can <em>doubly</em> integrate the measured acceleration to obtain the position <span class="math notranslate nohighlight">\(r^n(t)\)</span>
+(velocity is the integral of acceleration, and position is the integral of velocity).
+However, because of the double integration, the effect of random noise and bias error is doubly compounded, making the use of an accelerometer for estimating a drone’s position rather tricky. It can be done, but it requires great care and careful estimation of the biases. In fact, aircraft equipped with <em>inertial navigation systems</em> typically have an “INS alignment procedure” where the aircraft remains stationary on the taxi-way for a short period prior to take-off. Even then, unless the accelerometer can be augmented with absolute sources of position, such as GPS, an INS is bound to diverge sooner or later.</p>
 <p>One of the most frequent and dependable uses of an accelerometer is to “aid” a gyroscope, maintaining absolute orientation over time.
 As discussed above, integrating the angular velocity <span class="math notranslate nohighlight">\(\omega(t)\)</span> over time accumulates error.
-Because gravity is such a strong signal it often dwarfs the accelerations due to maneuvering, and hence we can use it to correct our attitude estimate <span class="math notranslate nohighlight">\(\hat{R}^n_b\)</span>. This is known as “aiding” the gyroscope. Note that the attitude has <em>three</em> degrees of freedom, and the accelerometer can only correct two of them: pitch and roll. The absolute heading of the drone is still <em>unobservable</em>.</p>
+Because gravity is such a strong signal it often dwarfs the accelerations due to maneuvering, and hence we can use it to correct our attitude estimate (i.e., our estimate for the rotation matrix <span class="math notranslate nohighlight">\(R^n_b\)</span>). This is known as “aiding” the gyroscope. Note that the attitude has <em>three</em> degrees of freedom, and the accelerometer can only correct two of them: pitch and roll. The absolute heading of the drone is still unavailable.</p>
 </section>
 <section id="magnetometers">
 <h3><span class="section-number">7.3.1.3. </span>Magnetometers<a class="headerlink" href="#magnetometers" title="Permalink to this heading">#</a></h3>
@@ -500,10 +502,10 @@ The magnetic field roughly points to the magnetic north, although it really is 3
 </section>
 <section id="cameras">
 <h2><span class="section-number">7.3.2. </span>Cameras<a class="headerlink" href="#cameras" title="Permalink to this heading">#</a></h2>
-<p>The second frequently used sensor for drones is a camera, or multiple cameras. Cameras are light-weight, cheap, and they provide some amazing capabilities, which we will discuss below and in the next section. They are also <em>passive</em>, in that unlike LIDARs, they do not send out energy into the environment. This has obvious benefits in terms of stealth, important in some applications, but also is less power-hungry. In drones, battery autonomy is one of the key design constraints and hence cameras are a very popular sensor for that reason alone.</p>
-<p>By tracking features in the image(s) over time, cameras can provide relative motion measurements, i.e., <strong>visual odometry</strong>. If you have a pre-existing map of the environment, you can use a camera to <strong>localize</strong>, providing absolute orientation and position even without an IMU. <em>If</em> an IMU is available it can be used to track the high frequency <em>relative</em> motion of the drone, while the visual information provides a lower frequency but <em>absolute</em> measurement of the drone’s pose. In that way, IMU and camera measurements are perfectly complementary. In addition, if no map is available, cameras can be used to build a 3-D map of the environment in real time, using a paradigm called <strong>visual SLAM</strong>, which we will discuss in the perception section.</p>
+<p>The second frequently used sensor for drones is a camera, or multiple cameras. Cameras are light-weight, cheap, and they provide some amazing capabilities, which we will discuss below and in the next section. They are also <em>passive</em>, in that unlike LIDAR sensors, they do not send out energy into the environment. This has obvious benefits in terms of stealth, important in some applications, but also is less power-hungry. In drones, battery autonomy is one of the key design constraints, and cameras are a very popular sensor for that reason alone.</p>
+<p>By tracking features in the image(s) over time, cameras can provide relative motion measurements, i.e., <strong>visual odometry</strong>. Given a preexisting map of the environment, a camera can be used to <strong>localize</strong>, providing absolute orientation and position even without an IMU. <em>If</em> an IMU is available it can be used to track the high frequency <em>relative</em> motion of the drone, while the visual information provides a lower frequency but <em>absolute</em> measurement of the drone’s pose. In that way, IMU and camera measurements are perfectly complementary. In addition, if no map is available, cameras can be used to build a 3D map of the environment in real time, using a paradigm called <strong>visual SLAM</strong>, which we will discuss below.</p>
 <p>In this section, about the raw sensing, we will concentrate on the <strong>extrinsic calibration</strong> of cameras and camera rigs.
-We already discussed cameras as sensors in section 5.2, including their <em>intrinsic</em> calibration parameters such as focal length, image center, etc.
+We have already discussed cameras as sensors in section 5.2, including their <em>intrinsic</em> calibration parameters such as focal length, image center, etc.
 However, when using cameras on a drone, it is important to know the relative position and orientation of the camera with respect to the drone’s body frame, the so called <strong>extrinsic calibration parameters</strong>, consisting of a position <span class="math notranslate nohighlight">\(t^b_c\)</span> and orientation <span class="math notranslate nohighlight">\(R^b_c\)</span> of the camera in the body frame.</p>
 <p>We first need to specify the <em>position</em> of the camera(s) on the drone.
 Recall that the drone <em>body coordinate frame</em> is forward-left-up (FLU), and hence this is how we need to think about where the camera is:
@@ -536,7 +538,7 @@ When grouping with a length-1 list-like, you will need to pass a length-1 tuple 
 <img alt="_images/b9a865cabb23f3ea3fc447aab0bc06b42cdfdcbe915fe0ed8984aedefdb8d33e.png" src="_images/b9a865cabb23f3ea3fc447aab0bc06b42cdfdcbe915fe0ed8984aedefdb8d33e.png" />
 </div>
 </div>
-<p>To specify the <em>orientation</em> <span class="math notranslate nohighlight">\(R^b_c\)</span> for each of the cameras, we need to remember that (a) the Z-axis points into the scene, and (b) the Y-axis points down. The easiest way to specify this is by using the <code class="docutils literal notranslate"><span class="pre">gtsam.Rot3</span></code> constructor that takes three column vectors:</p>
+<p>To specify the <em>orientation</em> <span class="math notranslate nohighlight">\(R^b_c\)</span> for each of the cameras, we need to remember that (a) the <span class="math notranslate nohighlight">\(z\)</span>-axis points into the scene, and (b) the <span class="math notranslate nohighlight">\(y\)</span>-axis points down. The easiest way to specify this is by using the <code class="docutils literal notranslate"><span class="pre">gtsam.Rot3</span></code> constructor that takes three column vectors:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">F</span><span class="p">,</span><span class="n">L</span><span class="p">,</span><span class="n">U</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
@@ -580,27 +582,28 @@ When grouping with a length-1 list-like, you will need to pass a length-1 tuple 
 <section id="projecting-3d-points">
 <h2><span class="section-number">7.3.3. </span>Projecting 3D Points<a class="headerlink" href="#projecting-3d-points" title="Permalink to this heading">#</a></h2>
 <blockquote>
-<div><p>Transforming from navigation to drone to camera.</p>
+<div><p>Transforming coordinates into the right reference frame.</p>
 </div></blockquote>
-<p>We already know how to project points specified in the <em>camera</em> frame <span class="math notranslate nohighlight">\(C\)</span> from chapter 5. However, for visual odometry or visual slam, an additional step is needed: we need to transform the 3-D points from the navigation frame <span class="math notranslate nohighlight">\(N\)</span> into the camera frame. This does not only involve the camera extrinsics, but also the drone’s pose <span class="math notranslate nohighlight">\(T^n_b\)</span> in the navigation frame itself.</p>
+<p>We have seen in Chapter 5 how to project points specified in the <em>camera</em> frame onto the image plane. However, for visual odometry or visual SLAM, an additional step is needed: we need to transform the 3D points from the navigation frame into the camera frame. This involves both the camera extrinsics and the drone’s pose <span class="math notranslate nohighlight">\(T^n_b\)</span> in the navigation frame itself.</p>
 <p>Let us start by reviewing the fundamental projection equation from chapter 5:</p>
 <div class="math notranslate nohighlight">
 \[
 u = u_0 + f \frac{X^c}{Z^c} ~~~~ v = v_0 + f \frac{Y^c}{Z^c}.
 \]</div>
-<p>where <span class="math notranslate nohighlight">\(u_0\)</span>, <span class="math notranslate nohighlight">\(v_0\)</span>, and <span class="math notranslate nohighlight">\(f\)</span> are the <em>intrinsic</em> camera calibration parameters, and <span class="math notranslate nohighlight">\(P^c=(X^c,Y^c,Z^c)\)</span> are the coordinates of a 3D point in the <em>camera</em> coordinate frame, hence the superscript <span class="math notranslate nohighlight">\(C\)</span>. However, what if we are given the 3D coordinates <span class="math notranslate nohighlight">\(P^n=(X^n,Y^n,Z^n)\)</span> in the ENU navigation frame <span class="math notranslate nohighlight">\(N\)</span>, rather than in the camera frame? Because the camera is mounted on the drone, we have to do this in two steps:</p>
+<p>where <span class="math notranslate nohighlight">\(u_0\)</span>, <span class="math notranslate nohighlight">\(v_0\)</span>, and <span class="math notranslate nohighlight">\(f\)</span> are the <em>intrinsic</em> camera calibration parameters, and <span class="math notranslate nohighlight">\(P^c=(X^c,Y^c,Z^c)\)</span> are the coordinates of a 3D point in the <em>camera</em> coordinate frame, hence the superscript <span class="math notranslate nohighlight">\(C\)</span>. But what if we are given the 3D coordinates <span class="math notranslate nohighlight">\(P^n=(X^n,Y^n,Z^n)\)</span> in the ENU navigation frame, rather than in the camera frame? Because the camera is mounted on the drone, we do this in two steps:</p>
 <ul class="simple">
 <li><p>convert from navigation to body frame: <span class="math notranslate nohighlight">\(P^b = (R^n_b)^T (P^n - t^n_b)\)</span></p></li>
 <li><p>convert from body to camera frame: <span class="math notranslate nohighlight">\(P^c = (R^b_c)^T (P^b - t^b_c)\)</span></p></li>
 </ul>
-<p>where <span class="math notranslate nohighlight">\(T^n_b=(R^n_b,t^n_b)\)</span> is the drone’s FLU body pose with respect to the ENU navigation frame, and <span class="math notranslate nohighlight">\(T^b_c=(R^b_c,t^b_c)\)</span> is the camera extrinsics specified in that body frame. In case there are multiple cameras the first conversion needs to be done only once, but the second conversion will be camera specific.</p>
+<p>where <span class="math notranslate nohighlight">\(T^n_b=(R^n_b,t^n_b)\)</span> is the drone’s FLU body pose with respect to the ENU navigation frame, and <span class="math notranslate nohighlight">\(T^b_c=(R^b_c,t^b_c)\)</span> is the camera pose (i.e., the extrinsic camera parameters) specified in the body frame. In case there are multiple cameras the first conversion needs to be done only once, but the second conversion will be camera specific.</p>
 </section>
 <section id="a-stereo-example-in-code">
 <h2><span class="section-number">7.3.4. </span>A Stereo Example in Code<a class="headerlink" href="#a-stereo-example-in-code" title="Permalink to this heading">#</a></h2>
 <blockquote>
 <div><p>It all works, folks!</p>
 </div></blockquote>
-<p>As an example, let us assume the drone is at position <span class="math notranslate nohighlight">\(t^n_b=(100, 300, 10)\)</span>, i.e., 10 meters high, flying north:</p>
+<p>As an example, let us assume the drone is at position <span class="math notranslate nohighlight">\(t^n_b=(100, 300, 10)\)</span> (i.e., 10 meters high)
+and flying north:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">E</span><span class="p">,</span><span class="n">N</span><span class="p">,</span><span class="n">U</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
@@ -632,7 +635,7 @@ c2P = [ 2.95 -1.99  9.9 ] in camera frame 2
 </div>
 </div>
 </div>
-<p>As you can see, the point in body coordinates is <span class="math notranslate nohighlight">\(10m\)</span> ahead, because the x-coordinate is <span class="math notranslate nohighlight">\(10\)</span> in the FLU body frame. Moreover, the points expressed in the two forward-looking camera frames are identical <em>except</em> for the X coordinates, which is exactly what we expect from a stereo rig. We can then apply the intrinsics to get the final image coordinates, for example using a <span class="math notranslate nohighlight">\(640\times 480\)</span> image and a focal length of <span class="math notranslate nohighlight">\(300\)</span>:</p>
+<p>As you can see, the point in body coordinates is <span class="math notranslate nohighlight">\(10m\)</span> ahead, because the <span class="math notranslate nohighlight">\(x\)</span>-coordinate is <span class="math notranslate nohighlight">\(10\)</span> in the FLU body frame. Moreover, the points expressed in the two forward-looking camera frames are identical <em>except</em> for the <span class="math notranslate nohighlight">\(x\)</span> coordinates, which is exactly what we expect from a stereo rig. We can then apply the intrinsics to get the final image coordinates, for example using a <span class="math notranslate nohighlight">\(640\times 480\)</span> image and a focal length of <span class="math notranslate nohighlight">\(300\)</span>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">f</span> <span class="o">=</span> <span class="mi">640</span><span class="p">,</span> <span class="mi">480</span><span class="p">,</span> <span class="mi">300</span>
@@ -651,7 +654,7 @@ u2,v2 = [409.39 179.7 ] in image 2
 </div>
 </div>
 </div>
-<p>Again, exactly what we expect for a stereo rig. In this case the disparity is <span class="math notranslate nohighlight">\(412.4-409.4\approx3\)</span> pixels, and if we plug that into the fundamental stereo equation from Section 5.2, with baseline <span class="math notranslate nohighlight">\(10cm\)</span> (check the extrinsics!), we indeed obtain that the point is at a depth of <span class="math notranslate nohighlight">\(10m\)</span>:</p>
+<p>Again, this is exactly what we expect for a stereo rig. In this case the disparity is <span class="math notranslate nohighlight">\(412.4-409.4\approx3\)</span> pixels, and if we plug that into the fundamental stereo equation from Section 5.2, with baseline <span class="math notranslate nohighlight">\(10cm\)</span> (check the extrinsics!), we indeed obtain that the point is at a depth of <span class="math notranslate nohighlight">\(10m\)</span>:</p>
 <div class="math notranslate nohighlight">
 \[
 Z = B \frac{f}{d} = 0.1 \frac{300}{3} = 10

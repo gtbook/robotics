@@ -476,7 +476,7 @@ We will discuss both linear and angular velocity, i.e., the rate of change in th
 <li><p>the <strong>navigation frame</strong> <span class="math notranslate nohighlight">\(N\)</span>, which you can think of as attached to the Earth;</p></li>
 <li><p>the <strong>body frame</strong> <span class="math notranslate nohighlight">\(B\)</span>, which you can think of as rigidly attached to the drone.</p></li>
 </ul>
-<p>In the next section different conventions for these coordinate frames are discussed in more detail, but below we simply use the subscripts “n” and “s” in the definitions and examples, irrespective of which convention is used.</p>
+<p>In the next section different conventions for these coordinate frames are discussed in more detail, but below we simply use the subscripts “n” and “b” in the definitions and examples, irrespective of which convention is used.</p>
 <section id="rotations-in-3d-aka-so-3">
 <h2><span class="section-number">7.1.1. </span>Rotations in 3D aka SO(3)<a class="headerlink" href="#rotations-in-3d-aka-so-3" title="Permalink to this heading">#</a></h2>
 <p>In Section 6.1, we constructed a rotation matrix <span class="math notranslate nohighlight">\(R^0_1 \in SO(2)\)</span>
@@ -493,7 +493,7 @@ x_b \cdot y_n &amp; y_b \cdot y_n &amp; z_b \cdot y_n \\
 x_b \cdot z_n &amp; y_b \cdot z_n &amp; z_b \cdot z_n \\
 \end{bmatrix}
 \end{split}\]</div>
-<p>The expression for rotational coordinate transformations is now exactly the
+<p>The expression for <em>rotational</em> coordinate transformations is now exactly the
 same as in Chapter 6.
 Given a point <span class="math notranslate nohighlight">\(p\)</span> with coordinates expressed relative to the body
 frame <span class="math notranslate nohighlight">\(B\)</span>, we compute its coordinates <span class="math notranslate nohighlight">\(p^n\)</span> in the navigation frame <span class="math notranslate nohighlight">\(N\)</span> as follows:</p>
@@ -550,7 +550,7 @@ a rotation about an implicit <span class="math notranslate nohighlight">\(z\)</s
 <section id="d-rigid-transforms-aka-se-3">
 <h2><span class="section-number">7.1.2. </span>3D Rigid transforms aka SE(3)<a class="headerlink" href="#d-rigid-transforms-aka-se-3" title="Permalink to this heading">#</a></h2>
 <p>In a similar way we can extend the group of 2D rigid transforms <span class="math notranslate nohighlight">\(SE(2)\)</span> to the case
-of rotation and translation in three dimensions.
+of <em>rotation and translation</em> in three dimensions.
 Suppose a point <span class="math notranslate nohighlight">\(p\)</span> is rigidly attached to frame <span class="math notranslate nohighlight">\(B\)</span>, and
 we wish to determine its coordinates with respect to the navigation frame <span class="math notranslate nohighlight">\(N\)</span>.
 If the coordinates of <span class="math notranslate nohighlight">\(p\)</span> with respect to frame <span class="math notranslate nohighlight">\(B\)</span> are given by <span class="math notranslate nohighlight">\(p^b\)</span>,
@@ -564,9 +564,11 @@ of frame <span class="math notranslate nohighlight">\(B\)</span> w.r.t. frame <s
 and  <span class="math notranslate nohighlight">\(t^n_b \in \mathbb{R}^3\)</span> gives the location of the origin
 of frame <span class="math notranslate nohighlight">\(B\)</span> specified in the coordinates of frame <span class="math notranslate nohighlight">\(N\)</span>.</p>
 <p>We denote this transform by
-<span class="math notranslate nohighlight">\(T_{b}^{n}\doteq\left(R_{b}^{n},\,t_{b}^{n}\right)\)</span>. These transforms <span class="math notranslate nohighlight">\(T_{b}^{n}\)</span> are elements of
-the  <strong>special Euclidean group</strong> <span class="math notranslate nohighlight">\(SE(3)\)</span>. Similarly to the previous chapter we can view the
-group <span class="math notranslate nohighlight">\(SE(3)\)</span> as a subgroup of the general linear group <span class="math notranslate nohighlight">\(GL(4)\)</span> of degree 4,
+<span class="math notranslate nohighlight">\(T_{b}^{n}\doteq\left(R_{b}^{n},\,t_{b}^{n}\right)\)</span>.
+These transforms <span class="math notranslate nohighlight">\(T_{b}^{n}\)</span> are elements of
+the  <strong>special Euclidean group</strong> of order 3, <span class="math notranslate nohighlight">\(SE(3)\)</span>.
+Similarly to the previous chapter we can construct
+matrices in <span class="math notranslate nohighlight">\(SE(3)\)</span> by<br />
 by embedding the rotation and translation into a <span class="math notranslate nohighlight">\(4\times4\)</span> invertible matrix defined as</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
@@ -575,10 +577,10 @@ R_{b}^{n} &amp; t_{b}^{n}\\
 0 &amp; 1
 \end{bmatrix}.
 \end{split}\]</div>
-<p>We can then implement the group operation as simple matrix multiplication.</p>
-<p>And, in analogy with the 2D case, by embedding 3D points in a four-vector, a
-3D rigid transform acting on a point can be implemented by matrix-vector
-multiplication:</p>
+<p>Again, as in the previous chapter, we can implement the group operation as simple matrix multiplication.
+And, in analogy with the 2D case, if we use the homogeneous coordinates
+for a point <span class="math notranslate nohighlight">\(p\)</span>, we define
+a 3D homogeneous transformation as</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 \begin{bmatrix}
@@ -612,15 +614,15 @@ all <span class="math notranslate nohighlight">\(T \in SE(3)\)</span> we have <s
 <p>The inverse <span class="math notranslate nohighlight">\(T^{-1}\)</span> is given by:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
-T^{-1} = \begin{bmatrix}R &amp; d\\0_2 &amp; 1\end{bmatrix}^{-1}
- = \begin{bmatrix}R^T &amp; -R^T d\\0_2 &amp; 1\end{bmatrix}
+T^{-1} = \begin{bmatrix}R &amp; d\\0_3 &amp; 1\end{bmatrix}^{-1}
+ = \begin{bmatrix}R^T &amp; -R^T d\\0_3 &amp; 1\end{bmatrix}
 \end{split}\]</div>
-<p>However, 3D rigid transforms do <em>not</em> commute. Hence, <span class="math notranslate nohighlight">\(SE(3)\)</span> is a <strong>non-commutative group</strong>. In fact, so is the group <span class="math notranslate nohighlight">\(SO(3)\)</span>: 3D rotations only commute when they represent rotations along the same axis. A special case is the set of 2D rotations from the last chapter, which are all around the imagined z-axis: this explains why rotations in 2D commute, but rotations in 3D do not, in general.</p>
+<p>However, 3D rigid transforms do <em>not</em> commute. Hence, <span class="math notranslate nohighlight">\(SE(3)\)</span> is a <strong>noncommutative group</strong>. In fact, so is the group <span class="math notranslate nohighlight">\(SO(3)\)</span>: 3D rotations only commute when they represent rotations along the same axis. A special case is the set of 2D rotations from the last chapter, which are all around the imagined z-axis: this explains why rotations in 2D commute, but rotations in 3D do not, in general.</p>
 </section>
 <section id="se-3-in-gtsam">
 <h2><span class="section-number">7.1.4. </span><span class="math notranslate nohighlight">\(SE(3)\)</span> in GTSAM<a class="headerlink" href="#se-3-in-gtsam" title="Permalink to this heading">#</a></h2>
 <blockquote>
-<div><p><code class="docutils literal notranslate"><span class="pre">Pose3</span></code> is a non-commutative group which acts on <code class="docutils literal notranslate"><span class="pre">Point3</span></code>.</p>
+<div><p><code class="docutils literal notranslate"><span class="pre">Pose3</span></code> is a noncommutative group which acts on <code class="docutils literal notranslate"><span class="pre">Point3</span></code>.</p>
 </div></blockquote>
 <p>Again, all of this is built into GTSAM, where both 3D poses and 3D rigid transforms are represented by the type <code class="docutils literal notranslate"><span class="pre">Pose3</span></code>, with rotation matrices represented by <code class="docutils literal notranslate"><span class="pre">Rot3</span></code>:</p>
 <div class="cell docutils container">
@@ -649,7 +651,7 @@ corresponding to the transformation matrix:
 </div>
 </div>
 </div>
-<p>We can verify the group properties for 3D transforms in code, as we do below, noting that the last assertion for commutativity yields <code class="docutils literal notranslate"><span class="pre">False</span></code>, as <span class="math notranslate nohighlight">\(SE(3)\)</span> is a <em>non-commutative</em> group:</p>
+<p>We can verify the group properties for 3D transforms in code, as we do below, noting that the last assertion for commutativity yields <code class="docutils literal notranslate"><span class="pre">False</span></code>, as <span class="math notranslate nohighlight">\(SE(3)\)</span> is a <em>noncommutative</em> group:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Closure:&quot;</span><span class="p">,</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">T</span> <span class="o">*</span> <span class="n">T</span><span class="p">,</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose3</span><span class="p">))</span> <span class="c1"># closure</span>
@@ -692,7 +694,10 @@ P0 = [ 5.78599563 18.50261322 33.        ]
 </section>
 <section id="velocity">
 <h2><span class="section-number">7.1.5. </span>Velocity<a class="headerlink" href="#velocity" title="Permalink to this heading">#</a></h2>
-<p>The linear velocity <span class="math notranslate nohighlight">\(v\)</span> of the origin of a moving frame is easy to understand.
+<blockquote>
+<div><p>Velocity comes in two flavors: linear and angular.</p>
+</div></blockquote>
+<p>The <strong>linear velocity</strong> <span class="math notranslate nohighlight">\(v\)</span> of the origin of a moving frame is easy to understand.
 This velocity is obtained merely by computing the derivative of the translation <span class="math notranslate nohighlight">\(t\)</span> of the frame’s origin:</p>
 <div class="math notranslate nohighlight">
 \[
@@ -702,12 +707,12 @@ v \doteq \frac{d}{dt}t
 <p>The derivative <span class="math notranslate nohighlight">\(\dot{R}\)</span> of orientation is more interesting.
 We begin by introducing the family of <span class="math notranslate nohighlight">\(3 \times 3\)</span> skew symmetric matrices, denoted by <span class="math notranslate nohighlight">\(\mathfrak{so}(3)\)</span>.
 The relationship between <span class="math notranslate nohighlight">\(\mathfrak{so}(3)\)</span> and <span class="math notranslate nohighlight">\(SO(3)\)</span> will become apparent shortly.
-A matrix <span class="math notranslate nohighlight">\(N\)</span> is said to be a <strong>skew symmetric matrix</strong> if</p>
+A matrix <span class="math notranslate nohighlight">\(S\)</span> is said to be a <strong>skew symmetric matrix</strong> if</p>
 <div class="math notranslate nohighlight">
 \[
 S = - S^T
 \]</div>
-<p>If we examine this equation for each element of <span class="math notranslate nohighlight">\(N\)</span>, we obtain nine equations,</p>
+<p>If we examine this equation for each element of <span class="math notranslate nohighlight">\(S\)</span>, we obtain nine equations,</p>
 <div class="math notranslate nohighlight">
 \[ s_{i,j} = - s_{j,i}, ~~~~ i,j = 1,2,3 \]</div>
 <p>When <span class="math notranslate nohighlight">\(i=j\)</span>, we have <span class="math notranslate nohighlight">\(s_{ii} = -s_{ii}\)</span>, which is satisfied only if <span class="math notranslate nohighlight">\(s_{ii} = 0\)</span>.
@@ -723,7 +728,7 @@ s_z &amp; 0 &amp; -s_x \\
 -s_y &amp; s_x &amp; 0
 \end{bmatrix}
 \end{split}\]</div>
-<p>Note that we define the <strong>hat operator</strong> <span class="math notranslate nohighlight">\(\hat{\cdot}\)</span>, which maps a vector <span class="math notranslate nohighlight">\(s = (s_x, s_y, s_z)\)</span> to
+<p>in which the <strong>hat operator</strong> <span class="math notranslate nohighlight">\(\hat{\cdot}\)</span>, maps a vector <span class="math notranslate nohighlight">\(s = (s_x, s_y, s_z)\)</span> to
 a skew symmetric matrix as above.</p>
 <p>Skew symmetric matrices play a key role in representing the angular rate of change of coordinate frames.
 Let <span class="math notranslate nohighlight">\(R(t)\)</span> be a time-varying rotation matrix.
@@ -736,17 +741,55 @@ If we differentiate both sides of this equation, we obtain</p>
      \dot{R}^T R + R^T \dot{R} &amp;= 0
 \end{aligned}
 \end{split}\]</div>
-<p>In other words, <span class="math notranslate nohighlight">\(R^T \dot{R} = - \dot{R}^T R\)</span> and hence the matrix <span class="math notranslate nohighlight">\(R^T \dot{R}\)</span> <em>is a skew symmetric matrix</em></p>
+<p>In other words, <span class="math notranslate nohighlight">\(\dot{R}^T R = -R^T \dot{R}\)</span> and hence the matrix <span class="math notranslate nohighlight">\(\dot{R}^T R\)</span> <em>is a skew symmetric matrix</em></p>
 <div class="math notranslate nohighlight">
-\[\hat{\omega} = R^T \dot{R}\]</div>
-<p>with <span class="math notranslate nohighlight">\(\omega\)</span> some three-vector. Multiplying by <span class="math notranslate nohighlight">\(R\)</span> on both sides immediately gives an equation of <span class="math notranslate nohighlight">\(\dot{R}\)</span> in terms of <span class="math notranslate nohighlight">\(\omega\)</span>:</p>
+\[\hat{\omega} = \dot{R}^T R\]</div>
+<p>with <span class="math notranslate nohighlight">\(\omega\)</span> some three-vector. Recalling that <span class="math notranslate nohighlight">\(R^{-1} = R^T\)</span>,
+we can solve this equation for <span class="math notranslate nohighlight">\(\dot{R}\)</span> to obtain:</p>
 <div class="math notranslate nohighlight">
-\[\dot{R} = R \hat{\omega}.\]</div>
+\[\dot{R} = \hat{\omega} R .\]</div>
 <p>The above gives an expression for the derivative of a rotation matrix <span class="math notranslate nohighlight">\(\dot{R}\)</span> that
 will be used below in our formulation of drone dynamics.
 The vector <span class="math notranslate nohighlight">\(\omega\)</span> is called the <strong>angular velocity</strong>,
 and is the same angular velocity that you may have
 learned in an introductory physics course.</p>
+<p>Note that the angular velocity vector <span class="math notranslate nohighlight">\(\omega\)</span> is a free vector, and therefore,
+we can define its coordinates with respect to the coordinate frame of our choice.
+To understand this, it is worth reconsidering the above in the context of
+a specific rotation matrix, say <span class="math notranslate nohighlight">\(R^n_b\)</span> that specifies the orientation of
+body frame with respect to the navigation frame.
+In this case, making explicit the relevant coordinate frames, we would write</p>
+<div class="math notranslate nohighlight">
+\[\dot{R}^n_b = \hat{\omega}^n_{n,b} R^n_b .\]</div>
+<p>Here, the notation <span class="math notranslate nohighlight">\(\hat{\omega}^n_{n,b}\)</span> can be understood to mean that
+the angular velocity <span class="math notranslate nohighlight">\(\omega\)</span> determines the relative rate of angular rotation
+of the body frame with respect to the navigation frame (the “<span class="math notranslate nohighlight">\(n,b\)</span>” in the subscript), and that
+the coordinates of the angular velocity vector are given with respect to the navigation
+frame (the “<span class="math notranslate nohighlight">\(n\)</span>” in superscript).
+Most often, the subscript can be inferred from context, and will be omitted.
+If, for example, we are concerned with the rotation of the quadrotor with respect
+to the navigation frame, the two coordinate frames will be clear from the context,
+and we can reduce clutter by omitting the subscript.
+In contrast, we will typically keep the superscript to make clear the reference
+frame in which the angular velocity is defined.
+This will be particularly important, for example, when we express control inputs relative to the
+quadrotor’s body frame, with a control goal of stabilizing its orientation
+relative to the fixed navigation coordinate frame.</p>
+<p>Equipped with this notation, it is easy to understand how to transform angular velocity vectors from one frame to another.
+If we are given <span class="math notranslate nohighlight">\(\omega^n_{n,b}\)</span> (i.e., the angular velocity is expressed with respect to the navigation frame),
+and we instead wish to specify the angular velocity with respect to the body frame, we merely perform the coordinate
+transformation</p>
+<div class="math notranslate nohighlight">
+\[
+\omega^b_{n,b} = R^b_n \omega^n_{n,b}
+\]</div>
+<p>or, when the context is understood, more compactly, as</p>
+<div class="math notranslate nohighlight">
+\[
+\omega^b = R^b_n \omega^n
+\]</div>
+<p>This transformation will be useful when expressing a desired angular velocity
+with respect to the body frame of a quadrotor.</p>
 </section>
 <section id="summary">
 <h2><span class="section-number">7.1.6. </span>Summary<a class="headerlink" href="#summary" title="Permalink to this heading">#</a></h2>
