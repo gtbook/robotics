@@ -971,8 +971,10 @@ Here, we set the altitude to be a 1.5m. We choose <span class="math notranslate 
 <p>We control the position of the drone using a 3DOF vectored thrust input: thrust magnitude, roll, and pitch. The idea outlined here is a simplified version of the geometric controller in a <a class="reference external" href="https://doi.org/10.23919/ACC.2019.8815189">2019 paper by Gamadedara et al.</a>, but while the paper is fairly advanced, the idea is rather simple. Remember the translational equations of motion from Section 7.2:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
-\dot r^n = v^n \\
-m \dot v ^n = R^n_b f + m g^n
+\begin{align}
+\dot r^n &amp;= v^n \\
+m \dot v ^n &amp;= R^n_b f + m g^n
+\end{align}
 \end{split}\]</div>
 <p>where <span class="math notranslate nohighlight">\(m\)</span> is the mass. Let us concentrate on the dynamics part: we <em>know</em> the acceleration <span class="math notranslate nohighlight">\(\dot v^n_d\)</span> we want from our planned trajectory, and gravity is a given. Hence, to make the drone do what we want, we can only change the quantity <span class="math notranslate nohighlight">\(R^n_b f\)</span>. Let us call that the <strong>vectored thrust</strong> <span class="math notranslate nohighlight">\(T^n\)</span>, where the superscript <span class="math notranslate nohighlight">\(n\)</span> denotes that the thrust is defined in the navigation frame. Then, to obtain the <em>desired</em> acceleration <span class="math notranslate nohighlight">\(\dot v^n_d\)</span>, the vectored thrust <span class="math notranslate nohighlight">\(T^n\)</span> has to satisfy</p>
 <div class="math notranslate nohighlight">
@@ -1147,8 +1149,10 @@ T^n = m \dot v^n_d - m g^n - K_x (X - X_d) - K_v (\dot X - \dot X_d)
 <p>While we cannot <em>instantaneously</em> produce the desired vectored thrust <span class="math notranslate nohighlight">\(T^n\)</span> at any given time, the dynamics of a quadrotor are fast enough that we can get rather close. Remember that the inertia matrix, which resists rotational acceleration, is typically small around the roll and pitch axes. Let us recall the the (approximate) rotational equations of motion, in the body frame <span class="math notranslate nohighlight">\(B\)</span>:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
-\dot{R}^n_b	= R^n_b\hat{\omega}^b \\
-I \dot{\omega}^b \approx \tau^b
+\begin{align}
+\dot{R}^n_b	&amp;= R^n_b\hat{\omega}^b \\
+I \dot{\omega}^b &amp;\approx \tau^b
+\end{align}
 \end{split}\]</div>
 <p>For typical drone configurations the inertial matrix <span class="math notranslate nohighlight">\(I\)</span> can be well approximated as <span class="math notranslate nohighlight">\(\text{diag}(I_{xx},I_{yy},I_zz)\)</span>, with the roll-pitch components <span class="math notranslate nohighlight">\(I_{xx}, I_{yy} &lt;&lt; I_{zz}\)</span>, the yaw component. Since <span class="math notranslate nohighlight">\(I_{xx}\)</span> and <span class="math notranslate nohighlight">\(I_{yy}\)</span> are small, and we have four powerful motors that can provide differential thrust very quickly, those dynamics are quite fast. Hence, if the attitude <span class="math notranslate nohighlight">\(R^n_b\)</span> does not yet align the total thrust <span class="math notranslate nohighlight">\(f\)</span> with the desired thrust vector <span class="math notranslate nohighlight">\(T^n\)</span>, we can quickly make it so by rotating.</p>
 <p>To figure out how to make the drone tilt, think of a video game where you are given a two axis controller and the screen displays the <em>current</em> orientation of the drone’s Z-axis <span class="math notranslate nohighlight">\(\hat k^n_b\)</span> and the <em>desired</em> thrust vector <span class="math notranslate nohighlight">\(T^n\)</span>. Your job is to align the two by rolling (rotate around the body X-axis <span class="math notranslate nohighlight">\(\hat x^n_b\)</span>) and pitching (rotating around the body Y-axis <span class="math notranslate nohighlight">\(\hat y^n_n\)</span>). Looking at the drone from the outside, in the navigation frame, this will actually be rather hard: typically the controls are fixed to the <em>body</em> frame, and at every step you need to perform a mental rotation to find the right action. That is why racing drone pilots much prefer to use a “first person view” or FPV display and controller.</p>
@@ -1208,7 +1212,7 @@ control[0] = [0.034 0.026 9.81 ]
 </div>
 </div>
 </div>
-<p>This example, with <span class="math notranslate nohighlight">\(K_F = K_L = K = 0.1\)</span>, illustrates the behavior: we want to increase the thrust <span class="math notranslate nohighlight">\(T_F\)</span> in the <span class="math notranslate nohighlight">\(x\)</span> direction to <span class="math notranslate nohighlight">\(0.26\)</span>, so we will positively <em>pitch</em> around the Y-axis: counter-clockwise, pointing the <span class="math notranslate nohighlight">\(z\)</span>-axis forward. Likewise, we want a thrust towards the right (<span class="math notranslate nohighlight">\(T_^_L-0.34\)</span>), so we need to roll counter-clockwise, as well, around the Forward/<span class="math notranslate nohighlight">\(x\)</span>-axis.</p>
+<p>This example, with <span class="math notranslate nohighlight">\(K_F = K_L = K = 0.1\)</span>, illustrates the behavior: we want to increase the thrust <span class="math notranslate nohighlight">\(T_F\)</span> in the <span class="math notranslate nohighlight">\(x\)</span> direction to <span class="math notranslate nohighlight">\(0.26\)</span>, so we will positively <em>pitch</em> around the Y-axis: counter-clockwise, pointing the <span class="math notranslate nohighlight">\(z\)</span>-axis forward. Likewise, we want a thrust towards the right (<span class="math notranslate nohighlight">\(T_L = -0.34\)</span>), so we need to roll counter-clockwise, as well, around the Forward/<span class="math notranslate nohighlight">\(x\)</span>-axis.</p>
 <section id="calculating-motor-thrust-vectors">
 <h3><span class="section-number">7.5.8.1. </span>Calculating Motor Thrust Vectors<a class="headerlink" href="#calculating-motor-thrust-vectors" title="Permalink to this heading">#</a></h3>
 <p>Creating the requested torque and thrust by the control law is done by adjusting the individual motor thrusts <span class="math notranslate nohighlight">\(f_i\)</span>. Recalling the force-torque equation in Section 7.2, if we ensure <span class="math notranslate nohighlight">\(f_{1} + f_{3} = f_{2} + f_{4}\)</span> we obtain :</p>
@@ -1228,10 +1232,12 @@ f = f_1 + f_2 + f_3 + f_4.
 <p>and hence we now have four equations in four unknowns. Solving for the forces yields</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
-f_1 = 0.25 \left( f + \tau_x/l + \tau_y/l \right) \\
-f_2 = 0.25 \left( f - \tau_x/l + \tau_y/l \right) \\
-f_3 = 0.25 \left( f + \tau_x/l - \tau_y/l \right) \\
-f_4 = 0.25 \left( f - \tau_x/l - \tau_y/l \right)
+\begin{align}
+f_1 &amp;= 0.25 \left( f + \tau_x/l + \tau_y/l \right) \\
+f_2 &amp;= 0.25 \left( f - \tau_x/l + \tau_y/l \right) \\
+f_3 &amp;= 0.25 \left( f + \tau_x/l - \tau_y/l \right) \\
+f_4 &amp;= 0.25 \left( f - \tau_x/l - \tau_y/l \right)
+\end{align}
 \end{split}\]</div>
 <p>where <span class="math notranslate nohighlight">\(l\)</span> is the arm length, and <span class="math notranslate nohighlight">\(\tau_x\)</span> and <span class="math notranslate nohighlight">\(\tau_y\)</span> are the roll and pitch moment, respectively.</p>
 <p>The piece of code below implements this; however, this simplified code does not make any guarantees on not hitting torque limits. Hence, in practice more sophisticated approaches are used return a solution subject to actual control limits, while still trying to deliver some desired torques and/or thrust.</p>
