@@ -441,10 +441,8 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inference-in-bayes-nets">3.4.1. Inference in Bayes Nets</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#full-posterior-inference">3.4.1.1. Full Posterior Inference</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#most-probable-explanation">3.4.1.2. Most Probable Explanation</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#efficiency-not">3.4.1.3. Efficiency (Not!)</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#maximum-a-posteriori-estimation">3.4.1.4. Maximum a Posteriori estimation</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">3.4.1.5. Exercises</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#maximum-a-posteriori-estimation">3.4.1.2. Maximum a Posteriori Estimation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">3.4.1.3. Exercises</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hidden-markov-models">3.4.2. Hidden Markov Models</a><ul class="nav section-nav flex-column">
@@ -459,7 +457,7 @@ document.write(`
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#computing-with-factor-graphs">3.4.6. Computing with Factor Graphs</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#naive-mpe-with-gtsam">3.4.6.1. Naive MPE with GTSAM</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#naive-map-estimation-with-gtsam">3.4.6.1. Naive MAP estimation with GTSAM</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-max-product-algorithm-for-hmms">3.4.7. The Max-Product Algorithm for HMMs</a><ul class="nav section-nav flex-column">
@@ -529,30 +527,33 @@ document.write(`
 </div></blockquote>
 <a class="reference internal image-reference" href="_images/S34-iRobot_vacuuming_robot-05.jpg"><img alt="Splash image with deeply contemplative robot" class="align-center" src="_images/S34-iRobot_vacuuming_robot-05.jpg" style="width: 40%;" /></a>
 <p>Bayes nets are great for <em>modeling</em>, but for inferring the state of the robot over time we need better data structures.
-In this section, we more formally define what we mean by inference, and introduce MAP and MPE inference.
-We then define hidden Markov models, and highlight their connection with robot
+In this section, we more formally define what we mean by inference,
+building on the methods introduced in Section 2.4.
+We then define hidden Markov models (HMMs), and highlight their connection with robot
 localization over time.
 Finally, we show how to efficiently perform inference by converting any Bayes net (with evidence) to a factor graph
-and performing full posterior inference, MPE, and MAP estimation for HMMs.</p>
+and performing full posterior inference and MAP estimation for HMMs.</p>
 <section id="inference-in-bayes-nets">
 <h2><span class="section-number">3.4.1. </span>Inference in Bayes Nets<a class="headerlink" href="#inference-in-bayes-nets" title="Permalink to this heading">#</a></h2>
 <blockquote>
-<div><p>Inference can mean full posterior inference, most probable explanation, or maximum a posteriori inference.</p>
+<div><p>Inference could mean estimating the full posterior distribution, or computing a single, maximum a posteriori estimate.</p>
 </div></blockquote>
 <p><strong>Inference</strong> is the process of determining knowledge about a subset of
-variables given the known values for another subset of variables. In
-this section we will talk about how to do inference when the joint
+variables given the known values for another subset of variables.
+In this section we will describe describe inference when the joint
 distribution is specified using a Bayes net, but we will not take
-advantage of the specific sparse structure of the network. Hence, the algorithms
+advantage of the specific sparse structure of the network.
+Hence, the algorithms
 below are completely general, for any (discrete) joint probability
 distribution, as long as you can evaluate the joint distribution.</p>
 <section id="full-posterior-inference">
 <h3><span class="section-number">3.4.1.1. </span>Full Posterior Inference<a class="headerlink" href="#full-posterior-inference" title="Permalink to this heading">#</a></h3>
-<p>The simplest case occurs when we can <em>partition</em> the variables into two
+<p>The simplest kind of inference occurs when we can <em>partition</em> the variables into two
 sets: the hidden variables <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> and the observed values
-<span class="math notranslate nohighlight">\(\mathcal{Z}\)</span>. Then we can simply apply Bayes’ rule, but now applied to
+<span class="math notranslate nohighlight">\(\mathcal{Z}\)</span>.
+Then we can simply apply Bayes’ theorem, but now applied to
 <em>sets</em> of variables, to obtain an expression for the posterior over the
-hidden variables <span class="math notranslate nohighlight">\(\mathcal{X}\)</span>. Using the “easy” version of Bayes’ law
+hidden variables <span class="math notranslate nohighlight">\(\mathcal{X}\)</span>. Using the “easy” version of Bayes’ theorem
 we obtain</p>
 <div class="math notranslate nohighlight">
 \[P(\mathcal{X}|\mathcal{Z}=\mathfrak{z})\propto P(\mathcal{X}, \mathcal{Z}=\mathfrak{z}), \]</div>
@@ -591,9 +592,9 @@ As before, let us assume that each variable can take on 10 different outcomes, a
 <td class="text-center"><p>2</p></td>
 <td class="text-center"><p><em>P(W=2|X=1, Z=7)P(X=1|Y=2, Z=7)P(Y=2|Z=7)P(Z=7)</em></p></td>
 </tr>
-<tr class="row-even"><td class="text-center"><p>…</p></td>
-<td class="text-center"><p>…</p></td>
-<td class="text-center"><p>…</p></td>
+<tr class="row-even"><td class="text-center"><p><span class="math notranslate nohighlight">\(\vdots\)</span></p></td>
+<td class="text-center"><p><span class="math notranslate nohighlight">\(\vdots\)</span></p></td>
+<td class="text-center"><p><span class="math notranslate nohighlight">\(\vdots\)</span></p></td>
 </tr>
 <tr class="row-odd"><td class="text-center"><p>10</p></td>
 <td class="text-center"><p>9</p></td>
@@ -606,67 +607,70 @@ As before, let us assume that each variable can take on 10 different outcomes, a
 </tbody>
 </table>
 <p>We normalize by calculating <span class="math notranslate nohighlight">\(\sum_{x, y} P(W=2, X=x, Y=y, Z=7)\)</span> by summing over all these entries, and subsequently dividing all entries by the sum.</p>
-</section>
-<section id="most-probable-explanation">
-<h3><span class="section-number">3.4.1.2. </span>Most Probable Explanation<a class="headerlink" href="#most-probable-explanation" title="Permalink to this heading">#</a></h3>
-<p>A common inference problem associated with Bayes nets is determining the <strong>most
-probable explanation</strong> or MPE for <span class="math notranslate nohighlight">\(\mathcal{X}\)</span>: given the values
-<span class="math notranslate nohighlight">\(\mathfrak{z}\)</span> for <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span>, what is the most probable joint
-assignment to the other variables <span class="math notranslate nohighlight">\(\mathcal{X}\)</span>? While the posterior
-gives us the complete picture, the MPE is different in nature: it is a
-single assignment of values to <span class="math notranslate nohighlight">\(\mathcal{X}\)</span>:</p>
-<div class="math notranslate nohighlight">
-\[x^*_{MPE} = \arg \max_x P(\mathcal{X}|\mathcal{Z}=\mathfrak{z}).\]</div>
-<p>For example, given
-<span class="math notranslate nohighlight">\(\mathfrak{z}=(2, 7)\)</span>, the MPE for <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> could be <span class="math notranslate nohighlight">\(X=3\)</span> and
-<span class="math notranslate nohighlight">\(Y=6\)</span>. Note that to compute the MPE, we need not bother with
-normalizing: we can simply find the maximum entry in the unnormalized
-posterior values.</p>
-</section>
-<section id="efficiency-not">
-<h3><span class="section-number">3.4.1.3. </span>Efficiency (Not!)<a class="headerlink" href="#efficiency-not" title="Permalink to this heading">#</a></h3>
-<p>In both the full posterior and MPE inference problems, the simple algorithms outlined above are
-<em>not</em> efficient. In the example the table contains 100 entries, and in
+<p>Estimating the full posterior using this approach is, obviously, <em>not</em> efficient.
+In this example the table contains 100 entries, and in
 general the number of entries is exponential in the size of
-<span class="math notranslate nohighlight">\(\mathcal{X}\)</span>. However, when inspecting the entries in the table
+<span class="math notranslate nohighlight">\(\mathcal{X}\)</span>.
+However, when inspecting the entries in the table
 there are already some obvious ways to save: for example, <span class="math notranslate nohighlight">\(P(Z=7)\)</span> is a
 common factor in all entries, so clearly we need not bother
 multiplying it in. Below we will discuss methods to fully
 exploit the structure of the Bayes net to perform efficient inference.</p>
-<p>If we had an efficient way to do inference, an MPE estimate would be a
+</section>
+<section id="maximum-a-posteriori-estimation">
+<h3><span class="section-number">3.4.1.2. </span>Maximum a Posteriori Estimation<a class="headerlink" href="#maximum-a-posteriori-estimation" title="Permalink to this heading">#</a></h3>
+<p>For the purpose of decision making,
+it is often the case that we do not require the full posterior distribution.
+In these cases, we could rely on methods introduced in Section 2.4,
+such as Maximum Likelihood Estimation (MLE)
+or Maximum a posteriori (MAP) estimation.
+Here, we consider MAP estimation.</p>
+<p>Suppose we are given the values
+<span class="math notranslate nohighlight">\(\mathfrak{z}\)</span> for <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span>.
+The MAP estimate of the
+joint assignment to the other variables <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> is given by</p>
+<div class="math notranslate nohighlight">
+\[x^*_{MAP} = \arg \max_x P(\mathcal{X}|\mathcal{Z}=\mathfrak{z}).\]</div>
+<p>For example, given
+<span class="math notranslate nohighlight">\(\mathfrak{z}=(2, 7)\)</span>, the MAP estimate for <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> could be <span class="math notranslate nohighlight">\(X=3\)</span> and
+<span class="math notranslate nohighlight">\(Y=6\)</span>. Note that to compute the MAP estimate, we need not bother with
+normalizing: we can simply find the maximum entry in the unnormalized
+posterior values.</p>
+<p>If we had an efficient way to do inference, a MAP estimate would be a
 great way to estimate the trajectory of a robot over time. For example,
 using the “robot” dynamic Bayes net example from the last section, let us
 assume that we are given the value of all observations and actions.
-Then the MPE would simply be a trajectory of robot states.
+Then the MAP estimate would simply be a trajectory of robot states.
 This is an example of robot localization over time, and is a
-key capability of a mobile robot.</p>
-</section>
-<section id="maximum-a-posteriori-estimation">
-<h3><span class="section-number">3.4.1.4. </span>Maximum a Posteriori estimation<a class="headerlink" href="#maximum-a-posteriori-estimation" title="Permalink to this heading">#</a></h3>
-<p>Finally, another well known inference problem is determining the <strong>maximum a
-posteriori</strong> or MAP estimate: given the values of some variables
-<span class="math notranslate nohighlight">\(\mathcal{Z}\)</span>, what joint assignment to a <em>subset</em>
-<span class="math notranslate nohighlight">\(\mathcal{X}\)</span> of the other variables maximizes the posterior
-<span class="math notranslate nohighlight">\(P(\mathcal{X}|\mathcal{Z}=\mathfrak{z})\)</span>?
-In this case the variables are
-partitioned into three sets: the variables of interest <span class="math notranslate nohighlight">\(\mathcal{X}\)</span>,
+key requirement for autonomous mobile robots.</p>
+<p>We can extend this idea to estimate only a subset of the unknown variables.
+This can be useful when there are unknown variables that are not relevant
+for the decision at hand.
+We will refer to these unknown and irrelevant variables as <strong>nuisance variables</strong>.
+In this case, we partition the variables into three sets:
+the variables of interest <span class="math notranslate nohighlight">\(\mathcal{X}\)</span>,
 the nuisance variables <span class="math notranslate nohighlight">\(\mathcal{Y}\)</span>, and the observed variables
-<span class="math notranslate nohighlight">\(\mathcal{Z}\)</span>:</p>
+<span class="math notranslate nohighlight">\(\mathcal{Z}\)</span>.
+Now, the posterior <span class="math notranslate nohighlight">\(P(\mathcal{X}|\mathcal{Z}=\mathfrak{z})\)</span>
+can be determined by marginalizing (Section 2.4.7) over
+the nuisance variables:</p>
 <div class="math notranslate nohighlight">
 \[
 P(\mathcal{X}|\mathcal{Z}=\mathfrak{z})=\sum_{\mathfrak{y}}P(\mathcal{X}, \mathcal{Y}=\mathfrak{y}|\mathcal{Z}=\mathfrak{z})\propto\sum_{\mathfrak{y}}P(\mathcal{X}, \mathcal{Y}=\mathfrak{y}, \mathcal{Z}=\mathfrak{z}).
 \]</div>
-<p>Finding a MAP estimate is more expensive than finding the MPE, as in
+<p>This approach to dealing with nuisance variables
+increases the computational cost of finding the MAP estimate.
+In
 addition to enumerating all possible combinations of <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> and
 <span class="math notranslate nohighlight">\(\mathcal{Y}\)</span> values, we now need to calculate
 a possibly large number of sums, each exponential in the size of
 <span class="math notranslate nohighlight">\(\mathcal{Y}\)</span>. In addition, the <em>number</em> of sums is
 exponential in the size of <span class="math notranslate nohighlight">\(\mathcal{X}\)</span>. Below we will see that
-while we can still exploit the Bayes net structure, MAP estimates are
-fundamentally more expensive even in that case.</p>
+while we can still exploit the Bayes net structure,
+this computation can still be quite expensive.</p>
 </section>
 <section id="exercises">
-<h3><span class="section-number">3.4.1.5. </span>Exercises<a class="headerlink" href="#exercises" title="Permalink to this heading">#</a></h3>
+<h3><span class="section-number">3.4.1.3. </span>Exercises<a class="headerlink" href="#exercises" title="Permalink to this heading">#</a></h3>
 <ol class="arabic simple">
 <li><p>Show that in the example above, if we condition on known values for <span class="math notranslate nohighlight">\(\mathcal{Z}=(X,Z)\)</span>, the
 posterior <span class="math notranslate nohighlight">\(P(W,Z|X,Y)\)</span> factors, and as a consequence we only have to
@@ -766,8 +770,8 @@ L(\mathcal{X}; \mathcal{Z}=\mathfrak{z}) &amp; \doteq P(\mathcal{Z}=\mathfrak{z}
 &amp; =P(z_1|X_1)P(z_2|X_2)P(z_3|X_3)\\
 &amp; =L(X_1; Z_1)L(X_2; Z_2)L(X_3; Z_3)\end{aligned}
 \end{split}\]</div>
-<p>Hence, a naive implementation for finding the <strong>most probable
-explanation</strong> (MPE) for <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> would tabulate all possible
+<p>Hence, a naive implementation for finding the MAP estimate
+for <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> would tabulate all possible
 trajectories <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> and calculate the posterior <span class="math notranslate nohighlight">\(P(\mathcal{X}|\mathcal{Z})\)</span> for each one.
 Unfortunately the number of entries in this giant table is
 <em>exponential</em> in the number of states. Not only is this computationally
@@ -944,8 +948,8 @@ unnormalized density <span class="math notranslate nohighlight">\(\phi(X)\)</spa
 given value, by simply evaluating every factor and multiplying the
 results. The factor graph represents the unnormalized posterior, i.e.,
 <span class="math notranslate nohighlight">\(\phi(\mathcal{X})\propto P(\mathcal{X}|\mathcal{Z})\)</span>.</p>
-<p>Evaluation opens up the way to <strong>optimization</strong>, e.g., finding the most probable
-explanation or MPE, as we will do below. In the case of discrete
+<p>Evaluation opens up the way to <strong>optimization</strong>, e.g., finding the MAP estimate,
+as we will do below. In the case of discrete
 variables, graph search methods can be applied, but we will use a
 different approach.</p>
 <p>While finding the maximum of the posterior is often of most
@@ -968,28 +972,28 @@ far beyond that: they are at the core of the sparse linear solvers we
 use as building blocks, they clearly show the nature of filtering and
 incremental inference, and lead naturally to distributed and/or parallel
 versions of robotics.</p>
-<section id="naive-mpe-with-gtsam">
-<h3><span class="section-number">3.4.6.1. </span>Naive MPE with GTSAM<a class="headerlink" href="#naive-mpe-with-gtsam" title="Permalink to this heading">#</a></h3>
-<p>Because our factor graph is so small, it does not hurt to show off how easy it is to implement the naive algorithm to find the MPE. We just loop over all possible state trajectories, and keep track of the one with the highest value:</p>
+<section id="naive-map-estimation-with-gtsam">
+<h3><span class="section-number">3.4.6.1. </span>Naive MAP estimation with GTSAM<a class="headerlink" href="#naive-map-estimation-with-gtsam" title="Permalink to this heading">#</a></h3>
+<p>Because our factor graph is so small, it does not hurt to show off how easy it is to implement the naive algorithm to find the MAP estimate. We just loop over all possible state trajectories, and keep track of the one with the highest value:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mpe_value</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="n">mpe_trajectory</span> <span class="o">=</span> <span class="kc">None</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">map_value</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">map_trajectory</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="k">for</span> <span class="n">x1</span> <span class="ow">in</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="p">:</span>
     <span class="k">for</span> <span class="n">x2</span> <span class="ow">in</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">x3</span> <span class="ow">in</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="p">:</span>
             <span class="n">trajectory</span> <span class="o">=</span> <span class="n">VARIABLES</span><span class="o">.</span><span class="n">assignment</span><span class="p">({</span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="n">x1</span><span class="p">,</span> <span class="n">X</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="n">x2</span><span class="p">,</span> <span class="n">X</span><span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="n">x3</span><span class="p">})</span>
             <span class="n">value</span> <span class="o">=</span> <span class="n">graph</span><span class="p">(</span><span class="n">trajectory</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="n">mpe_value</span><span class="p">:</span>
-                <span class="n">mpe_value</span> <span class="o">=</span> <span class="n">value</span>
-                <span class="n">mpe_trajectory</span> <span class="o">=</span> <span class="n">trajectory</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;found MPE solution with value </span><span class="si">{</span><span class="n">mpe_value</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
-<span class="n">pretty</span><span class="p">(</span><span class="n">mpe_trajectory</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="n">map_value</span><span class="p">:</span>
+                <span class="n">map_value</span> <span class="o">=</span> <span class="n">value</span>
+                <span class="n">map_trajectory</span> <span class="o">=</span> <span class="n">trajectory</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;found MAP solution with value </span><span class="si">{</span><span class="n">map_value</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
+<span class="n">pretty</span><span class="p">(</span><span class="n">map_trajectory</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>found MPE solution with value 0.3277:
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>found MAP solution with value 0.3277:
 </pre></div>
 </div>
 <div class="output text_html"><div>
@@ -1005,20 +1009,21 @@ versions of robotics.</p>
 </table>
 </div></div></div>
 </div>
-<p>Remember that this MPE is <em>for a given action and measurement sequence</em>. All those fixed values are implicit in the factors that we have added to the factor graph in <code class="docutils literal notranslate"><span class="pre">graph</span></code> above.</p>
+<p>Remember that this MAP estimate is <em>for a given action and measurement sequence</em>. All those fixed values are implicit in the factors that we have added to the factor graph in <code class="docutils literal notranslate"><span class="pre">graph</span></code> above.</p>
 </section>
 </section>
 <section id="the-max-product-algorithm-for-hmms">
 <h2><span class="section-number">3.4.7. </span>The Max-Product Algorithm for HMMs<a class="headerlink" href="#the-max-product-algorithm-for-hmms" title="Permalink to this heading">#</a></h2>
 <blockquote>
-<div><p>Max-product on HMMs, also known as the Viterbi algorithm, is a dynamic-programming algorithm for finding the MPE.</p>
+<div><p>Max-product on HMMs, also known as the Viterbi algorithm, is a dynamic-programming algorithm for finding a
+MAP estimate.</p>
 </div></blockquote>
-<p>In this section we discuss an algorithm that is much faster than the naive algorithm to find the MPE.
+<p>In this section we discuss an algorithm that is much faster than the naive algorithm to find the MAP estimate.
 Given a factor graph of size <span class="math notranslate nohighlight">\(n\)</span>, the <strong>max-product algorithm</strong> is an <span class="math notranslate nohighlight">\(O(n)\)</span> algorithm
-to find the maximum probable explanation or MPE.
+to find the MAP estimate.
 We will use the example from Figure
 <a href="#fig:HMM-FG" data-reference-type="ref" data-reference="fig:HMM-FG">2</a>
-to give the intuition. To find the MPE for <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> we need to
+to give the intuition. To find the MAP estimate for <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> we need to
 <em>maximize</em> the product</p>
 <div class="math notranslate nohighlight">
 \[\phi(X_1, X_2, X_3)=\prod\phi_{i}(\mathcal{X}_{i})\]</div>
@@ -1177,14 +1182,14 @@ This is indicated by making the argument list equal to the empty set <span class
 Indeed, <span class="math notranslate nohighlight">\(g_3\)</span> just tells us what the best value for <span class="math notranslate nohighlight">\(X_3\)</span> is, and <span class="math notranslate nohighlight">\(\tau\)</span>
 tells us the corresponding value. Because it incorporates the factors
 from the previous elimination steps, this will in fact be exactly the
-MPE solution, and the recursion ends!</p>
+MAP solution, and the recursion ends!</p>
 </section>
 <section id="back-substitution">
 <h3><span class="section-number">3.4.7.4. </span>Back-substitution<a class="headerlink" href="#back-substitution" title="Permalink to this heading">#</a></h3>
 <p>Once we know the value for <span class="math notranslate nohighlight">\(X_3\)</span>, we can simply plug it into the
 lookup table <span class="math notranslate nohighlight">\(g_2(X_3)\)</span> to get the value for <span class="math notranslate nohighlight">\(X_2\)</span>, which we can
 then plug into the lookup table <span class="math notranslate nohighlight">\(g_1\)</span> to get the value for <span class="math notranslate nohighlight">\(X_1\)</span>,
-and we recover the MPE in one single backward pass.</p>
+and we recover the MAP value in one single backward pass.</p>
 </section>
 <section id="summary-max-product">
 <h3><span class="section-number">3.4.7.5. </span>Summary: Max-Product<a class="headerlink" href="#summary-max-product" title="Permalink to this heading">#</a></h3>
@@ -1197,7 +1202,7 @@ eliminate each variable <span class="math notranslate nohighlight">\(X_{j}\)</sp
 table <span class="math notranslate nohighlight">\(g_{j}(X_{j+1})\)</span>, as well as a reduced factor graph <span class="math notranslate nohighlight">\(\Phi_{j+1:n}\)</span>
 on the remaining variables. After all variables have been eliminated,
 the algorithm returns a chain of lookup tables that can be used to
-recover the MPE in reverse elimination order.</p>
+recover the MAP value in reverse elimination order.</p>
 <hr class="docutils" />
 <p><code class="docutils literal notranslate"><span class="pre">MaxProductHMM</span></code> (<span class="math notranslate nohighlight">\(\Phi_{1:n}\)</span>):</p>
 <ul class="simple">
@@ -1229,11 +1234,11 @@ recover the MPE in reverse elimination order.</p>
 </section>
 <section id="max-product-in-gtsam">
 <h3><span class="section-number">3.4.7.7. </span>Max-product in GTSAM<a class="headerlink" href="#max-product-in-gtsam" title="Permalink to this heading">#</a></h3>
-<p>GTSAM’s bread and butter is factor graphs, and finding the MPE is easy:</p>
+<p>GTSAM’s bread and butter is factor graphs, and finding the MAP value is easy:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mpe</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">optimize</span><span class="p">()</span>
-<span class="n">pretty</span><span class="p">(</span><span class="n">mpe</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">map_value</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">optimize</span><span class="p">()</span>
+<span class="n">pretty</span><span class="p">(</span><span class="n">map_value</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1263,7 +1268,7 @@ algorithm that instead produces a Bayes net that calculates the
 posterior probability <span class="math notranslate nohighlight">\(P(\mathcal{X}|\mathcal{Z})\)</span>. Whereas the
 max-product produces a DAG of lookup tables, the sum-product produces a
 DAG of conditionals, i.e., a Bayes net. This is particularly interesting
-if one is not content with a most probable explanation or MPE, but
+if one is not content with just the MAP value, but
 instead wants the <strong>full Bayesian probability distribution</strong>.
 The fact that we recover this distribution in the form of a Bayes net again is
 satisfying, because, as we have seen, that is an economical representation of a
@@ -1347,7 +1352,7 @@ is no back-substitution step. However, one might consider ancestral
 sampling as a type of back-substitution: the reverse elimination order
 is always a topological sort of the resulting Bayes net! Hence, after
 applying the sum-product algorithm, we can sample as many realizations from the
-posterior as we want: rather than just one MPE, we now have access to all
+posterior as we want: rather than just one MAP value, we now have access to all
 plausible explanations, and ancestral sampling will yield them in
 exactly the correct frequencies.</p>
 <section id="sidebar">
@@ -1361,8 +1366,8 @@ E_{P(\mathcal{X}|\mathcal{Z})}[f(x)]\approx\sum f(\mathcal{X}^{(s)})
 \]</div>
 <p>For example, we can calculate the posterior mean of how far the robot
 traveled, either in Euclidean or Manhattan distance, using this approach.
-Doing this will provide a more reliable estiate than merely
-calculating the distance for the MPE,
+Doing this will provide a more reliable estimate than merely
+calculating the distance for the MAP value,
 since this approach averages over the entire probability distribution rather
 than just using a single (albeit most probable) estimate.</p>
 </section>
@@ -1479,7 +1484,7 @@ than just using a single (albeit most probable) estimate.</p>
 </table>
 </div></div></div>
 </div>
-<p>These approximate marginals say how probable it is that the robot was in a particular room at a particular time step. This is much richer information that what is available in the MPE, which is just a point estimate for the trajectory.</p>
+<p>These approximate marginals say how probable it is that the robot was in a particular room at a particular time step. This is much richer information that what is available in the MAP value, which is just a point estimate for the trajectory.</p>
 </section>
 <section id="id2">
 <h3><span class="section-number">3.4.8.3. </span>Exercise<a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h3>
@@ -1505,7 +1510,7 @@ distinction between frontal and parent values, so we just have a key, or a list 
 <span class="o">-</span> <span class="n">sumProduct</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">DiscreteBayesNet</span>
 </pre></div>
 </div>
-<p>The first one returns the MPE as an assignment to discrete variables, whereas the second returns an entire Bayes net, encoding the posterior.</p>
+<p>The first one returns the MAP value as an assignment to discrete variables, whereas the second returns an entire Bayes net, encoding the posterior.</p>
 <p>There is actually a method <code class="docutils literal notranslate"><span class="pre">maxProduct</span></code> as well, which we have not discussed:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">-</span> <span class="n">maxProduct</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">DiscreteLookupDAG</span>
 </pre></div>
@@ -1614,10 +1619,8 @@ distinction between frontal and parent values, so we just have a key, or a list 
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inference-in-bayes-nets">3.4.1. Inference in Bayes Nets</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#full-posterior-inference">3.4.1.1. Full Posterior Inference</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#most-probable-explanation">3.4.1.2. Most Probable Explanation</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#efficiency-not">3.4.1.3. Efficiency (Not!)</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#maximum-a-posteriori-estimation">3.4.1.4. Maximum a Posteriori estimation</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">3.4.1.5. Exercises</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#maximum-a-posteriori-estimation">3.4.1.2. Maximum a Posteriori Estimation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">3.4.1.3. Exercises</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hidden-markov-models">3.4.2. Hidden Markov Models</a><ul class="nav section-nav flex-column">
@@ -1632,7 +1635,7 @@ distinction between frontal and parent values, so we just have a key, or a list 
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#computing-with-factor-graphs">3.4.6. Computing with Factor Graphs</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#naive-mpe-with-gtsam">3.4.6.1. Naive MPE with GTSAM</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#naive-map-estimation-with-gtsam">3.4.6.1. Naive MAP estimation with GTSAM</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-max-product-algorithm-for-hmms">3.4.7. The Max-Product Algorithm for HMMs</a><ul class="nav section-nav flex-column">

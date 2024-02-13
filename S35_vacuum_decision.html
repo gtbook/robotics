@@ -1321,7 +1321,14 @@ b = [10.  8.  0.  8.  0.]
 </div></blockquote>
 <p>Now that we know how to compute the value function for an arbitrary policy <span class="math notranslate nohighlight">\(\pi\)</span>,
 we turn our attention to computing the <strong>optimal value function</strong>,
-which can be used to construct the <strong>optimal policy</strong> <span class="math notranslate nohighlight">\(\pi^*\)</span></p>
+which can be used to construct the <strong>optimal policy</strong> <span class="math notranslate nohighlight">\(\pi^*\)</span>.</p>
+<p>To begin, we recall the famous <strong>principle of optimality</strong>
+as stated by Bellman in a
+<a class="reference external" href="https://doi.org/10.1109/TAC.1960.6429288">1960 article in the IEEE Transactions on Automatic Control</a>:</p>
+<ul class="simple">
+<li><p><em>An optimal policy has the property that whatever the initial state and initial decision are, the remaining decisions must constitute an optimal policy with regard to the state resulting from the first decision.</em></p></li>
+</ul>
+<p>This principle enables a key step in the derivation of a recursvie formulation for the optimal policy.</p>
 <p>The optimal value function  <span class="math notranslate nohighlight">\(V^*: {\cal X} \rightarrow {\cal A}\)</span>
 is merely the value function for the optimal policy.
 This can be written mathematically as</p>
@@ -1332,22 +1339,28 @@ V^*(x) &amp;= \max_\pi V^{\pi}(x) \\
 &amp;=
 \max_\pi \left\{ \bar{R}(x,\pi(x)) + \gamma \sum_{x'} P(x'|x, \pi(x)) V^\pi(x')   \right\}\\
 &amp;=
+\max_\pi \left\{ \bar{R}(x,\pi(x)) + \gamma \sum_{x'} P(x'|x, \pi(x)) V^*(x')   \right\}\\
+&amp;=
 \max_a  \left\{ \bar{R}(x,a) + \gamma \sum_{x'} P(x'|x, a) V^*(x')   \right\} \\
 \end{aligned}
 \end{split}\]</div>
 <p>In the above, the second line follows immediately by substituting
 our earlier expression for <span class="math notranslate nohighlight">\(V^\pi\)</span> into the maximization.
 The third line is more interesting.
-Because the value function has been written in recursive form,
+By applying the principle of optimality, we replace <span class="math notranslate nohighlight">\(V^\pi(x')\)</span> with <span class="math notranslate nohighlight">\(V^*(x')\)</span>.
+Simply put, if remaining decisions from state <span class="math notranslate nohighlight">\(x'\)</span> must constitute an optimal policy,
+the corresponding value function at <span class="math notranslate nohighlight">\(x'\)</span> will be the optimal value function for <span class="math notranslate nohighlight">\(x'\)</span>.
+For the fourth line,
+because the value function has been written in recursive form,
 <span class="math notranslate nohighlight">\(\pi\)</span> is only applied to the current state (i.e., when <span class="math notranslate nohighlight">\(\pi\)</span> is evaluated in the optimization,
 it always appears as <span class="math notranslate nohighlight">\(\pi(x)\)</span>).
 Therefore, we can write the optimization
 as a maximization with respect to the <em>action</em> applied in the <em>current state</em>, rather than as a
-maximization with respect to the entire policy <span class="math notranslate nohighlight">\(\pi\)</span>!
-This equation is known as the <strong>Bellman equation</strong>.
+maximization with respect to the entire policy <span class="math notranslate nohighlight">\(\pi\)</span>!</p>
+<p>This equation is known as the <strong>Bellman equation</strong>.
 It is named after Richard Bellman, the mathematician
-who discovered it, and it is one of the most important equations in all of computer science.</p>
-<p>The Bellman equation has a very nice interpretation:
+who discovered it, and it is one of the most important equations in all of computer science.
+The Bellman equation has a very nice interpretation:
 the optimal value function of a state is the maximum expected reward
 <em>plus</em> the discounted expected value function when acting optimally in the future.</p>
 <p>Using Bellman’s equation, it is straightforward to compute the optimal policy from a given state.</p>
@@ -1537,7 +1550,9 @@ We already knew that it should be pretty good at getting to the living room as f
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Hallway) ~ 97.93
-V(Dining Room) ~ 85.84
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Dining Room) ~ 85.84
 </pre></div>
 </div>
 </div>
