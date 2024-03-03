@@ -1,0 +1,658 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>1.3. The Mathematics of Robotics &#8212; Introduction to Robotics and Perception</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="_static/style.css?v=51e3b7cf" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js?v=36754332"></script>
+    <script async="async" src="https://www.googletagmanager.com/gtag/js?id=UA-312077-7"></script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'UA-312077-7');
+            </script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'UA-312077-7');
+            </script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'S13_math';</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="2. A Trash Sorting Robot" href="S20_sorter_intro.html" />
+    <link rel="prev" title="1.2. Reasoning" href="S12_reasoning.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/logo.png" class="logo__image only-light" alt="Introduction to Robotics and Perception - Home"/>
+    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Introduction to Robotics and Perception - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    Introduction to Robotics and Perception
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="S10_introduction.html">1. Introduction</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="S11_models.html">1.1. Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S12_reasoning.html">1.2. Reasoning</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">1.3. The Mathematics of Robotics</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="S20_sorter_intro.html">2. A Trash Sorting Robot</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="S21_sorter_state.html">2.1. Modeling the World State</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S22_sorter_actions.html">2.2. Actions for Sorting Trash</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S23_sorter_sensing.html">2.3. Sensors for Sorting Trash</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S24_sorter_perception.html">2.4. Perception</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S25_sorter_decision_theory.html">2.5. Decision Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S26_sorter_learning.html">2.6. Learning</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="S30_vacuum_intro.html">3. A Robot Vacuum Cleaner</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="S31_vacuum_state.html">3.1. Modeling the State of the Vacuum Cleaning Robot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S32_vacuum_actions.html">3.2. Actions over time</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S33_vacuum_sensing.html">3.3. Dynamic Bayes Nets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S34_vacuum_perception.html">3.4. Perception with Graphical Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S35_vacuum_decision.html">3.5. Markov Decision Processes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S36_vacuum_RL.html">3.6. Reinforcement Learning</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="S40_logistics_intro.html">4. Warehouse Robots in 2D</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="S41_logistics_state.html">4.1. Continuous State</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S42_logistics_actions.html">4.2. Moving in 2D</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S43_logistics_sensing.html">4.3. Sensor Models with Continuous State</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S44_logistics_perception.html">4.4. Localization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S45_logistics_planning.html">4.5. Planning for Logistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S46_logistics_learning.html">4.6. Some System Identification</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="S50_diffdrive_intro.html">5. A Mobile Robot With Simple Kinematics</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="S51_diffdrive_state.html">5.1. State Space for a Differential Drive Robot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S52_diffdrive_actions.html">5.2. Motion Model for the Differential Drive Robot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S53_diffdrive_sensing.html">5.3. Robot Vision</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S54_diffdrive_perception.html">5.4. Computer Vision 101</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S55_diffdrive_planning.html">5.5. Path Planning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S56_diffdrive_learning.html">5.6. Deep Learning</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="S60_driving_intro.html">6. Autonomous Vehicles</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="S61_driving_state.html">6.1. Planar Geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S62_driving_actions.html">6.2. Kinematics for Driving</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S63_driving_sensing.html">6.3. Sensing for Autonomous Vehicles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S64_driving_perception.html">6.4. SLAM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S65_driving_planning.html">6.5. Planning for Autonomous Driving.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S66_driving_DRL.html">6.6. Deep Reinforcement Learning</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="S70_drone_intro.html">7. Autonomous Drones in 3D</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="S71_drone_state.html">7.1. Moving in Three Dimensions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S72_drone_actions.html">7.2. Multi-rotor Aircraft</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S73_drone_sensing.html">7.3. Sensing for Drones</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S74_drone_perception.html">7.4. Visual SLAM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S75_drone_planning.html">7.5. Trajectory Optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S76_drone_learning.html">7.6. Neural Radiance Fields for Drones</a></li>
+</ul>
+</li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/gtbook/robotics" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/gtbook/robotics/issues/new?title=Issue%20on%20page%20%2FS13_math.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/S13_math.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>The Mathematics of Robotics</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#probability-theory-and-statistics">1.3.1. Probability Theory and Statistics</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#linear-algebra">1.3.2. Linear Algebra</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optimization">1.3.3. Optimization</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="the-mathematics-of-robotics">
+<h1><span class="section-number">1.3. </span>The Mathematics of Robotics<a class="headerlink" href="#the-mathematics-of-robotics" title="Link to this heading">#</a></h1>
+<blockquote>
+<div><p>Probability theory and statistics, linear algebra, and optimization are key mathematical tools for modern robotics.</p>
+</div></blockquote>
+<a class="reference internal image-reference" href="_images/S15-Robot_menagerie-02.jpg"><img alt="Splash image with robot thinking deeply" class="align-center" src="_images/S15-Robot_menagerie-02.jpg" style="width: 40%;" /></a>
+<p>We use three different broad areas of mathematics in this book. One is <em>probability theory and statistics</em>, the next is <em>linear algebra</em>, and finally, we rely extensively on <em>optimization methods</em>. In this section, we discuss each of them in turn. We also preview how graphical models like <em>Bayes Networks</em> and <em>Factor Graphs</em> will be used in each of these areas as convenient representations. Since graph theory is also a branch of mathematics, these can be seen as a fourth, over-arching mathematical theme.</p>
+<section id="probability-theory-and-statistics">
+<h2><span class="section-number">1.3.1. </span>Probability Theory and Statistics<a class="headerlink" href="#probability-theory-and-statistics" title="Link to this heading">#</a></h2>
+<blockquote>
+<div><p>Statisticians study data. Probability theorists understand why that’s a good idea.</p>
+</div></blockquote>
+<p>It is often the case that robots do not have access to a complete and correct model of the environment. If sensors are used to determine the world state, there will invariably be errors and uncertainties associated to the sensor measurements. For example, the trash sorting robot has several sensors, all of which report data that is corrupted by noise, and these measurements are therefore subject to multiple possible interpretations. Furthermore, the effects of the robot’s own actions might be uncertain, as is the case with our vacuum cleaning robot, which sometimes fails to arrive at its desired destination, or with the logistics robot, whose motion is affected by factors such as variable friction of the factory floor and variation in motor performance.</p>
+<p><em>Probability theory</em> provides a rigorous mathematical framework for modeling and reasoning about uncertainty. Uncertain quantities are characterized by <em>probability distributions</em> that characterize the likelihood of various possibilities, such as the probability that a piece of trash will be made of glass vs. metal. <em>Conditional probability distributions</em> describe uncertainty in the relationships among various quantities, such as the actual weight of an object and the weight returned by a sensor (as for the trash sorting robot), or the distance traveled by a robot and the commanded motion (for our logistics robot). The concept of <em>expectation</em> quantifies what we would expect to see <em>on average</em> after many trials or many observations. For example, if we command the logistics robot to move forward by one meter and repeat this many times, what would be the average distance moved by the robot at each step.</p>
+<p>In addition, probability theory provides sound inference tools, such as <em>Bayes’ Theorem</em>, which relates the probability of an outcome given the occurrence of particular evidence to the probabilities associated with the evidence, the outcome itself, and the conditional relationship between the two.  Bayes’ theorem is at the heart of the Bayes filter, which we introduce in Chapter 4 to solve the localization problem, and is one of the most important tools used by roboticists to deal with uncertainty.</p>
+<p>Probability distributions are among the most important mathematical objects in robotics. Unfortunately, for many problems the probability distributions are too complex to represent exactly, and mathematically manipulating these distributions (e.g., propagating uncertainty forward through a sequence of actions) is computationally intractable.  In such cases, it is convenient to approximate the probability distribution using <em>sampling</em>.
+In particular, we can represent a probability distribution by a set of samples, each with an associated weight.</p>
+<p>Sampling-based methods require the ability to generate samples from a target probability distribution.
+Most all programming languages include a random number generator of some sort. The most common of these will return a sample from the uniform distribution on the unit interval, however functions that generate samples from Gaussian distributions are also commonly available.  For other kinds of distributions, it is possible to write a customized random sample generator using methods that we will introduce in Chapter 2.
+Given the ability to generate random samples from arbitrary distributions, it is a simple matter to generate sample trajectories for stochastic systems.</p>
+<p>We can also use samples to directly represent the probability distribution of the robot state as the robot moves through the world. Rather than compute the exact state probability distribution for the given motion and measurement uncertainty models, we can generate samples from both the motion and measurement probability distributions, and use these to update parameters associated to a set of state estimates.  This method, which we introduce in Chapter 4 to solve the localization problem for our logistics robot, is referred to as <em>particle filtering</em>; each state estimate corresponds to a sample, which can be thought of as a particle, and the sample’s associated weight is an estimate of the probability mass assigned to a specific value of the state (or to a specific small region in the state space).</p>
+<p>We can also use sampling to build paths and trajectories for robots. For example, in Chapter 5 we introduce <em>Probabilistic Road Maps</em>(<em>PRMs</em>) and <em>Rapidly-Exploring Random Trees</em> (<em>RRTs</em>) to find collision-free paths. For both PRMs and RRTs, path planning is reduced to the problem of generating random samples in the configuration space, and connecting these with appropriate, local paths.  In the original versions of these algorithms, samples were drawn from a uniform distribution, but over the years, many alternative sampling schemes have been proposed.</p>
+<p><em>Statistics</em> is concerned with the analysis and interpretation of data. For example, if we measure the weight of 100 pieces of cardboard trash, what is the average weight. If the vacuum cleaning robot attempts to navigate from the living room to the kitchen several times, how often does it succeed. If a LIDAR sensor returns multiple range measurements to an object in its field of view, how does that data vary with respect to the average distance returned by the sensor?</p>
+<p>Probability theory and statistics seem to be concerned with the same thing – characterizing and reasoning about uncertainty – but they are, in fact, quite different. Probability theory deals with mathematical objects (probability distributions) that are <em>given</em>; statistics deals with data that are <em>observed</em>. As roboticists, we have direct access to data, but not to the underlying probability models that characterize the data. In general, the latter are either (a) estimated from first principles, or (b) estimated using data.  For former, we might know that around the holiday season, many people open presents and place the wrapping paper in the trash, and that this will affect the probabilities associated to the various kinds of trash that arrive to our trash sorting robot. For the latter, a LIDAR manufacturer might take many measurements in a strictly controlled and highly calibrated environment, and use this data to estimate the distribution of measurement errors for the LIDAR sensor.</p>
+<p>One might wonder whether using data, via statistics, to estimate probability distributions is a good idea. In fact, there are a number of results from probability theory that explicitly address this question. One example is the <em>weak law of large numbers</em>, which says (informally) that, if data values are sampled from an underlying probability distribution, the average of the data will tend toward the expected value of the associated random variable as the data set becomes large. There are many related theorems (sometimes called <em>limit theorems</em>), but they generally share the same insight:  as the size of a data set becomes large, the statistics of that data set will become increasingly good approximations for various properties of the underlying probability distribution from which the data set was generated.  This insight provides a theoretical basis for the use of many probabilistic methods in practice.</p>
+<p><strong>Graphical models</strong> are useful to represent, manipulate, and compute with all of the above. Besides sampling, another way to model complex probability distributions is by using a graph framework called <em>Bayes networks</em>, which we will recognize as an excellent tool for <em>modeling</em> uncertainty in both sensing <em>and</em> acting. For inference, on the other hand, we introduce the use of <em>factor graphs</em>, which are more convenient and compact to describe relative probabilities when sensor measurements are available and can be conditioned upon.</p>
+<p>Graphical models and statistics come together when we are trying to <em>learn</em> the parameters of Bayes networks from data. As alluded to above, we can then use these parameters to infer outcomes from measurement data, via a conversion to factor graphs. Or, we can sample from Bayes networks directly to simulate the behavior of a system. We will encounter a very convenient algorithm, ancestral sampling, that can be applied to sample from any Bayes network with ease. For example, when studying reinforcement learning in Chapter 3, we will generate sample trajectories for our logistics robot using ancestral sampling. We can use these sample trajectories to compute the expected performance over a future time horizon. For example, to evaluate the quality of a candidate control policy, we can generate a large number of sample paths (or roll-outs), and compute the average cost (or reward) over these trajectories. This provides an approximation of the value function for the policy, the quality of which increases with the number of sample paths.</p>
+</section>
+<section id="linear-algebra">
+<h2><span class="section-number">1.3.2. </span>Linear Algebra<a class="headerlink" href="#linear-algebra" title="Link to this heading">#</a></h2>
+<blockquote>
+<div><p>Linear algebra is a powerful mathematical tool, even in a nonlinear world.</p>
+</div></blockquote>
+<p>Linear algebra is ubiquitous in robotics, from low-level control to high-level reasoning about optimal policies. This may seem surprising at first. After all, almost everything in robotics, from low-level dynamic models to high-level policy optimization is nonlinear. Nevertheless, linear algebra can be used to solve many problems in robotics.</p>
+<p>Perhaps the most obvious use for linear algebra is to solve systems of linear equations. These occur frequently in robotics. For example, in Chapter 3, we estimate the value function for a specific policy by solving a system of linear equations. Interestingly, for a <em>specific, given</em> policy, this problem is linear, even though the problem of computing the optimal value function is nonlinear. This property leads to an efficient implementation of an algorithm called <em>policy iteration</em> that (a) uses the current estimate of the optimal value function to update a guess for the optimal policy, (b) computes the exact value function for this improved policy by solving a system of linear equations, and (c) iterates by using this new value function as the new guess for the optimal value function. The linear solver is the workhorse of this algorithm.</p>
+<p>However, one of the most powerful uses of linear algebra comes in when we represent probability distributions over continuous variables. A Gaussian density is described by a vector and a matrix: the mean and covariance of the Gaussian density. This simple representation of densities in potentially high-dimensional continuous spaces is both compact and allows for manipulation with methods from linear algebra. Unsurprisingly, complex densities over many continuous variables can be represented using Gaussian Bayes networks and/or factor graphs, which then allow for very efficient manipulation through libraries such as GTSAM. Finally, even non-linear relationships can be approximated using linear approximations, which will come in handy when we talk about optimization below.</p>
+<p>The Kalman filter is one of the seminal tools in robotics. In particular, for linear systems with Gaussian noise, such as the logistics robot of Chapter 4, uncertainty grows as the robot executes actions; if each action has uncertain results, then a sequence of actions will accumulate uncertainty. Happily, by using sensor measurements, it is possible to reduce uncertainty.  A number of questions immediately come to mind. How do we mathematically model the propagation of uncertainty? How do we quantify the reduction in uncertainty that can be achieved using sensor data? What is the optimal way to combine predictions (using models of actions and the associated uncertainty) and observations (from sensor data) to update estimates of the robot’s state? The answers to these questions lead to the development of the well-known Kalman Filter, which we will introduce in Chapter 4. It turns out that the answer to each of these questions is formulated using linear algebra.</p>
+<p>A less obvious use of linear algebra is to represent an object’s orientation. We all understand that orientation involves angles and trigonometric functions such as sine and cosine, so it may be surprising that we can build matrices, called <em>rotation matrices</em> that encode the orientation of a Cartesian coordinate frame. This approach works for both 2D and 3D scenarios, and best of all, composition of rotations (e.g., a drone yaws by angle <span class="math notranslate nohighlight">\(\phi\)</span> about its <span class="math notranslate nohighlight">\(z\)</span>-axis, then rolls forward by angle <span class="math notranslate nohighlight">\(\theta\)</span> about its <span class="math notranslate nohighlight">\(x\)</span>-axis) is achieved by merely multiplying the appropriate rotations matrices: <span class="math notranslate nohighlight">\(R_ {final} = R_{z,\phi} R_{x,\theta}\)</span>. Furthermore, the inverse of a rotation matrix corresponds to performing the opposite rotation. In short, object rotations can be handled simply by applying basic tools from linear algebra.</p>
+<p>We can take this idea a bit further, and build a slightly larger matrix that includes both a rotation matrix (as a sub-matrix) and the position of the origin of a coordinate frame. These matrices are called <em>homogeneous transformation matrices</em>, and they can be used to encode both position and orientation. As with rotation matrices, successive combinations of translation and rotation can be realized by merely multiplying the appropriate homogeneous transformation matrices, and performing the opposite translation and rotation corresponds to the inverse of the matrix.  Rotation matrices and homogeneous transformation matrices are introduced for the 2D case (rotation and translation in the plane) for the car-like robot of Chapter 6, and for the 3D case for the drone in Chapter 7.</p>
+<p>Perhaps most surprisingly, the relationship between velocities can always be encoded as a linear mapping from one vector space to another. Consider a differential drive robot with two wheels that rotate independently. As these wheels rotate, the robot will move in the world, changing its position and orientation. The <em>instantaneous</em> relationship between the angular velocities of the two wheels and the linear and angular velocities of the robot is linear! The matrix that encodes this relationship is called a <em>Jacobian</em> matrix (which may include time-varying entries that are nonlinear functions of configuration variables). You may remember Jacobian matrices from an advanced calculus class. If so, you may recall that the Jacobian of a function relates the derivatives of the function’s input to the derivatives of its output.  Even for highly nonlinear functions, the instantaneous relationship between these derivatives is linear, and expressed by the Jacobian matrix. We will see Jacobian matrices for omnidirectional robots in Chapter 4, DDRs in Chapter 5, and for drone dynamics in Chapter 7.</p>
+</section>
+<section id="optimization">
+<h2><span class="section-number">1.3.3. </span>Optimization<a class="headerlink" href="#optimization" title="Link to this heading">#</a></h2>
+<blockquote>
+<div><p>Why settle, if you can have the best?</p>
+</div></blockquote>
+<p>Many of the computational problems in robotics are either intractable (i.e., have high computational complexity) or cannot be solved in closed form (e.g., determining the exact form for probability distributions).  In both cases, roboticists have worked to develop efficient and accurate computational methods to solve these problems. In this book, there are two main computational approaches: sampling-based approaches, which we discussed above, and optimization methods. For the latter we will almost exclusively resort to factor graphs as a way to represent the problem space and objective function. We will also use the open source library GTSAM, a powerful software system that facilitates computationally efficient solutions for a wide range of optimization problems that can be described by factor graphs.</p>
+<p><em>Optimization</em> is the process of finding extremal values of performance criteria, all of which, in this book, will be expressed as scalar-valued functions of a finite number of inputs. In some cases, we search for the single, scalar input that will minimize a cost function, such as when choosing the best action for a trash sorting robot in Chapter 2. In other cases, we might search for a sequence of input commands that will yield an ideal system trajectory, such as for drone flight in Chapter 7. In still other cases, we might try to find millions of weights for a neural network to minimize recognition error of our computer vision system, such as the Convolutional Neural Nets (CNNs) of Chapter 5.</p>
+<p>In general, we can express such problems as</p>
+<div class="math notranslate nohighlight">
+\[\max_x f(x)\]</div>
+<p>in which <span class="math notranslate nohighlight">\(x\)</span> is called the optimization variable (or variables in the case where <span class="math notranslate nohighlight">\(x\)</span> is a vector) and <span class="math notranslate nohighlight">\(f(\cdot)\)</span> is called the objective function. For this formulation, when maximizing, <span class="math notranslate nohighlight">\(f(\cdot)\)</span> can be thought of as a reward. We could have framed the problem as a minimization, <span class="math notranslate nohighlight">\(\min_x f(x)\)</span>, in which case <span class="math notranslate nohighlight">\(f(\cdot)\)</span> should be thought of as a cost to be minimized. It is easy to convert between these two forms (e.g., simply multiply the objective function by <span class="math notranslate nohighlight">\(-1\)</span>), but it is often helpful to express problems specifically as either minimizing cost or maximizing reward, based on the semantics of the problem.</p>
+<p>Many optimization problems can be solved using the method of gradient descent.  Such methods construct a sequence of estimates, <span class="math notranslate nohighlight">\(x^1, x^2, \dots\)</span> until a minimal value of cost is found. The incremental update rule for the estimates is given by</p>
+<div class="math notranslate nohighlight">
+\[ x^{k+1} = x^k + \alpha \nabla f(x) \]</div>
+<p>in which <span class="math notranslate nohighlight">\(\alpha\)</span> is a step-size parameter.
+In some cases, the gradient <span class="math notranslate nohighlight">\(\nabla f(x) \)</span> can be computed in closed form, while for more complex functions it may be necessary to use numerical approximations of the gradient.
+When working with neural networks, the cost function can be written as a sum</p>
+<div class="math notranslate nohighlight">
+\[ f(x,S) = \sum_{s\in S} f_k(x; s) \]</div>
+<p>Here, <span class="math notranslate nohighlight">\(x\)</span> denotes the weights assigned to the connections in the network, and <span class="math notranslate nohighlight">\(s\)</span> denotes a specific example in the data set <span class="math notranslate nohighlight">\(S\)</span>. Since differentiation is linear, the gradient of this functional can be expressed as</p>
+<div class="math notranslate nohighlight">
+\[ \nabla_x f(x,S) = \sum_{s\in S} \nabla_x f_k(x; s)\]</div>
+<p>If the data set is very large, computing <span class="math notranslate nohighlight">\(|S|\)</span> gradients will be prohibitive. The method of stochastic gradient descent deals with this problem by randomly selecting a few samples from the data set, <span class="math notranslate nohighlight">\(S’ \subset S\)</span>, and using the approximation</p>
+<div class="math notranslate nohighlight">
+\[ \nabla_x f(x,S) \approx \sum_{s \in S’} \nabla_x f_k(x; s)\]</div>
+<p>We use stochastic gradient descent in chapter 5 to optimize the weights in a deep neural network.</p>
+<p>Quite often in robotics, the optimization variables can be written as <span class="math notranslate nohighlight">\(x_1, x_2, \dots x_n\)</span>, in which the subscripts denote discrete instants in time. In this case, there are typically well-defined relationships between each <span class="math notranslate nohighlight">\(x_k\)</span> and <span class="math notranslate nohighlight">\(x_{k+1}\)</span>. This is true, for example, when a robot moves through the world, at each step <span class="math notranslate nohighlight">\(k\)</span> executing command <span class="math notranslate nohighlight">\(u_k\)</span> and collecting data <span class="math notranslate nohighlight">\(z_k\)</span>.  Estimating the state trajectory <span class="math notranslate nohighlight">\(x_1, \dots, x_n\)</span> can be formulated as an optimization problem in which the value of <span class="math notranslate nohighlight">\(u_k\)</span> acts as a kind of constraint on the relationship between <span class="math notranslate nohighlight">\(x_k\)</span> and <span class="math notranslate nohighlight">\(x_{k+1}\)</span>, as we will see in Chapter 4 when we solve the localization problem.  Similarly, if we wish to optimize the trajectory of a drone (as in Chapter 7), the optimization problem begins by finding a sequence of states <span class="math notranslate nohighlight">\(x_1, \dots, x_n\)</span> that maximize performance criteria. In this case, in order to ensure smooth flight, <span class="math notranslate nohighlight">\(x_k\)</span> and <span class="math notranslate nohighlight">\(x_{k+1}\)</span> should not be too far apart.  For problems of this sort, when there are specific relationships between the optimization variables, and especially when they enjoy this kind of sequential structure, we can solve the optimization using factor graphs, which are extremely computationally efficient when the graph that encodes variable interdependence is sparse.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="S12_reasoning.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">1.2. </span>Reasoning</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="S20_sorter_intro.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">2. </span>A Trash Sorting Robot</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#probability-theory-and-statistics">1.3.1. Probability Theory and Statistics</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#linear-algebra">1.3.2. Linear Algebra</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optimization">1.3.3. Optimization</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Frank Dellaert and Seth Hutchinson
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

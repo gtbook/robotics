@@ -71,11 +71,13 @@
                 gtag('config', 'UA-312077-7');
             </script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'S10_introduction';</script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="1.1. Representing State" href="S11_intro_state.html" />
+    <link rel="next" title="1.1. Models" href="S11_models.html" />
     <link rel="prev" title="Introduction to Robotics and Perception" href="intro.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -193,12 +195,9 @@
         </ul>
         <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">1. Introduction</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="S11_intro_state.html">1.1. Representing State</a></li>
-<li class="toctree-l2"><a class="reference internal" href="S12_intro_actions.html">1.2. Robot Actions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="S13_intro_sensing.html">1.3. Sensing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="S14_intro_perception.html">1.4. Perception</a></li>
-<li class="toctree-l2"><a class="reference internal" href="S15_intro_decision.html">1.5. Planning</a></li>
-<li class="toctree-l2"><a class="reference internal" href="S16_intro_learning.html">1.6. Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S11_models.html">1.1. Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S12_reasoning.html">1.2. Reasoning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S13_math.html">1.3. The Mathematics of Robotics</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="S20_sorter_intro.html">2. A Trash Sorting Robot</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -452,54 +451,16 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <p><a href="https://colab.research.google.com/github/gtbook/robotics/blob/main/S10_introduction.ipynb" target="_parent"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg" /></a></p>
-<section class="tex2jax_ignore mathjax_ignore" id="introduction">
+  <section class="tex2jax_ignore mathjax_ignore" id="introduction">
 <h1><span class="section-number">1. </span>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">#</a></h1>
 <a class="reference internal image-reference" href="_images/S10-Robot_menagerie-08.jpg"><img alt="Splash image with cute robot" class="align-center" src="_images/S10-Robot_menagerie-08.jpg" style="width: 60%;" /></a>
-<p>When you are given a task to perform, for example, place the chairs in
-the room into a circular pattern, you might proceed as follows. First,
-look around the room and assess the situation. How many chairs are
-there? Where are they located? Second, you might make a plan for putting
-the chairs into the desired pattern: Go to the first chair, pick it up,
-and move it to its desired location; then, repeat this for the second
-chair, and so on. Finally, execute the plan, and arrange the chairs as
-desired. This basic strategy is often referred to as the Sense-Think-Act
-paradigm, and it forms the basis for the behavior of most all robotic
-systems.</p>
-<p>In robotic systems, <em>sensing</em> might be performed using computer vision,
-touch sensors, laser range scanners, or any number of currently
-available sensing modalities. <em>Thinking</em> corresponds to the process of
-manipulating an internal model of the world, reasoning about which
-actions the robot could perform, and how these actions would change the
-state of the world. Finally, <em>acting</em> is the moment when the robot moves
-in, and interacts with, its environment.</p>
-<p>For real robotic systems, it is almost never the case that a robot
-succeeds at performing a task by using a single instance of this
-sense-think-act process. Rather, these steps are typically performed
-iteratively. At each iteration, sensing updates the robot’s
-understanding of the current situation; thinking is used to update or
-refine the current plan; actions are then executed to bring things a bit
-closer to the desired outcome. For this reason, one typically refers to
-the <em>sense-think-act loop</em>. The speed at which this loop is executed
-varies based on the task to be performed. For a chess playing robot, a
-single iteration could take seconds or minutes (each iteration
-corresponding to a single move). For a self-driving car, a single
-iteration of sense-think-act might take milliseconds (or less). In the
-limit, as the time associated to a single iteration decreases to zero,
-we obtain continuous time systems. While the specific behavior of these
-various systems can be quite different, they are all nicely described in
-terms of the sense-think-act loop, and for this reason, we use this
-paradigm as the organizing structure for our development.</p>
-<p>In this chapter, we introduce concepts that are fundamental to the study
-of intelligent robots, particularly those that rely on the
-sense-think-act paradigm. We introduce the concept of world state, and
-describe various possible methods that can be used to represent the
-world state. We then introduce the notion of the robot’s state, which is
-subtly different from the state of objects in the world, due mainly to
-the fact that the robot can directly change its own state. The robots
-actions and how to represent them are the topic of the subsequent
-section. Finally, we give a brief overview of sensing methodologies that
-are currently of interest to intelligent robotic systems.</p>
+<p>Robotics is a fascinating field in which we study how to make sense of the world and how to reason about acting purposefully in the physical world. Robotics is more relevant than ever, as robots populate our factories, streets, skies, and even work inside our homes. How do these systems work? What sensors do they have and how do they perceive our world through these senses? What are the mechanisms by which they can move and act in their environment? And how do they choose how to act at any given moment? These questions are an incredibly broad and rich subject, and given the recent advances in artificial intelligence the field of robotics is bound to see many breakthroughs over the next few years.</p>
+<p>This introductory text is designed to guide the reader through the <em>foundations</em> of modern robotics, while at the same time showing how practical systems can be implemented. The theoretical concepts in each chapter are explained informally without sacrificing rigor, but balance this with a unique hands-on approach. Theory is immediately put into practice, as every section in the book is interspersed with example code and can be executed as a python notebook, allowing students to experiment with implementations that are representative of many robotics systems. No experience is needed beyond a good basis in math, especially linear algebra and notions of statistics, and some knowledge of the python programming language. The code itself is based on popular open source libraries, most notably GTSAM and PyTorch, which provide a good starting point for those who want to further explore robotics as a career choice.</p>
+<p>In this book, we proceed through a sequence of increasingly complex robotic systems. Each chapter is laid out in the same pattern, delving into how to represent the robot’s state, how to describe its actuators and sensors, the corresponding perception and planning methods and algorithms, and ending with a section on learning from data. The expressiveness of the state space, which is tied to how much we do or do not abstract away from reality, determines to a large degree the complexity of the corresponding algorithms. By gradually building up this richness, we ensure that each chapter builds upon the previous one, guiding the reader along a series of achievable steps. A key tool we use in each chapter is the use of graphical models to help explain how state, actions, and sensing share many commonalities across a diverse set of autonomous robots.</p>
+<p>We begin, in Chapter 2, by considering a simple trash sorting robot. Pieces of trash arrive on a conveyor, and the robot’s task is to place these in an appropriate bin. For this first robotic system, we abstract away most all details that would confront a real trash sorting robot, focusing our attention on fundamental concepts from probability theory, both to solve a simple perception problem (categorizing pieces of trash) and to solve a planning problem (which bin to select). From there, in each chapter we incrementally add complexity to the system models and the mathematical methods for manipulating them, developing increasingly sophisticated algorithms to implement these methods. We consider a simple vacuum cleaning robot in Chapter 3, a mobile robot that navigates in a warehouse in Chapter 4, a two-wheeled, differential drive robot (DDR) in Chapter 5, self-driving cars in Chapter 6, and quadrotor drones in Chapter 7.</p>
+<p>In the state, action, and sensing sections of each chapter we focus on the mathematical <em>models</em>. To model robots, we move from discrete state spaces and fairly abstract action and sensing, to continuous state spaces and real-world sensing in later sections. We introduce the special Euclidean group of order two, <span class="math notranslate nohighlight">\(SE(2)\)</span> for differential drive robots, and extend it to <span class="math notranslate nohighlight">\(SE(3)\)</span> for the case of drones. We develop the differential kinematics for wheeled mobile robots, both for omnidirectional robots (our logistics robot), and for robots with non-holonomic constraints.  In the case of drones, we derive a model for the dynamics which includes propellor thrust, and aerodynamic properties such as drag.  We take a similar approach with sensors. In Chapter 2, we introduce simple sensors that measure physical properties of a piece of trash. Then, in subsequent chapters, we consider an increasing array of sensors, including proximity sensors, RFID beacons, GPS, cameras, LIDAR, and Inertial Measurement Units (IMUs).</p>
+<p>In other places, we focus on probabilistic methods for representing and reasoning about uncertainty. We introduce discrete probability distributions for simple classification problems, and develop maximum likelihood and maximum posteriori estimation methods for these using our trash sorting robot. We introduce continuous distributions, and specifically the uniform and Gaussian distributions, to model the motion of mobile robots and the effects of sensor noise. To reason about the effects of uncertainty, we introduce sampling-based methods, such as particle filtering and Markov localization, Kalman filters, Bayes nets, and Markov decision processes. In each case, we begin by formulating the appropriate mathematical models, and then proceed to describe algorithmic solutions (often illustrated with code).</p>
+<p>In the remainder of this chapter, we give a slightly more detailed overview of the topics covered in this book.</p>
 <div class="toctree-wrapper compound">
 </div>
 </section>
@@ -544,11 +505,11 @@ are currently of interest to intelligent robotic systems.</p>
       </div>
     </a>
     <a class="right-next"
-       href="S11_intro_state.html"
+       href="S11_models.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title"><span class="section-number">1.1. </span>Representing State</p>
+        <p class="prev-next-title"><span class="section-number">1.1. </span>Models</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

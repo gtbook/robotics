@@ -1,0 +1,675 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>1.1. Models &#8212; Introduction to Robotics and Perception</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="_static/style.css?v=51e3b7cf" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js?v=36754332"></script>
+    <script async="async" src="https://www.googletagmanager.com/gtag/js?id=UA-312077-7"></script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'UA-312077-7');
+            </script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'UA-312077-7');
+            </script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'S11_models';</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="1.2. Reasoning" href="S12_reasoning.html" />
+    <link rel="prev" title="1. Introduction" href="S10_introduction.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/logo.png" class="logo__image only-light" alt="Introduction to Robotics and Perception - Home"/>
+    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Introduction to Robotics and Perception - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    Introduction to Robotics and Perception
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="S10_introduction.html">1. Introduction</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">1.1. Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S12_reasoning.html">1.2. Reasoning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S13_math.html">1.3. The Mathematics of Robotics</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="S20_sorter_intro.html">2. A Trash Sorting Robot</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="S21_sorter_state.html">2.1. Modeling the World State</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S22_sorter_actions.html">2.2. Actions for Sorting Trash</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S23_sorter_sensing.html">2.3. Sensors for Sorting Trash</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S24_sorter_perception.html">2.4. Perception</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S25_sorter_decision_theory.html">2.5. Decision Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S26_sorter_learning.html">2.6. Learning</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="S30_vacuum_intro.html">3. A Robot Vacuum Cleaner</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="S31_vacuum_state.html">3.1. Modeling the State of the Vacuum Cleaning Robot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S32_vacuum_actions.html">3.2. Actions over time</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S33_vacuum_sensing.html">3.3. Dynamic Bayes Nets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S34_vacuum_perception.html">3.4. Perception with Graphical Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S35_vacuum_decision.html">3.5. Markov Decision Processes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S36_vacuum_RL.html">3.6. Reinforcement Learning</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="S40_logistics_intro.html">4. Warehouse Robots in 2D</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="S41_logistics_state.html">4.1. Continuous State</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S42_logistics_actions.html">4.2. Moving in 2D</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S43_logistics_sensing.html">4.3. Sensor Models with Continuous State</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S44_logistics_perception.html">4.4. Localization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S45_logistics_planning.html">4.5. Planning for Logistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S46_logistics_learning.html">4.6. Some System Identification</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="S50_diffdrive_intro.html">5. A Mobile Robot With Simple Kinematics</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="S51_diffdrive_state.html">5.1. State Space for a Differential Drive Robot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S52_diffdrive_actions.html">5.2. Motion Model for the Differential Drive Robot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S53_diffdrive_sensing.html">5.3. Robot Vision</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S54_diffdrive_perception.html">5.4. Computer Vision 101</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S55_diffdrive_planning.html">5.5. Path Planning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S56_diffdrive_learning.html">5.6. Deep Learning</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="S60_driving_intro.html">6. Autonomous Vehicles</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="S61_driving_state.html">6.1. Planar Geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S62_driving_actions.html">6.2. Kinematics for Driving</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S63_driving_sensing.html">6.3. Sensing for Autonomous Vehicles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S64_driving_perception.html">6.4. SLAM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S65_driving_planning.html">6.5. Planning for Autonomous Driving.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S66_driving_DRL.html">6.6. Deep Reinforcement Learning</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="S70_drone_intro.html">7. Autonomous Drones in 3D</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="S71_drone_state.html">7.1. Moving in Three Dimensions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S72_drone_actions.html">7.2. Multi-rotor Aircraft</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S73_drone_sensing.html">7.3. Sensing for Drones</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S74_drone_perception.html">7.4. Visual SLAM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S75_drone_planning.html">7.5. Trajectory Optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S76_drone_learning.html">7.6. Neural Radiance Fields for Drones</a></li>
+</ul>
+</li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/gtbook/robotics" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/gtbook/robotics/issues/new?title=Issue%20on%20page%20%2FS11_models.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/S11_models.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Models</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#state">1.1.1. State</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#representing-the-world-state">1.1.1.1. Representing the World State</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#representing-the-robots-state">1.1.1.2. Representing the Robot’s State</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#actions">1.1.2. Actions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sensors">1.1.3. Sensors</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="models">
+<h1><span class="section-number">1.1. </span>Models<a class="headerlink" href="#models" title="Link to this heading">#</a></h1>
+<blockquote>
+<div><p>Models enable computation and reasoning by robots that operate in the real world.</p>
+</div></blockquote>
+<a class="reference internal image-reference" href="_images/S11-Robot_menagerie-09.jpg"><img alt="Splash image with robot pondering state" class="align-center" src="_images/S11-Robot_menagerie-09.jpg" style="width: 40%;" /></a>
+<p>To reason about the world and how to act in the world, a robot requires representations of itself, the world that it inhabits, the actions it can perform, how these affect the world, and the sensors at its disposal. In robotics, we refer to these representations as <em>models</em>, and designing appropriate, effective models is an important part of designing any robotic system.  For a specific system, the system designer must decide what to represent, and which representational schemes will be most useful.</p>
+<p>The first design decision is how to represent the state of the robot and the state of its environment. These representations vary from small, simple, and discrete, to large, complex, and continuous. For example, the vacuum cleaning robot in Chapter 3 models the environment as a collection of rooms and hallways connected by doors, while the logistics robot in Chapter 4 models the warehouse floor as a large, discrete grid, and the drone of Chapter 7 uses a continuous representation for position and orientation of the drone; these representations vary from a small qualitative graph to a dense grid-approximation, to a continuous, six degree-of-freedom model.
+Likewise, the actions that these robots perform are modeled at different levels of abstraction, ranging from simple deterministic actions, such as for the trash sorting robot of Chapter 2, to applying motor torques to drive propellors for the drone in Chapter 7.
+Sensors can also be modeled at different levels of abstraction, based on properties of the environment they observe, and the resolution of the data that they provide. In Chapter 2, we use very simple sensors that measure properties like weight and electrical conductivity, both of which provide a single scalar value as the result. At the other extreme, computer vision, which is introduced in Chapter 5, provides a dense and rich set of data.</p>
+<section id="state">
+<h2><span class="section-number">1.1.1. </span>State<a class="headerlink" href="#state" title="Link to this heading">#</a></h2>
+<blockquote>
+<div><p>Choosing the right representation for state is key to effective reasoning about actions in the world.</p>
+</div></blockquote>
+<p>We use the term <em>state</em> to describe the set of information available to the robot about the world and about itself.
+Often, the world state is essentially static (except for objects that are manipulated by the robot,
+or the occasional moving object in the robot’s proximity), while the robot’s state is typically dynamic,
+changing as the robot moves..
+Thus, different representational schemes are often required for the world state and the robot state.</p>
+<section id="representing-the-world-state">
+<h3><span class="section-number">1.1.1.1. </span>Representing the World State<a class="headerlink" href="#representing-the-world-state" title="Link to this heading">#</a></h3>
+<p>The robot’s information about its environment is generally referred to as the <em>world state</em>. How to represent the world state depends on the kind of information that is required for the specific tasks to be performed by the robot.
+High-level, symbolic representations are appropriate when low-level controllers are available to reliably execute specific tasks. This is the case for the trash collecting robot in Chapter 2 and the vacuum cleaning robot in Chapter 3. For each of these, we assume that the robot is able to execute primitive tasks (placing an object in a designated trash bin, cleaning the floor in the current room, moving through a doorway).  For these situations, high-level representations allow the robot to build high-level plans, sometimes called <em>task plans</em>, that will be executed using low-level controllers. For example, if the trash sorting robot knows that an object in its workspace is a bottle, it can invoke the primitive action of moving the object to the glass bin, and if the vacuum cleaning robot knows that the living room is adjacent to the kitchen, it can move directly from the living room to the kitchen using the appropriate motion primitive.</p>
+<p>From the educational point of view, this level of representation brings the benefit of simplicity, allowing us to introduce other concepts without worrying too much about state representation. For example, we are able to introduce several concepts from probability and estimation theory in Chapters 2 and 3, without getting lost in the notation and nuance typical of a class in probability theory.</p>
+<p>While high-level, qualitative state descriptions may be useful for task-level planning, because they fail to capture any of the geometric aspects of the environment, they are less useful when the robot begins to actually move in, and interact with, the world. For example, cleaning the floor in a room is actually a fairly complex action, and, other than in textbooks, is unlikely to be directly encoded as a primitive action in a robot system.  For mobile robots, such as the logistics robot of Chapter 4, it is often sufficient to use a discrete grid to represent which parts of the environment contain objects (or obstacles), and thus cannot be traversed by the robot. Occupancy grids, in which the presence or absence of an obstacle is noted for each cell (perhaps probabilistically), are a popular representation for this situation.</p>
+<p>In some cases, a more precise geometric description of the world state may be required.  Consider the case of an autonomous car, as in Chapter 6, driving in an environment populated with other cars, cyclists, and pedestrians. When objects in the environment are moving, occupancy grids are not an effective representation (e.g., the grid would need to be continuously updated as objects move in the world). In this case, we might choose to associate a specific position and orientation with each object in the environment, and to update these as the object moves. There are several ways to represent this kind of geometric information, but the most common is to define a Cartesian coordinate frame that is rigidly attached to the object (i.e., the relationship between the object and this coordinate frame is fixed, and does not change as the object moves), and to then specify the position and orientation of this coordinate frame relative to a reference frame (possibly the robot’s own coordinate frame, possibly a fixed external reference frame).  In Chapters 4 and 5, we will see how stereo computer vision and LIDAR can be used to determine this information for objects in the world.</p>
+</section>
+<section id="representing-the-robots-state">
+<h3><span class="section-number">1.1.1.2. </span>Representing the Robot’s State<a class="headerlink" href="#representing-the-robots-state" title="Link to this heading">#</a></h3>
+<p>While the robot is, technically speaking, an object in the world, the robot enjoys the special status of being able to act in the world to effect changes. Furthermore, the robot has direct control over its own actions, unlike obstacles or other actors in the world, over which the robot has, at best, indirect control. Therefore, rather than merely incorporate information about the robot into the world state, we typically represent the robot state separately, using representations that are specifically developed for modeling the robot’s geometry, dynamics, and manipulation capabilities.</p>
+<p>The most basic information about a robot’s state is merely a description of the robot’s location (and orientation) in its environment, which we will define as the robot’s <em>configuration</em>. The set of all possible configurations will be called the <em>configuration space</em>. This information could be a qualitative, high-level description (e.g., the room in which the vacuum cleaning robot of Chapter 3 is located), coordinates for the robot’s position in a grid or continuous position coordinates in the plane (as for the logistics robot of Chapter 4), continuous coordinates for a position and orientation in the plane (as for the differential drive robot, or DDR, of Chapter 5 and the autonomous car of Chapter 6), or continuous coordinates for three-dimensional position and orientation (as for the drone in Chapter 7).</p>
+<p>Above, to represent the position and orientation of an object in the robot’s workspace, we attached a coordinate frame to the object. We do the same for the robot (assuming the robot can be modeled as a single rigid body), and we call this frame the <em>body frame</em> or the <em>body-attached frame</em>.  Now, as for objects, specifying the location of the robot is equivalent to specifying the position and orientation of the body-attached frame, and such a specification defines a configuration for the robot. For example, we can define the configuration of a DDR using the coordinates <span class="math notranslate nohighlight">\(q = (x, y, \theta)\)</span>, which specify the location of the origin of the body-attached frame along with its orientation relative to a fixed reference frame.</p>
+<p>For a drone, we might specify the configuration as <span class="math notranslate nohighlight">\(q = (x,y,z,\phi,\theta,\psi)\)</span>, in which <span class="math notranslate nohighlight">\(x,y,z\)</span> give the position of the origin of the body-attached frame,  and the angles <span class="math notranslate nohighlight">\(\phi, \theta, \psi\)</span> define the roll, pitch, and yaw angles for the drone’s orientation.
+The configuration of a robot answers the question of where the robot is at a specific instant in time. If we wish instead to describe the motion of a robot, we must consider the configuration to be time varying, and in this case both the configuration and its time derivative (a velocity) are relevant. We often package the configuration and its time derivative into a single vector</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}x(t) = \left[ \begin{array}{c} q(t) \\ \dot{q}(t) \end{array}\right]\end{split}\]</div>
+<p>In many disciplines related to robotics, <span class="math notranslate nohighlight">\(x(t)\)</span> is referred to as the system’s <em>state</em>. This is particularly true in the areas of dynamical systems and control theory. In this text, we will maintain a more general use of the term <em>state</em>, but when relevant, we will adopt robot-specific terminology.
+When the robot is modeled as a rigid body moving in three-space, we often replace <span class="math notranslate nohighlight">\(\dot{x}\)</span> with a six-vector that includes the time derivative of the position of the origin of the robot’s body-attached frame along with the angular velocity vector, denoted by <span class="math notranslate nohighlight">\(\omega\)</span>. Note that <span class="math notranslate nohighlight">\(\omega\)</span> is not actually the time derivative of any relevant quantity describing the robot’s motion, but is instead a parameterization of the derivative of a rotation matrix. We will use 3D rotation matrices, their derivatives, and angular velocity in Chapter 7, to describe the motion of drones.</p>
+<p>In many applications, position and velocity provide a sufficiently detailed description of robot motion. This is not true, however, when we must explicitly consider forces that affect the robot’s motion, as with the drone, whose motion is determined by aerodynamic forces.  For example, we can regard the logistics robot as a device that responds to position and velocity commands: we issue a command to the robot to move to a certain position at a certain velocity, and the robot has no difficulty in executing this command (though there may be uncertainty associated to the motion). There are, however, numerous applications in which simple geometric descriptions of robot motion are not adequate. Consider for example the case of a quadrotor that maneuvers by exploiting aerodynamic forces. In these cases, we typically consider position, velocity, and acceleration, i.e., in terms of <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(\dot{x}\)</span>, or, if making the configuration and its derivatives more explicit, in terms of <span class="math notranslate nohighlight">\(q, \dot{q},\)</span> and <span class="math notranslate nohighlight">\(\ddot{q}\)</span>.</p>
+</section>
+</section>
+<section id="actions">
+<h2><span class="section-number">1.1.2. </span>Actions<a class="headerlink" href="#actions" title="Link to this heading">#</a></h2>
+<blockquote>
+<div><p>By executing actions, robots change the state of the world, as well as their own state.</p>
+</div></blockquote>
+<p>Models of actions allow robots to construct plans to achieve their goals. In particular, by modeling the affects of actions on the world and on the robot itself, a planning system can construct a sequence of actions to achieve its goals.  Action models are intimately connected to state models. Since actions change the state of the world and the robot, the choice of state model determines the vocabulary for the action models. As such, action models tend to mirror the abstraction level chosen for the state.</p>
+<p>For high-level state models, such as the trash sorting robot or vacuum cleaning robot, the actions are also defined at a high level. For the trash sorting robot, we will merely assume that actions exist to transfer an object to each of three possible bins, essentially omitting all details of how the action might be implemented. For the vacuum cleaning robot, actions take the form of directed edges in a place graph, in which the vertices represent rooms. As we will see in Chapter 3, if, for example, the robot state is <em>living room</em>, the action “move right” corresponds to changing the state to <em>kitchen</em> (though, when uncertainty comes into play, other outcomes are also possible). In the absence of uncertainty, the action acts as a deterministic mapping from the current state to a next state. For the vacuuming robot, the state space is merely the set of rooms, and one action exists for each possible transit from one room to another.</p>
+<p>For robot’s that have continuous configuration or state spaces, we have the choice of whether to represent actions in discrete or continuous time. In the case of discrete time, we typically represent actions at time instant <span class="math notranslate nohighlight">\(k\)</span> as <span class="math notranslate nohighlight">\(u_k\)</span>, and define a corresponding mapping from state at time <span class="math notranslate nohighlight">\(k\)</span> to the state at time <span class="math notranslate nohighlight">\(k+1\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[x_{k+1} = f(x_k, u_k)\]</div>
+<p>Here, the function <span class="math notranslate nohighlight">\(f(x,u)\)</span> defines the effect of the action on the current state. Typically, for discrete time systems we assume that the time discretization is uniform, <span class="math notranslate nohighlight">\(\Delta t\)</span>, and that the time corresponding to time instant <span class="math notranslate nohighlight">\(k\)</span> is thus equal to <span class="math notranslate nohighlight">\(k \Delta t\)</span>.  It should be emphasized that discrete time systems can have continuous state representations, for example, our logistics robot will have <span class="math notranslate nohighlight">\(x_k \in \mathbb{R}^2\)</span>, which takes continuous values in the plane, even though we only note these values at discrete moments in time.
+Note that we have made several notational choices here. First, we use <span class="math notranslate nohighlight">\(u\)</span> to denote the action, mainly due to this usage in the control theory community. We use the index <span class="math notranslate nohighlight">\(k\)</span> instead of <span class="math notranslate nohighlight">\(t\)</span> to denote the discrete time instant, preferring to reserve <span class="math notranslate nohighlight">\(t\)</span> for the case of continuous time systems.
+Further, we will use <span class="math notranslate nohighlight">\(x\)</span> to denote state for discrete time systems, even if we are interested only in the configuration <span class="math notranslate nohighlight">\(q\)</span>.</p>
+<p>In some cases, continuous time representations are preferred. For example, the drone in Chapter 7 moves in continuous time. For continuous time systems, we typically represent the system dynamics as an ordinary differential equation of the form:</p>
+<div class="math notranslate nohighlight">
+\[ \dot{x} = f(x(t), u(t))\]</div>
+<p>In the case of drones, the system dynamics relate the instantaneous velocity of the drone (both linear and angular velocity) to the input thrusts provided by the propellors.
+Even if we choose to represent actions using continuous time, it is often necessary to discretize time for the purpose of computation
+(e.g., to determine a drone trajectory using nonlinear optimization). In this case, we typically compute a discrete time approximation for time <span class="math notranslate nohighlight">\((k+1) \Delta t\)</span> by integrating the system dynamics over the relevant time interval:</p>
+<div class="math notranslate nohighlight">
+\[x_{k+1} = x_k + \int_{k \Delta t}^{(k+1) \Delta t} \dot{x}(t) dt\]</div>
+</section>
+<section id="sensors">
+<h2><span class="section-number">1.1.3. </span>Sensors<a class="headerlink" href="#sensors" title="Link to this heading">#</a></h2>
+<blockquote>
+<div><p>Actions allow the robot to affect the world. Sensors allow the robot to perceive the world.</p>
+</div></blockquote>
+<p>A robot’s sensors provide information that can be used to infer things about the world, about the robot, and about the robot’s location in the world.  In general, an abstract sensor model can be written as</p>
+<div class="math notranslate nohighlight">
+\[z = h(x) \]</div>
+<p>in which the measurement is denoted by <span class="math notranslate nohighlight">\(z\)</span> and the function <span class="math notranslate nohighlight">\(h(\cdot)\)</span> maps from the current state to a sensor value.  The form of <span class="math notranslate nohighlight">\(h\)</span> depends, of course, on the sensor. For the trash sorting robot of Chapter 2, one sensor measures the electrical conductivity of an object, and merely returns “true” or “false.” Another sensor returns the real-valued weight of the object in kilograms. These sensors are simple to implement, fairly robust, and require physical contact with the object of interest.</p>
+<p>Simple non-contact sensors include proximity sensors (which detect the presence of a nearby obstacle), RFID sensors (which return a distance to the nearest RFID beacon), and GPS-style location sensors (which return the coordinates of the sensor in the GPS system’s coordinate frame). Each of these returns a set of scalar values, and each is used by the logistics robot of Chapter 4.</p>
+<p>Inertial Measurement Units (<em>IMUs</em>) measure how a rigid body moves through space. These sensors are ubiquitous nowadays. For example, every modern phone is equipped with such sensors.  In this book, we will use IMUs in Chapter 7 to measure the state of a drone that flies through three-dimensional space. The measurements returned by the sensor include gyroscope, accelerometer, and magnetometer readings.</p>
+<p>Vision-based sensors are the most complex sensors that we will study, and they provide the richest set of sensor data. Cameras provide a two-dimensional array of pixel values (an image) that can be gray-scale or full color (e.g., Red, Green, Blue). In addition, color cameras are now available that also provide depth information for each pixel in the image (i.e., for each pixel, the sensor determines the physical distance to the object that is “seen” in that pixel). Such cameras are called <em>RGB-D cameras</em>, indicating that they return Red, Green, Blue color values and Depth information for each pixel.</p>
+<p>LIDAR (LIght raDAR) is a special kind of vision sensor that uses laser time of flight to measure the depth to points in the sensor’s field of view. In this case, the sensor returns an array of <span class="math notranslate nohighlight">\((x,y,z)\)</span> values, called a <em>point cloud</em>.  LIDAR is particularly popular for autonomous cars, which we discuss in Chapter 6.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="S10_introduction.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">1. </span>Introduction</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="S12_reasoning.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">1.2. </span>Reasoning</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#state">1.1.1. State</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#representing-the-world-state">1.1.1.1. Representing the World State</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#representing-the-robots-state">1.1.1.2. Representing the Robot’s State</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#actions">1.1.2. Actions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sensors">1.1.3. Sensors</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Frank Dellaert and Seth Hutchinson
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

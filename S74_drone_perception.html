@@ -195,12 +195,9 @@
         </ul>
         <ul class="current nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="S10_introduction.html">1. Introduction</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="S11_intro_state.html">1.1. Representing State</a></li>
-<li class="toctree-l2"><a class="reference internal" href="S12_intro_actions.html">1.2. Robot Actions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="S13_intro_sensing.html">1.3. Sensing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="S14_intro_perception.html">1.4. Perception</a></li>
-<li class="toctree-l2"><a class="reference internal" href="S15_intro_decision.html">1.5. Planning</a></li>
-<li class="toctree-l2"><a class="reference internal" href="S16_intro_learning.html">1.6. Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S11_models.html">1.1. Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S12_reasoning.html">1.2. Reasoning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S13_math.html">1.3. The Mathematics of Robotics</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="S20_sorter_intro.html">2. A Trash Sorting Robot</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -452,11 +449,8 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integrating-the-imu">7.4.1. Integrating the IMU</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#incorporating-visual-measurements">7.4.1.1. Incorporating Visual Measurements</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#structure-from-motion">7.4.2. Structure from Motion</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integrating-the-imu">7.4.1. Integrating the IMU</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#incorporating-visual-measurements">7.4.2. Incorporating Visual Measurements</a></li>
 </ul>
             </nav>
         </div>
@@ -616,8 +610,8 @@ Every 5 steps we add an <code class="docutils literal notranslate"><span class="
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>initial error: 28094705.303980965
-final error: 3.4511814394734785e-23
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>initial error: 25608540.63674757
+final error: 3.483593946261978e-23
 </pre></div>
 </div>
 </div>
@@ -637,17 +631,18 @@ final error: 3.4511814394734785e-23
 <img alt="_images/23c1e848be5e8354d29d72fc17cb5f2fa451f7011524a7cf2139f26737e44b8a.png" src="_images/23c1e848be5e8354d29d72fc17cb5f2fa451f7011524a7cf2139f26737e44b8a.png" />
 </div>
 </div>
+</section>
 <section id="incorporating-visual-measurements">
-<h3><span class="section-number">7.4.1.1. </span>Incorporating Visual Measurements<a class="headerlink" href="#incorporating-visual-measurements" title="Link to this heading">#</a></h3>
-<p>TBD, but see <a class="reference external" href="https://gtbook.github.io/gtsam-examples/StereoVOExample_large.html">this example</a>.</p>
-</section>
-</section>
-<section id="structure-from-motion">
-<h2><span class="section-number">7.4.2. </span>Structure from Motion<a class="headerlink" href="#structure-from-motion" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">7.4.2. </span>Incorporating Visual Measurements<a class="headerlink" href="#incorporating-visual-measurements" title="Link to this heading">#</a></h2>
+<blockquote>
+<div><p>Visual SLAM is based on Structure from Motion</p>
+</div></blockquote>
+<p>Many unmanned aerial vehicles use cameras as their main sensors in addition to inertial sensing, as they are an incredibly rich sensing modality, do not consume a whole lot of energy, and are quite small. Especially the latter two considerations are very important in the weight and energy constrained world of autonomous drones. Furthermore, in military applications there is another reason to favor cameras over active sensors like LIDAR: cameras do not <em>emit</em> energy and hence are stealthier.</p>
+<p>In this section we provide an introduction to reconstructing a 3D environment from camera images over time, which allows for planning and obstacle avoidance, which we discuss in more detail in the next section. However, mapping the environment is in and of itself a useful capability in many applications. In some industrial and military applications, teh map <em>is</em> the product of interest. In this section we discuss 3D reconstruction as a <em>batch</em> process, done after the drone has collected images. Real-time, incremental visual SLAM is beyond our scope, but it should be easy to imagine how inertial sensing and 3D reconstruction done together and in real-time is an incredible asset to autonomous flight.</p>
 <p><img alt="Balbianello" src="https://github.com/gtbook/robotics/blob/main/Figures7/Balbianello.jpg?raw=1" /></p>
 <p>Structure from Motion, or SfM, is the problem of computing the 3D structure of a scene from multiple images, either taken from different cameras, or taken at different times as the camera moves in the environment. In the figure above we show one such image sequence, five images of the “Balbianello” villa in Italy, situated on lake Como.</p>
 <p>SfM is almost the same problem as Visual SLAM, but typically there is no odometry information to relate
-different camear views. The resulting optimization problem is sometimes called <strong>Bundle Adjustment</strong>.
+different camera views. The resulting optimization problem is sometimes called <strong>Bundle Adjustment</strong>.
 The most difficult problems associated with SfM are feature detection, data association, and initializing the optimization.</p>
 <p>Below we load the Balbianello data from a file and create a factor graph, as well as an initial estimate.</p>
 <div class="cell docutils container">
@@ -774,11 +769,8 @@ The most difficult problems associated with SfM are feature detection, data asso
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integrating-the-imu">7.4.1. Integrating the IMU</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#incorporating-visual-measurements">7.4.1.1. Incorporating Visual Measurements</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#structure-from-motion">7.4.2. Structure from Motion</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integrating-the-imu">7.4.1. Integrating the IMU</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#incorporating-visual-measurements">7.4.2. Incorporating Visual Measurements</a></li>
 </ul>
   </nav></div>
 
