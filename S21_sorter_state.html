@@ -598,18 +598,20 @@ available at <a class="reference external" href="http://gtsam.org">http://gtsam.
 enabling rapid prototype development, visualization, and user interaction.
 The python library can be imported directly into a Google colab via
 “import gtsam”. A large subset of the GTSAM functionality can be
-accessed through wrapped classes from within python.</p>
-<p>The code below illustrates the use of GTSAM. Although not strictly necessary, we can create a <code class="docutils literal notranslate"><span class="pre">Variables</span></code> data structure to provide more informative output:</p>
+accessed through wrapped classes from within python.
+To not interrupt the flow of the book too much we will not always fully explain the code throughout the text, but rather include a “GTSAM 101” sub-section at the end that elaborates on the types and functions we used.</p>
+<p>The code below illustrates the use of GTSAM. First we create a <code class="docutils literal notranslate"><span class="pre">Variables</span></code> data structure that will be used to obtain more informative output from other code below:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">categories</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;cardboard&quot;</span><span class="p">,</span> <span class="s2">&quot;paper&quot;</span><span class="p">,</span> <span class="s2">&quot;can&quot;</span><span class="p">,</span> <span class="s2">&quot;scrap metal&quot;</span><span class="p">,</span> <span class="s2">&quot;bottle&quot;</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">VARIABLES</span> <span class="o">=</span> <span class="n">Variables</span><span class="p">()</span>
+<span class="n">categories</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;cardboard&quot;</span><span class="p">,</span> <span class="s2">&quot;paper&quot;</span><span class="p">,</span> <span class="s2">&quot;can&quot;</span><span class="p">,</span> <span class="s2">&quot;scrap metal&quot;</span><span class="p">,</span> <span class="s2">&quot;bottle&quot;</span><span class="p">]</span>
 <span class="n">Category</span> <span class="o">=</span> <span class="n">VARIABLES</span><span class="o">.</span><span class="n">discrete</span><span class="p">(</span><span class="s2">&quot;Category&quot;</span><span class="p">,</span> <span class="n">categories</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>Conceptually, the Variables class keeps track of the names of variables and what values each variable can take on. For example in the above, we need the variable <code class="docutils literal notranslate"><span class="pre">Category</span></code>, and it can take on the values <code class="docutils literal notranslate"><span class="pre">cardboard</span></code>, <code class="docutils literal notranslate"><span class="pre">paper</span></code>, <code class="docutils literal notranslate"><span class="pre">can</span></code>, <code class="docutils literal notranslate"><span class="pre">scrap</span> <span class="pre">metal</span></code>, and <code class="docutils literal notranslate"><span class="pre">bottle</span></code>. We do this so that later when we print, it can show us a beautiful outputs.</p>
-<p>We can now create a prior probability <span class="math notranslate nohighlight">\(P(Category)\)</span> on the category:</p>
+<p>Conceptually, the Variables class keeps track of the names of variables and what values each variable can take on. For example in the above, we need the variable <code class="docutils literal notranslate"><span class="pre">Category</span></code>, and it can take on the values <code class="docutils literal notranslate"><span class="pre">cardboard</span></code>, <code class="docutils literal notranslate"><span class="pre">paper</span></code>, <code class="docutils literal notranslate"><span class="pre">can</span></code>, <code class="docutils literal notranslate"><span class="pre">scrap</span> <span class="pre">metal</span></code>, and <code class="docutils literal notranslate"><span class="pre">bottle</span></code>. We do this so that later when we print, it can show us a nicely rendered outputs.</p>
+<p>We can now create a prior probability <span class="math notranslate nohighlight">\(P(Category)\)</span> on the category using a <code class="docutils literal notranslate"><span class="pre">DiscreteDistribution</span></code> constructor:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">category_prior</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">DiscreteDistribution</span><span class="p">(</span><span class="n">Category</span><span class="p">,</span> <span class="s2">&quot;200/300/250/200/50&quot;</span><span class="p">)</span>
@@ -617,7 +619,7 @@ accessed through wrapped classes from within python.</p>
 </div>
 </div>
 </div>
-<p>The constructor automatically normalizes to a proper probability distribution, i.e., it sums to one. It is rendered in notebook as a table below, where we can verify this:</p>
+<p>The constructor automatically normalizes the numbers given to it to a proper probability distribution, i.e., it makes the probabilities sum to one. It is rendered in notebook as a table below, where we can verify this:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pretty</span><span class="p">(</span><span class="n">category_prior</span><span class="p">)</span>
@@ -642,12 +644,12 @@ accessed through wrapped classes from within python.</p>
 </table>
 </div></div></div>
 </div>
-<p>We can of course evaluate the prior for any category value:</p>
+<p>We can evaluate the prior for any category value, e.g., “can”, but that function does take integer indices, not srings. Hence, we use the built-in python function <code class="docutils literal notranslate"><span class="pre">index</span></code> to obtain that integer (2 in this case):</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">index</span> <span class="o">=</span> <span class="n">categories</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;can&#39;</span><span class="p">)</span>  <span class="c1"># we still have to use an integer value</span>
-<span class="n">Pcan</span> <span class="o">=</span> <span class="n">category_prior</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;P(&#39;can&#39;) = </span><span class="si">{</span><span class="n">Pcan</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">P_can</span> <span class="o">=</span> <span class="n">category_prior</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;P(&#39;can&#39;) = </span><span class="si">{</span><span class="n">P_can</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -657,7 +659,7 @@ accessed through wrapped classes from within python.</p>
 </div>
 </div>
 </div>
-<p>We can also recover all values in the probability mass function at once, like so:</p>
+<p>We can also recover all values in the probability distribution at once, using the <code class="docutils literal notranslate"><span class="pre">pmf</span></code> method:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">PMF</span> <span class="o">=</span> <span class="n">category_prior</span><span class="o">.</span><span class="n">pmf</span><span class="p">()</span>
@@ -671,12 +673,14 @@ accessed through wrapped classes from within python.</p>
 </div>
 </div>
 </div>
-<p>Note that the ordering of the array was fixed when we defined <code class="docutils literal notranslate"><span class="pre">categories</span></code> above.  It is your responsibility
+<p>Here “pmf” is short for “probability mass function”, which we define more precisely in Section 2.2. Note that the ordering of the array was fixed when we defined <code class="docutils literal notranslate"><span class="pre">categories</span></code> above.  It is your responsibility
 to maintain consistency when using arrays to store values associated to a collection of variables.</p>
 <p>We can display probability distributions in various ways, including as a bar graph, as shown below.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">px</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">PMF</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">categories</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: A discrete probability distribution as a bar graph.</span>
+<span class="c1">#| label: fig:discrete-distribution</span>
+<span class="n">px</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">PMF</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">categories</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -819,18 +823,22 @@ to category 1.</p>
 <p>Plotting this as a histogram:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">px</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="p">[</span><span class="n">sample</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">)])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: A histogram of samples from the discrete distribution.</span>
+<span class="c1">#| label: fig:discrete-samples</span>
+<span class="n">px</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="p">[</span><span class="n">sample</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">)])</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/ed027c9ff152e0d42b6b96a226b04eb88c5b58ce09a8eb4ffa69ace728045458.png" src="_images/ed027c9ff152e0d42b6b96a226b04eb88c5b58ce09a8eb4ffa69ace728045458.png" />
+<img alt="_images/6c83ba2f2845a036e1ac8cb967db2b71106379498621e4a7ae834a1cae64b282.png" src="_images/6c83ba2f2845a036e1ac8cb967db2b71106379498621e4a7ae834a1cae64b282.png" />
 </div>
 </div>
 <p>Of course, GTSAM has all this machinery built-in:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">px</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="p">[</span><span class="n">category_prior</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">)])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: The same histogram produced by GTSAM&#39;s `DiscreteDistribution.sample` method.</span>
+<span class="c1">#| label: fig:discrete-samples-gtsam</span>
+<span class="n">px</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="p">[</span><span class="n">category_prior</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">)])</span>
 </pre></div>
 </div>
 </div>
@@ -895,7 +903,7 @@ to category 1.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/d233dc35380710968c39867d8b866ff01717714f42889842f5f612747ee47ad5.svg" src="_images/d233dc35380710968c39867d8b866ff01717714f42889842f5f612747ee47ad5.svg" /></div>
+<img alt="_images/c17b8b5c525f431c4c0a6b0b80dbbf2f9bb8d0b8d8707b113f8a7a28a0b331ee.svg" src="_images/c17b8b5c525f431c4c0a6b0b80dbbf2f9bb8d0b8d8707b113f8a7a28a0b331ee.svg" /></div>
 </div>
 <p>Of course, it would be much nicer if we could print out these PMFs in a more readable format, that shows us a name for each variable as well as a pretty name for each. This is where the <code class="docutils literal notranslate"><span class="pre">Variables</span></code> class comes to the rescue. We actually defined a global variable at the top of this notebook, like so:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">VARIABLES</span> <span class="o">=</span> <span class="n">Variables</span><span class="p">()</span>
