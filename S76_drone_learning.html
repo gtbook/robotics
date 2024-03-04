@@ -576,8 +576,10 @@ C = \sum_{i=1}^N \alpha_i T_i c_i
 <p>where <span class="math notranslate nohighlight">\(\alpha_i\)</span> is the <strong>opacity</strong> and <span class="math notranslate nohighlight">\(T_i\)</span> is the <strong>transmittance</strong> at <span class="math notranslate nohighlight">\(P_i\)</span>, both defined below:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
-\alpha_i \doteq 1 - \exp(-\sigma_i) \\
-T_i \doteq \exp ( - \sum_{j=1}^{i-1} \sigma_j).
+\begin{align}
+\alpha_i &amp;\doteq 1 - \exp(-\sigma_i) \\
+T_i &amp;\doteq \exp ( - \sum_{j=1}^{i-1} \sigma_j).
+\end{align}
 \end{split}\]</div>
 <p>The quantity <span class="math notranslate nohighlight">\(\alpha_i\)</span> is the easier of the two to understand: a density <span class="math notranslate nohighlight">\(\sigma=0\)</span> corresponds to an alpha value <span class="math notranslate nohighlight">\(\alpha=0\)</span>, signifying full transparency. Conversely, a high density <span class="math notranslate nohighlight">\(\sigma &gt;&gt; 0\)</span> will yield an alpha value close to <span class="math notranslate nohighlight">\(\alpha=1\)</span>, i.e., fully opaque. The transmittance <span class="math notranslate nohighlight">\(T_i\)</span>, on the other hand, is computed over all samples up to the current sample <span class="math notranslate nohighlight">\(P_i\)</span>, and measures the <em>lack</em> of occlusion in the space between the <span class="math notranslate nohighlight">\(i^th\)</span> sample and the ray origin.</p>
 <p>The calculation of <span class="math notranslate nohighlight">\(C\)</span> above simulates how light is absorbed as it travels through a medium, and can even deal with semi-transparency such as smoke, flames, frosted windows, etc. It is a simplified version of the calculation in the original NeRF paper as we do not bother to deal with non-uniform sampling. The color <span class="math notranslate nohighlight">\(c_i\)</span> at the <span class="math notranslate nohighlight">\(i^th\)</span> sample will contribute a lot if there is not a lot of “stuff” between it and the origin (transmittance <span class="math notranslate nohighlight">\(T_i\)</span> is high), <em>and</em> the local opacity <span class="math notranslate nohighlight">\(\alpha_i\)</span> is high. Conversely, if either visibility from the origin is occluded (transmittance <span class="math notranslate nohighlight">\(T_i\)</span> is low) <em>or</em> there is really nothing there (opacity <span class="math notranslate nohighlight">\(\alpha_i\)</span> is low) then the sample will not contribute much to the pixel color <span class="math notranslate nohighlight">\(C\)</span>.</p>
@@ -612,8 +614,8 @@ T_i \doteq \exp ( - \sum_{j=1}^{i-1} \sigma_j).
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[0.5503223  0.31049657 0.3146699 ]
- [0.7855829  0.6525968  0.5146799 ]]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[0.4195683  0.42883706 0.5692342 ]
+ [0.73458326 0.79676384 0.784617  ]]
 </pre></div>
 </div>
 </div>
@@ -696,7 +698,7 @@ The code below implements trilinear interpolation: the values on the <em>eight</
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Interpolated Output: 0.45679
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Interpolated Output: 0.52113
 </pre></div>
 </div>
 </div>
@@ -1053,7 +1055,7 @@ P = A^{-1}(\tilde{p} - a)
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/18a7132e739fcbe7c2126c8b8eb486cb44e5a68a716b736e4b34df7bc2e63b98.png" src="_images/18a7132e739fcbe7c2126c8b8eb486cb44e5a68a716b736e4b34df7bc2e63b98.png" />
+<img alt="_images/d151e5b69117a0f0e316e6a66254a932f6ad62959fc7aa4f617862a63dbba986.png" src="_images/d151e5b69117a0f0e316e6a66254a932f6ad62959fc7aa4f617862a63dbba986.png" />
 </div>
 </div>
 <p>Let us recall the training code from Chapter 5. We previously used this code to train for the parameters of a 1D interpolation grid, minimizing a Mean-Squared Error (MSE) loss function, i.e., the squared difference between the predicted values and the training data values. This is the standard loss function for continuous <em>regression</em> problems.</p>
