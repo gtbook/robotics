@@ -488,7 +488,7 @@ document.write(`
 <section class="tex2jax_ignore mathjax_ignore" id="actions-over-time">
 <h1><span class="section-number">3.2. </span>Actions over time<a class="headerlink" href="#actions-over-time" title="Link to this heading">#</a></h1>
 <blockquote>
-<div><p>We can use the language of probability to describe systems with uncertainty in the effects of actions.</p>
+<div><p>Using the language of probability to describe systems with uncertainty in the effects of actions.</p>
 </div></blockquote>
 <a class="reference internal image-reference" href="_images/S32-iRobot_vacuuming_robot-04.jpg"><img alt="Splash image with vacuuming robot in action" class="align-center" src="_images/S32-iRobot_vacuuming_robot-04.jpg" style="width: 40%;" /></a>
 <p>In the real world, robots do not always execute actions perfectly, for a
@@ -784,6 +784,14 @@ the probabilistic transitions between states, and in fact it can be generated in
 <span class="n">markov_chain</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">state_prior</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">N</span><span class="p">):</span>
     <span class="n">markov_chain</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="p">]],</span> <span class="s2">&quot;6/1/1/1/1 1/6/1/1/1 1/1/6/1/1 1/1/6/1/1 1/1/1/1/6&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: A simple three state Markov chain.</span>
+<span class="c1">#| label: fig:markov_chain_3</span>
 <span class="n">show</span><span class="p">(</span><span class="n">markov_chain</span><span class="p">,</span> <span class="n">hints</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;X&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">})</span>
 </pre></div>
 </div>
@@ -812,6 +820,14 @@ since the action <span class="math notranslate nohighlight">\(a_1\)</span> and t
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">action_prior</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">DiscreteDistribution</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;1/1/1/1&quot;</span><span class="p">)</span>
 <span class="n">fragment</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">DiscreteBayesNet</span><span class="p">()</span>
 <span class="n">fragment</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">motion_model</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: A Bayes net fragment modeling the effect of an action on the state.</span>
+<span class="c1">#| label: fig:bayes_net_fragment</span>
 <span class="n">show</span><span class="p">(</span><span class="n">fragment</span><span class="p">,</span> <span class="n">hints</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;A&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;X&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="n">boxes</span><span class="o">=</span><span class="p">{</span><span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]})</span>
 </pre></div>
 </div>
@@ -854,6 +870,14 @@ time step <span class="math notranslate nohighlight">\(k\)</span>. The code belo
 <span class="n">bayesNet</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">state_prior</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">N</span><span class="p">):</span>
     <span class="n">bayesNet</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="n">k</span><span class="p">]],</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">action_spec</span><span class="p">)</span> <span class="c1"># add creates conditional and adds</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Concatenating Bayes net fragments into a controlled Markov chain.</span>
+<span class="c1">#| label: fig:controlled_markov_chain</span>
 <span class="n">show</span><span class="p">(</span><span class="n">bayesNet</span><span class="p">,</span> <span class="n">hints</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;A&quot;</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;X&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">},</span> <span class="n">boxes</span><span class="o">=</span><span class="p">{</span><span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">A</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]})</span>
 </pre></div>
 </div>
@@ -965,6 +989,14 @@ we multiply the conditionals does not matter, but we typically prefer to put the
 <span class="n">wxyz</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="p">[</span><span class="n">Y1</span><span class="p">,</span> <span class="n">Z1</span><span class="p">],</span> <span class="s2">&quot;1/1 1/1 1/1 1/1&quot;</span><span class="p">)</span>
 <span class="n">wxyz</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Y1</span><span class="p">,</span> <span class="p">[</span><span class="n">Z1</span><span class="p">],</span> <span class="s2">&quot;1/1 1/1&quot;</span><span class="p">)</span>
 <span class="n">wxyz</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Z1</span><span class="p">,</span> <span class="s2">&quot;1/1&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: A general Bayes net on four discrete variables.</span>
+<span class="c1">#| label: fig:general_bayes_net</span>
 <span class="n">show</span><span class="p">(</span><span class="n">wxyz</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1061,6 +1093,14 @@ actions to factored state representations. The code below shows one way to do it
 <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">N</span><span class="p">):</span>
     <span class="n">factored</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="n">k</span><span class="p">]],</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">action_spec</span><span class="p">)</span> <span class="c1"># motion model for location</span>
     <span class="n">factored</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">B</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="n">A</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">B</span><span class="p">[</span><span class="n">k</span><span class="p">]],</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">spec_b</span><span class="p">]</span><span class="o">*</span><span class="mi">4</span><span class="p">))</span> <span class="c1"># battery evolution model</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: A factored Bayes net for the vacuum cleaner problem.</span>
+<span class="c1">#| label: fig:factored_bayes_net</span>
 <span class="n">show</span><span class="p">(</span><span class="n">factored</span><span class="p">,</span> <span class="n">hints</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;A&quot;</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;X&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">},</span> <span class="n">boxes</span><span class="o">=</span><span class="p">{</span><span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">A</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]})</span>
 </pre></div>
 </div>

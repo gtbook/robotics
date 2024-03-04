@@ -493,27 +493,30 @@ Here, we extend the idea of filtering to spatial data, such as images, instead o
 <p>Recall the image from the previous section:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">image_name</span> <span class="o">=</span> <span class="s2">&quot;LL_color_1201754063.387872.bmp&quot;</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: The color image from the previous section.</span>
+<span class="c1">#| label: fig:color_image_by_robot</span>
+<span class="n">image_name</span> <span class="o">=</span> <span class="s2">&quot;LL_color_1201754063.387872.jpeg&quot;</span>
 <span class="n">lagr_image</span> <span class="o">=</span> <span class="n">diffdrive</span><span class="o">.</span><span class="n">read_image</span><span class="p">(</span><span class="n">image_name</span><span class="p">)</span> <span class="c1"># locally: PIL.Image.open(image_name)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">lagr_image</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/b6a9a0632845fb2809e591dcf08a045e9bf2ade530ebd627fe713946af362b0f.png" src="_images/b6a9a0632845fb2809e591dcf08a045e9bf2ade530ebd627fe713946af362b0f.png" />
+<img alt="_images/6f65948a3d30d2b3706c89034bef2c63b1e2a3945f9a0e5b4a2865276bbd69a5.png" src="_images/6f65948a3d30d2b3706c89034bef2c63b1e2a3945f9a0e5b4a2865276bbd69a5.png" />
 </div>
 </div>
 <p>First, to explain linear filtering operations, we will convert the image to grayscale:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">PIL.ImageOps</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Gray scale version of the same image.</span>
+<span class="c1">#| label: fig:gray_image_by_robot</span>
 <span class="n">grayscale_image</span> <span class="o">=</span> <span class="n">PIL</span><span class="o">.</span><span class="n">ImageOps</span><span class="o">.</span><span class="n">grayscale</span><span class="p">(</span><span class="n">lagr_image</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">grayscale_image</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/5f8b4cc6269e997905694ad210dc1a976ad4bed176f86b3195dfe41048addf11.png" src="_images/5f8b4cc6269e997905694ad210dc1a976ad4bed176f86b3195dfe41048addf11.png" />
+<img alt="_images/ad9369322527c92b317f3b7ed329bb78009e3bb8684d65ef7422781d54f72ffe.png" src="_images/ad9369322527c92b317f3b7ed329bb78009e3bb8684d65ef7422781d54f72ffe.png" />
 </div>
 </div>
 <p>We will be using the <code class="docutils literal notranslate"><span class="pre">pytorch</span></code> library below, which operates on <em>tensors</em>, which are basically equivalent to multidimensional numpy arrays. It is easy to convert from numpy to pytorch tensors:</p>
@@ -543,14 +546,16 @@ Here, we extend the idea of filtering to spatial data, such as images, instead o
 <p>Above the first line creates a “filter” of size <span class="math notranslate nohighlight">\(1 \times 3\)</span>, with values <span class="math notranslate nohighlight">\(\begin{bmatrix}-1 &amp; 0 &amp; 1\end{bmatrix}\)</span>, and then the second line calls a function <code class="docutils literal notranslate"><span class="pre">conv2</span></code> which implements the filtering. The results are shown below:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot_mosaic</span><span class="p">([[</span><span class="s1">&#39;input&#39;</span><span class="p">,</span> <span class="s1">&#39;edges&#39;</span><span class="p">]],</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Gray scale image and its edges.</span>
+<span class="c1">#| label: fig:gray_image_and_edges_by_robot</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot_mosaic</span><span class="p">([[</span><span class="s1">&#39;input&#39;</span><span class="p">,</span> <span class="s1">&#39;edges&#39;</span><span class="p">]],</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
 <span class="n">ax</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">grayscale</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="s1">&#39;edges&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">I_u</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;RdYlGn&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/16e115e8a60ef18a5b8d36349d8b964f1828a2d2fa69d2caa09122ff90e2b9d8.png" src="_images/16e115e8a60ef18a5b8d36349d8b964f1828a2d2fa69d2caa09122ff90e2b9d8.png" />
+<img alt="_images/4b4d43b7d814db1097ba1a941a14675ea57299fdf75307037cc8dfefd9d68303.png" src="_images/4b4d43b7d814db1097ba1a941a14675ea57299fdf75307037cc8dfefd9d68303.png" />
 </div>
 </div>
 <p>Above we show the input image and the computed “edge image” side by side. The edge image is color-coded: red is negative, green is positive, and yellow is zero. By comparing with the input, you can see that it highlights strong <em>vertical edges</em> in the input image, where green corresponds to dark-light transitions, and red corresponds to light-dark transitions.</p>
@@ -648,7 +653,9 @@ g = \begin{pmatrix}-1 \\ 0 \\ 1\end{pmatrix}
 <p>The code below applies the horizontal Sobel edge detector to our original image from above.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sobel_v</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Gray scale image and the result of the horizontal Sobel edge detector.</span>
+<span class="c1">#| label: fig:gray_image_and_horizontal_edges_by_robot</span>
+<span class="n">sobel_v</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
 <span class="n">I_v</span> <span class="o">=</span> <span class="n">diffdrive</span><span class="o">.</span><span class="n">conv2</span><span class="p">(</span><span class="n">grayscale</span><span class="p">,</span> <span class="n">sobel_v</span><span class="p">)</span>
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot_mosaic</span><span class="p">([[</span><span class="s1">&#39;input&#39;</span><span class="p">,</span> <span class="s1">&#39;edges&#39;</span><span class="p">]],</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
 <span class="n">ax</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">grayscale</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span>
@@ -657,7 +664,7 @@ g = \begin{pmatrix}-1 \\ 0 \\ 1\end{pmatrix}
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/d3b0eb8a443a3bfbe4ac242e31bd56c1125fb25afee50c8950791de47033cc0a.png" src="_images/d3b0eb8a443a3bfbe4ac242e31bd56c1125fb25afee50c8950791de47033cc0a.png" />
+<img alt="_images/f62d86ec0e3bcf918920fdf03335e0e6dbe3b045dafef4f355b2d8055a56f110.png" src="_images/f62d86ec0e3bcf918920fdf03335e0e6dbe3b045dafef4f355b2d8055a56f110.png" />
 </div>
 </div>
 <p>Note that above we defined the filter such that a positive transition is defined as having dark then light for an increasing value of the <em>row</em> coordinate. This explains why above the strong edge with the sky shows up as <em>negative</em>, perhaps counter to your intuition.</p>
@@ -672,7 +679,9 @@ Could we use our Sobel gradient operators to construct an edge detector?</p>
 <p>The gradient magnitude (i.e., the Euclidean norm of the gradient) is a positive number that combines both horizontal and vertical gradient values. We can calculate and visualize it as follows:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">I_m</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">I_u</span><span class="p">)</span><span class="o">+</span><span class="n">torch</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">I_v</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Gray scale and gradient magnitude.</span>
+<span class="c1">#| label: fig:gray_image_and_gradient_magnitude_by_robot</span>
+<span class="n">I_m</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">I_u</span><span class="p">)</span><span class="o">+</span><span class="n">torch</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">I_v</span><span class="p">))</span>
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot_mosaic</span><span class="p">([[</span><span class="s1">&#39;input&#39;</span><span class="p">,</span> <span class="s1">&#39;edges&#39;</span><span class="p">]],</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
 <span class="n">ax</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">grayscale</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="s1">&#39;edges&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">I_m</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;Greys&quot;</span><span class="p">);</span>
@@ -680,13 +689,15 @@ Could we use our Sobel gradient operators to construct an edge detector?</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/a523abb4da5c8ab025124c744f7252acdffdb4ef18fe09e048fed2bd67289225.png" src="_images/a523abb4da5c8ab025124c744f7252acdffdb4ef18fe09e048fed2bd67289225.png" />
+<img alt="_images/25676f1e20d887c89c96bd69553c9cdaefead22bfde5cede1e50cf0434ffd431.png" src="_images/25676f1e20d887c89c96bd69553c9cdaefead22bfde5cede1e50cf0434ffd431.png" />
 </div>
 </div>
 <p>Above, it seems that edges have a high magnitude, and non-edges have a low magnitude, so a very simple idea is to simply threshold and get a <em>binary edge image</em>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">edges</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">I_m</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Gray scale version and thresholded gradient magnitude.</span>
+<span class="c1">#| label: fig:gray_image_and_thresholded_gradient_magnitude_by_robot</span>
+<span class="n">edges</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">I_m</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span>
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot_mosaic</span><span class="p">([[</span><span class="s1">&#39;input&#39;</span><span class="p">,</span> <span class="s1">&#39;edges&#39;</span><span class="p">]],</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
 <span class="n">ax</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">grayscale</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="s1">&#39;edges&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;Greys&quot;</span><span class="p">);</span>
@@ -694,7 +705,7 @@ Could we use our Sobel gradient operators to construct an edge detector?</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/9df6b0de9028c38dfb5fb4ed0955bc55a5deb347efd8a06786b920278d79b17b.png" src="_images/9df6b0de9028c38dfb5fb4ed0955bc55a5deb347efd8a06786b920278d79b17b.png" />
+<img alt="_images/60e8f20a02e48b61c73a83d33a321b762693599bad764a8b423998b4284370d6.png" src="_images/60e8f20a02e48b61c73a83d33a321b762693599bad764a8b423998b4284370d6.png" />
 </div>
 </div>
 <p>In the above we used a threshold <span class="math notranslate nohighlight">\(\theta=50\)</span>, but feel free to play with this threshold a bit and see what you like best. You can see that it is not so easy to make this simple, hand-designed edge detector to do what we <em>really</em> want, which is to detect edges as we think of them, and not react to all the noise in the image. Image processing, and computer vision in general, is messy and hard!</p>
@@ -858,7 +869,9 @@ The MNIST task is now considered solved, and LeNet-5 is not even the best perfor
 <p>We load a highway driving example to test it:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">image_name</span> <span class="o">=</span> <span class="s2">&quot;highway280.jpg&quot;</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Color image taken from a front-facing camera on a highway.</span>
+<span class="c1">#| label: fig:highway_image_by_robot</span>
+<span class="n">image_name</span> <span class="o">=</span> <span class="s2">&quot;highway280.jpg&quot;</span>
 <span class="n">highway_image</span> <span class="o">=</span> <span class="n">diffdrive</span><span class="o">.</span><span class="n">read_image</span><span class="p">(</span><span class="n">image_name</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;resolution = </span><span class="si">{</span><span class="n">highway_image</span><span class="o">.</span><span class="n">width</span><span class="si">}</span><span class="s2">x</span><span class="si">{</span><span class="n">highway_image</span><span class="o">.</span><span class="n">height</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="n">highway_image</span> <span class="o">=</span> <span class="n">highway_image</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">&quot;RGB&quot;</span><span class="p">)</span>
@@ -897,7 +910,9 @@ The MNIST task is now considered solved, and LeNet-5 is not even the best perfor
 <p>Again, we use example code from PyTorch Hub to display the result as a color-coded per-pixel segmentation image. Note the method calls <code class="docutils literal notranslate"><span class="pre">.cpu()</span></code> and <code class="docutils literal notranslate"><span class="pre">.numpy()</span></code> which respectively transfer a PyTorch tensor to the CPU (if it’s not already there) and then convert the tensor to a <code class="docutils literal notranslate"><span class="pre">numpy</span></code> array, to play nicely with <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># create a color pallette, selecting a color for each class</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Semantic segmentation of the highway image.</span>
+<span class="c1">#| label: fig:semantic_segmentation_by_robot</span>
+<span class="c1"># create a color pallette, selecting a color for each class</span>
 <span class="n">palette</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">2</span> <span class="o">**</span> <span class="mi">25</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span> <span class="o">**</span> <span class="mi">15</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span> <span class="o">**</span> <span class="mi">21</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
 <span class="n">colors</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">as_tensor</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">21</span><span class="p">)])[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">palette</span>
 <span class="n">colors</span> <span class="o">=</span> <span class="p">(</span><span class="n">colors</span> <span class="o">%</span> <span class="mi">255</span><span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;uint8&quot;</span><span class="p">)</span>
@@ -947,7 +962,9 @@ The MNIST task is now considered solved, and LeNet-5 is not even the best perfor
 <p>After evaluating the network, we show the result using matplotlib:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Depth estimation of the highway image.</span>
+<span class="c1">#| label: fig:depth_estimation_by_robot</span>
+<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
     <span class="n">prediction</span> <span class="o">=</span> <span class="n">midas</span><span class="p">(</span><span class="n">input_batch</span><span class="p">)</span>
 
 <span class="n">output</span> <span class="o">=</span> <span class="n">prediction</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>

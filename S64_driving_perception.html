@@ -463,7 +463,6 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optimization-with-gtsam">6.4.8. Optimization with GTSAM</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#slam-with-landmarks">6.4.9. SLAM with Landmarks</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-larger-slam-example">6.4.10. A Larger SLAM Example</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gtsam-101">6.4.11. GTSAM 101</a></li>
 </ul>
             </nav>
         </div>
@@ -935,7 +934,9 @@ Value 5: (gtsam::Pose2)
 <p>We can use this initial estimate to show the factor graph below:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">show</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">initial_estimate</span><span class="p">,</span> <span class="n">binary_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Factor graph with odometry and loop closure constraints.</span>
+<span class="c1">#| label: fig:factor_graph_with_loop_closure</span>
+<span class="n">show</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">initial_estimate</span><span class="p">,</span> <span class="n">binary_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -977,7 +978,9 @@ Value 5: (gtsam::Pose2)
 <p>In code, we do this via the <code class="docutils literal notranslate"><span class="pre">gtsam.Marginals</span></code> object, and we can plot marginals with a special function <code class="docutils literal notranslate"><span class="pre">plot_pose2</span></code>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">marginals</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Marginals</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: The optimized trajectory with the estimated covariances.</span>
+<span class="c1">#| label: fig:optimized_trajectory_with_covariances</span>
+<span class="n">marginals</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Marginals</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">):</span>
     <span class="n">gtsam_plot</span><span class="o">.</span><span class="n">plot_pose2</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">atPose2</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="mf">0.5</span><span class="p">,</span>
                           <span class="n">marginals</span><span class="o">.</span><span class="n">marginalCovariance</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
@@ -1050,7 +1053,9 @@ bearing-range measurements as well.</p>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">show</span><span class="p">(</span><span class="n">slam_graph</span><span class="p">,</span> <span class="n">slam_initial</span><span class="p">,</span> <span class="n">binary_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Factor graph with odometry and range-bearing constraints.</span>
+<span class="c1">#| label: fig:factor_graph_with_range_bearing</span>
+<span class="n">show</span><span class="p">(</span><span class="n">slam_graph</span><span class="p">,</span> <span class="n">slam_initial</span><span class="p">,</span> <span class="n">binary_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1068,7 +1073,9 @@ bearing-range measurements as well.</p>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">marginals</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Marginals</span><span class="p">(</span><span class="n">slam_graph</span><span class="p">,</span> <span class="n">slam_result</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: The optimized trajectory with the estimated covariances, with bearing-range measurements to landmarks.</span>
+<span class="c1">#| label: fig:optimized_trajectory_with_covariances_and_landmarks_br</span>
+<span class="n">marginals</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Marginals</span><span class="p">(</span><span class="n">slam_graph</span><span class="p">,</span> <span class="n">slam_result</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]:</span>
     <span class="n">gtsam_plot</span><span class="o">.</span><span class="n">plot_pose2</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">slam_result</span><span class="o">.</span><span class="n">atPose2</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">marginals</span><span class="o">.</span><span class="n">marginalCovariance</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
 <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]:</span>
@@ -1090,6 +1097,14 @@ bearing-range measurements as well.</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">datafile</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">findExampleDataFile</span><span class="p">(</span><span class="s1">&#39;example.graph&#39;</span><span class="p">)</span>
 <span class="n">model</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">noiseModel</span><span class="o">.</span><span class="n">Diagonal</span><span class="o">.</span><span class="n">Sigmas</span><span class="p">([</span><span class="mf">0.05</span><span class="p">,</span><span class="mf">0.05</span><span class="p">,</span><span class="mi">2</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span><span class="p">])</span>
 <span class="p">[</span><span class="n">graph</span><span class="p">,</span><span class="n">initial</span><span class="p">]</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">load2D</span><span class="p">(</span><span class="n">datafile</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Factor graph for a more realistic example, derived from a real-world dataset.</span>
+<span class="c1">#| label: fig:factor_graph_real_world</span>
 <span class="n">show</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span><span class="n">initial</span><span class="p">,</span> <span class="n">binary_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1123,89 +1138,23 @@ bearing-range measurements as well.</p>
 <span class="n">fig</span><span class="o">.</span><span class="n">add_scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">initial_poses</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="n">initial_poses</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;initial&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">))</span>
 <span class="n">final_poses</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">utilities</span><span class="o">.</span><span class="n">extractPose2</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">add_scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">final_poses</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="n">final_poses</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;optimized&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">))</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">update_yaxes</span><span class="p">(</span><span class="n">scaleanchor</span> <span class="o">=</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span><span class="n">scaleratio</span> <span class="o">=</span> <span class="mi">1</span><span class="p">);</span> <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">update_yaxes</span><span class="p">(</span><span class="n">scaleanchor</span> <span class="o">=</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span><span class="n">scaleratio</span> <span class="o">=</span> <span class="mi">1</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Initial and optimized trajectories for a more realistic example.</span>
+<span class="c1">#| label: fig:initial_and_optimized_trajectories</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/bbb2e404d051e148f58d02e81618e1428385209d991bece344b1ade1b557143b.png" src="_images/bbb2e404d051e148f58d02e81618e1428385209d991bece344b1ade1b557143b.png" />
+<img alt="_images/d28feff7c73cf74058db68b43703cc11bbf72dcc686efd32002b301a41bd0ede.png" src="_images/d28feff7c73cf74058db68b43703cc11bbf72dcc686efd32002b301a41bd0ede.png" />
 </div>
 </div>
-</section>
-<section id="gtsam-101">
-<h2><span class="section-number">6.4.11. </span>GTSAM 101<a class="headerlink" href="#gtsam-101" title="Link to this heading">#</a></h2>
-<blockquote>
-<div><p>A deeper dive in the GTSAM concepts used above.</p>
-</div></blockquote>
-<p>help(gtsam.Point3)</p>
-<div class="highlight-Point3(x=nan, notranslate"><div class="highlight"><pre><span></span>    Shim for the deleted Point3 type.
-</pre></div>
-</div>
-<p>help(gtsam.Rot3.Ypr)</p>
-<div class="highlight-Ypr(...) notranslate"><div class="highlight"><pre><span></span>    Ypr(y: float, p: float, r: float) -&gt; gtsam.gtsam.Rot3
-</pre></div>
-</div>
-<p>help(gtsam.Pose3)</p>
-<div class="highlight-Align(...) notranslate"><div class="highlight"><pre><span></span> |      Align(*args, **kwargs)
- |      Overloaded function.
- |      
- |      1. Align(abPointPairs: std::vector&lt;std::pair&lt;Eigen::Matrix&lt;double, 3, 1, 0, 3, 1&gt;, Eigen::Matrix&lt;double, 3, 1, 0, 3, 1&gt; &gt;, std::allocator&lt;std::pair&lt;Eigen::Matrix&lt;double, 3, 1, 0, 3, 1&gt;, Eigen::Matrix&lt;double, 3, 1, 0, 3, 1&gt; &gt; &gt; &gt;) -&gt; Optional[gtsam.gtsam.Pose3]
- |      
- |      2. Align(a: numpy.ndarray[numpy.float64[m, n]], b: numpy.ndarray[numpy.float64[m, n]]) -&gt; Optional[gtsam.gtsam.Pose3]
- |  
- |  Expmap(...) from builtins.PyCapsule
- |      Expmap(v: numpy.ndarray[numpy.float64[m, 1]]) -&gt; gtsam.gtsam.Pose3
- |  
- |  ExpmapDerivative(...) from builtins.PyCapsule
- |      ExpmapDerivative(xi: numpy.ndarray[numpy.float64[m, 1]]) -&gt; numpy.ndarray[numpy.float64[6, 6]]
- |  
- |  Logmap(...) from builtins.PyCapsule
- |      Logmap(pose: gtsam.gtsam.Pose3) -&gt; numpy.ndarray[numpy.float64[6, 1]]
- |  
- |  LogmapDerivative(...) from builtins.PyCapsule
- |      LogmapDerivative(xi: gtsam.gtsam.Pose3) -&gt; numpy.ndarray[numpy.float64[6, 6]]
- |  
- |  adjoint(...) from builtins.PyCapsule
- |      adjoint(xi: numpy.ndarray[numpy.float64[m, 1]], y: numpy.ndarray[numpy.float64[m, 1]]) -&gt; numpy.ndarray[numpy.float64[6, 1]]
- |  
- |  adjointMap(...) from builtins.PyCapsule
- |      adjointMap(xi: numpy.ndarray[numpy.float64[m, 1]]) -&gt; numpy.ndarray[numpy.float64[6, 6]]
- |  
- |  adjointMap_(...) from builtins.PyCapsule
- |      adjointMap_(xi: numpy.ndarray[numpy.float64[m, 1]]) -&gt; numpy.ndarray[numpy.float64[6, 6]]
- |  
- |  adjointTranspose(...) from builtins.PyCapsule
- |      adjointTranspose(xi: numpy.ndarray[numpy.float64[m, 1]], y: numpy.ndarray[numpy.float64[m, 1]]) -&gt; numpy.ndarray[numpy.float64[6, 1]]
- |  
- |  adjoint_(...) from builtins.PyCapsule
- |      adjoint_(xi: numpy.ndarray[numpy.float64[m, 1]], y: numpy.ndarray[numpy.float64[m, 1]]) -&gt; numpy.ndarray[numpy.float64[6, 1]]
- |  
- |  identity(...) from builtins.PyCapsule
- |      identity() -&gt; gtsam.gtsam.Pose3
- |  
- |  wedge(...) from builtins.PyCapsule
- |      wedge(wx: float, wy: float, wz: float, vx: float, vy: float, vz: float) -&gt; numpy.ndarray[numpy.float64[m, n]]
- |  
- |  ----------------------------------------------------------------------
- |  Static methods inherited from pybind11_builtins.pybind11_object:
- |  
- |  __new__(*args, **kwargs) from pybind11_builtins.pybind11_type
- |      Create and return a new object.  See help(type) for accurate signature.
-
-</pre></div>
-</div>
-<p>help(driving.read_lidar_points)</p>
-<p>help(driving.visualize_clouds)
-help(driving.visualize_clouds_animation)</p>
-<p>help(gtsam.Values.deserialize)</p>
-<p>help(gtsam.Pose3.transformFrom)</p>
-<p>help(gtsam.noiseModel.Diagonal)</p>
-<p>help(gtsam.NonlinearFactorGraph())</p>
-<p>help(gtsam.PriorFactorPose3)
-help(gtsam.BetweenFactorPose3)</p>
-<p>help(gtsam.GaussNewtonParams)</p>
-<p>help( gtsam.GaussNewtonOptimizer)</p>
-<p>help(gtsam.Marginals)</p>
 </section>
 </section>
 
@@ -1287,7 +1236,6 @@ help(gtsam.BetweenFactorPose3)</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optimization-with-gtsam">6.4.8. Optimization with GTSAM</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#slam-with-landmarks">6.4.9. SLAM with Landmarks</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-larger-slam-example">6.4.10. A Larger SLAM Example</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gtsam-101">6.4.11. GTSAM 101</a></li>
 </ul>
   </nav></div>
 

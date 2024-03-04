@@ -537,7 +537,7 @@ and performing full posterior inference and MAP estimation for HMMs.</p>
 <section id="inference-in-bayes-nets">
 <h2><span class="section-number">3.4.1. </span>Inference in Bayes Nets<a class="headerlink" href="#inference-in-bayes-nets" title="Link to this heading">#</a></h2>
 <blockquote>
-<div><p>Inference could mean estimating the full posterior distribution, or computing a single, maximum a posteriori estimate.</p>
+<div><p>Inference is the full posterior or a single maximum a posteriori estimate.</p>
 </div></blockquote>
 <p><strong>Inference</strong> is the process of determining knowledge about a subset of
 variables <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> given the known values for another subset of variables <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span>.
@@ -574,7 +574,9 @@ P(\mathcal{X}|\mathcal{Z}=\mathfrak{z})\propto P(\mathcal{X}, \mathcal{Z}=\mathf
 <p>This seems almost too simple, but it really works, as shown in a small generic Bayes net example below. Let us recall the 4-variable Bayes net example on variables <span class="math notranslate nohighlight">\(X\)</span>, <span class="math notranslate nohighlight">\(Y\)</span>, <span class="math notranslate nohighlight">\(W\)</span>, and <span class="math notranslate nohighlight">\(Z\)</span>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">show</span><span class="p">(</span><span class="n">wxyz</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Bayes net for the 4-variable model, again.</span>
+<span class="c1">#| label: fig:bayesnet_4</span>
+<span class="n">show</span><span class="p">(</span><span class="n">wxyz</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -750,6 +752,14 @@ joint distribution <span class="math notranslate nohighlight">\(P(\mathcal{X}, \
 <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">N</span><span class="p">)):</span>
     <span class="n">dbn</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="n">k</span><span class="p">]],</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">action_spec</span><span class="p">)</span>
 <span class="n">dbn</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;1/1/1/1/1&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: A hidden Markov model.</span>
+<span class="c1">#| label: fig:hmm_vacuum</span>
 <span class="n">show</span><span class="p">(</span><span class="n">dbn</span><span class="p">,</span> <span class="n">hints</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;A&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;X&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Z&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span> <span class="n">boxes</span><span class="o">=</span><span class="p">{</span><span class="n">A</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">N</span><span class="p">)}</span><span class="o">.</span><span class="n">union</span><span class="p">({</span><span class="n">Z</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">)}))</span>
 </pre></div>
 </div>
@@ -940,6 +950,14 @@ and finally, the measurement likelihood factors <span class="math notranslate no
     <span class="n">z_k</span> <span class="o">=</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">light_levels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">measurement</span><span class="p">)</span>
     <span class="n">factor</span> <span class="o">=</span> <span class="n">conditional</span><span class="o">.</span><span class="n">likelihood</span><span class="p">(</span><span class="n">z_k</span><span class="p">)</span>  <span class="c1"># \phi(X) = P(Z=z|X)</span>
     <span class="n">graph</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">factor</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: A three-variable factor graph for when measurements are *given*</span>
+<span class="c1">#| label: fig:factor_graph_vacuum</span>
 <span class="n">show</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1143,7 +1161,9 @@ P(\mathcal{X}|\mathcal{Z}) &amp;\propto \prod\phi_{i}(\mathcal{X}_{i})
 <p>In GTSAM, calling <code class="docutils literal notranslate"><span class="pre">sumProduct</span></code> yields a Bayes net, which encodes the full posterior distribution:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">posterior</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">sumProduct</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: The full posterior encoded as a Bayes net.</span>
+<span class="c1">#| label: fig:posterior_bn</span>
+<span class="n">posterior</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">sumProduct</span><span class="p">()</span>
 <span class="n">show</span><span class="p">(</span><span class="n">posterior</span><span class="p">,</span> <span class="n">hints</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;X&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
 </pre></div>
 </div>

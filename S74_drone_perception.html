@@ -451,6 +451,8 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integrating-the-imu">7.4.1. Integrating the IMU</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#incorporating-visual-measurements">7.4.2. Incorporating Visual Measurements</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">7.4.3. Visual SLAM</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">7.4.4. Summary</a></li>
 </ul>
             </nav>
         </div>
@@ -470,6 +472,8 @@ document.write(`
 </div></blockquote>
 <a class="reference internal image-reference" href="_images/S74-Autonomous_camera_drone-04.jpg"><img alt="Splash image with strange drone presumably thinking about maps" class="align-center" src="_images/S74-Autonomous_camera_drone-04.jpg" style="width: 40%;" /></a>
 <p>Visual SLAM <em>almost</em> the same problem as the “SLAM with Landmarks” problem from Section 6.4, but we will now use 3D poses and 3D points, and we will use the inertial measurements from the IMU to inform us about the movement of the platform. This is a typical pipeline on drones, phones, etc., everything with an IMU.</p>
+<p>Many unmanned aerial vehicles use cameras as their main sensors in addition to inertial sensing, as they are an incredibly rich sensing modality, do not consume a whole lot of energy, and are quite small. Especially the latter two considerations are very important in the weight and energy constrained world of autonomous drones. Furthermore, in military applications there is another reason to favor cameras over active sensors like LIDAR: cameras do not <em>emit</em> energy and hence are stealthier.</p>
+<p>Below we first introduce how we can estimate the trajectory of a drone using an inertial measurement unit or IMU, which we introduced in Section 7.2. Here we integrate IMU measurements over time to yield an estimate of the trajectory of the drone over time. Below that we discuss how we can build 3D maps from images alone (!), in a process called <strong>Structure from Motion</strong> or SfM. We then discuss Visual SLAM, which combines both IMU integration and SfM in a real-time, incremental pipeline. Implementing visual SLAM is beyond our scope, but it should be easy to imagine how inertial sensing and 3D reconstruction done together and in real-time is an incredible asset to autonomous flight.</p>
 <section id="integrating-the-imu">
 <h2><span class="section-number">7.4.1. </span>Integrating the IMU<a class="headerlink" href="#integrating-the-imu" title="Link to this heading">#</a></h2>
 <p>We start off by encoding the information provided by the inertial measurement unit (IMU) in a factor graph.</p>
@@ -587,7 +591,9 @@ Every 5 steps we add an <code class="docutils literal notranslate"><span class="
 <p>The graph displayed below shows (a bit messily) that the IMUFactors tie together the <code class="docutils literal notranslate"><span class="pre">Pose3</span></code> states <span class="math notranslate nohighlight">\(x_k\)</span>, the velocities <span class="math notranslate nohighlight">\(v_k\)</span> and the unknown IMU biases <span class="math notranslate nohighlight">\(b_0\)</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">position_hints</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;u&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;z&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: A (somewhat messy) factor graph for the IMU preintegration problem.</span>
+<span class="c1">#| label: fig:imu_graph</span>
+<span class="n">position_hints</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;u&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;z&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
 <span class="n">position_hints</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;v&#39;</span><span class="p">:</span><span class="mi">2</span><span class="p">})</span>
 <span class="n">show</span><span class="p">(</span><span class="n">imu_graph</span><span class="p">,</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Values</span><span class="p">(),</span> <span class="n">hints</span><span class="o">=</span><span class="n">position_hints</span><span class="p">)</span>
 </pre></div>
@@ -610,15 +616,17 @@ Every 5 steps we add an <code class="docutils literal notranslate"><span class="
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>initial error: 28887870.40572297
-final error: 1.5726116722584744e-23
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>initial error: 21754918.966487072
+final error: 1.9107947977950773e-23
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Result of the IMU preintegration optimization.</span>
+<span class="c1">#| label: fig:imu_result</span>
+<span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="k">while</span> <span class="n">imu_result</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">X</span><span class="p">(</span><span class="n">i</span><span class="p">)):</span>
     <span class="n">gtsam_plot</span><span class="o">.</span><span class="n">plot_pose3</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">imu_result</span><span class="o">.</span><span class="n">atPose3</span><span class="p">(</span><span class="n">X</span><span class="p">(</span><span class="n">i</span><span class="p">)),</span> <span class="mi">1</span><span class="p">)</span>
     <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -635,16 +643,15 @@ final error: 1.5726116722584744e-23
 <section id="incorporating-visual-measurements">
 <h2><span class="section-number">7.4.2. </span>Incorporating Visual Measurements<a class="headerlink" href="#incorporating-visual-measurements" title="Link to this heading">#</a></h2>
 <blockquote>
-<div><p>Visual SLAM is based on Structure from Motion</p>
+<div><p>Structure from Motion is 3D reconstruction from images</p>
 </div></blockquote>
-<p>Many unmanned aerial vehicles use cameras as their main sensors in addition to inertial sensing, as they are an incredibly rich sensing modality, do not consume a whole lot of energy, and are quite small. Especially the latter two considerations are very important in the weight and energy constrained world of autonomous drones. Furthermore, in military applications there is another reason to favor cameras over active sensors like LIDAR: cameras do not <em>emit</em> energy and hence are stealthier.</p>
-<p>In this section we provide an introduction to reconstructing a 3D environment from camera images over time, which allows for planning and obstacle avoidance, which we discuss in more detail in the next section. However, mapping the environment is in and of itself a useful capability in many applications. In some industrial and military applications, teh map <em>is</em> the product of interest. In this section we discuss 3D reconstruction as a <em>batch</em> process, done after the drone has collected images. Real-time, incremental visual SLAM is beyond our scope, but it should be easy to imagine how inertial sensing and 3D reconstruction done together and in real-time is an incredible asset to autonomous flight.</p>
+<p>In this section we provide an introduction to reconstructing a 3D environment from camera images over time, which allows for planning and obstacle avoidance, which we discuss in more detail in the next section. However, mapping the environment is in and of itself a useful capability in many applications. In some industrial and military applications, the map <em>is</em> the product of interest. In this section we discuss 3D reconstruction as a <em>batch</em> process, done after the drone has collected images.</p>
 <p><img alt="Balbianello" src="https://github.com/gtbook/robotics/blob/main/Figures7/Balbianello.jpg?raw=1" /></p>
 <p>Structure from Motion, or SfM, is the problem of computing the 3D structure of a scene from multiple images, either taken from different cameras, or taken at different times as the camera moves in the environment. In the figure above we show one such image sequence, five images of the “Balbianello” villa in Italy, situated on lake Como.</p>
 <p>SfM is almost the same problem as Visual SLAM, but typically there is no odometry information to relate
 different camera views. The resulting optimization problem is sometimes called <strong>Bundle Adjustment</strong>.
 The most difficult problems associated with SfM are feature detection, data association, and initializing the optimization.</p>
-<p>Below we load the Balbianello data from a file and create a factor graph, as well as an initial estimate.</p>
+<p>Below we load the Balbianello data from a file and create a factor graph, as well as an initial estimate. A lot of work is done in the code snippet below! The particular file format, which stems from the “Bundler”” library, is transformed into a data structure <code class="docutils literal notranslate"><span class="pre">sfm_data</span></code>. The method <code class="docutils literal notranslate"><span class="pre">sfmFactorGraph</span></code> then creates a factor graph with <em>all</em> the projection factors derived from the close to 1500 visual measurements. The <code class="docutils literal notranslate"><span class="pre">initialCamerasAndPointsEstimate</span></code> methods next instantiates a <code class="docutils literal notranslate"><span class="pre">Valeus</span></code> object with initial estimates for all the cameras and the points, extracted from the Bundler file. We then print the initial error and see that it has a value of <span class="math notranslate nohighlight">\(126.9\)</span>, which is normalized with respect to 1-pixel standard deviation given in the noise model.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">filename</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">findExampleDataFile</span><span class="p">(</span><span class="s2">&quot;Balbianello.out&quot;</span><span class="p">)</span>
@@ -652,17 +659,17 @@ The most difficult problems associated with SfM are feature detection, data asso
 <span class="n">model</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">noiseModel</span><span class="o">.</span><span class="n">Isotropic</span><span class="o">.</span><span class="n">Sigma</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>  <span class="c1"># one pixel in u and v</span>
 <span class="n">graph</span> <span class="o">=</span> <span class="n">sfm_data</span><span class="o">.</span><span class="n">sfmFactorGraph</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
 <span class="n">initial</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">initialCamerasAndPointsEstimate</span><span class="p">(</span><span class="n">sfm_data</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;initial error: </span><span class="si">{</span><span class="n">graph</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">initial</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;initial error: </span><span class="si">{</span><span class="n">graph</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">initial</span><span class="p">)</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>initial error: 126.92834251964682
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>initial error: 126.9
 </pre></div>
 </div>
 </div>
 </div>
-<p>We then optimize, as usual, now performing structure from motion: we optimize for both the unknown camera poses (calibration is assumed known here) and the unknown 3D points in the scene.</p>
+<p>The code above already did most of the heavy lifting that was so cumbersome and manual in earlier sections of this book, but it does not yet optimize! We once again use the Levenberg-Marquardt non-linear optimizer below, which is now performing <em>structure from motion</em>: we optimize for both the unknown camera poses (calibration is assumed known here) and the unknown 3D points in the scene:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
@@ -670,16 +677,17 @@ The most difficult problems associated with SfM are feature detection, data asso
     <span class="n">result</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">optimize</span><span class="p">()</span>
 <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;LM Optimization failed&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;final error: </span><span class="si">{</span><span class="n">graph</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">result</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;final error: </span><span class="si">{</span><span class="n">graph</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">result</span><span class="p">)</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>final error: 125.51738267205126
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>final error: 125.5
 </pre></div>
 </div>
 </div>
 </div>
+<p>The final error is not much smaller than the initial error, which tells us that the initial estimate was already very good. It is quite fortunate to have found that initial estimate in the file, because in many cases initializing a structure for motion problem can be quite a difficult undertaking. When we are flying a drone, we can build up an estimate of the 3D environment gradually, and hence an initial estimate is always available to use from the previous time step. However, we will not discuss this more in depth here.</p>
 <p>The result of SfM is a sparse point cloud and a set of well-determined camera poses, which can be “densified” using multi-view stereo techniques. This is out of scope of this book, however, and below we simply extract the 3D points and display them in 3D with <code class="docutils literal notranslate"><span class="pre">plotly</span></code>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -689,7 +697,14 @@ The most difficult problems associated with SfM are feature detection, data asso
 <span class="n">wRc</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Rot3</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span> <span class="c1"># make camera point to world y</span>
 <span class="n">wRb</span> <span class="o">=</span> <span class="n">wRc</span><span class="o">.</span><span class="n">compose</span><span class="p">(</span><span class="n">bRc</span><span class="o">.</span><span class="n">inverse</span><span class="p">())</span>
 <span class="n">structure</span> <span class="o">=</span> <span class="p">(</span><span class="n">wRb</span><span class="o">.</span><span class="n">matrix</span><span class="p">()</span> <span class="o">@</span> <span class="n">structure</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
-
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Structure from motion result as a sparse 3D point cloud.</span>
+<span class="c1">#| label: fig:sfm_result</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">()</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter3d</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">structure</span><span class="p">[</span><span class="n">valid</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span><span class="n">y</span><span class="o">=</span><span class="n">structure</span><span class="p">[</span><span class="n">valid</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">z</span><span class="o">=</span><span class="n">structure</span><span class="p">[</span><span class="n">valid</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span>
     <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;markers&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">),</span> <span class="n">showlegend</span><span class="o">=</span> <span class="kc">False</span><span class="p">))</span>
@@ -702,6 +717,18 @@ The most difficult problems associated with SfM are feature detection, data asso
 <img alt="_images/1518d0c5c6a8d6d694b335a5ab3b109f3f4db31813d3054d8759f1f09a3aeb67.png" src="_images/1518d0c5c6a8d6d694b335a5ab3b109f3f4db31813d3054d8759f1f09a3aeb67.png" />
 </div>
 </div>
+</section>
+<section id="id1">
+<h2><span class="section-number">7.4.3. </span>Visual SLAM<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<blockquote>
+<div><p>Visual SLAM is based on Structure from Motion</p>
+</div></blockquote>
+<p>Visual SLAM combines both IMU integration and SfM in a real-time, incremental pipeline. Typically, The drone starts with no pre-built map, opens its eyes as it were, and starts building a 3D map of the environment incrementally. Initial estimates for the camera positions are given by integrating the IMU forward. New landmarks are added incrementally as the drone progresses throughout the environment. Fast, incremental optimization techniques can be used to keep the computation under control, but discussing these is out of scope for an introductory textbook. Suffice to say that, modulo a <em>lot</em> of engineering efforts, this process can be made to work incredibly well. When done well, this provides a superpower to autonomous drones, allowing them to map their environment in real time and affording it to do obstacle avoidance and planning in hitherto unknown environments.</p>
+<p>Visual SLAM from images and IMU integration compliment each other perfectly. The IMU excels at dealing with high frequency motion like vibrations, which is common on drones. However, it suffers from drift: the inertial measurement units available for consumer drones can drift away from the true trajectory quite rapidly. High quality IMUs are typically very expensive and only available in high-end applications. In fact, this technology is so sensitive that even <em>disclosing</em> the accuracy of military-grade IMUs is a crime in many countries. Visual SLAM, on the other hand, is not great at dealing with high frequency motions, but does not suffer from drift as much, especially in environments where many loop closures can be made. It is only in very long, open-ended trajectories that drift is again be a problem.</p>
+</section>
+<section id="summary">
+<h2><span class="section-number">7.4.4. </span>Summary<a class="headerlink" href="#summary" title="Link to this heading">#</a></h2>
+<p>In summary, above we introduced Visual SLAM as an extension of SLAM with landmarks and its critical integration with an IMU integration process. We discussed how the latter can be done with factor graphs, and while these are some of the most complex factor graphs we encountered, the principle stays the same. Structure from Motion was introduced as a method for constructing 3D maps from images, and while we did not go into too much detail about the specific factors, the same optimization pattern can be found at the center of it. Visual SLAM was then introduced, at a high level, as a combination of IMU integration and SfM.</p>
 </section>
 </section>
 
@@ -771,6 +798,8 @@ The most difficult problems associated with SfM are feature detection, data asso
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integrating-the-imu">7.4.1. Integrating the IMU</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#incorporating-visual-measurements">7.4.2. Incorporating Visual Measurements</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">7.4.3. Visual SLAM</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">7.4.4. Summary</a></li>
 </ul>
   </nav></div>
 

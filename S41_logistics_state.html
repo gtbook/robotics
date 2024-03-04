@@ -584,7 +584,8 @@ which is why there are so many ellipses in the figures below.</p>
 <p>The simple code above has limitations: it <em>only</em> works for dimensionality <span class="math notranslate nohighlight">\(n\geq2\)</span>.  In this chapter we will be working in 2D, so below we show the effect of mean and covariance as density contour plots:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># show off some 2D Gaussians</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Some example Gaussian densities in 2D.</span>
+<span class="c1">#| label: fig:example_gaussians</span>
 <span class="n">means</span> <span class="o">=</span> <span class="p">[</span><span class="n">gtsam</span><span class="o">.</span><span class="n">Point2</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="ow">in</span> <span class="p">[(</span><span class="mi">20</span><span class="p">,</span><span class="mi">25</span><span class="p">),(</span><span class="mi">70</span><span class="p">,</span><span class="mi">40</span><span class="p">),(</span><span class="mi">50</span><span class="p">,</span><span class="mi">15</span><span class="p">)]]</span>
 <span class="n">covariances</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="n">sx</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span><span class="n">sy</span><span class="o">**</span><span class="mi">2</span><span class="p">])</span> <span class="k">for</span> <span class="n">sx</span><span class="p">,</span><span class="n">sy</span> <span class="ow">in</span> <span class="p">[(</span><span class="mi">5</span><span class="p">,</span><span class="mi">10</span><span class="p">),(</span><span class="mi">20</span><span class="p">,</span><span class="mi">5</span><span class="p">)]]</span>
 <span class="n">covariances</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">40</span><span class="p">,</span><span class="mi">35</span><span class="p">],[</span><span class="mi">35</span><span class="p">,</span><span class="mi">40</span><span class="p">]]))</span>
@@ -635,7 +636,9 @@ increases.</p>
 <p>Below we show what the 1x1 meter discretization looks like for our warehouse example, using the same three Gaussian densities from above to illustrate a multimodal density:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">probabilities</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">50</span><span class="p">,</span><span class="mi">100</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: A finite element representation of the example Gaussian densities.</span>
+<span class="c1">#| label: fig:example_gaussians_finite</span>
+<span class="n">probabilities</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">50</span><span class="p">,</span><span class="mi">100</span><span class="p">))</span>
 <span class="k">for</span> <span class="n">mean</span><span class="p">,</span><span class="n">cov</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">means</span><span class="p">,</span><span class="n">covariances</span><span class="p">):</span>
     <span class="n">probabilities</span> <span class="o">+=</span> <span class="n">gaussian</span><span class="p">(</span><span class="n">logistics</span><span class="o">.</span><span class="n">map_coords</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">cov</span><span class="p">)</span>
 <span class="n">logistics</span><span class="o">.</span><span class="n">show_map</span><span class="p">(</span><span class="n">probabilities</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">probabilities</span><span class="p">))</span>
@@ -669,7 +672,9 @@ and these can form the basis for perception algorithms used in localization (as 
 <p>Below, we use a numpy random number generator (<code class="docutils literal notranslate"><span class="pre">rng</span></code>, defined in preamble) to sample from the three Gaussians we defined above, and display the resulting sets of samples.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">N</span><span class="o">=</span><span class="mi">500</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: A sampling-based representation of the example Gaussian densities.</span>
+<span class="c1">#| label: fig:example_gaussians_samples</span>
+<span class="n">N</span><span class="o">=</span><span class="mi">500</span>
 <span class="n">samples</span> <span class="o">=</span> <span class="p">[</span><span class="n">rng</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">cov</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">N</span><span class="p">)</span>
            <span class="k">for</span> <span class="n">mean</span><span class="p">,</span><span class="n">cov</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">means</span><span class="p">,</span><span class="n">covariances</span><span class="p">)]</span>
 <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">sample</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span><span class="n">y</span><span class="o">=</span><span class="n">sample</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;markers&quot;</span><span class="p">,</span>
@@ -679,7 +684,7 @@ and these can form the basis for perception algorithms used in localization (as 
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/b79279f2e791f410787832488f0216f34565310e04313976ff324116628a7ca1.png" src="_images/b79279f2e791f410787832488f0216f34565310e04313976ff324116628a7ca1.png" />
+<img alt="_images/6b1b1719313eacd1cd08348c6ba8d3087cb812c86885ec3b19501d65f778bc64.png" src="_images/6b1b1719313eacd1cd08348c6ba8d3087cb812c86885ec3b19501d65f778bc64.png" />
 </div>
 </div>
 </section>

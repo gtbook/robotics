@@ -568,7 +568,9 @@ moves to the right, then up between the middle two shelves:</p>
 <p>Note above we used a <code class="docutils literal notranslate"><span class="pre">gtsam.VectorValues</span></code> to store the ground truth trajectory, which will come in handy again when we simulate the measurements. Below we show this “ground truth” trajectory overlaid on the warehouse map we introduced before:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ground_truth</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">values</span><span class="o">.</span><span class="n">at</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Ground truth trajectory displayed on the base map.</span>
+<span class="c1">#| label: fig:logistics-ground-truth</span>
+<span class="n">ground_truth</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">values</span><span class="o">.</span><span class="n">at</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">])</span>
 <span class="n">logistics</span><span class="o">.</span><span class="n">show_map</span><span class="p">(</span><span class="n">logistics</span><span class="o">.</span><span class="n">base_map</span><span class="p">,</span> <span class="n">ground_truth</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -677,6 +679,14 @@ over <span class="math notranslate nohighlight">\(X\)</span>.</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">prior_mean</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">at</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 <span class="n">prior_cov</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">25</span><span class="p">,</span><span class="mi">25</span><span class="p">])</span>
 <span class="n">prior</span> <span class="o">=</span> <span class="n">logistics</span><span class="o">.</span><span class="n">gaussian</span><span class="p">(</span><span class="n">logistics</span><span class="o">.</span><span class="n">map_coords</span><span class="p">,</span> <span class="n">prior_mean</span><span class="p">,</span> <span class="n">prior_cov</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Prior distribution over the robot&#39;s initial position.</span>
+<span class="c1">#| label: fig:logistics-prior</span>
 <span class="n">logistics</span><span class="o">.</span><span class="n">show_map</span><span class="p">(</span><span class="n">prior</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">prior</span><span class="p">)</span><span class="o">+</span><span class="mf">0.1</span><span class="o">*</span><span class="n">logistics</span><span class="o">.</span><span class="n">base_map</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -722,7 +732,8 @@ P(X_{k}|\mathcal{Z}^{k-1},\mathcal{U}^{k})=\sum_{x_{k-1}}P(X_{k}|x_{k-1},u_{k-1}
 <p>If we have <em>no</em> measurements at all, but have a perfect measurement model, our “control tape” just pushes the Gaussian density along:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Predictive density after taking 14 actions.</span>
+<span class="c1">#| label: fig:logistics-predictive</span>
 <span class="n">motion_model_sigma</span> <span class="o">=</span> <span class="mi">2</span>
 <span class="n">current_density</span> <span class="o">=</span> <span class="n">prior</span>
 <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
@@ -730,12 +741,6 @@ P(X_{k}|\mathcal{Z}^{k-1},\mathcal{U}^{k})=\sum_{x_{k-1}}P(X_{k}|x_{k-1},u_{k-1}
     <span class="n">control</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">at</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="n">values</span><span class="o">.</span><span class="n">at</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="c1"># ground truth control</span>
     <span class="n">current_density</span> <span class="o">=</span> <span class="n">prediction_step</span><span class="p">(</span><span class="n">current_density</span><span class="p">,</span> <span class="n">control</span><span class="p">,</span> <span class="n">motion_model_sigma</span><span class="p">)</span>
 <span class="c1"># logistics.show_map(current_density/np.max(current_density) + 0.1*logistics.base_map)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 19.7 s, sys: 5.77 ms, total: 19.7 s
-Wall time: 19.7 s
 </pre></div>
 </div>
 </div>
@@ -754,7 +759,8 @@ P(X_{k}|\mathcal{Z}^{k},\mathcal{U}^{k}) \propto L(X_{k};z_{k})P(X_{k}|\mathcal{
 <p>Note that this is so much simpler! We just have to code a pointwise multiplication and we are done. Because the ground truth trajectory never comes near any of the shelves, the proximity sensor is always <code class="docutils literal notranslate"><span class="pre">OFF</span></code>, and hence we multiply the predictive density with the corresponding <code class="docutils literal notranslate"><span class="pre">proximity_map_off</span></code> likelihood image:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Posterior density after taking 14 actions.</span>
+<span class="c1">#| label: fig:logistics-posterior</span>
 <span class="n">predictive_density</span> <span class="o">=</span> <span class="n">prior</span>
 <span class="n">posterior_density</span> <span class="o">=</span> <span class="n">predictive_density</span> <span class="o">*</span> <span class="n">logistics</span><span class="o">.</span><span class="n">proximity_map_off</span>
 <span class="n">posterior_density</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">posterior_density</span><span class="p">)</span>
@@ -766,12 +772,6 @@ P(X_{k}|\mathcal{Z}^{k},\mathcal{U}^{k}) \propto L(X_{k};z_{k})P(X_{k}|\mathcal{
     <span class="n">posterior_density</span> <span class="o">=</span> <span class="n">predictive_density</span> <span class="o">*</span> <span class="n">logistics</span><span class="o">.</span><span class="n">proximity_map_off</span>
     <span class="n">posterior_density</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">posterior_density</span><span class="p">)</span>
 <span class="c1"># logistics.show_map(posterior_density/np.max(posterior_density) + 0.1*logistics.base_map)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 6.81 s, sys: 0 ns, total: 6.81 s
-Wall time: 6.81 s
 </pre></div>
 </div>
 </div>
@@ -847,6 +847,14 @@ A mixture density is simply a weighted sum of <em>component densities</em>, in t
 <span class="n">covariances</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="n">sx</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span><span class="n">sy</span><span class="o">**</span><span class="mi">2</span><span class="p">])</span> <span class="k">for</span> <span class="n">sx</span><span class="p">,</span><span class="n">sy</span> <span class="ow">in</span> <span class="p">[(</span><span class="mi">5</span><span class="p">,</span><span class="mi">10</span><span class="p">),(</span><span class="mi">20</span><span class="p">,</span><span class="mi">5</span><span class="p">)]]</span>
 <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">go</span><span class="o">.</span><span class="n">Contour</span><span class="p">(</span><span class="n">z</span><span class="o">=</span><span class="n">logistics</span><span class="o">.</span><span class="n">gaussian</span><span class="p">(</span><span class="n">logistics</span><span class="o">.</span><span class="n">map_coords</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">cov</span><span class="p">),</span> <span class="n">contours_coloring</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span>
         <span class="n">line_width</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">showscale</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">for</span> <span class="n">mean</span><span class="p">,</span><span class="n">cov</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">means</span><span class="p">,</span><span class="n">covariances</span><span class="p">)]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Two Gaussian distributions that combine into a mixture density.</span>
+<span class="c1">#| label: fig:logistics-mixture</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">);</span> <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -858,7 +866,9 @@ A mixture density is simply a weighted sum of <em>component densities</em>, in t
 <p>The following code generates 100 samples, rather inefficiently:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">component_indices</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="p">[</span><span class="mf">0.9</span><span class="p">,</span><span class="mf">0.1</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Samples from a mixture of two Gaussian distributions.</span>
+<span class="c1">#| label: fig:logistics-samples</span>
+<span class="n">component_indices</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="p">[</span><span class="mf">0.9</span><span class="p">,</span><span class="mf">0.1</span><span class="p">])</span>
 <span class="n">samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">rng</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="p">(</span><span class="n">means</span><span class="p">[</span><span class="n">s</span><span class="p">],</span> <span class="n">covariances</span><span class="p">[</span><span class="n">s</span><span class="p">])</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">component_indices</span><span class="p">])</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">samples</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span><span class="n">y</span><span class="o">=</span><span class="n">samples</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;markers&quot;</span><span class="p">,</span>
         <span class="n">marker</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)))</span>
@@ -866,7 +876,7 @@ A mixture density is simply a weighted sum of <em>component densities</em>, in t
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/cc9a8241cf22695c7dfe598683227849f395a9cb500664d5c39edc4685835015.png" src="_images/cc9a8241cf22695c7dfe598683227849f395a9cb500664d5c39edc4685835015.png" />
+<img alt="_images/bb3fe315f2ab262ae123f0607a270677cd2ba8efa3d53ebf885aca636c6cb381.png" src="_images/bb3fe315f2ab262ae123f0607a270677cd2ba8efa3d53ebf885aca636c6cb381.png" />
 </div>
 </div>
 <p>As you can see the first component is chosen much more often, which is exactly what we expect.</p>
@@ -902,10 +912,12 @@ A mixture density is simply a weighted sum of <em>component densities</em>, in t
 </section>
 <section id="mcl-warehouse-example">
 <h3><span class="section-number">4.4.4.3. </span>MCL Warehouse Example<a class="headerlink" href="#mcl-warehouse-example" title="Link to this heading">#</a></h3>
-<p>Now that we know how to do the prediction step and evaluate the likelihood function, we are able to implement the entire Monte Carlo localization method. First, let us obtain 500 samples from the posterior:</p>
+<p>Now that we know how to do the prediction step and evaluate the likelihood function, we are able to implement the entire Monte Carlo localization method. First, let us obtain 500 samples from the prior:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">S</span><span class="o">=</span><span class="mi">500</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: 500 samples from the prior density at the start.</span>
+<span class="c1">#| label: fig:logistics-prior-samples</span>
+<span class="n">S</span><span class="o">=</span><span class="mi">500</span>
 <span class="n">prior_samples</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="p">(</span><span class="n">prior_mean</span><span class="p">,</span> <span class="n">prior_cov</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">S</span><span class="p">)</span>
 <span class="n">logistics</span><span class="o">.</span><span class="n">show_map</span><span class="p">(</span><span class="mf">0.1</span><span class="o">*</span><span class="n">logistics</span><span class="o">.</span><span class="n">base_map</span><span class="p">,</span> <span class="n">markers</span><span class="o">=</span><span class="n">prior_samples</span><span class="p">,</span>
          <span class="n">marker</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">))</span>
@@ -913,7 +925,7 @@ A mixture density is simply a weighted sum of <em>component densities</em>, in t
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/78e39303bd6929f12df98a956f73cd2fe6adaa3b0a5dc7c672de15a2753e7310.png" src="_images/78e39303bd6929f12df98a956f73cd2fe6adaa3b0a5dc7c672de15a2753e7310.png" />
+<img alt="_images/3b773ac463cb1fdd7cf4c5d0780817cdd57047cfa399ad6a2716e865810101ed.png" src="_images/3b773ac463cb1fdd7cf4c5d0780817cdd57047cfa399ad6a2716e865810101ed.png" />
 </div>
 </div>
 <p>Compare this sampling-based representation with the Markov localization representation of the prior above, and note they represent the <em>same</em> density, but using vastly different representations. In fact, they also use vastly different resources: for Markov localization we used 5000 cells, and here we use 500 samples, each represented as a two-dimensional vector. In higher-dimensional state spaces this difference is even greater: what would happen if we wanted to represent orientation as well?</p>
@@ -921,7 +933,9 @@ A mixture density is simply a weighted sum of <em>component densities</em>, in t
 <span class="math notranslate nohighlight">\(\{(x_1^{(t)}, L(x_1^{(t)};z_1))\}_{t = 1 \dots S}\)</span>, which represents the posterior for <span class="math notranslate nohighlight">\(k=1\)</span>. We do this by weighting each sample from the prior with the likelihood:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">samples</span> <span class="o">=</span> <span class="n">prior_samples</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: By weighting the samples with the likelihood, we get a representation for the posterior.</span>
+<span class="c1">#| label: fig:logistics-posterior-samples</span>
+<span class="n">samples</span> <span class="o">=</span> <span class="n">prior_samples</span>
 <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span><span class="n">likelihood_off</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">samples</span><span class="p">)</span>
 <span class="n">logistics</span><span class="o">.</span><span class="n">show_map</span><span class="p">(</span><span class="mf">0.1</span><span class="o">*</span><span class="n">logistics</span><span class="o">.</span><span class="n">base_map</span><span class="p">,</span> <span class="n">markers</span><span class="o">=</span><span class="n">samples</span><span class="p">,</span>
          <span class="n">marker</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="o">*</span><span class="n">weights</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">weights</span><span class="p">)))</span>
@@ -929,13 +943,14 @@ A mixture density is simply a weighted sum of <em>component densities</em>, in t
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/dc486e2e4dd25c7d3f1c96acc7fef5f46323e3e2b4f1cb7d9b0ddc0ed668f667.png" src="_images/dc486e2e4dd25c7d3f1c96acc7fef5f46323e3e2b4f1cb7d9b0ddc0ed668f667.png" />
+<img alt="_images/4977b159e4e62aaf2fc2c774d3488f77d5f4640e9aa98cb51d2903a43835658e.png" src="_images/4977b159e4e62aaf2fc2c774d3488f77d5f4640e9aa98cb51d2903a43835658e.png" />
 </div>
 </div>
 <p>Note that all samples close to the wall and/or the shelves have disappeared, as they have zero weight. All remaining samples have the same weight.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Monte Carlo Localization in action!</span>
+<span class="c1">#| label: fig:mcl_in_action</span>
 <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
     <span class="c1"># prediction phase</span>
     <span class="n">control</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">at</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="n">values</span><span class="o">.</span><span class="n">at</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>  <span class="c1"># ground truth control</span>
@@ -944,12 +959,6 @@ A mixture density is simply a weighted sum of <em>component densities</em>, in t
     <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span><span class="n">likelihood_off</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">samples</span><span class="p">)</span>
 <span class="c1"># logistics.show_map(0.1*logistics.base_map, markers=samples,</span>
 <span class="c1">#          marker=dict(color=&quot;red&quot;, opacity=0.1, size=10*weights/np.max(weights)))</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 451 ms, sys: 43 µs, total: 451 ms
-Wall time: 451 ms
 </pre></div>
 </div>
 </div>
@@ -962,7 +971,9 @@ Wall time: 451 ms
 <p>You might wonder about the samples that made it into the seemingly <em>wrong</em> aisles between the shelves. However, if we crank up the Markov localization visualization by a factor of 10, you will see that <em>in</em> fact the probability of being in those aisles is actually non-zero:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">logistics</span><span class="o">.</span><span class="n">show_map</span><span class="p">(</span><span class="mi">10</span><span class="o">*</span><span class="n">posterior_density</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">posterior_density</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.1</span><span class="o">*</span><span class="n">logistics</span><span class="o">.</span><span class="n">base_map</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Markov Localization visualized with a heatmap.</span>
+<span class="c1">#| label: fig:logistics-markov-heatmap</span>
+<span class="n">logistics</span><span class="o">.</span><span class="n">show_map</span><span class="p">(</span><span class="mi">10</span><span class="o">*</span><span class="n">posterior_density</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">posterior_density</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.1</span><span class="o">*</span><span class="n">logistics</span><span class="o">.</span><span class="n">base_map</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -998,7 +1009,9 @@ a uniform distribution, sometimes called the <em>uniform prior</em> assumption.
 Because our knowledge is now so diffuse, we use 2000 samples instead of 500 to better approximate it:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">T</span><span class="o">=</span><span class="mi">2000</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: 2000 samples from an *uninformative* prior density at the start, i.e., we don&#39;t know where we are.</span>
+<span class="c1">#| label: fig:logistics-uninformative-prior-samples</span>
+<span class="n">T</span><span class="o">=</span><span class="mi">2000</span>
 <span class="n">prior_samples</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="n">gtsam</span><span class="o">.</span><span class="n">Point2</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">high</span><span class="o">=</span><span class="n">gtsam</span><span class="o">.</span><span class="n">Point2</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="mi">50</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">T</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
 <span class="n">logistics</span><span class="o">.</span><span class="n">show_map</span><span class="p">(</span><span class="mf">0.1</span><span class="o">*</span><span class="n">logistics</span><span class="o">.</span><span class="n">base_map</span><span class="p">,</span> <span class="n">markers</span><span class="o">=</span><span class="n">prior_samples</span><span class="p">,</span>
          <span class="n">marker</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">))</span>
@@ -1006,13 +1019,15 @@ Because our knowledge is now so diffuse, we use 2000 samples instead of 500 to b
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/6b8d2195ff6149735b7b29a04430830b2f70c51b7c7eaf31070eca60ead25c18.png" src="_images/6b8d2195ff6149735b7b29a04430830b2f70c51b7c7eaf31070eca60ead25c18.png" />
+<img alt="_images/1032d4196a8d0cfc7fea5e85f0c5bb9d555e3621aa65a26a895a3880540bd2ca.png" src="_images/1032d4196a8d0cfc7fea5e85f0c5bb9d555e3621aa65a26a895a3880540bd2ca.png" />
 </div>
 </div>
 <p>The first range measurement happens to be out of range, and we can see the effect on our estimate for the posterior <span class="math notranslate nohighlight">\(p(x_1|z_1)\)</span> quite clearly:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">samples</span> <span class="o">=</span> <span class="n">prior_samples</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Sample-based posterior after a single &quot;out of range&quot; measurement.</span>
+<span class="c1">#| label: fig:logistics-posterior-samples-out-of-range</span>
+<span class="n">samples</span> <span class="o">=</span> <span class="n">prior_samples</span>
 <span class="n">range_measurement</span> <span class="o">=</span> <span class="n">logistics</span><span class="o">.</span><span class="n">rfid_measurement</span><span class="p">(</span><span class="n">values</span><span class="o">.</span><span class="n">at</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
 <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span><span class="n">likelihood_range</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">range_measurement</span><span class="p">)</span>
 <span class="n">logistics</span><span class="o">.</span><span class="n">show_map</span><span class="p">(</span><span class="mf">0.1</span><span class="o">*</span><span class="n">logistics</span><span class="o">.</span><span class="n">base_map</span><span class="p">,</span> <span class="n">markers</span><span class="o">=</span><span class="n">samples</span><span class="p">,</span>
@@ -1021,26 +1036,29 @@ Because our knowledge is now so diffuse, we use 2000 samples instead of 500 to b
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/c4b595df9925bce711b82ba720fbc55ab20cd6d971616836ab043706ca82eeae.png" src="_images/c4b595df9925bce711b82ba720fbc55ab20cd6d971616836ab043706ca82eeae.png" />
+<img alt="_images/0cf694f56b5e3fe3128f62600d30cc0039fbd71a7a23354b2119c8ad3af0c93e.png" src="_images/0cf694f56b5e3fe3128f62600d30cc0039fbd71a7a23354b2119c8ad3af0c93e.png" />
 </div>
 </div>
 <p>As expected, the likelihood has “punched holes” around the beacons, because we <em>know</em> we cannot have been near them. When we combine this with the proximity OFF measurement, we improve our posterior even more:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">weights</span> <span class="o">*=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span><span class="n">likelihood_off</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">samples</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Upgrading the posterior with a single &quot;proximity=OFF&quot; measurement.</span>
+<span class="c1">#| label: fig:logistics-posterior-samples-proximity-off</span>
+<span class="n">weights</span> <span class="o">*=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span><span class="n">likelihood_off</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">samples</span><span class="p">)</span>
 <span class="n">logistics</span><span class="o">.</span><span class="n">show_map</span><span class="p">(</span><span class="mf">0.1</span><span class="o">*</span><span class="n">logistics</span><span class="o">.</span><span class="n">base_map</span><span class="p">,</span> <span class="n">markers</span><span class="o">=</span><span class="n">samples</span><span class="p">,</span>
          <span class="n">marker</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="o">*</span><span class="n">weights</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">weights</span><span class="p">)))</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/822f6a673b13219c209e8236f6ad8f444120d919f43076df8c2202df163703f8.png" src="_images/822f6a673b13219c209e8236f6ad8f444120d919f43076df8c2202df163703f8.png" />
+<img alt="_images/6971c2edf42a53dc86862fde1727d660c9a12530879fc3896ed7ffaf7026cca3.png" src="_images/6971c2edf42a53dc86862fde1727d660c9a12530879fc3896ed7ffaf7026cca3.png" />
 </div>
 </div>
 <p>We are now ready to bring it all together by multiplying <em>two</em> likelihoods in every measurement update phase:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Global localization using Monte Carlo Localization.</span>
+<span class="c1">#| label: fig:logistics-mcl-global</span>
 <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
     <span class="c1"># prediction phase</span>
     <span class="n">control</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">at</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="n">values</span><span class="o">.</span><span class="n">at</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>  <span class="c1"># ground truth control</span>
@@ -1052,12 +1070,6 @@ Because our knowledge is now so diffuse, we use 2000 samples instead of 500 to b
     <span class="n">weights</span> <span class="o">*=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span><span class="n">likelihood_off</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">samples</span><span class="p">)</span>
 <span class="c1"># logistics.show_map(0.1*logistics.base_map, markers=samples,</span>
 <span class="c1">#          marker=dict(color=&quot;red&quot;, opacity=0.1, size=10*weights/np.max(weights)))</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 484 ms, sys: 54 µs, total: 484 ms
-Wall time: 483 ms
 </pre></div>
 </div>
 </div>
@@ -1262,6 +1274,14 @@ Below we illustrate this with an example in code for the GPS-like measurements, 
 <span class="n">pos</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:(</span><span class="mf">0.35</span><span class="p">,</span><span class="mi">1</span><span class="p">)}</span>
 <span class="n">pos</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">k</span><span class="p">:(</span><span class="n">k</span><span class="o">+</span><span class="mf">0.5</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]})</span> <span class="c1"># binary</span>
 <span class="n">pos</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">k</span><span class="o">+</span><span class="n">N</span><span class="o">-</span><span class="mi">1</span><span class="p">:(</span><span class="n">k</span><span class="p">,</span><span class="mf">0.5</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">})</span> <span class="c1"># unary</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: The factor graph for a Kalman smoother.</span>
+<span class="c1">#| label: fig:logistics-factor-graph</span>
 <span class="n">show</span><span class="p">(</span><span class="n">gfg</span><span class="p">,</span> <span class="n">hints</span><span class="o">=</span><span class="n">position_hints</span><span class="p">,</span> <span class="n">factor_positions</span><span class="o">=</span><span class="n">pos</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1280,7 +1300,9 @@ Below we illustrate this with an example in code for the GPS-like measurements, 
 <p>Below we compare the estimated trajectory with the ground truth trajectory:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">estimated</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">least_squares_solution</span><span class="o">.</span><span class="n">at</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Estimated trajectory using a Kalman smoother.</span>
+<span class="c1">#| label: fig:logistics-estimated</span>
+<span class="n">estimated</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">least_squares_solution</span><span class="o">.</span><span class="n">at</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">])</span>
 <span class="n">logistics</span><span class="o">.</span><span class="n">show_map</span><span class="p">(</span><span class="n">logistics</span><span class="o">.</span><span class="n">base_map</span><span class="p">,</span> <span class="n">estimated</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1299,7 +1321,9 @@ Below we illustrate this with an example in code for the GPS-like measurements, 
 <p>Recall the <code class="docutils literal notranslate"><span class="pre">gtsam.GaussianFactorGraph</span></code> <code class="docutils literal notranslate"><span class="pre">gfg</span></code>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">show</span><span class="p">(</span><span class="n">gfg</span><span class="p">,</span> <span class="n">hints</span><span class="o">=</span><span class="n">position_hints</span><span class="p">,</span> <span class="n">factor_positions</span><span class="o">=</span><span class="n">pos</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Factor graph for a Kalman smoother, again.</span>
+<span class="c1">#| label: fig:logistics-factor-graph-again</span>
+<span class="n">show</span><span class="p">(</span><span class="n">gfg</span><span class="p">,</span> <span class="n">hints</span><span class="o">=</span><span class="n">position_hints</span><span class="p">,</span> <span class="n">factor_positions</span><span class="o">=</span><span class="n">pos</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1309,7 +1333,8 @@ Below we illustrate this with an example in code for the GPS-like measurements, 
 <p>We can also visualize the sparse <span class="math notranslate nohighlight">\(A\)</span> matrix, which is called the <strong>sparse Jacobian</strong> of the system:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># show [A|b]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: The Jacobian matrix $A$ (and RHS $b$) corresponding to the above factor graph</span>
+<span class="c1">#| label: fig:logistics_proximity_map_on</span>
 <span class="n">A</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">gfg</span><span class="o">.</span><span class="n">jacobian</span><span class="p">()</span>
 <span class="n">px</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">A</span><span class="p">),</span> <span class="n">color_continuous_scale</span><span class="o">=</span><span class="s1">&#39;Reds&#39;</span><span class="p">)</span>
 </pre></div>
@@ -1332,7 +1357,9 @@ Below we illustrate this with an example in code for the GPS-like measurements, 
 <p>We can use the method <code class="docutils literal notranslate"><span class="pre">eliminateSequential</span></code> to use the linear-Gaussian sum-product algorithm (matrix factorization!) to turn it into a Bayes net, which encodes the multivariate Gaussian posterior:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gaussian_posterior</span> <span class="o">=</span> <span class="n">gfg</span><span class="o">.</span><span class="n">eliminateSequential</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Bayes net representing a multivariate Gaussian posterior. </span>
+<span class="c1">#| label: fig:bayes-net-gaussian-posterior</span>
+<span class="n">gaussian_posterior</span> <span class="o">=</span> <span class="n">gfg</span><span class="o">.</span><span class="n">eliminateSequential</span><span class="p">()</span>
 <span class="n">show</span><span class="p">(</span><span class="n">gaussian_posterior</span><span class="p">,</span> <span class="n">hints</span><span class="o">=</span><span class="n">position_hints</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1343,7 +1370,9 @@ Below we illustrate this with an example in code for the GPS-like measurements, 
 <p>This Bayes net <em>is</em> the upper-triangular (DAG!) Cholesky factor <span class="math notranslate nohighlight">\(R\)</span> we discussed above:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">R</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">gaussian_posterior</span><span class="o">.</span><span class="n">matrix</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: The upper triangular matrix corresponding to the above Bayes net. </span>
+<span class="c1">#| label: fig:upper-triangular-gaussian-posterior</span>
+<span class="n">R</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">gaussian_posterior</span><span class="o">.</span><span class="n">matrix</span><span class="p">()</span>
 <span class="n">display</span><span class="p">(</span><span class="n">px</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">R</span><span class="p">),</span> <span class="n">color_continuous_scale</span><span class="o">=</span><span class="s1">&#39;Reds&#39;</span><span class="p">))</span>
 </pre></div>
 </div>
