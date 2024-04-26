@@ -451,8 +451,9 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inference-in-bayes-nets">3.4.1. Inference in Bayes Nets</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#full-posterior-inference">3.4.1.1. Full Posterior Inference</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#maximum-a-posteriori-estimation">3.4.1.2. Maximum a Posteriori Estimation</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">3.4.1.3. Exercises</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">3.4.1.2. Exercises</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#maximum-a-posteriori-estimation">3.4.1.3. Maximum a Posteriori Estimation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">3.4.1.4. Exercises</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hidden-markov-models">3.4.2. Hidden Markov Models</a><ul class="nav section-nav flex-column">
@@ -466,21 +467,20 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#factor-graphs-in-gtsam">3.4.5.2. Factor Graphs in GTSAM</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#computing-with-factor-graphs">3.4.6. Computing with Factor Graphs</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#naive-map-estimation-with-gtsam">3.4.6.1. Naive MAP estimation with GTSAM</a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#computing-with-factor-graphs">3.4.6. Computing with Factor Graphs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-max-product-algorithm-for-hmms">3.4.7. The Max-Product Algorithm for HMMs</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#max-product-in-gtsam">3.4.7.1. Max-product in GTSAM</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-sum-product-algorithm-for-hmms">3.4.8. The Sum-Product Algorithm for HMMs</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sum-product-in-gtsam">3.4.8.1. Sum-Product in GTSAM</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sidebar">3.4.8.2. Sidebar</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">3.4.8.3. Exercise</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gtsam-101">3.4.9. GTSAM 101</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sampling-and-posterior-means">3.4.9. Sampling and Posterior Means*</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">3.4.9.1. Exercise</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gtsam-101">3.4.10. GTSAM 101</a></li>
 </ul>
             </nav>
         </div>
@@ -527,32 +527,35 @@ document.write(`
 <div><p>Perception for dynamic Bayes nets is equivalent to inference in hidden Markov models (HMMs).</p>
 </div></blockquote>
 <a class="reference internal image-reference" href="_images/S34-iRobot_vacuuming_robot-05.jpg"><img alt="Splash image with deeply contemplative robot" class="align-center" src="_images/S34-iRobot_vacuuming_robot-05.jpg" style="width: 40%;" /></a>
-<p>Bayes nets are great for <em>modeling</em>, but for inferring the state of the robot over time <em>efficiently</em> we need better data structures.
-In this section, we more formally define what we mean by inference,
-building on the methods introduced in Section 2.4.
-We then define hidden Markov models (HMMs), and highlight their connection with robot
-localization over time.
-Finally, we show how to efficiently perform inference by converting any Bayes net (with evidence) to a factor graph
-and performing full posterior inference and MAP estimation for HMMs.</p>
+<p>Now that we have a solid mathematical framework to work in, in the remainder of this chapter we will tackle perception, decision-making based on this, and learning to improve both. We used the vacuum cleaning robot as an example system that has discrete states, with actions that mediate discrete-time state transitions, and emitting noisy measurements at every step. The key mathematical concept that tied all this together was the language of dynamic Bayes nets.</p>
+<p>In this section we tackle <em>perception</em> in this setting: can we, by remembering which actions we took and what measurements we observed, infer what states we were in and are likely to be in now?
+We more formally define what we mean by inference, building on the methods introduced in Section 2.4.
+Just as we did there, we will characterize what we know and don’t know using probability distributions, leaning into the Bayesian view even more.
+However, here we will consider probability distributions over <em>sequences</em> of states, rather than just the current state.</p>
+<p>To this end, we introduce one of the most important tools used throughout this book: <strong>factor graphs</strong>. Bayes nets are great for <em>modeling</em>, but for inferring the state of the robot over time <em>efficiently</em> we need a better data structure.
+We first introduce hidden Markov models (HMMs), and highlight their connection with robot localization over time. We then show how to efficiently perform inference by converting an HMM into a factor graph, and performing full posterior inference and MAP estimation in linear time.</p>
 <section id="inference-in-bayes-nets">
 <h2><span class="section-number">3.4.1. </span>Inference in Bayes Nets<a class="headerlink" href="#inference-in-bayes-nets" title="Link to this heading">#</a></h2>
 <blockquote>
-<div><p>Inference is the full posterior or a single maximum a posteriori estimate.</p>
+<div><p>Inference begets the full posterior or a single maximum a posteriori estimate.</p>
 </div></blockquote>
-<p><strong>Inference</strong> is the process of determining knowledge about a subset of
-variables <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> given the known values for another subset of variables <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span>.
+<p><strong>Inference</strong> is the process of determining knowledge about a set of
+variables <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> given the known values for another set of variables <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span>.
 In this section we will describe describe inference when the joint
 distribution is specified using a Bayes net, but we will not take
 advantage of the specific sparse structure of the network.
 Hence, the algorithms
 below are completely general, for any (discrete) joint probability
-distribution, as long as you can evaluate the joint distribution.</p>
+distribution, as long as we can evaluate the joint distribution.</p>
 <section id="full-posterior-inference">
 <h3><span class="section-number">3.4.1.1. </span>Full Posterior Inference<a class="headerlink" href="#full-posterior-inference" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p>Naive full posterior inference is <em>easy</em> but probably expensive.</p>
+</div></blockquote>
 <p>The simplest kind of inference occurs when we can <em>partition</em> the variables into two
-sets: the <strong>hidden variables</strong> <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> and the <strong>observed values</strong>
+sets: the <strong>hidden variables</strong> <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> and the <strong>observations</strong>
 <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span>. First, let us recall what a Bayes net looks like in this case.
-From Section 3.2, we have that a Bayes net over any set of variables is defined as a product of conditionals, hence in our case we would have</p>
+From Section 3.2, we have that a general Bayes net over any set of variables is defined as a product of conditionals, hence in our case we would have</p>
 <div class="math notranslate nohighlight">
 \[
 P(\mathcal{X}, \mathcal{Z}) = \prod_{i=1}P(X_{i}|\Pi_{X_i}) \prod_{j=1}P(Z_{j}|\Pi_{Z_j})
@@ -571,26 +574,23 @@ we just re-write the posterior as the joint, but with the values <span class="ma
 \[
 P(\mathcal{X}|\mathcal{Z}=\mathfrak{z})\propto P(\mathcal{X}, \mathcal{Z}=\mathfrak{z}).
 \]</div>
-<p>This seems almost too simple, but it really works, as shown in a small generic Bayes net example below. Let us recall the 4-variable Bayes net example on variables <span class="math notranslate nohighlight">\(X\)</span>, <span class="math notranslate nohighlight">\(Y\)</span>, <span class="math notranslate nohighlight">\(W\)</span>, and <span class="math notranslate nohighlight">\(Z\)</span>:</p>
+<p>This seems almost too simple, but it really works, as shown in a small generic Bayes net example below. Let us recall the 4-variable Bayes net example on variables <span class="math notranslate nohighlight">\(X\)</span>, <span class="math notranslate nohighlight">\(Y\)</span>, <span class="math notranslate nohighlight">\(W\)</span>, and <span class="math notranslate nohighlight">\(Z\)</span>, and let us take <span class="math notranslate nohighlight">\(\mathcal{X}=(X, Y)\)</span> and <span class="math notranslate nohighlight">\(\mathcal{Z}=(W, Z)\)</span> - which we indicate in the figure by rendering <span class="math notranslate nohighlight">\(W\)</span> and <span class="math notranslate nohighlight">\(Z\)</span> as boxes.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Bayes net for the 4-variable model, again.</span>
 <span class="c1">#| label: fig:bayesnet_4</span>
-<span class="n">show</span><span class="p">(</span><span class="n">wxyz</span><span class="p">)</span>
+<span class="n">show</span><span class="p">(</span><span class="n">wxyz</span><span class="p">,</span> <span class="n">boxes</span><span class="o">=</span><span class="p">{</span><span class="n">Z1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">W1</span><span class="p">[</span><span class="mi">0</span><span class="p">]})</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/293c7a7b79ef0d22d2343e0267cd0a8f01ebfd5e77c35487dfc2ea11588e0519.svg" src="_images/293c7a7b79ef0d22d2343e0267cd0a8f01ebfd5e77c35487dfc2ea11588e0519.svg" /></div>
+<img alt="_images/86ba9280bf42d1fee9703de42c832fd69a3160784d0789a9c1dc4ce02c7bef36.svg" src="_images/86ba9280bf42d1fee9703de42c832fd69a3160784d0789a9c1dc4ce02c7bef36.svg" /></div>
 </div>
 <p>Bayes’ law as applied above suggests an easy algorithm to calculate the posterior distribution
 above: simply enumerate all tuples <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> in a table, evaluate
 <span class="math notranslate nohighlight">\(P(\mathcal{X}, \mathcal{Z}=\mathfrak{z})\)</span> for each one, and then
 normalize. Note we need <em>only</em> enumerate the variables in <span class="math notranslate nohighlight">\(\mathcal{X}\)</span>, as all variables in <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span> are fixed.</p>
-<p>As an example, let us take <span class="math notranslate nohighlight">\(\mathcal{X}=(X, Y)\)</span> and <span class="math notranslate nohighlight">\(\mathcal{Z}=(W, Z)\)</span>.
-As before, let us assume that each variable can take on 10 different outcomes, and that
-<span class="math notranslate nohighlight">\(\mathfrak{z}=(2, 7)\)</span>. The resulting table for
-<span class="math notranslate nohighlight">\(P(X, Y|W=2, Z=7)\propto P(W=2, X, Y, Z=7)\)</span> is shown in the table below:</p>
+<p>Applying this to our example entails evaluating 100 probabilities, if we assume -as before - that each variable can take on 10 different outcomes. We show the resulting table for the case that <span class="math notranslate nohighlight">\(\mathfrak{z}=(2, 7)\)</span>, i.e., every entry in the table is a value for <span class="math notranslate nohighlight">\(P(X, Y|W=2, Z=7)\propto P(W=2, X, Y, Z=7)\)</span>. Below we show the factorized joint probability, to make a point:</p>
 <table class="table">
 <thead>
 <tr class="row-odd"><th class="head text-center"><p><em>x</em></p></th>
@@ -632,8 +632,18 @@ common factor in all entries, so clearly we need not bother
 multiplying it in. Below we will discuss methods to fully
 exploit the structure of the Bayes net to perform efficient inference.</p>
 </section>
+<section id="exercises">
+<h3><span class="section-number">3.4.1.2. </span>Exercises<a class="headerlink" href="#exercises" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p>Think more deeply about which other factors get repeatedly (and redundantly) calculated, and how you might organize the computation to avoid this.</p></li>
+<li><p>Show that in the example above, if we instead condition on known values for <span class="math notranslate nohighlight">\(\mathcal{Z}=(X,Z)\)</span>, the posterior <span class="math notranslate nohighlight">\(P(W,Z|X,Y)\)</span> factors, and as a consequence we only have to enumerate two tables of length 10, instead of a large table of size 100.</p></li>
+</ol>
+</section>
 <section id="maximum-a-posteriori-estimation">
-<h3><span class="section-number">3.4.1.2. </span>Maximum a Posteriori Estimation<a class="headerlink" href="#maximum-a-posteriori-estimation" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">3.4.1.3. </span>Maximum a Posteriori Estimation<a class="headerlink" href="#maximum-a-posteriori-estimation" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p>MAP saves a bit on compute, but is still expensive when done naively.</p>
+</div></blockquote>
 <p>For the purpose of decision making,
 it is often the case that we do not require the full posterior distribution.
 In these cases, we could rely on methods introduced in Section 2.4,
@@ -647,18 +657,17 @@ joint assignment to the other variables <span class="math notranslate nohighligh
 <div class="math notranslate nohighlight">
 \[x^*_{MAP} = \arg \max_x P(\mathcal{X}|\mathcal{Z}=\mathfrak{z}).\]</div>
 <p>For example, given
-<span class="math notranslate nohighlight">\(\mathfrak{z}=(2, 7)\)</span>, the MAP estimate for <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> could be <span class="math notranslate nohighlight">\(X=3\)</span> and
-<span class="math notranslate nohighlight">\(Y=6\)</span>. Note that to compute the MAP estimate, we need not bother with
-normalizing: we can simply find the maximum entry in the unnormalized
+<span class="math notranslate nohighlight">\(\mathfrak{z}=(2, 7)\)</span>, the MAP estimate for <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> could be <span class="math notranslate nohighlight">\(x^*=3\)</span> and
+<span class="math notranslate nohighlight">\(y^*=6\)</span>. Note that to compute the MAP estimate, we need not bother with
+normalizing: we can simply find the maximum entry in a table of <em>unnormalized</em>
 posterior values.</p>
-<p>If we had an efficient way to do inference, a MAP estimate would be a
-great way to estimate the trajectory of a robot over time. For example,
-using the “robot” dynamic Bayes net example from the last section, let us
+<p><strong>Robot localization</strong> is a capability for autonomous mobile robots that can be achieved via MAP estimation.
+For example, using the “robot” dynamic Bayes net example from the last section, let us
 assume that we are given the value of all observations and actions.
 Then the MAP estimate would simply be a trajectory of robot states.
-This is an example of robot localization over time, and is a
-key requirement for autonomous mobile robots.</p>
-<p>We can extend this idea to estimate only a subset of the unknown variables.
+Hence, if we had an efficient way to do inference, a MAP estimate would be a
+great way to estimate the trajectory of a robot over time, i.e., robot localization.</p>
+<p>We can extend the idea of MAP to estimate only a subset of the unknown variables.
 This can be useful when there are unknown variables that are not relevant
 for the decision at hand.
 We will refer to these unknown and irrelevant variables as <strong>nuisance variables</strong>.
@@ -684,13 +693,9 @@ exponential in the size of <span class="math notranslate nohighlight">\(\mathcal
 while we can still exploit the Bayes net structure,
 this computation can still be quite expensive.</p>
 </section>
-<section id="exercises">
-<h3><span class="section-number">3.4.1.3. </span>Exercises<a class="headerlink" href="#exercises" title="Link to this heading">#</a></h3>
+<section id="id1">
+<h3><span class="section-number">3.4.1.4. </span>Exercises<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
 <ol class="arabic simple">
-<li><p>Show that in the example above, if we condition on known values for <span class="math notranslate nohighlight">\(\mathcal{Z}=(X,Z)\)</span>, the
-posterior <span class="math notranslate nohighlight">\(P(W,Z|X,Y)\)</span> factors, and as a consequence we only have to
-enumerate two tables of length 10, instead of a large table of
-size 100.</p></li>
 <li><p>Calculate the size of the table needed to enumerate the posterior
 over the states <span class="math notranslate nohighlight">\(S\)</span> the robot dynamic Bayes net from the previous section,
 given the value of all observations <span class="math notranslate nohighlight">\(Z\)</span> and actions <span class="math notranslate nohighlight">\(A\)</span>.</p></li>
@@ -705,7 +710,7 @@ Hint: this is similar to the first exercise above.</p></li>
 <blockquote>
 <div><p>HMMs provide a general framework for perception over time.</p>
 </div></blockquote>
-<p>In the previous section we discussed dynamic Bayes networks to model how a robot state evolves over time by taking actions, and how measurements result in a particular state. In this section we will ask <em>how we can recover the state of the robot given only the observations</em>, i.e. without knowing the states: the state is “hidden”. Here we will consider a general framework to answer this question.</p>
+<p>In the previous section we discussed dynamic Bayes networks to model how a robot state evolves over time by taking actions, and how measurements correlate to a particular state. In this section we will ask <em>how we can recover the state of the robot given only the observations</em>, i.e. without knowing the states: the state is “hidden”. Here we will consider a general framework to answer this question.</p>
 <p>A <strong>hidden Markov model</strong> or HMM is a dynamic Bayes net that has two
 types of variables: states <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> and measurements <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span>.
 The states <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> are connected sequentially and satisfy the Markov property:
@@ -789,9 +794,9 @@ and the <strong>likelihood</strong> <span class="math notranslate nohighlight">\
 <div class="math notranslate nohighlight">
 \[\begin{split}
 \begin{aligned}
-L(\mathcal{X}; \mathcal{Z}=\mathfrak{z}) &amp; \doteq P(\mathcal{Z}=\mathfrak{z}|\mathcal{X})\\
+L(\mathcal{X}; \mathcal{Z}=\mathfrak{z}) &amp; \propto P(\mathcal{Z}=\mathfrak{z}|\mathcal{X})\\
 &amp; =P(z_1|X_1)P(z_2|X_2)P(z_3|X_3)\\
-&amp; =L(X_1; Z_1)L(X_2; Z_2)L(X_3; Z_3)\end{aligned}
+&amp; \propto L(X_1; Z_1)L(X_2; Z_2)L(X_3; Z_3)\end{aligned}
 \end{split}\]</div>
 <p>Hence, a naive implementation for finding the MAP estimate
 for <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> would tabulate all possible
@@ -831,14 +836,14 @@ above:</p>
 \[
 P(\mathcal{X}|\mathcal{Z})\propto P(X_1)L(X_1; z_1)P(X_2|X_1)L(X_2; z_2)P(X_3|X_2)L(X_3; z_3)
 \]</div>
-<p>Some of these factors are unary factors, and some are binary factors.
-In particular, above some of the factors depend on just one hidden variable,
-for example <span class="math notranslate nohighlight">\(L(X_2; z_2)\)</span>, whereas others depend on two variables, e.g., the
+<p>Some of these factors are <strong>unary factors</strong>, and some are <strong>binary factors</strong>.
+By which we mean: some of the factors depend on just <em>one</em> hidden variable,
+for example <span class="math notranslate nohighlight">\(L(X_2; z_2)\)</span>, whereas others depend on <em>two</em> variables, e.g., the
 transition model <span class="math notranslate nohighlight">\(P(X_3|X_2)\)</span>.
 Measurements are not counted here,
 because once we are <em>given</em> the measurements <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span>, they merely
 function as known parameters in the likelihoods <span class="math notranslate nohighlight">\(L(X_k; z_k)\)</span>, which
-are seen as functions of <em>just</em> the state <span class="math notranslate nohighlight">\(X_k\)</span>.</p>
+are seen as functions of <em>just</em> the state <span class="math notranslate nohighlight">\(X_k\)</span>, i.e., they will yield unary factors in the unknowns.</p>
 <figure id="fig:HMM-FG">
 <img src="https://raw.githubusercontent.com/gtbook/robotics/main/Figures3/fg-v2.png?raw=1" style="width:60%" alt="">
 <figcaption>An HMM with observed measurements for three time steps, represented as a factor graph.</figcaption>
@@ -944,8 +949,7 @@ and finally, the measurement likelihood factors <span class="math notranslate no
     <span class="n">conditional</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">DiscreteConditional</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="n">k</span><span class="p">]],</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">action_spec</span><span class="p">)</span>
     <span class="n">conditional_a_k</span> <span class="o">=</span> <span class="n">conditional</span><span class="o">.</span><span class="n">choose</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span>  <span class="c1"># \phi(X,X+) = P(X+|X,A=a)</span>
     <span class="n">graph</span><span class="o">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">conditional_a_k</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">measurement</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">measurements</span><span class="p">):</span>
-    <span class="n">k</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">measurement</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">measurements</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
     <span class="n">conditional</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">DiscreteConditional</span><span class="p">(</span><span class="n">Z</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="p">]],</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">sensor_spec</span><span class="p">)</span>
     <span class="n">z_k</span> <span class="o">=</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">light_levels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">measurement</span><span class="p">)</span>
     <span class="n">factor</span> <span class="o">=</span> <span class="n">conditional</span><span class="o">.</span><span class="n">likelihood</span><span class="p">(</span><span class="n">z_k</span><span class="p">)</span>  <span class="c1"># \phi(X) = P(Z=z|X)</span>
@@ -987,28 +991,6 @@ evaluating all possible assignments for <span class="math notranslate nohighligh
 but just as inefficient.
 In the case of discrete variables, graph search methods can be applied, but we will discuss a
 different approach in the next sub-section.</p>
-<p>While finding the maximum of the posterior is often of most
-interest, <strong>sampling</strong> from a probability distribution can be used to
-visualize, explore, and compute statistics and expected values
-associated with the posterior. The ancestral sampling method we
-discussed earlier only applies to directed acyclic graphs. There are
-however more general sampling algorithms that can be used for factor
-graphs, more specifically Markov chain Monte Carlo (MCMC) methods. One
-such method is Gibbs sampling, which proceeds by sampling one variable
-at a time from its conditional density given all other variables it is
-connected to via factors. This assumes that this conditional density can
-be easily obtained, which is in fact true for discrete variables.</p>
-<p>In this book, we use factor graphs as the organizing structure for probabilistic
-inference. In later chapters we will expand their use to continuous
-variables, and will see that factor graphs aptly describe the
-independence assumptions and sparse nature of the large nonlinear
-least-squares problems arising in robotics. But their usefulness extends
-far beyond that: they are at the core of the sparse linear solvers we
-use as building blocks, they clearly show the nature of filtering and
-incremental inference, and lead naturally to distributed and/or parallel
-versions of robotics.</p>
-<section id="naive-map-estimation-with-gtsam">
-<h3><span class="section-number">3.4.6.1. </span>Naive MAP estimation with GTSAM<a class="headerlink" href="#naive-map-estimation-with-gtsam" title="Link to this heading">#</a></h3>
 <p>Because our factor graph is so small, it does not hurt to show off how easy it is to implement the naive algorithm to find the MAP estimate. We just loop over all possible state trajectories, and keep track of the one with the highest value:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1044,8 +1026,18 @@ versions of robotics.</p>
 </table>
 </div></div></div>
 </div>
-<p>Remember that this MAP estimate is <em>for a given action and measurement sequence</em>. All those fixed values are implicit in the factors that we have added to the factor graph in <code class="docutils literal notranslate"><span class="pre">graph</span></code> above.</p>
-</section>
+<p>Note that this MAP estimate is <em>for a given action and measurement sequence</em>. All those fixed values are implicit in the factors that we have added to the factor graph in <code class="docutils literal notranslate"><span class="pre">graph</span></code> above.</p>
+<p>Finally, while finding the maximum of the posterior (MAP) is often of most
+interest, <strong>sampling</strong> from a probability distribution can be used to
+visualize, explore, and compute statistics and expected values
+associated with the posterior. The ancestral sampling method we
+discussed earlier only applies to Bayes bets, however.
+There are more general sampling algorithms that can be used for factor
+graphs.
+One such method is <strong>Gibbs sampling</strong>, which proceeds by sampling one variable
+at a time from its conditional density given all other variables it is
+connected to via factors. This assumes that this conditional density can
+be easily obtained, which is true for discrete variables.</p>
 </section>
 <section id="the-max-product-algorithm-for-hmms">
 <h2><span class="section-number">3.4.7. </span>The Max-Product Algorithm for HMMs<a class="headerlink" href="#the-max-product-algorithm-for-hmms" title="Link to this heading">#</a></h2>
@@ -1055,15 +1047,15 @@ MAP estimate.</p>
 </div></blockquote>
 <p>In this section we discuss an algorithm that is much faster than the naive algorithm to find the MAP estimate.
 Given an HMM factor graph of size <span class="math notranslate nohighlight">\(n\)</span>, the <strong>max-product algorithm</strong> is an <span class="math notranslate nohighlight">\(O(n)\)</span> algorithm
-to find the MAP estimate, which is used under the hood by GTSAM.</p>
+to find the MAP estimate, which is used by GTSAM under the hood.</p>
 <p>Let us use the example from Figure
 <a href="#fig:HMM-FG" data-reference-type="ref" data-reference="fig:HMM-FG">2</a>
 to understand the main idea behind it. To find the MAP estimate for <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> we need to
 <em>maximize</em> the product</p>
 <div class="math notranslate nohighlight">
 \[\phi(X_1, X_2, X_3)=\prod\phi_{i}(\mathcal{X}_{i})\]</div>
-<p>i.e., the <strong>value</strong> of the factor graph.</p>
-<p>Because the value of the factor graph is a product of factor values, we can compute its maximum recursively, dynamic programming style. We start by writing out the maximization over the product explicitly:</p>
+<p>i.e., the value of the factor graph.
+Because this is a product of factor values, we can compute its maximum recursively - dynamic programming style. We start by writing out the maximization over the product explicitly:</p>
 <div class="math notranslate nohighlight">
 \[
 \max_{\mathcal{X}} \prod\phi_{i}(\mathcal{X}_{i}) = 
@@ -1075,15 +1067,15 @@ to understand the main idea behind it. To find the MAP estimate for <span class=
 \max_{\mathcal{X}} \prod\phi_{i}(\mathcal{X}_{i}) = 
 \max_{X_1, X_2, X_3} ~~~ \{ \phi_1(X_1)\phi_2(X_1)\phi_3(X_1, X_2) \} ~~~ \phi_4(X_2)\phi_5(X_2, X_3)\phi_6(X_3)
 \]</div>
-<p>which allows us to move the <em>max</em> operator inside:</p>
+<p>which allows us to move the <em>max</em> operator over <span class="math notranslate nohighlight">\(X_1\)</span> inside:</p>
 <div class="math notranslate nohighlight">
 \[
 \max_{\mathcal{X}} \prod\phi_{i}(\mathcal{X}_{i}) = 
 \max_{X_2, X_3} ~~~ \{ \max_{X_1} \phi_1(X_1)\phi_2(X_1)\phi_3(X_1, X_2) \} ~~~ \phi_4(X_2)\phi_5(X_2, X_3)\phi_6(X_3)
 \]</div>
-<p>The key to the recursion is that we can simply consider the expression inside the curly braces as new factor on <span class="math notranslate nohighlight">\(X_2\)</span>:</p>
+<p>The key to the recursion is that we can simply consider the expression inside the curly braces as new factor on <span class="math notranslate nohighlight">\(X_2\)</span>, defined as</p>
 <div class="math notranslate nohighlight">
-\[\tau(X_2)\doteq \max_{X_1} \phi_1(X_1)\phi_2(X_1)\phi_3(X_1, X_2)\]</div>
+\[\tau(X_2)\doteq \max_{X_1} \phi_1(X_1)\phi_2(X_1)\phi_3(X_1, X_2),\]</div>
 <p>which records the maximum value resulting from <em>only</em> maximizing <span class="math notranslate nohighlight">\(X_1\)</span>. The value of the computation depends on the value of <span class="math notranslate nohighlight">\(X_2\)</span>, because <span class="math notranslate nohighlight">\(X_2\)</span> was involved in factor <span class="math notranslate nohighlight">\(\phi_3\)</span>. However, crucially, the variable <span class="math notranslate nohighlight">\(X_3\)</span> is not involved in the maximization.</p>
 <p>Substituting the new factor into the maximization, we now need to maximize over a <em>reduced</em> factor graph that no longer is a function of <span class="math notranslate nohighlight">\(X_1\)</span>,</p>
 <div class="math notranslate nohighlight">
@@ -1092,12 +1084,12 @@ to understand the main idea behind it. To find the MAP estimate for <span class=
 \max_{X_2, X_3} ~~~\tau(X_2) \phi_4(X_2)\phi_5(X_2, X_3)\phi_6(X_3)
 \]</div>
 <p>and this allows us to recurse until no more variables are left!</p>
-<p>For hidden Markov models this dynamics programming approach is known as the <strong>Viterbi Algorithm</strong>. Note that the algorithmic sketch above only yields the <em>value</em> of the factor graph at the maximum. A key part of the Viterbi algorithm is adding some book-keeping that after the recursion terminates, we can recover the actual variable assignments that make the factor graph attain its maximum value.</p>
-<p>The complexity of max-product for HMMs is <em>linear</em> in the number of nodes, which is a nice improvement over exponential complexity. The complexity of every elimination step is quadratic in the number of states, because we have to form the product factors and then maximize over them.</p>
+<p>For hidden Markov models this dynamics programming approach is known as the <strong>Viterbi Algorithm</strong>. Note that the algorithmic sketch above only yields the <em>value</em> of the factor graph at the maximum. A key part of the Viterbi algorithm is adding some book-keeping that after the recursion terminates, we can recover the actual variable assignments that make the factor graph attain its maximum value.
+Also, the complexity of max-product for HMMs is <em>linear</em> in the number of nodes, which is a nice improvement over exponential complexity. The complexity of every elimination step is quadratic in the number of states, because we have to form the product factors and then maximize over them.</p>
 <p>Because at every step, one variable is eliminated from the maximization, the max-product algorithm is in fact an instance of the <strong>elimination algorithm</strong>, which works for <em>arbitrary</em> factor graphs, albeit not necessarily in <span class="math notranslate nohighlight">\(O(n)\)</span> time. Indeed, the max-product (and sum-product below) can be applied in more general settings than the linear chains one finds in HMMs.</p>
 <section id="max-product-in-gtsam">
 <h3><span class="section-number">3.4.7.1. </span>Max-product in GTSAM<a class="headerlink" href="#max-product-in-gtsam" title="Link to this heading">#</a></h3>
-<p>GTSAM’s bread and butter is factor graphs, and finding the MAP value is easy:</p>
+<p>GTSAM’s bread and butter is factor graphs, and finding the MAP value is done via a single <code class="docutils literal notranslate"><span class="pre">optimize</span></code> call, which implements the max-product algorithm internally, book-keeping and all:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">map_value</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">optimize</span><span class="p">()</span>
@@ -1119,30 +1111,28 @@ to understand the main idea behind it. To find the MAP estimate for <span class=
 </table>
 </div></div></div>
 </div>
+<p>The resulting <code class="docutils literal notranslate"><span class="pre">gtsam.DiscreteValues</span></code> instance corresponds to the MAP trajectory given the actions and measurements at every step. And, of course, this generalizes to much larger sequences, scaling only linearly in complexity with the number of time-steps.</p>
 </section>
 </section>
 <section id="the-sum-product-algorithm-for-hmms">
 <h2><span class="section-number">3.4.8. </span>The Sum-Product Algorithm for HMMs<a class="headerlink" href="#the-sum-product-algorithm-for-hmms" title="Link to this heading">#</a></h2>
 <blockquote>
-<div><p>Sum-product on HMMs, also known as the Forward-Backward algorithm, is a dynamic-programming algorithm for doing full posterior inference.</p>
+<div><p>Sum-product on HMMs is a dynamic-programming algorithm for doing full posterior inference.</p>
 </div></blockquote>
 <p>The sum-product algorithm for HMMs is a slight tweak on the max-product
-algorithm that instead produces a Bayes net that calculates the
-posterior probability <span class="math notranslate nohighlight">\(P(\mathcal{X}|\mathcal{Z})\)</span>. Whereas the
-max-product results in a single variable assignment, the sum-product produces a Bayes net
-that represents the <strong>full Bayesian probability distribution</strong>.
+algorithm that instead calculates the posterior probability <span class="math notranslate nohighlight">\(P(\mathcal{X}|\mathcal{Z})\)</span>.
+Whereas the max-product results in a single variable assignment, the sum-product produces a Bayes net that represents the <em>full Bayesian probability distribution</em>.
 The fact that we recover this distribution in the form of a Bayes net again is
 satisfying, because, as we have seen, that is an economical representation of a
 probability distribution.</p>
 <p>One might wonder about the wisdom of all this: we started with a Bayes
 net, converted to a factor graph, and now end up with a Bayes net again?
-There are two important differences: the first Bayes net
-represents the joint distribution <span class="math notranslate nohighlight">\(P(\mathcal{X}, \mathcal{Z})\)</span> and is
-very useful for modeling. However, the second Bayes represents the
-posterior <span class="math notranslate nohighlight">\(P(\mathcal{X}|\mathcal{Z})\)</span>, and only has nodes for the
-random variables in <span class="math notranslate nohighlight">\(\mathcal{X}\)</span>, hence it is much smaller. Finally, in
-many practical cases we do not even bother with the modeling step, but
-construct the factor graph directly from the measurements.</p>
+There are two important differences.
+First, in many practical cases we do not even bother with the modeling step, but
+construct the factor graph directly from the measurements.
+Second, even if we did, this first Bayes represents the joint
+distribution <span class="math notranslate nohighlight">\(P(\mathcal{X}, \mathcal{Z})\)</span>, useful for modeling and simulation.
+However, the second, “posterior Bayes net” represents just <span class="math notranslate nohighlight">\(P(\mathcal{X}|\mathcal{Z})\)</span>, and only has nodes for the random variables in <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> and is only half the size. Below we show how to compute it.</p>
 <p>Again, the key is that we can compute the posterior recursively from the product of factors, in dynamic programming style.
 For the example above, this gives</p>
 <div class="math notranslate nohighlight">
@@ -1151,14 +1141,26 @@ For the example above, this gives</p>
 P(\mathcal{X}|\mathcal{Z}) &amp;\propto \prod\phi_{i}(\mathcal{X}_{i})
 \\&amp;\propto \phi_1(X_1)\phi_2(X_1)\phi_3(X_1, X_2) \phi_4(X_2)\phi_5(X_2, X_{3})\phi_6(X_3)
 \\&amp;\propto \{\phi_1(X_1)\phi_2(X_1)\phi_3(X_1, X_2)\} ~~ \phi_4(X_2)\phi_5(X_2, X_{3})\phi_6(X_3)
-\\ &amp;\propto \{P(X_1|X_2, \mathcal{Z}) \tau(X_2)\} ~~ \phi_4(X_2)\phi_5(X_2, X_{3})\phi_6(X_3)
-\\ &amp;= P(X_1|X_2, \mathcal{Z}) ~~ P(X_2, X_3|\mathcal{Z})
 \end{aligned}
 \end{split}\]</div>
-<p>where the last equality invoked recursion to calculate the posterior <span class="math notranslate nohighlight">\(P(X_2, X_3|\mathcal{Z})\)</span> on the remaining variables from the remaining factors.</p>
+<p>where we once again grouped the factors connected to <span class="math notranslate nohighlight">\(X_1\)</span> inside the curly braces. Using the chain rule, we can those as the product of a conditional (which will end up in the Bayes net) and a new factor <span class="math notranslate nohighlight">\(\tau(X_2)\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+\phi_1(X_1)\phi_2(X_1)\phi_3(X_1, X_2) = P(X_1|X_2, \mathcal{Z}) \tau(X_2).
+\]</div>
+<p>Note that above we explicitly indicate the dependence on <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span> in <span class="math notranslate nohighlight">\(P(X_1|X_2, \mathcal{Z})\)</span>, which was left implicit in the factor graph. Substituting this back in, we get a conditional multiplied with a smaller factor graph that no longer involves <span class="math notranslate nohighlight">\(X_1\)</span>, and we can recurse:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+P(\mathcal{X}|\mathcal{Z}) &amp;\propto P(X_1|X_2, \mathcal{Z}) ~~ \{ \tau(X_2) \phi_4(X_2)\phi_5(X_2, X_{3})\phi_6(X_3)\}
+\\ &amp;\propto P(X_1|X_2, \mathcal{Z}) P(X_2 | X_{3}, \mathcal{Z}) ~~ \{\tau(X_{3})\phi_6(X_3)\}
+\\ &amp;\propto P(X_1|X_2, \mathcal{Z}) P(X_2 | X_{3}, \mathcal{Z}) P(X_3| \mathcal{Z}).
+\end{aligned}
+\end{split}\]</div>
+<p>Each of the three conditionals above was computed by implementing the chain rule, which is a simple calculation in the case of discrete factors.</p>
 <section id="sum-product-in-gtsam">
 <h3><span class="section-number">3.4.8.1. </span>Sum-Product in GTSAM<a class="headerlink" href="#sum-product-in-gtsam" title="Link to this heading">#</a></h3>
-<p>In GTSAM, calling <code class="docutils literal notranslate"><span class="pre">sumProduct</span></code> yields a Bayes net, which encodes the full posterior distribution:</p>
+<p>In GTSAM, once again the sum-product is but a simple call to the <code class="docutils literal notranslate"><span class="pre">sumProduct</span></code> method of a factor graph. It yields a <code class="docutils literal notranslate"><span class="pre">gtsam.DiscreteBayes</span></code> net which encodes the full posterior distribution:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: The full posterior encoded as a Bayes net.</span>
@@ -1171,22 +1173,6 @@ P(\mathcal{X}|\mathcal{Z}) &amp;\propto \prod\phi_{i}(\mathcal{X}_{i})
 <div class="cell_output docutils container">
 <img alt="_images/b47b43ecc9b1139aa5b102545c47245491ba1b3d965b2ef1bd9f51c4cea873a9.svg" src="_images/b47b43ecc9b1139aa5b102545c47245491ba1b3d965b2ef1bd9f51c4cea873a9.svg" /></div>
 </div>
-</section>
-<section id="sidebar">
-<h3><span class="section-number">3.4.8.2. </span>Sidebar<a class="headerlink" href="#sidebar" title="Link to this heading">#</a></h3>
-<p>When we can produce samples <span class="math notranslate nohighlight">\(\mathcal{X}^{(s)}\)</span> from a posterior
-<span class="math notranslate nohighlight">\(P(\mathcal{X}|\mathcal{Z})\)</span>, we can calculate empirical means of any
-real-valued function <span class="math notranslate nohighlight">\(f(\mathcal{X})\)</span> as follows:</p>
-<div class="math notranslate nohighlight">
-\[
-E_{P(\mathcal{X}|\mathcal{Z})}[f(x)]\approx\sum f(\mathcal{X}^{(s)})
-\]</div>
-<p>For example, we can calculate the posterior mean of how far the robot
-traveled, either in Euclidean or Manhattan distance, using this approach.
-Doing this will provide a more reliable estimate than merely
-calculating the distance for the MAP value,
-since this approach averages over the entire probability distribution rather
-than just using a single (albeit most probable) estimate.</p>
 <p>One of the things we can do with this <em>exact</em> posterior is sample from it, which is one possible state history conditioned on the available sensor measurements <em>and</em> the known action sequence:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1209,7 +1195,27 @@ than just using a single (albeit most probable) estimate.</p>
 </table>
 </div></div></div>
 </div>
-<p>We can go even further: the code below samples 1000 alternate state histories, parallel universes of what <em>could</em> have happened:</p>
+</section>
+</section>
+<section id="sampling-and-posterior-means">
+<h2><span class="section-number">3.4.9. </span>Sampling and Posterior Means*<a class="headerlink" href="#sampling-and-posterior-means" title="Link to this heading">#</a></h2>
+<blockquote>
+<div><p>Bayesian reasoning at its best</p>
+</div></blockquote>
+<p>When we can produce samples <span class="math notranslate nohighlight">\(\mathcal{X}^{(s)}\)</span> from a posterior
+<span class="math notranslate nohighlight">\(P(\mathcal{X}|\mathcal{Z})\)</span>, we can calculate the empirical mean of any
+real-valued function <span class="math notranslate nohighlight">\(f(\mathcal{X})\)</span> as follows:</p>
+<div class="math notranslate nohighlight">
+\[
+E_{P(\mathcal{X}|\mathcal{Z})}[f(x)]\approx\sum f(\mathcal{X}^{(s)})
+\]</div>
+<p>For example, we can calculate the posterior mean of how far the robot
+traveled, either in Euclidean or Manhattan distance, using this approach.
+Doing this will provide a more reliable estimate than merely
+calculating the distance for the MAP value,
+since this approach averages over the entire probability distribution rather
+than just using a single (albeit most probable) estimate.</p>
+<p>For example, the code below samples 1000 alternate state histories, parallel universes of what <em>could</em> have happened:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
@@ -1224,7 +1230,7 @@ than just using a single (albeit most probable) estimate.</p>
 </div>
 </div>
 </div>
-<p>Could we summarize these 1000 alternate histories some way other than printing all of them out? One idea is to summarize, for every time step, what the probability is to be in a particular room. It turns out we can do this with a one-liner, because we kept track of counts in the code above:</p>
+<p>Posterior means gives us a way to summarize these 1000 alternate histories some other way other than just printing them all out. One idea is to summarize, for every time step, what the probability is to be in a particular room. It turns out we can do this with a one-liner, because we kept track of counts in the code above:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="mi">100</span><span class="o">*</span><span class="n">counts</span><span class="o">/</span><span class="n">num_samples</span><span class="p">,</span>
@@ -1288,14 +1294,13 @@ than just using a single (albeit most probable) estimate.</p>
 </div></div></div>
 </div>
 <p>These approximate marginals say how probable it is that the robot was in a particular room at a particular time step. This is much richer information that what is available in the MAP value, which is just a point estimate for the trajectory.</p>
-</section>
-<section id="id1">
-<h3><span class="section-number">3.4.8.3. </span>Exercise<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<section id="id2">
+<h3><span class="section-number">3.4.9.1. </span>Exercise<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
 <p>Execute the code above multiple times and observe that you <em>do</em> get different realizations (almost) every time, but that the approximate marginals stay roughly the same.</p>
 </section>
 </section>
 <section id="gtsam-101">
-<h2><span class="section-number">3.4.9. </span>GTSAM 101<a class="headerlink" href="#gtsam-101" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">3.4.10. </span>GTSAM 101<a class="headerlink" href="#gtsam-101" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>The GTSAM concepts used in this section, explained.</p>
 </div></blockquote>
@@ -1383,8 +1388,9 @@ distinction between frontal and parent values, so we just have a key, or a list 
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inference-in-bayes-nets">3.4.1. Inference in Bayes Nets</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#full-posterior-inference">3.4.1.1. Full Posterior Inference</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#maximum-a-posteriori-estimation">3.4.1.2. Maximum a Posteriori Estimation</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">3.4.1.3. Exercises</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">3.4.1.2. Exercises</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#maximum-a-posteriori-estimation">3.4.1.3. Maximum a Posteriori Estimation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">3.4.1.4. Exercises</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hidden-markov-models">3.4.2. Hidden Markov Models</a><ul class="nav section-nav flex-column">
@@ -1398,21 +1404,20 @@ distinction between frontal and parent values, so we just have a key, or a list 
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#factor-graphs-in-gtsam">3.4.5.2. Factor Graphs in GTSAM</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#computing-with-factor-graphs">3.4.6. Computing with Factor Graphs</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#naive-map-estimation-with-gtsam">3.4.6.1. Naive MAP estimation with GTSAM</a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#computing-with-factor-graphs">3.4.6. Computing with Factor Graphs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-max-product-algorithm-for-hmms">3.4.7. The Max-Product Algorithm for HMMs</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#max-product-in-gtsam">3.4.7.1. Max-product in GTSAM</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-sum-product-algorithm-for-hmms">3.4.8. The Sum-Product Algorithm for HMMs</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sum-product-in-gtsam">3.4.8.1. Sum-Product in GTSAM</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sidebar">3.4.8.2. Sidebar</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">3.4.8.3. Exercise</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gtsam-101">3.4.9. GTSAM 101</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sampling-and-posterior-means">3.4.9. Sampling and Posterior Means*</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">3.4.9.1. Exercise</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gtsam-101">3.4.10. GTSAM 101</a></li>
 </ul>
   </nav></div>
 

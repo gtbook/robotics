@@ -490,8 +490,8 @@ the concept of Markov decision processes (MDPs).</p>
 </div></blockquote>
 <a class="reference internal image-reference" href="_images/S35-iRobot_vacuuming_robot-06.jpg"><img alt="Splash image with thinking vacuum robot" class="align-center" src="_images/S35-iRobot_vacuuming_robot-06.jpg" style="width: 40%;" /></a>
 <p>Previously in this chapter, we described how conditional probability distributions can be used to model uncertainty
-in the effects of actions. We defined the belief state <span class="math notranslate nohighlight">\(b_{t+1}\)</span> to be the posterior probability distribution
-for the state at time <span class="math notranslate nohighlight">\(t+1\)</span> given the sequence of actions <span class="math notranslate nohighlight">\(a_1 \dots a_t\)</span>.
+in the effects of actions. We defined the belief state <span class="math notranslate nohighlight">\(b_{k+1}\)</span> to be the posterior probability distribution
+for the state at time <span class="math notranslate nohighlight">\(k+1\)</span> given the sequence of actions <span class="math notranslate nohighlight">\(a_1 \dots a_k\)</span>.
 In every example, the sequence of actions was predetermined, and we merely calculated probabilities
 associated with performing these actions from some specified initial state, described
 by a probability distribution <span class="math notranslate nohighlight">\(P(X_1)\)</span>.</p>
@@ -504,16 +504,16 @@ invoke the concept of expectation to compute expected future benefits of applyin
 <p>As we work through these concepts, it will rapidly become apparent that executing a predefined sequence of actions
 is not the best way to face the future.
 Suppose, for example, that our vacuuming robot wants to move from the office to the living room.
-Because it is not possible to know how many times we should execute the move right action
-to arrive to the hallway, we might construct a sequence of actions
-to move right many times (to increase the probability of arriving to the dining room),
-then move up many times (to increase the probability of arriving to the kitchen),
-then move left many times (to increase the probability of arriving to the living room).</p>
+Because it is not possible to know how many times we should “move right”
+to arrive at the hallway, we might construct a sequence of actions
+to move right many times (to increase the probability of arriving at the dining room),
+then move up many times (to increase the probability of arriving at the kitchen),
+then move left many times (to increase the probability of arriving at the living room).</p>
 <p>This kind of plan might make sense if the robot is unable to know its current location.
 For example, moving for a long time to the right should eventually bring the robot to the dining room with
 high probability,
 but if the robot moves to the right for a short time, it could remain in the office,
-arrive to the hallway, or arrive to the dining room.</p>
+arrive at the hallway, or arrive at the dining room.</p>
 <p>In contrast, if the robot is able to know its location (using perception), it can act
 opportunistically when it reaches the hallway, and immediately move up.
 The key idea here is that the optimal action at any moment in time depends
@@ -550,14 +550,14 @@ in the entrance hallway).</p>
 Let <span class="math notranslate nohighlight">\(\cal X\)</span> denote the set of states and <span class="math notranslate nohighlight">\(\cal A\)</span> the set of actions.
 The reward function, <span class="math notranslate nohighlight">\(R : {\cal X} \times {\cal A} \times {\cal X} \rightarrow \mathbb{R}\)</span>,
 assigns a numeric reward to specific state transitions under specific actions.
-In particular, <span class="math notranslate nohighlight">\(R(x_t, a_t, x_{t+1})\)</span> is the reward obtained by arriving to state
-<span class="math notranslate nohighlight">\(x_{t+1}\)</span> from state <span class="math notranslate nohighlight">\(x_t\)</span> as a result of executing action <span class="math notranslate nohighlight">\(a_t\)</span>.</p>
+In particular, <span class="math notranslate nohighlight">\(R(x_k, a_k, x_{k+1})\)</span> is the reward obtained by arriving to state
+<span class="math notranslate nohighlight">\(x_{k+1}\)</span> from state <span class="math notranslate nohighlight">\(x_k\)</span> as a result of executing action <span class="math notranslate nohighlight">\(a_k\)</span>.</p>
 <p>In what follows we assume that the reward function is time-invariant, i.e., the benefit of moving up from
 the hallway to the living room does not change as time passes.
 This allows us to use the more compact notation
 <span class="math notranslate nohighlight">\(R(x, a, x')\)</span> to represent the reward obtained by arriving to (the next) state <span class="math notranslate nohighlight">\(x'\)</span>
 by executing action <span class="math notranslate nohighlight">\(a\)</span> in state <span class="math notranslate nohighlight">\(x\)</span>. We will frequently use this notation in the remainder of the section.</p>
-<p>This form for the reward function is very general, allowing us to encode context dependent rewards
+<p>This form of the reward function is very general, allowing us to encode context dependent rewards
 that depend on the state in which an action is executed.
 It is also common to specify rewards merely as a function of state.
 In this case, we denote by <span class="math notranslate nohighlight">\(R(x)\)</span> the reward obtained for arriving to state <span class="math notranslate nohighlight">\(x\)</span>, regardless
@@ -602,22 +602,22 @@ by <span class="math notranslate nohighlight">\(\bar{R}(x,a)\)</span>,
 and its value is obtained by evaluating the expectation</p>
 <div class="math notranslate nohighlight">
 \[
-\bar{R}(x,a) \doteq E[R(x,a,X')] = \sum_{x'} P(x'|x,a) R(x, a, x')
+\bar{R}(x,a) \doteq E[R(x,a,X')] = \sum_{x'} P(x'|x,a) R(x, a, x').
 \]</div>
 <p>Note that we use the upper case <span class="math notranslate nohighlight">\(X'\)</span> to indicate that the expectation is taken with
 respect to the random next state.
-Accordingly, the sum is over all possible next states, and the reward for each next
-state is weighted by the probability of arriving to that state from state <span class="math notranslate nohighlight">\(x\)</span> by executing action <span class="math notranslate nohighlight">\(a\)</span>.</p>
+Accordingly, the sum is over all possible next states, and the reward <span class="math notranslate nohighlight">\(R(x, a, x')\)</span> for each next
+state is weighted by the probability <span class="math notranslate nohighlight">\(P(x'|x,a)\)</span> of arriving to that state from state <span class="math notranslate nohighlight">\(x\)</span> by executing action <span class="math notranslate nohighlight">\(a\)</span>.</p>
 <!-- In some cases (e.g., when the transition probabilities are *known*),
 it can be convenient to work only with the expected reward, instead of dealing wit $R(x,a,x')$
-which some texts do. However, below we will continue to work with the most general formulation. --><p>To <em>calculate</em> the expected reward in code, we first create a multidimensional array <span class="math notranslate nohighlight">\(R(x,a,x')\)</span> that contains the rewards for every possible transition <span class="math notranslate nohighlight">\(x,a \rightarrow x'\)</span>. We use the handy GTSAM <code class="docutils literal notranslate"><span class="pre">enumerate</span></code> method below to do so:</p>
+which some texts do. However, below we will continue to work with the most general formulation. --><p>To <em>calculate</em> the expected reward in code, we first create a multidimensional array <span class="math notranslate nohighlight">\(R(x,a,x')\)</span> that contains the rewards for every possible transition <span class="math notranslate nohighlight">\(x,a \rightarrow x'\)</span>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">conditional</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">DiscreteConditional</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">)],</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">action_spec</span><span class="p">)</span>
-<span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="nb">float</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">assignment</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">conditional</span><span class="o">.</span><span class="n">enumerate</span><span class="p">():</span>
-    <span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">assignment</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">assignment</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">assignment</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-    <span class="n">R</span><span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span> <span class="o">=</span> <span class="mf">10.0</span> <span class="k">if</span> <span class="n">y</span> <span class="o">==</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;Living Room&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="mf">0.0</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="nb">float</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">room_x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">action</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">vacuum</span><span class="o">.</span><span class="n">action_space</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">y</span><span class="p">,</span> <span class="n">room_y</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="p">):</span>
+            <span class="n">R</span><span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span> <span class="o">=</span> <span class="mf">10.0</span> <span class="k">if</span> <span class="n">room_y</span> <span class="o">==</span> <span class="s2">&quot;Living Room&quot;</span> <span class="k">else</span> <span class="mf">0.0</span>
 
 <span class="c1"># For example, taking action &quot;L&quot; in &quot;Kitchen&quot;:</span>
 <span class="n">R</span><span class="p">[</span><span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;Kitchen&quot;</span><span class="p">),</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;L&quot;</span><span class="p">)]</span>
@@ -630,13 +630,16 @@ which some texts do. However, below we will continue to work with the most gener
 </div>
 </div>
 </div>
-<p>The result above is simple to interpret: if the robot
-arrives to the living room (index 0) the robot obtains a reward of 10, otherwise 0.</p>
-<p>Note that <span class="math notranslate nohighlight">\(R\)</span> is a <em>multidimensional</em> array, with shape <span class="math notranslate nohighlight">\((5, 4, 5)\)</span>, corresponding to the dimensionality of the arguments of the reward function <span class="math notranslate nohighlight">\(R(x,a,x')\)</span>.
+<p>The result above is simple to interpret: if the robot starts in the kitchen and goes left, it obtains a reward of 10 <em>iff</em> it arrives to the living room (index 0), otherwise 0.</p>
+<p>Observe that <span class="math notranslate nohighlight">\(R\)</span> is a <em>multidimensional</em> array, with shape <span class="math notranslate nohighlight">\((5, 4, 5)\)</span>, corresponding to the dimensionality of the arguments of the reward function <span class="math notranslate nohighlight">\(R(x,a,x')\)</span>.
 We can do the same with the transition probabilities, creating a multidimensional array <span class="math notranslate nohighlight">\(T\)</span> with an entry for every possible transition <span class="math notranslate nohighlight">\(x \rightarrow a \rightarrow x'\)</span> with probability <span class="math notranslate nohighlight">\(P(x'|a,x)\)</span>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="nb">float</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># First create a conditional with ids 0, 1, and 2 for state, action, and next state:</span>
+<span class="n">conditional</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">DiscreteConditional</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">)],</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">action_spec</span><span class="p">)</span>
+
+<span class="c1"># Now use `enumerate` to iterate over all possible assignments to the conditional:</span>
+<span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="nb">float</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">assignment</span><span class="p">,</span> <span class="n">P_y_given_ax</span> <span class="ow">in</span> <span class="n">conditional</span><span class="o">.</span><span class="n">enumerate</span><span class="p">():</span>
     <span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">assignment</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">assignment</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">assignment</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
     <span class="n">T</span><span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span> <span class="o">=</span> <span class="n">P_y_given_ax</span>
@@ -672,24 +675,24 @@ we end up in the living room with 80% chance, while staying in place (the kitche
 <!-- Note that this computation can also be realized using belief states.  In
 particular, if encode the reward function as a vector (as above),
 say $R = [10, 0, 0, 0, 0]^T$,
-the the expected reward at time $t+1$ is given by
+the the expected reward at time $k+1$ is given by
 
-$$E[ R(X_t, a, X_{t+t})] = b_{t+1} R = \left( b_t M_{a}\right) R
+$$E[ R(X_k, a, X_{k+t})] = b_{k+1} R = \left( b_k M_{a}\right) R
 $$
 
 in which $M_{a}$ denotes the transition probability matrix associated
 to action $ a$. Note that in this case, we the expected reward is computed for a given
-prior distribution on $X_t$. If we know with certainty that $X_t =x$, the belief
+prior distribution on $X_k$. If we know with certainty that $X_k =x$, the belief
 vector would have a $1$ in the entry corresponding to the current room, and zero's for
 all other entries.
 Therefore, this form is somewhat more general than that given above. -->
 <p>Equipped with the definition of expected reward, we can introduce a first, <strong>greedy planning</strong> algorithm:
-Given the current state <span class="math notranslate nohighlight">\(x_t\)</span>, execute the action that maximizes the expected reward:</p>
+Given the current state <span class="math notranslate nohighlight">\(x_k\)</span>, execute the action that maximizes the expected reward:</p>
 <div class="math notranslate nohighlight">
 \[
-a_t^* = \arg  \max_{a \in {\cal A}} E[ R(x_t, a, X_{t+t})]
+a_k^* = \arg  \max_{a \in {\cal A}} E[ R(x_k, a, X_{k+t})]
 \]</div>
- <!-- = \arg \max_{a \in {\cal A}}\left( b_t M_{A}\right) R --><p>For example, in the kitchen, we can calculate the expected award for all actions:</p>
+ <!-- = \arg \max_{a \in {\cal A}}\left( b_k M_{A}\right) R --><p>For example, in the kitchen, we can calculate the expected award for all actions:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;Kitchen&quot;</span><span class="p">)</span>
@@ -723,17 +726,17 @@ There are two immediate disadvantages to a direct implementation of this approac
 <ul class="simple">
 <li><p>First, because the effects of actions are uncertain, it is likely that the further we look
 into the future, the more uncertain we will be about the robot’s anticipated state.
-Therefore, it makes sense to discount our consideration of rewards that might occur far into the future,
-say at times <span class="math notranslate nohighlight">\(X_{t+T}\)</span>, for increasing values of <span class="math notranslate nohighlight">\(T\)</span>.</p></li>
+Therefore, it makes sense to <em>discount</em> our consideration of rewards that might occur far into the future,
+say at times <span class="math notranslate nohighlight">\(X_{k+l}\)</span>, for increasing values of <span class="math notranslate nohighlight">\(l\)</span>.</p></li>
 <li><p>Second, it is often convenient to reason with an infinite time horizon, e.g., consider the case when the robot will operate forever.
 While this is certainly not a realistic expectation,
 reasoning over an infinite time horizon often simplifies the mathematical complexities of planning into the future.
-If we merely compute the sum of all future rewards, this sum will diverge to infinity as <span class="math notranslate nohighlight">\(T\)</span> approaches infinity.</p></li>
+If we merely compute the sum of all future rewards, this sum will diverge to infinity as <span class="math notranslate nohighlight">\(l\)</span> approaches infinity.</p></li>
 </ul>
-<p>We can deal with both of these disadvantages by multiplying the reward at time <span class="math notranslate nohighlight">\(t + T\)</span> by a discounting
-factor <span class="math notranslate nohighlight">\(\gamma^T\)</span>, with <span class="math notranslate nohighlight">\(0 &lt; \gamma \leq 1\)</span>.
+<p>We can deal with both of these disadvantages by multiplying the reward at time step <span class="math notranslate nohighlight">\(k + l\)</span> by a discounting
+factor <span class="math notranslate nohighlight">\(\gamma^l\)</span>, with <span class="math notranslate nohighlight">\(0 &lt; \gamma \leq 1\)</span>.
 We refer to <span class="math notranslate nohighlight">\(\gamma\)</span> as the <strong>discount factor</strong>
-and to the term <span class="math notranslate nohighlight">\(\gamma^T R(x_{t+T},a_{t+T},x_{t+T+1})\)</span> as a <strong>discounted reward.</strong>
+and to the term <span class="math notranslate nohighlight">\(\gamma^l R(x_{k+l},a_{k+l},x_{k+l+1})\)</span> as a <strong>discounted reward.</strong>
 Note that for <span class="math notranslate nohighlight">\(\gamma = 1\)</span>, there is no discount, and all future rewards are treated with equal weight.</p>
 <p>Suppose the robot executes a sequence of actions, <span class="math notranslate nohighlight">\(a_1, \dots, a_n\)</span>,
 starting in state  <span class="math notranslate nohighlight">\(X_1=x_1\)</span>, and passes through
@@ -742,23 +745,22 @@ We define the utility function <span class="math notranslate nohighlight">\(U: {
 <div class="math notranslate nohighlight">
 \[
 U(a_1, \dots, a_n, x_1, \dots x_{n+1}) =
-R(x_1,a_1, x_2) + \gamma R(x_2, a_2, x_3) + \gamma^2 R(x_3, \pi(x_3), x_4) + \dots \gamma^{n-1} R(x_{n}, a_{n}, x_{n+1})\]</div>
+R(x_1,a_1, x_2) + \gamma R(x_2, a_2, x_3) + \dots \gamma^{n-1} R(x_{n}, a_{n}, x_{n+1})\]</div>
 <p>We can write this more compactly as the summation</p>
 <div class="math notranslate nohighlight">
 \[
 U(a_1, \dots, a_n, x_1, \dots x_{n+1}) =
-\sum_{t=1}^{n} = \gamma^{t-1} R(x_t, a_t, x_{t+1}) 
+\sum_{k=1}^{n} = \gamma^{k-1} R(x_k, a_k, x_{k+1}) 
 \]</div>
 <p>For <span class="math notranslate nohighlight">\(n &lt; \infty\)</span>, we refer to this as a finite-horizon utility function.
 Note that influence of future rewards decreases exponentially with the time horizon,
-and that the use of <span class="math notranslate nohighlight">\(\gamma^{t-1}\)</span> ensures that the sum will converge for the infinite horizon case
-(under mild assumptions about <span class="math notranslate nohighlight">\(R\)</span>).</p>
+and that the use of <span class="math notranslate nohighlight">\(\gamma^{k-1}\)</span> ensures that the sum will converge for the infinite horizon case (under mild assumptions about <span class="math notranslate nohighlight">\(R\)</span>).</p>
 <p>The expression above is defined for a specific sequence of actions and a specific sequence of states.
 When planning, as we have noted above, we are unable to know with certainty the future states.
-We can, again, deal with this difficulty by computing the expected utility for a
+We can, again, deal with this difficulty by computing the <em>expected</em> utility for a
 given sequence of actions,
 <span class="math notranslate nohighlight">\(E[U(a_1, \dots, a_n, X_1, \dots X_n)]\)</span>.
-We can now formulate a slightly more sophisticated version of our planning problem:</p>
+We can now formulate a slightly more sophisticated version of our planning problem. Choose the sequence of actions <span class="math notranslate nohighlight">\(a_{1:n}\)</span> that maximizes the expected utility:</p>
 <div class="math notranslate nohighlight">
 \[ a_1^*, \dots a_n^* = \arg  \max_{a_1 \dots a_n \in {\cal A}^n} E[U(a_1, \dots, a_n, X_1, \dots X_{n+1})]
 \]</div>
@@ -947,7 +949,7 @@ choose which action to execute based on its current state.</p>
 Specifying a policy instead of a control tape has the potential to significantly improve the robot’s performance, by adapting the action sequence based on the actual state trajectory that occurs during execution.</p>
 <p>The code below defines a fairly intuitive policy. If in the office, move right. If in the dining room or kitchen, move left.
 If in the hallway or living room, move up.
-Note we implement policies as a simple list in python, so <code class="docutils literal notranslate"><span class="pre">pi[0]</span></code> is the the action taken in state with index 0 (the Living Room):</p>
+Note we implement policies as a simple list in python, so <code class="docutils literal notranslate"><span class="pre">pi[0]</span></code> is the the action taken in state with index 0 (the Living Room). We return an index into the <code class="docutils literal notranslate"><span class="pre">action_space</span></code> to make the code following it efficient:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">RIGHT</span> <span class="o">=</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;R&quot;</span><span class="p">)</span>
@@ -960,12 +962,10 @@ Note we implement policies as a simple list in python, so <code class="docutils 
 </div>
 </div>
 </div>
-<p>Again, we return an index into the <code class="docutils literal notranslate"><span class="pre">action_space</span></code> to make the following code efficient.
-Once we have a given policy, <span class="math notranslate nohighlight">\(\pi\)</span>, we can compute a policy rollout in a manner analogous to computing
-control tape rollouts described above.
+<p>Once we have a given policy, <span class="math notranslate nohighlight">\(\pi\)</span>, we can compute a policy rollout in a manner analogous to computing control tape rollouts described above.
 In particular, at each state, instead of sampling from the distribution
-<span class="math notranslate nohighlight">\(P(X_{t+1} | a_t, x_t)\)</span> we sample from the distribution
-<span class="math notranslate nohighlight">\(P(X_{t+1} | \pi(x_t), x_t)\)</span>. In other words, instead of simulating a pre-specified action <span class="math notranslate nohighlight">\(a_t\)</span>, we choose <span class="math notranslate nohighlight">\(a_t = \pi(x_t)\)</span>.</p>
+<span class="math notranslate nohighlight">\(P(X_{k+1} | a_k, x_k)\)</span> we sample from the distribution
+<span class="math notranslate nohighlight">\(P(X_{k+1} | \pi(x_k), x_k)\)</span>. In other words, instead of simulating a pre-specified action <span class="math notranslate nohighlight">\(a_k\)</span>, we choose <span class="math notranslate nohighlight">\(a_k = \pi(x_k)\)</span>.</p>
 <p>Here is a function that computes a rollout given a policy, rather than a control tape:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1006,8 +1006,8 @@ In particular, at each state, instead of sampling from the distribution
 </table>
 </div></div></div>
 </div>
-<p>Above, we proposed two methods to plan an action sequence,
-a greedy approach that maximizes the expected reward for executing a single action,
+<p>Our policy-based rollouts seem to be much better!</p>
+<p>In summary, we proposed two methods to plan an action sequence, a greedy approach that maximizes the expected reward for executing a single action,
 and an optimization-based method that chooses a fixed action sequence to maximize the
 expected utility of the action sequence.
 We described how to implement the computations required for the latter approach using control tape rollouts.</p>
@@ -1026,18 +1026,19 @@ for a fixed sequence of actions.</p>
 <blockquote>
 <div><p>The value function <span class="math notranslate nohighlight">\(V^\pi\)</span> measures the expected utility from each state, under a given policy <span class="math notranslate nohighlight">\(\pi\)</span>.</p>
 </div></blockquote>
-<p>Above, we defined the utility for a specific sequence of <span class="math notranslate nohighlight">\(n\)</span> actions as</p>
+<p>To implement optimal planning as a search for an optimal policy, we now derive an objective function to maximize.
+Above, we defined the utility for a specific sequence of <span class="math notranslate nohighlight">\(n\)</span> actions as</p>
 <div class="math notranslate nohighlight">
 \[
 U(a_1, \dots, a_n, x_1, \dots x_{n+1}) =
-R(x_1,a_1, x_2) + \gamma R(x_2, a_2, x_3) + \gamma^2 R(x_3, \pi(x_3), x_4) + \dots \gamma^{n-1} R(x_{n}, a_{n}, x_{n+1})\]</div>
+R(x_1,a_1, x_2) + \gamma R(x_2, a_2, x_3) + \dots \gamma^{n-1} R(x_{n}, a_{n}, x_{n+1})
+\]</div>
 <p>and used the expected utility, <span class="math notranslate nohighlight">\(E[U(a_1, \dots, a_n, X_1, \dots X_{n+1})]\)</span> as a quantitative measure
 of the efficacy of the specific action sequence.
 We can apply this same type of reasoning for a policy, <span class="math notranslate nohighlight">\(\pi\)</span>.
 When evaluating policies, it is typical to use a discounted
 reward over an infinite time horizon.
-In this case, we define the <strong>value function for policy <span class="math notranslate nohighlight">\(\pi\)</span></strong>,
-<span class="math notranslate nohighlight">\(V^\pi:{\cal X} \rightarrow \mathbb{R}\)</span> as</p>
+In this case, we define the <strong>value function</strong> <span class="math notranslate nohighlight">\(V^\pi:{\cal X} \rightarrow \mathbb{R}\)</span> for policy <span class="math notranslate nohighlight">\(\pi\)</span> as</p>
 <div class="math notranslate nohighlight">
 \[
 V^\pi(x_1) \doteq E [R(x_1, \pi(x_1), X_2) + \gamma R(X_2, \pi(X_2), X_3) + \gamma^2 R(X_3, \pi(X_3), X_4) + \dots]
@@ -1046,28 +1047,27 @@ V^\pi(x_1) \doteq E [R(x_1, \pi(x_1), X_2) + \gamma R(X_2, \pi(X_2), X_3) + \gam
 of the states <span class="math notranslate nohighlight">\(X_2, X_3 \dots\)</span>.
 Note that the policy <span class="math notranslate nohighlight">\(\pi\)</span> is deterministic, but that <span class="math notranslate nohighlight">\(\pi(X_i)\)</span> is the random action that results
 from applying the deterministic policy to the stochastic state <span class="math notranslate nohighlight">\(X_i\)</span>.</p>
-<p>In the definition for <span class="math notranslate nohighlight">\(V^\pi\)</span>, the argument is given as <span class="math notranslate nohighlight">\(x_1\)</span>, the initial state.
-We can easily generalize this to arbitrary time steps as</p>
-<div class="math notranslate nohighlight">
-\[
-V^\pi(x_t) \doteq E [R(x_t, \pi(x_t), X_{t+1}) + \gamma R(X_{t+1}, \pi(X_{t+1}), X_{t+2}) + \gamma^2 R(X_{t+2}, \pi(X_{t+2}), X_{t+3}) + \dots]
-\]</div>
-<p>The value function for a policy can be written in a nice recursive form
+<!-- In the definition for $V^\pi$, the argument is given as $x_1$, the initial state.
+We can easily generalize this to arbitrary time steps as
+
+$$
+V^\pi(x_k) \doteq E [R(x_k, \pi(x_k), X_{k+1}) + \gamma R(X_{k+1}, \pi(X_{k+1}), X_{k+2}) + \dots]
+$$ --><p>The value function for a policy can be written in a nice recursive form
 that can be obtained by the following derivation.</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 \begin{aligned}
 V^\pi(x_1) &amp;=
 E [R(x_1, \pi(x_1), X_2) + \gamma R(X_2, \pi(X_2), X_3) + \gamma^2 R(X_3, \pi(X_3), X_4) + \dots] \\
-&amp;=
- \sum_{x_2} P(x_2|x_1, \pi(x_1)) \{R(x_1, \pi(x_1), x_2) + E [\gamma R(x_2, \pi(x_2), X_3) + \gamma^2 R(X_3, \pi(X_3), X_4) + \dots]\}\\
+&amp;= \sum_{x_2} P(x_2|x_1, \pi(x_1)) R(x_1, \pi(x_1), x_2) \\
+&amp; + \sum_{x_2} P(x_2|x_1, \pi(x_1)) E [\gamma R(x_2, \pi(x_2), X_3) + \gamma^2 R(X_3, \pi(X_3), X_4) + \dots]\\
 &amp;= \sum_{x_2} P(x_2|x_1, \pi(x_1)) \{R(x_1, \pi(x_1), x_2) + \gamma V^\pi(x_2)\}
 \end{aligned}
 \end{split}\]</div>
 <p>where the second line is obtained by explicitly writing the summation for the expectation
 taken with respect to the random state <span class="math notranslate nohighlight">\(X_2\)</span>,
 and the third line is obtained by noticing that
-<span class="math notranslate nohighlight">\(\gamma V^\pi(x_2) =E [\gamma R(x_2, \pi(x_2), X_3) + \gamma^2 R(X_3, \pi(X_3), X_4) + \dots]\)</span>.</p>
+<span class="math notranslate nohighlight">\(E [\gamma R(x_2, \pi(x_2), X_3) + \gamma^2 R(X_3, \pi(X_3), X_4) + \dots] = \gamma V^\pi(x_2)\)</span>.</p>
 <p>We can apply the distributivity property to this expression to obtain</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
@@ -1076,8 +1076,7 @@ V^\pi(x_1) &amp;= \sum_{x_2} P(x_2|x_1, \pi(x_1)) R(x_1, \pi(x_1), x_2) + \gamma
 &amp;= \bar{R}(x_1,\pi(x_1)) + \gamma \sum_{x_2} P(x_2|x_1, \pi(x_1)) V^\pi(x_2)
 \end{aligned}
 \end{split}\]</div>
-<p>in which the term <span class="math notranslate nohighlight">\(\bar{R}(x_1,\pi(x_1))\)</span> is the expected reward for applying action <span class="math notranslate nohighlight">\(a = \pi(x_1)\)</span> in state <span class="math notranslate nohighlight">\(x_1\)</span>.
-This can be computed directly using the reward function and transition probabilities.
+<p>in which the term <span class="math notranslate nohighlight">\(\bar{R}(x_1,\pi(x_1))\)</span> is the expected reward for applying action <span class="math notranslate nohighlight">\(a = \pi(x_1)\)</span> in state <span class="math notranslate nohighlight">\(x_1\)</span>, which we already know how to compute from the reward function <span class="math notranslate nohighlight">\(R\)</span> and transition probabilities <span class="math notranslate nohighlight">\(T\)</span>.
 By now substituting <span class="math notranslate nohighlight">\(x\)</span> for <span class="math notranslate nohighlight">\(x_1\)</span>, and <span class="math notranslate nohighlight">\(x'\)</span> for <span class="math notranslate nohighlight">\(x_{2}\)</span> we can generalize this expression
 to apply to the state <span class="math notranslate nohighlight">\(x\)</span> at any arbitrary time:</p>
 <div class="math notranslate nohighlight">
@@ -1114,8 +1113,8 @@ we know that there is some upper bound <span class="math notranslate nohighlight
 possible <span class="math notranslate nohighlight">\(x,a,x'\)</span>.
 We can use this fact to find a bound on <span class="math notranslate nohighlight">\(V^\pi\)</span>:</p>
 <div class="math notranslate nohighlight">
-\[V^\pi(x_t)
-\leq \max_{x_t, x_{t+1}, \dots} \sum_{i=0}^\infty \gamma ^i R(x_{t+i},\pi(x_{t+i}), x_{t+i+1})
+\[V^\pi(x_k)
+\leq \max_{x_k, x_{k+1}, \dots} \sum_{i=0}^\infty \gamma ^i R(x_{k+i},\pi(x_{k+i}), x_{k+i+1})
 \leq \sum_{i=0}^\infty \gamma ^i R_{\rm{max}} = \frac{R_{\rm{max}}}{1 - \gamma}\]</div>
 <p>in which the final term applies for <span class="math notranslate nohighlight">\(0 &lt; \gamma &lt; 1\)</span>.
 This expression can then be used to bound the error</p>
@@ -1181,7 +1180,7 @@ V(Office) ~ 84.74
 <section id="computing-the-value-function">
 <h2><span class="section-number">3.5.8. </span>Computing The Value Function*<a class="headerlink" href="#computing-the-value-function" title="Link to this heading">#</a></h2>
 <blockquote>
-<div><p>For any fixed policy we can <em>exactly</em> compute the value function.</p>
+<div><p>For any <em>fixed</em> policy we can compute the exact value of value function.</p>
 </div></blockquote>
 <p>We can compute the exact value of <span class="math notranslate nohighlight">\(V^\pi\)</span> by solving a system of linear equations.
 Recall our recursive definition of the value function:</p>
@@ -1200,24 +1199,19 @@ In addition, we use the abbreviations L,K,O,H, and D for the rooms, and use the 
 Using this notation, we can evaluate the above expression.
 For <span class="math notranslate nohighlight">\(x = L\)</span>, we obtain</p>
 <div class="math notranslate nohighlight">
-\[\begin{split} 
-\begin{aligned}
-V^\pi_L - \gamma \sum_{x'\in {L,K,O,H,D}} T^\pi_{Lx'} V^\pi_{x'} &amp; = \bar{R}(L,\pi(L)) \\
-V^\pi_{L}
-- \gamma T^\pi_{LL} V^\pi_{L}
-- \gamma T^\pi_{LK} V^\pi_{K} 
-- \gamma T^\pi_{LO} V^\pi_{O} 
-- \gamma T^\pi_{LH} V^\pi_{H} 
-- \gamma T^\pi_{LD} V^\pi_{D} 
-&amp;= \bar{R}(L,\pi(L)) \\
+\[ 
+V^\pi_L - \gamma \sum_{x'\in {L,K,O,H,D}} T^\pi_{Lx'} V^\pi_{x'} = \bar{R}(L,\pi(L))
+\]</div>
+<p>or, after some algebra:</p>
+<div class="math notranslate nohighlight">
+\[ 
 (1 - \gamma T^\pi_{LL}) V^\pi_{L}
 - \gamma T^\pi_{LK} V^\pi_{K} 
 - \gamma T^\pi_{LO} V^\pi_{O} 
 - \gamma T^\pi_{LH} V^\pi_{H} 
 - \gamma T^\pi_{LD} V^\pi_{D} 
-&amp;= \bar{R}(L,\pi(L))
-\end{aligned}
-\end{split}\]</div>
+= \bar{R}(L,\pi(L))
+\]</div>
 <p>If we apply this same process for each of the five rooms,
 we obtain the following five equations:</p>
 <div class="math notranslate nohighlight">
@@ -1426,23 +1420,23 @@ ultimately converging to the optimal value function.</p>
 at the optimal policy, and then iteratively improve our guess until no futher improvements are possible.
 This is exactly the approach taken by <strong>policy iteration</strong>.
 In particular, policy iteration generates a sequence of policies
-<span class="math notranslate nohighlight">\(\pi^0, \pi^1, \dots \pi^n\)</span>, such that <span class="math notranslate nohighlight">\(\pi^{k+1}\)</span> is better than policy <span class="math notranslate nohighlight">\(\pi^k\)</span>.
+<span class="math notranslate nohighlight">\(\pi^0, \pi^1, \dots \pi^n\)</span>, such that <span class="math notranslate nohighlight">\(\pi^{i+1}\)</span> is better than policy <span class="math notranslate nohighlight">\(\pi^i\)</span>.
 This process ends when no further improvement is possible, which
-occurs when <span class="math notranslate nohighlight">\(\pi^{k+1} = \pi^k.\)</span></p>
-<p>To improve the policy <span class="math notranslate nohighlight">\(\pi^k\)</span>, we update the action chosen <em>for each state</em> by applying
-Bellman’s equation using <span class="math notranslate nohighlight">\(\pi^k\)</span> in place of <span class="math notranslate nohighlight">\(\pi^*\)</span>.
+occurs when <span class="math notranslate nohighlight">\(\pi^{i+1} = \pi^i.\)</span></p>
+<p>To improve the policy <span class="math notranslate nohighlight">\(\pi^i\)</span>, we update the action chosen <em>for each state</em> by applying
+Bellman’s equation using <span class="math notranslate nohighlight">\(\pi^i\)</span> in place of <span class="math notranslate nohighlight">\(\pi^*\)</span>.
 The can be achieved with the following algorithm:</p>
-<p>Start with a random policy <span class="math notranslate nohighlight">\(\pi^0\)</span> and <span class="math notranslate nohighlight">\(k=0\)</span>, and repeat until convergence:</p>
+<p>Start with a random policy <span class="math notranslate nohighlight">\(\pi^0\)</span> and <span class="math notranslate nohighlight">\(i=0\)</span>, and repeat until convergence:</p>
 <ol class="arabic simple">
-<li><p>Compute the value function <span class="math notranslate nohighlight">\(V^{\pi^k}\)</span></p></li>
+<li><p>Compute the value function <span class="math notranslate nohighlight">\(V^{\pi^i}\)</span></p></li>
 <li><p>Improve the policy for each state <span class="math notranslate nohighlight">\(x \in {\cal X}\)</span> using the update rule:</p></li>
 </ol>
 <div class="math notranslate nohighlight">
 \[
-\pi^{k+1}(x) \leftarrow\arg \max_a \sum_{x'} \{P(x'|x, a) \{R(x, a, x') + \gamma V^k(x')\}
+\pi^{i+1}(x) \leftarrow\arg \max_a \sum_{x'} \{P(x'|x, a) \{R(x, a, x') + \gamma V^i(x')\}
 \]</div>
 <ol class="arabic simple" start="3">
-<li><p>Increment <span class="math notranslate nohighlight">\(k\)</span></p></li>
+<li><p>Increment <span class="math notranslate nohighlight">\(i\)</span></p></li>
 </ol>
 <p>Notice that this algorithm has the side benefit of computing
 successively better approximations to the value function at each iteration.
@@ -1593,25 +1587,25 @@ Starting with an initial guess, <span class="math notranslate nohighlight">\(V^0
 our approximation of the value function for each state by the update rule:</p>
 <div class="math notranslate nohighlight">
 \[
-V^{k+1}(x) \leftarrow \max_a \left\{ \bar{R}(x,a) + \gamma \sum_{x'} P(x'|x, a) V^k(x')   \right\} 
+V^{i+1}(x) \leftarrow \max_a \left\{ \bar{R}(x,a) + \gamma \sum_{x'} P(x'|x, a) V^i(x')   \right\} 
 \]</div>
 <p>Notice that the right hand side includes two terms:
-the expected reward (which we can compute exactly), and a term in <span class="math notranslate nohighlight">\(V^k\)</span> (our current best guess at the value function).
+the expected reward (which we can compute exactly), and a term in <span class="math notranslate nohighlight">\(V^i\)</span> (our current best guess at the value function).
 Value iteration operates by iteratively using our <em>current best guess</em> of <span class="math notranslate nohighlight">\(V^*\)</span> along with the <em>known</em> expected reward
 to update the approximation.
 Unlike policy iteration, we do not expect value iteration to converge to the exact result in finite time.
-Therefore, we cannot use <span class="math notranslate nohighlight">\(V^{k+1} = V^k\)</span> as our termination condition.
-Instead, we often use a condition such as <span class="math notranslate nohighlight">\(|V^{k+1} - V^k| &lt; \epsilon\)</span>, for some small value of <span class="math notranslate nohighlight">\(\epsilon\)</span>
+Therefore, we cannot use <span class="math notranslate nohighlight">\(V^{i+1} = V^i\)</span> as our termination condition.
+Instead, we often use a condition such as <span class="math notranslate nohighlight">\(|V^{i+1} - V^i| &lt; \epsilon\)</span>, for some small value of <span class="math notranslate nohighlight">\(\epsilon\)</span>
 as the termination condition.</p>
 <p>Finally, note that we can define Q values for the <span class="math notranslate nohighlight">\(k^{th}\)</span> iteration as</p>
 <div class="math notranslate nohighlight">
 \[
-Q(x, a; V^k) \doteq \bar{R}(x,a) + \gamma \sum_{x'} P(x'|x, a) V^k(x'),
+Q(x, a; V^i) \doteq \bar{R}(x,a) + \gamma \sum_{x'} P(x'|x, a) V^i(x'),
 \]</div>
 <p>and hence a value update is simply</p>
 <div class="math notranslate nohighlight">
 \[
-V^{k+1}(x) \leftarrow \max_a Q(x, a; V^k).
+V^{i+1}(x) \leftarrow \max_a Q(x, a; V^i).
 \]</div>
 <p>In code, this is actually easier than policy iteration:</p>
 <div class="cell docutils container">
