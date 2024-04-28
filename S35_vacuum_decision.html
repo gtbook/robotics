@@ -77,7 +77,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="3.6. Reinforcement Learning" href="S36_vacuum_RL.html" />
+    <link rel="next" title="3.6. Learning to Act Optimally" href="S36_vacuum_RL.html" />
     <link rel="prev" title="3.4. Perception with Graphical Models" href="S34_vacuum_perception.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -215,7 +215,7 @@
 <li class="toctree-l2"><a class="reference internal" href="S33_vacuum_sensing.html">3.3. Dynamic Bayes Nets</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S34_vacuum_perception.html">3.4. Perception with Graphical Models</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">3.5. Markov Decision Processes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="S36_vacuum_RL.html">3.6. Reinforcement Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S36_vacuum_RL.html">3.6. Learning to Act Optimally</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="S40_logistics_intro.html">4. Warehouse Robots in 2D</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -466,10 +466,7 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise">3.5.8.1. Exercise</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optimal-policy-and-value-function">3.5.9. Optimal Policy and Value Function</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#policy-iteration">3.5.10. Policy Iteration</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#value-iteration">3.5.11. Value Iteration</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">3.5.12. Summary</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">3.5.9. Summary</a></li>
 </ul>
             </nav>
         </div>
@@ -516,10 +513,10 @@ but if the robot moves to the right for a short time, it could remain in the off
 arrive at the hallway, or arrive at the dining room.</p>
 <p>In contrast, if the robot is able to know its location (using perception), it can act
 opportunistically when it reaches the hallway, and immediately move up.
-The key idea here is that the optimal action at any moment in time depends
+The key idea here is that the best action at any moment in time depends
 on the state in which the action is executed.
 The recipe of which action to execute in each state is called a <em>policy</em>,
-and determining optimal policies is the main goal for this section.</p>
+and defining policies and their associated <em>value function</em> is the main goal for this section.</p>
 <section id="reward-functions">
 <h2><span class="section-number">3.5.1. </span>Reward Functions<a class="headerlink" href="#reward-functions" title="Link to this heading">#</a></h2>
 <blockquote>
@@ -1026,7 +1023,7 @@ for a fixed sequence of actions.</p>
 <blockquote>
 <div><p>The value function <span class="math notranslate nohighlight">\(V^\pi\)</span> measures the expected utility from each state, under a given policy <span class="math notranslate nohighlight">\(\pi\)</span>.</p>
 </div></blockquote>
-<p>To implement optimal planning as a search for an optimal policy, we now derive an objective function to maximize.
+<p>We would now like to characterize the quality of any given policy.
 Above, we defined the utility for a specific sequence of <span class="math notranslate nohighlight">\(n\)</span> actions as</p>
 <div class="math notranslate nohighlight">
 \[
@@ -1192,7 +1189,7 @@ Each of these <span class="math notranslate nohighlight">\(n\)</span> equations 
 Collecting the unknown <span class="math notranslate nohighlight">\(V^\pi\)</span> terms on the left hand side and the known <span class="math notranslate nohighlight">\(\bar{R}(x,\pi(x))\)</span>
 terms on the right hand side, we obtain</p>
 <div class="math notranslate nohighlight">
-\[V^\pi(x) - \gamma \sum_{x'} P(x'|x, \pi(x)) V^\pi(x') = \bar{R}(x,\pi(x))\]</div>
+\[V^\pi(x) - \gamma \sum_{x'} P(x'|x, \pi(x)) V^\pi(x') = \bar{R}(x,\pi(x)).\]</div>
 <p>To make this explicit yet concise for our vacuum cleaning robot example,
 let us define the <em>scalar</em> <span class="math notranslate nohighlight">\(T^\pi_{xy}\doteq P(y|x,\pi(x))\)</span> as the transition probability from state <span class="math notranslate nohighlight">\(x\)</span> to state <span class="math notranslate nohighlight">\(y\)</span> under policy <span class="math notranslate nohighlight">\(\pi\)</span>.
 In addition, we use the abbreviations L,K,O,H, and D for the rooms, and use the shorthand <span class="math notranslate nohighlight">\(V^\pi_x\doteq V^\pi(x)\)</span> for the value of state <span class="math notranslate nohighlight">\(x\)</span> under policy <span class="math notranslate nohighlight">\(\pi\)</span>.
@@ -1326,346 +1323,8 @@ b = [10.  8.  0.  8.  0.]
 <p>Why is the value function in the living room <span class="math notranslate nohighlight">\(100\)</span> and not the immediate reward <span class="math notranslate nohighlight">\(10\)</span>?</p>
 </section>
 </section>
-<section id="optimal-policy-and-value-function">
-<h2><span class="section-number">3.5.9. </span>Optimal Policy and Value Function<a class="headerlink" href="#optimal-policy-and-value-function" title="Link to this heading">#</a></h2>
-<blockquote>
-<div><p>The optimal policy maximizes the value function.</p>
-</div></blockquote>
-<p>Now that we know how to compute the value function for an arbitrary policy <span class="math notranslate nohighlight">\(\pi\)</span>,
-we turn our attention to computing the <strong>optimal value function</strong>,
-which can be used to construct the <strong>optimal policy</strong> <span class="math notranslate nohighlight">\(\pi^*\)</span>.</p>
-<p>To begin, we recall the famous <strong>principle of optimality</strong>
-as stated by Bellman in a
-<a class="reference external" href="https://doi.org/10.1109/TAC.1960.6429288">1960 article in the IEEE Transactions on Automatic Control</a>:</p>
-<ul class="simple">
-<li><p><em>An optimal policy has the property that whatever the initial state and initial decision are, the remaining decisions must constitute an optimal policy with regard to the state resulting from the first decision.</em></p></li>
-</ul>
-<p>This principle enables a key step in the derivation of a recursvie formulation for the optimal policy.</p>
-<p>The optimal value function  <span class="math notranslate nohighlight">\(V^*: {\cal X} \rightarrow {\cal A}\)</span>
-is merely the value function for the optimal policy.
-This can be written mathematically as</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-\begin{aligned}
-V^*(x) &amp;= \max_\pi V^{\pi}(x) \\
-&amp;=
-\max_\pi \left\{ \bar{R}(x,\pi(x)) + \gamma \sum_{x'} P(x'|x, \pi(x)) V^\pi(x')   \right\}\\
-&amp;=
-\max_\pi \left\{ \bar{R}(x,\pi(x)) + \gamma \sum_{x'} P(x'|x, \pi(x)) V^*(x')   \right\}\\
-&amp;=
-\max_a  \left\{ \bar{R}(x,a) + \gamma \sum_{x'} P(x'|x, a) V^*(x')   \right\} \\
-\end{aligned}
-\end{split}\]</div>
-<p>In the above, the second line follows immediately by substituting
-our earlier expression for <span class="math notranslate nohighlight">\(V^\pi\)</span> into the maximization.
-The third line is more interesting.
-By applying the principle of optimality, we replace <span class="math notranslate nohighlight">\(V^\pi(x')\)</span> with <span class="math notranslate nohighlight">\(V^*(x')\)</span>.
-Simply put, if remaining decisions from state <span class="math notranslate nohighlight">\(x'\)</span> must constitute an optimal policy,
-the corresponding value function at <span class="math notranslate nohighlight">\(x'\)</span> will be the optimal value function for <span class="math notranslate nohighlight">\(x'\)</span>.
-For the fourth line,
-because the value function has been written in recursive form,
-<span class="math notranslate nohighlight">\(\pi\)</span> is only applied to the current state (i.e., when <span class="math notranslate nohighlight">\(\pi\)</span> is evaluated in the optimization,
-it always appears as <span class="math notranslate nohighlight">\(\pi(x)\)</span>).
-Therefore, we can write the optimization
-as a maximization with respect to the <em>action</em> applied in the <em>current state</em>, rather than as a
-maximization with respect to the entire policy <span class="math notranslate nohighlight">\(\pi\)</span>!</p>
-<p>This equation is known as the <strong>Bellman equation</strong>.
-It is named after Richard Bellman, the mathematician
-who discovered it, and it is one of the most important equations in all of computer science.
-The Bellman equation has a very nice interpretation:
-the optimal value function of a state is the maximum expected reward
-<em>plus</em> the discounted expected value function when acting optimally in the future.</p>
-<p>Using Bellman’s equation, it is straightforward to compute the optimal policy from a given state.</p>
-<div class="math notranslate nohighlight">
-\[
-\pi^*(x) = \arg
-\max_a  \left\{ \bar{R}(x,a) + \gamma \sum_{x'} P(x'|x, a) V^*(x')   \right\} 
-\]</div>
-<p>This computation is performed so often that it is convenient to introduce the so-called <span class="math notranslate nohighlight">\(Q\)</span>-function</p>
-<div class="math notranslate nohighlight">
-\[
-\begin{aligned}
-Q^*(x,a) \doteq \bar{R}(x,a) + \gamma \sum_{x'} P(x'|x, a) V^*(x') 
-\end{aligned}
-\]</div>
-<p>which allows us to write the optimal policy as</p>
-<div class="math notranslate nohighlight">
-\[
-\pi^*(x) = \arg
-\max_a  Q^*(x,a)
-\]</div>
-<p>We will see the <span class="math notranslate nohighlight">\(Q\)</span>-function again, when we discuss reinforcement learning.
-The code for computing a Q-value from a value function is given below:</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">Q_value</span><span class="p">(</span><span class="n">value_function</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.9</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate Q(x,a) from given value function&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">T</span><span class="p">[</span><span class="n">x</span><span class="p">,</span><span class="n">a</span><span class="p">]</span> <span class="o">@</span> <span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="n">x</span><span class="p">,</span><span class="n">a</span><span class="p">]</span> <span class="o">+</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">value_function</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>We will describe two methods for determining the optimal policy.
-The first method, policy iteration, iteratively improves candidate policies,
-ultimately converging to the optimal policy <span class="math notranslate nohighlight">\(\pi^*\)</span>.
-The second method, value iteration, iteratively improves an estimate of <span class="math notranslate nohighlight">\(V^*\)</span>,
-ultimately converging to the optimal value function.</p>
-</section>
-<section id="policy-iteration">
-<h2><span class="section-number">3.5.10. </span>Policy Iteration<a class="headerlink" href="#policy-iteration" title="Link to this heading">#</a></h2>
-<blockquote>
-<div><p>By iteratively improving an estimate of the optimal policy, we eventually find <span class="math notranslate nohighlight">\(\pi^*\)</span>.</p>
-</div></blockquote>
-<p>One way to compute an optimal policy is to start with an initial guess
-at the optimal policy, and then iteratively improve our guess until no futher improvements are possible.
-This is exactly the approach taken by <strong>policy iteration</strong>.
-In particular, policy iteration generates a sequence of policies
-<span class="math notranslate nohighlight">\(\pi^0, \pi^1, \dots \pi^n\)</span>, such that <span class="math notranslate nohighlight">\(\pi^{i+1}\)</span> is better than policy <span class="math notranslate nohighlight">\(\pi^i\)</span>.
-This process ends when no further improvement is possible, which
-occurs when <span class="math notranslate nohighlight">\(\pi^{i+1} = \pi^i.\)</span></p>
-<p>To improve the policy <span class="math notranslate nohighlight">\(\pi^i\)</span>, we update the action chosen <em>for each state</em> by applying
-Bellman’s equation using <span class="math notranslate nohighlight">\(\pi^i\)</span> in place of <span class="math notranslate nohighlight">\(\pi^*\)</span>.
-The can be achieved with the following algorithm:</p>
-<p>Start with a random policy <span class="math notranslate nohighlight">\(\pi^0\)</span> and <span class="math notranslate nohighlight">\(i=0\)</span>, and repeat until convergence:</p>
-<ol class="arabic simple">
-<li><p>Compute the value function <span class="math notranslate nohighlight">\(V^{\pi^i}\)</span></p></li>
-<li><p>Improve the policy for each state <span class="math notranslate nohighlight">\(x \in {\cal X}\)</span> using the update rule:</p></li>
-</ol>
-<div class="math notranslate nohighlight">
-\[
-\pi^{i+1}(x) \leftarrow\arg \max_a \sum_{x'} \{P(x'|x, a) \{R(x, a, x') + \gamma V^i(x')\}
-\]</div>
-<ol class="arabic simple" start="3">
-<li><p>Increment <span class="math notranslate nohighlight">\(i\)</span></p></li>
-</ol>
-<p>Notice that this algorithm has the side benefit of computing
-successively better approximations to the value function at each iteration.
-Because there are a finite number of actions that can be applied in each state, there are only finitely many ways to update
-a policy. Therefore, we expect this policy iteration algorithm to converge in finite time.</p>
-<p>We already know how to do step one, via <code class="docutils literal notranslate"><span class="pre">calculate_value_function</span></code>. The second step of the algorithm is easily
-implemented with the following code:</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">update_policy</span><span class="p">(</span><span class="n">value_function</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Update policy given a value function&quot;&quot;&quot;</span>
-    <span class="n">new_policy</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)]</span>
-    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">room</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="p">):</span>
-        <span class="n">Q_values</span> <span class="o">=</span> <span class="p">[</span><span class="n">Q_value</span><span class="p">(</span><span class="n">value_function</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)]</span>
-        <span class="n">new_policy</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">Q_values</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">new_policy</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>The whole policy iteration algorithm then simply iterates these until the policy no longer changes. If no initial policy is given, we can
-start with a zero value function
-<span class="math notranslate nohighlight">\(V^{\pi^0}(x) = 0\)</span> for all <span class="math notranslate nohighlight">\(x\)</span>:</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">policy_iteration</span><span class="p">(</span><span class="n">pi</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_iterations</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Do policy iteration, starting from policy `pi`.&quot;&quot;&quot;</span>
-    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_iterations</span><span class="p">):</span>
-        <span class="n">value_for_pi</span> <span class="o">=</span> <span class="n">calculate_value_function</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span> <span class="k">if</span> <span class="n">pi</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">5</span><span class="p">,))</span>
-        <span class="n">new_policy</span> <span class="o">=</span> <span class="n">update_policy</span><span class="p">(</span><span class="n">value_for_pi</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">new_policy</span> <span class="o">==</span> <span class="n">pi</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">pi</span><span class="p">,</span> <span class="n">value_for_pi</span>
-        <span class="n">pi</span> <span class="o">=</span> <span class="n">new_policy</span>
-    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;No stable policy found after </span><span class="si">{max_iterations}</span><span class="s2"> iterations&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>On the other hand, if we have a guess for the initial policy, we can intialize
-<span class="math notranslate nohighlight">\(\pi^0\)</span> accordingly.
-For example, we can start with a not-so-smart <code class="docutils literal notranslate"><span class="pre">always_right</span></code> policy:</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">RIGHT</span> <span class="o">=</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;R&quot;</span><span class="p">)</span>
-
-<span class="n">always_right</span> <span class="o">=</span> <span class="p">[</span><span class="n">RIGHT</span><span class="p">,</span> <span class="n">RIGHT</span><span class="p">,</span> <span class="n">RIGHT</span><span class="p">,</span> <span class="n">RIGHT</span><span class="p">,</span> <span class="n">RIGHT</span><span class="p">]</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">optimal_policy</span><span class="p">,</span> <span class="n">optimal_value_function</span> <span class="o">=</span> <span class="n">policy_iteration</span><span class="p">(</span><span class="n">always_right</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">([</span><span class="n">vacuum</span><span class="o">.</span><span class="n">action_space</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">optimal_policy</span><span class="p">])</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;L&#39;, &#39;L&#39;, &#39;R&#39;, &#39;U&#39;, &#39;U&#39;]
-</pre></div>
-</div>
-</div>
-</div>
-<p>Starting with the <code class="docutils literal notranslate"><span class="pre">always_right</span></code> policy, our policy iteration algorithm converges to an
-intuitively pleasing policy.
-In the dining room and kitchen we go <code class="docutils literal notranslate"><span class="pre">left</span></code>, in the office we go <code class="docutils literal notranslate"><span class="pre">right</span></code>, and in the hallway and dining room we go <code class="docutils literal notranslate"><span class="pre">up</span></code>.
-This is significantly different from the <code class="docutils literal notranslate"><span class="pre">always_right</span></code> policy (which might be better named <code class="docutils literal notranslate"><span class="pre">almost_always_wrong</span></code>).
-In fact, it is exactly the <code class="docutils literal notranslate"><span class="pre">reasonable_policy</span></code> that we created above.
-We already knew that it should be pretty good at getting to the living room as fast as possible. In fact, it is optimal!</p>
-<p>We also print out the optimal value function below, which shows that if we are close to the living room the value function is very high, but it is a bit lower in the office in the dining room:</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">room</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">room</span><span class="si">:</span><span class="s2">12</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">optimal_value_function</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Living Room : 100.00
-  Kitchen     : 97.56
-  Office      : 85.66
-  Hallway     : 97.56
-  Dining Room : 85.66
-</pre></div>
-</div>
-</div>
-</div>
-<p>The optimal policy is also obtained when we start without a policy, starting with a zero value function:</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">optimal_policy</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">policy_iteration</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">([</span><span class="n">vacuum</span><span class="o">.</span><span class="n">action_space</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">optimal_policy</span><span class="p">])</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;L&#39;, &#39;L&#39;, &#39;R&#39;, &#39;U&#39;, &#39;U&#39;]
-</pre></div>
-</div>
-</div>
-</div>
-<p>Just to be sure, let us sanity check the solution above using the Monte Carlo estimate of the policy, which should give the same answer:</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nr_samples</span> <span class="o">=</span> <span class="mi">100</span>
-<span class="n">horizon</span> <span class="o">=</span> <span class="mi">100</span>
-<span class="n">X</span> <span class="o">=</span> <span class="n">VARIABLES</span><span class="o">.</span><span class="n">discrete_series</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">horizon</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="p">)</span>
-<span class="n">A</span> <span class="o">=</span> <span class="n">VARIABLES</span><span class="o">.</span><span class="n">discrete_series</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">horizon</span><span class="p">),</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">action_space</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">x1</span><span class="p">,</span> <span class="n">room</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="p">):</span>
-    <span class="n">V_x1</span> <span class="o">=</span> <span class="n">approximate_value_function</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">optimal_policy</span><span class="p">,</span> <span class="n">nr_samples</span><span class="p">,</span> <span class="n">horizon</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;V(</span><span class="si">{</span><span class="n">room</span><span class="si">}</span><span class="s2">) ~ </span><span class="si">{</span><span class="n">V_x1</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Living Room) ~ 100.00
-V(Kitchen) ~ 97.93
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Office) ~ 83.87
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Hallway) ~ 97.93
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Dining Room) ~ 85.84
-</pre></div>
-</div>
-</div>
-</div>
-<p>These values are remarkably similar to the exact values computed above!</p>
-</section>
-<section id="value-iteration">
-<h2><span class="section-number">3.5.11. </span>Value Iteration<a class="headerlink" href="#value-iteration" title="Link to this heading">#</a></h2>
-<blockquote>
-<div><p>Dynamic programming can be used to obtain the optimal value function.</p>
-</div></blockquote>
-<p>Recall Bellman’s equation, which must hold for each state <span class="math notranslate nohighlight">\(x\)</span>.</p>
-<div class="math notranslate nohighlight">
-\[
-V^*(x) = \max_a  \left\{ \bar{R}(x,a) + \gamma \sum_{x'} P(x'|x, a) V^*(x')   \right\} 
-\]</div>
-<p>Sadly, this is not a linear equation (the maximization operation is not linear), so we cannot solve this
-equation for <span class="math notranslate nohighlight">\(V^*\)</span> as a system of linear equations.
-<strong>Value iteration</strong> approximates <span class="math notranslate nohighlight">\(V^*\)</span> by constructing a sequence of estimates,
-<span class="math notranslate nohighlight">\(V^0, V^1, \dots , V^n\)</span> that converges to <span class="math notranslate nohighlight">\(V^*\)</span>.
-Starting with an initial guess, <span class="math notranslate nohighlight">\(V^0\)</span>, at each iteration we update
-our approximation of the value function for each state by the update rule:</p>
-<div class="math notranslate nohighlight">
-\[
-V^{i+1}(x) \leftarrow \max_a \left\{ \bar{R}(x,a) + \gamma \sum_{x'} P(x'|x, a) V^i(x')   \right\} 
-\]</div>
-<p>Notice that the right hand side includes two terms:
-the expected reward (which we can compute exactly), and a term in <span class="math notranslate nohighlight">\(V^i\)</span> (our current best guess at the value function).
-Value iteration operates by iteratively using our <em>current best guess</em> of <span class="math notranslate nohighlight">\(V^*\)</span> along with the <em>known</em> expected reward
-to update the approximation.
-Unlike policy iteration, we do not expect value iteration to converge to the exact result in finite time.
-Therefore, we cannot use <span class="math notranslate nohighlight">\(V^{i+1} = V^i\)</span> as our termination condition.
-Instead, we often use a condition such as <span class="math notranslate nohighlight">\(|V^{i+1} - V^i| &lt; \epsilon\)</span>, for some small value of <span class="math notranslate nohighlight">\(\epsilon\)</span>
-as the termination condition.</p>
-<p>Finally, note that we can define Q values for the <span class="math notranslate nohighlight">\(k^{th}\)</span> iteration as</p>
-<div class="math notranslate nohighlight">
-\[
-Q(x, a; V^i) \doteq \bar{R}(x,a) + \gamma \sum_{x'} P(x'|x, a) V^i(x'),
-\]</div>
-<p>and hence a value update is simply</p>
-<div class="math notranslate nohighlight">
-\[
-V^{i+1}(x) \leftarrow \max_a Q(x, a; V^i).
-\]</div>
-<p>In code, this is actually easier than policy iteration:</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">V_k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="mi">5</span><span class="p">,),</span> <span class="mi">100</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
-    <span class="n">Q_k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">T</span> <span class="o">*</span> <span class="p">(</span><span class="n">R</span> <span class="o">+</span> <span class="mf">0.9</span> <span class="o">*</span> <span class="n">V_k</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="c1"># 5 x 4</span>
-    <span class="n">V_k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">Q_k</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># max over actions</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">V_k</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[100.  98.  90.  98.  90.]
-[100.    97.64  86.76  97.64  86.76]
-[100.    97.58  85.92  97.58  85.92]
-[100.    97.56  85.72  97.56  85.72]
-[100.    97.56  85.68  97.56  85.68]
-[100.    97.56  85.67  97.56  85.67]
-[100.    97.56  85.66  97.56  85.66]
-[100.    97.56  85.66  97.56  85.66]
-[100.    97.56  85.66  97.56  85.66]
-[100.    97.56  85.66  97.56  85.66]
-</pre></div>
-</div>
-</div>
-</div>
-<p>Compare with optimal value function:</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">optimal_value_function</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[100.    97.56  85.66  97.56  85.66]
-</pre></div>
-</div>
-</div>
-</div>
-<p>And we can easily <em>extract</em> the optimal policy:</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Q_k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">T</span> <span class="o">*</span> <span class="p">(</span><span class="n">R</span> <span class="o">+</span> <span class="mf">0.9</span> <span class="o">*</span> <span class="n">V_k</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-<span class="n">pi_k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">Q_k</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;policy = </span><span class="si">{</span><span class="n">pi_k</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">([</span><span class="n">vacuum</span><span class="o">.</span><span class="n">action_space</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">pi_k</span><span class="p">])</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>policy = [0 0 1 2 0]
-[&#39;L&#39;, &#39;L&#39;, &#39;R&#39;, &#39;U&#39;, &#39;L&#39;]
-</pre></div>
-</div>
-</div>
-</div>
-</section>
 <section id="summary">
-<h2><span class="section-number">3.5.12. </span>Summary<a class="headerlink" href="#summary" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">3.5.9. </span>Summary<a class="headerlink" href="#summary" title="Link to this heading">#</a></h2>
 <p>Markov Decision Processes or MDPs can be used to model decision making in a stochastic environment, albeit with complete knowledge of the state. It is a rich subject, and we introduced many new concepts in this section:</p>
 <ul class="simple">
 <li><p>The reward function, <span class="math notranslate nohighlight">\(R : {\cal X} \times {\cal A} \times {\cal X} \rightarrow \mathbb{R}\)</span>.</p></li>
@@ -1676,13 +1335,11 @@ V^{i+1}(x) \leftarrow \max_a Q(x, a; V^i).
 <li><p>The value function, <span class="math notranslate nohighlight">\(V^\pi:{\cal X} \rightarrow \mathbb{R}\)</span>, associated with a given policy <span class="math notranslate nohighlight">\(\pi\)</span>.</p></li>
 <li><p>The use of policy rollouts to approximate the value function <span class="math notranslate nohighlight">\(V^\pi\)</span>.</p></li>
 <li><p>Exact calculation of the value function for a fixed policy.</p></li>
-<li><p>The optimal policy and value function, governed by the Bellman equation.</p></li>
-<li><p>Two algorithms to compute those: policy iteration and value iteration.</p></li>
 </ul>
-<p>There are two important extensions to MDPs that are not covered in this section:</p>
+<p>We’ll leave the concepts of an optimal policy and how to compute it for the next section. There are two other extensions to MDPs that we did not cover:</p>
 <ul class="simple">
 <li><p>Partially Observable MDPs (or POMDPS) are appropriate when we cannot directly observe the state.</p></li>
-<li><p>Reinforcement learning, a way to learn MDP policies from <em>data</em>. This will be covered next.</p></li>
+<li><p>Reinforcement learning, a way to learn MDP policies from <em>data</em>. This will be covered in the next section as well.</p></li>
 </ul>
 </section>
 </section>
@@ -1731,7 +1388,7 @@ V^{i+1}(x) \leftarrow \max_a Q(x, a; V^i).
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title"><span class="section-number">3.6. </span>Reinforcement Learning</p>
+        <p class="prev-next-title"><span class="section-number">3.6. </span>Learning to Act Optimally</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -1768,10 +1425,7 @@ V^{i+1}(x) \leftarrow \max_a Q(x, a; V^i).
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise">3.5.8.1. Exercise</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optimal-policy-and-value-function">3.5.9. Optimal Policy and Value Function</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#policy-iteration">3.5.10. Policy Iteration</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#value-iteration">3.5.11. Value Iteration</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">3.5.12. Summary</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">3.5.9. Summary</a></li>
 </ul>
   </nav></div>
 

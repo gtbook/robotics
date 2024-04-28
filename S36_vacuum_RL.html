@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>3.6. Reinforcement Learning &#8212; Introduction to Robotics and Perception</title>
+    <title>3.6. Learning to Act Optimally &#8212; Introduction to Robotics and Perception</title>
   
   
   
@@ -215,7 +215,7 @@
 <li class="toctree-l2"><a class="reference internal" href="S33_vacuum_sensing.html">3.3. Dynamic Bayes Nets</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S34_vacuum_perception.html">3.4. Perception with Graphical Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S35_vacuum_decision.html">3.5. Markov Decision Processes</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">3.6. Reinforcement Learning</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">3.6. Learning to Act Optimally</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="S40_logistics_intro.html">4. Warehouse Robots in 2D</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -439,7 +439,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Reinforcement Learning</h1>
+    <h1>Learning to Act Optimally</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -449,9 +449,23 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exploring-to-get-data">3.6.1. Exploring to get Data</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-based-reinforcement-learning">3.6.2. Model-based Reinforcement Learning</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-free-reinforcement-learning">3.6.3. Model-free Reinforcement Learning</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-optimal-value-function">3.6.1. The Optimal Value Function</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#action-values-and-the-optimal-policy">3.6.2. Action Values and the Optimal Policy</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise">3.6.2.1. Exercise</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#policy-iteration">3.6.3. Policy Iteration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#value-iteration">3.6.4. Value Iteration</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">3.6.4.1. Exercise</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-based-reinforcement-learning">3.6.5. Model-based Reinforcement Learning</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-free-reinforcement-learning">3.6.6. Model-free Reinforcement Learning</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exploration-vs-exploitation">3.6.6.1. Exploration vs Exploitation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">3.6.6.2. Exercise</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">3.6.7. Summary</a></li>
 </ul>
             </nav>
         </div>
@@ -464,18 +478,341 @@ document.write(`
                 <article class="bd-article">
                   
   <p><a href="https://colab.research.google.com/github/gtbook/robotics/blob/main/S36_vacuum_RL.ipynb" target="_parent"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg" /></a></p>
-<section class="tex2jax_ignore mathjax_ignore" id="reinforcement-learning">
-<h1><span class="section-number">3.6. </span>Reinforcement Learning<a class="headerlink" href="#reinforcement-learning" title="Link to this heading">#</a></h1>
+<section class="tex2jax_ignore mathjax_ignore" id="learning-to-act-optimally">
+<h1><span class="section-number">3.6. </span>Learning to Act Optimally<a class="headerlink" href="#learning-to-act-optimally" title="Link to this heading">#</a></h1>
 <blockquote>
-<div><p>We will talk about model-based and model-free learning.</p>
+<div><p>Learning to act optimally in a stochastic world.</p>
 </div></blockquote>
 <a class="reference internal image-reference" href="_images/S36-iRobot_vacuuming_robot-04.jpg"><img alt="Splash image with intelligent looking robot" class="align-center" src="_images/S36-iRobot_vacuuming_robot-04.jpg" style="width: 40%;" /></a>
-<section id="exploring-to-get-data">
-<h2><span class="section-number">3.6.1. </span>Exploring to get Data<a class="headerlink" href="#exploring-to-get-data" title="Link to this heading">#</a></h2>
+<p>When a Markov Decision Process is fully specified we can <em>compute</em> an optimal policy.
+Below we first define optimal value functions and examine its properties, most notably the Bellman equation.
+We then discuss value iteration and policy iteration, two algorithms to calculate the optimal value function and its associated optimal policy. However, both these algorithms need a fully-defined MDP.</p>
+<p>When the MPD is not known in advance, however, we have to <em>learn</em> an optimal policy over time. There are two main approaches: model-based and model-free.</p>
+<section id="the-optimal-value-function">
+<h2><span class="section-number">3.6.1. </span>The Optimal Value Function<a class="headerlink" href="#the-optimal-value-function" title="Link to this heading">#</a></h2>
 <blockquote>
-<div><p>Where we gather experience.</p>
+<div><p>The optimal policy maximizes the value function.</p>
 </div></blockquote>
-<p>Let’s adapt the <code class="docutils literal notranslate"><span class="pre">policy_rollout</span></code> code from the previous section to generate a whole lot of experiences of the form <span class="math notranslate nohighlight">\((x,a,x',r)\)</span>.</p>
+<p>We now turn our attention to defining the <em>optimal</em> value function,
+which can be used to construct the <strong>optimal policy</strong> <span class="math notranslate nohighlight">\(\pi^*\)</span>.
+From Section 3.5 we know how to compute the value function for an arbitrary policy <span class="math notranslate nohighlight">\(\pi\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[V^\pi(x) = \bar{R}(x,\pi(x)) + \gamma \sum_{x'} P(x'|x, \pi(x)) V^\pi(x').\]</div>
+<p>To begin, we recall the famous <strong>principle of optimality</strong>
+as stated by Bellman in a
+<a class="reference external" href="https://doi.org/10.1109/TAC.1960.6429288">1960 article in the IEEE Transactions on Automatic Control</a>:</p>
+<blockquote>
+<div><p><em>An optimal policy has the property that whatever the initial state and initial decision are, the remaining decisions must constitute an optimal policy with regard to the state resulting from the first decision.</em></p>
+</div></blockquote>
+<p>This principle enables a key step in the derivation of a recursive formulation for the optimal policy. Indeed, the <strong>optimal value function</strong> <span class="math notranslate nohighlight">\(V^*: {\cal X} \rightarrow {\cal A}\)</span>
+is merely the value function for the optimal policy.
+This can be written mathematically as</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+V^*(x) &amp;= \max_\pi V^{\pi}(x) \\
+&amp;=
+\max_\pi \left\{ \bar{R}(x,\pi(x)) + \gamma \sum_{x'} P(x'|x, \pi(x)) V^\pi(x')   \right\}\\
+&amp;=
+\max_\pi \left\{ \bar{R}(x,\pi(x)) + \gamma \sum_{x'} P(x'|x, \pi(x)) V^*(x')   \right\}\\
+&amp;=
+\max_a  \left\{ \bar{R}(x,a) + \gamma \sum_{x'} P(x'|x, a) V^*(x')   \right\} \\
+\end{aligned}
+\end{split}\]</div>
+<p>In the above, the second line follows immediately by using the definition of <span class="math notranslate nohighlight">\(V^\pi\)</span> above. The third line is more interesting.
+By applying the principle of optimality, we replace <span class="math notranslate nohighlight">\(V^\pi(x')\)</span> with <span class="math notranslate nohighlight">\(V^*(x')\)</span>.
+Simply put, if remaining decisions from state <span class="math notranslate nohighlight">\(x'\)</span> must constitute an optimal policy,
+the corresponding value function at <span class="math notranslate nohighlight">\(x'\)</span> will be the optimal value function for <span class="math notranslate nohighlight">\(x'\)</span>.
+For the fourth line,
+because the value function has been written in recursive form,
+<span class="math notranslate nohighlight">\(\pi\)</span> is only applied to the current state (i.e., when <span class="math notranslate nohighlight">\(\pi\)</span> is evaluated in the optimization,
+it always appears as <span class="math notranslate nohighlight">\(\pi(x)\)</span>).
+Therefore, we can write the optimization
+as a maximization with respect to the <em>action</em> applied in the <em>current state</em>, rather than as a
+maximization with respect to the entire policy <span class="math notranslate nohighlight">\(\pi\)</span>!</p>
+<p>This equation is known as the <strong>Bellman equation</strong>.
+It is named after Richard Bellman, the mathematician
+who discovered it, and it is one of the most important equations in all of computer science.
+The Bellman equation has a very nice interpretation:
+the optimal value function of a state is the maximum expected reward
+<em>plus</em> the discounted expected value function when acting optimally in the future.</p>
+</section>
+<section id="action-values-and-the-optimal-policy">
+<h2><span class="section-number">3.6.2. </span>Action Values and the Optimal Policy<a class="headerlink" href="#action-values-and-the-optimal-policy" title="Link to this heading">#</a></h2>
+<p>Using Bellman’s equation, it is straightforward to compute the optimal policy <span class="math notranslate nohighlight">\(\pi^*\)</span> from a given state <span class="math notranslate nohighlight">\(x\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+\pi^*(x) = \arg
+\max_a  \left\{ \bar{R}(x,a) + \gamma \sum_{x'} P(x'|x, a) V^*(x')   \right\}.
+\]</div>
+<p>This computation is performed so often that it is convenient to introduce the so-called <strong><span class="math notranslate nohighlight">\(Q\)</span>-function</strong>, which is the value of being in state <span class="math notranslate nohighlight">\(x\)</span> and taking action <span class="math notranslate nohighlight">\(a\)</span>, for a given value function <span class="math notranslate nohighlight">\(V\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+\begin{aligned}
+Q(x,a;  V) \doteq \bar{R}(x,a) + \gamma \sum_{x'} P(x'|x, a) V(x') 
+\end{aligned}
+\]</div>
+<p>Another name for Q-values is <strong>action values</strong>, to be contrasted with the state values, i.e., the value function <span class="math notranslate nohighlight">\(V(x)\)</span>. They allow us to write the optimal policy <span class="math notranslate nohighlight">\(\pi^*(x)\)</span> simply as picking, for any given state <span class="math notranslate nohighlight">\(x\)</span>, the action <span class="math notranslate nohighlight">\(a\)</span> with the highest action value <span class="math notranslate nohighlight">\(Q(x,a; V^*)\)</span> computed from the optimal value function <span class="math notranslate nohighlight">\(V^*\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+\pi^*(x) = \arg \max_a  Q(x,a; V^*)
+\]</div>
+<p>We will use <span class="math notranslate nohighlight">\(Q\)</span>-values in many of the algorithms in this section, and an efficient way to compute a Q-value from a value function is given below:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">Q_value</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.9</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate Q(x,a) from given value function&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">T</span><span class="p">[</span><span class="n">x</span><span class="p">,</span><span class="n">a</span><span class="p">]</span> <span class="o">@</span> <span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="n">x</span><span class="p">,</span><span class="n">a</span><span class="p">]</span> <span class="o">+</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">V</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>A very efficient way to compute all Q-values for all state-action pairs at once, using <code class="docutils literal notranslate"><span class="pre">numpy</span></code>, is</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">T</span> <span class="o">*</span> <span class="p">(</span><span class="n">R</span> <span class="o">+</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">V</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>which we will also use below. It yields a matrix of size <span class="math notranslate nohighlight">\(|X| \times |A|\)</span>.</p>
+<section id="exercise">
+<h3><span class="section-number">3.6.2.1. </span>Exercise<a class="headerlink" href="#exercise" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p>Try to understand the function <code class="docutils literal notranslate"><span class="pre">Q_value</span></code> above for calculating the Q-values. Use the notebook to investigate the calculation for specific values of <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(a\)</span>.</p></li>
+<li><p>Similarly, try to understand the “vectorized” form above that yields the entire table of Q-values at once.</p></li>
+</ol>
+</section>
+</section>
+<section id="policy-iteration">
+<h2><span class="section-number">3.6.3. </span>Policy Iteration<a class="headerlink" href="#policy-iteration" title="Link to this heading">#</a></h2>
+<blockquote>
+<div><p>By iteratively improving an estimate of the optimal policy, we eventually find <span class="math notranslate nohighlight">\(\pi^*\)</span>.</p>
+</div></blockquote>
+<p>We will describe two methods for determining the optimal policy.
+The method we describe below, policy iteration, iteratively improves candidate policies, ultimately converging to the optimal policy <span class="math notranslate nohighlight">\(\pi^*\)</span>.
+The second method, value iteration, iteratively improves an estimate of <span class="math notranslate nohighlight">\(V^*\)</span>, ultimately converging to the optimal value function.
+Both, however, need access to the MDP’s transition probabilities and the reward function.</p>
+<p><strong>Policy Iteration</strong> starts with an initial guess at the optimal policy, and then iteratively improve our guess until no further improvements are possible.
+In particular, policy iteration generates a sequence of policies
+<span class="math notranslate nohighlight">\(\pi^0, \pi^1, \dots \pi^n\)</span>, such that <span class="math notranslate nohighlight">\(\pi^{i+1}\)</span> is better than policy <span class="math notranslate nohighlight">\(\pi^i\)</span>.
+This process ends when no further improvement is possible, which
+occurs when <span class="math notranslate nohighlight">\(\pi^{i+1} = \pi^i.\)</span></p>
+<p>To improve the policy <span class="math notranslate nohighlight">\(\pi^i\)</span>, we update the action chosen <em>for each state</em> by applying
+Bellman’s equation using <span class="math notranslate nohighlight">\(\pi^i\)</span> in place of <span class="math notranslate nohighlight">\(\pi^*\)</span>.
+The can be achieved with the following algorithm:</p>
+<p>Start with a random policy <span class="math notranslate nohighlight">\(\pi^0\)</span> and <span class="math notranslate nohighlight">\(i=0\)</span>, and repeat until convergence:</p>
+<ol class="arabic simple">
+<li><p>Compute the value function <span class="math notranslate nohighlight">\(V^{\pi^i}\)</span></p></li>
+<li><p>Improve the policy for each state <span class="math notranslate nohighlight">\(x \in {\cal X}\)</span> using the update rule:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[
+\pi^{i+1}(x) \leftarrow\arg \max_a Q(x,a; V^{\pi^i})
+\]</div>
+<ol class="arabic simple" start="3">
+<li><p>Increment <span class="math notranslate nohighlight">\(i\)</span></p></li>
+</ol>
+<p>Notice that this algorithm has the side benefit of computing
+successively better approximations to the value function at each iteration.
+Because there are a finite number of actions that can be applied in each state, there are only finitely many ways to update
+a policy. Therefore, we expect this policy iteration algorithm to converge in finite time.</p>
+<p>We already know how to do step (1) above, using the<code class="docutils literal notranslate"><span class="pre">calculate_value_function</span></code>.
+The second step of the algorithm is easily implemented with the following code:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">update_policy</span><span class="p">(</span><span class="n">value_function</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Update policy given a value function&quot;&quot;&quot;</span>
+    <span class="n">new_policy</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)]</span>
+    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">room</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="p">):</span>
+        <span class="n">Q_values</span> <span class="o">=</span> <span class="p">[</span><span class="n">Q_value</span><span class="p">(</span><span class="n">value_function</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)]</span>
+        <span class="n">new_policy</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">Q_values</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">new_policy</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The whole policy iteration algorithm then simply iterates these until the policy no longer changes. If no initial policy is given, we can
+start with a zero value function
+<span class="math notranslate nohighlight">\(V^{\pi^0}(x) = 0\)</span> for all <span class="math notranslate nohighlight">\(x\)</span>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">policy_iteration</span><span class="p">(</span><span class="n">pi</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_iterations</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Do policy iteration, starting from policy `pi`.&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_iterations</span><span class="p">):</span>
+        <span class="n">value_for_pi</span> <span class="o">=</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">calculate_value_function</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">pi</span><span class="p">)</span> <span class="k">if</span> <span class="n">pi</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">5</span><span class="p">,))</span>
+        <span class="n">new_policy</span> <span class="o">=</span> <span class="n">update_policy</span><span class="p">(</span><span class="n">value_for_pi</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">new_policy</span> <span class="o">==</span> <span class="n">pi</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">pi</span><span class="p">,</span> <span class="n">value_for_pi</span>
+        <span class="n">pi</span> <span class="o">=</span> <span class="n">new_policy</span>
+    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;No stable policy found after </span><span class="si">{max_iterations}</span><span class="s2"> iterations&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>On the other hand, if we have a guess for the initial policy, we can intialize
+<span class="math notranslate nohighlight">\(\pi^0\)</span> accordingly.
+For example, we can start with a not-so-smart <code class="docutils literal notranslate"><span class="pre">always_right</span></code> policy:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">RIGHT</span> <span class="o">=</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;R&quot;</span><span class="p">)</span>
+
+<span class="n">always_right</span> <span class="o">=</span> <span class="p">[</span><span class="n">RIGHT</span><span class="p">,</span> <span class="n">RIGHT</span><span class="p">,</span> <span class="n">RIGHT</span><span class="p">,</span> <span class="n">RIGHT</span><span class="p">,</span> <span class="n">RIGHT</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">optimal_policy</span><span class="p">,</span> <span class="n">optimal_value_function</span> <span class="o">=</span> <span class="n">policy_iteration</span><span class="p">(</span><span class="n">always_right</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">([</span><span class="n">vacuum</span><span class="o">.</span><span class="n">action_space</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">optimal_policy</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;L&#39;, &#39;L&#39;, &#39;R&#39;, &#39;U&#39;, &#39;U&#39;]
+</pre></div>
+</div>
+</div>
+</div>
+<p>Starting with the <code class="docutils literal notranslate"><span class="pre">always_right</span></code> policy, our policy iteration algorithm converges to an
+intuitively pleasing policy.
+In the dining room and kitchen we go <code class="docutils literal notranslate"><span class="pre">left</span></code>, in the office we go <code class="docutils literal notranslate"><span class="pre">right</span></code>, and in the hallway and dining room we go <code class="docutils literal notranslate"><span class="pre">up</span></code>.
+This is significantly different from the <code class="docutils literal notranslate"><span class="pre">always_right</span></code> policy (which might be better named <code class="docutils literal notranslate"><span class="pre">almost_always_wrong</span></code>).
+In fact, it is exactly the <code class="docutils literal notranslate"><span class="pre">reasonable_policy</span></code> that we created in Section 3.5.
+We already knew that it should be pretty good at getting to the living room as fast as possible. In fact, it is optimal!</p>
+<p>We also print out the optimal value function below, which shows that if we are close to the living room the value function is very high, but it is a bit lower in the office in the dining room:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">room</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">room</span><span class="si">:</span><span class="s2">12</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">optimal_value_function</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Living Room : 100.00
+  Kitchen     : 97.56
+  Office      : 85.66
+  Hallway     : 97.56
+  Dining Room : 85.66
+</pre></div>
+</div>
+</div>
+</div>
+<p>The optimal policy is also obtained when we start without a policy, starting with a zero value function:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">optimal_policy</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">policy_iteration</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">([</span><span class="n">vacuum</span><span class="o">.</span><span class="n">action_space</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">optimal_policy</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;L&#39;, &#39;L&#39;, &#39;R&#39;, &#39;U&#39;, &#39;U&#39;]
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="value-iteration">
+<h2><span class="section-number">3.6.4. </span>Value Iteration<a class="headerlink" href="#value-iteration" title="Link to this heading">#</a></h2>
+<blockquote>
+<div><p>Dynamic programming can be used to obtain the optimal value function.</p>
+</div></blockquote>
+<p>Let us restate Bellman’s equation, which must hold for each state <span class="math notranslate nohighlight">\(x\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+V^*(x) = \max_a  \left\{ \bar{R}(x,a) + \gamma \sum_{x'} P(x'|x, a) V^*(x')   \right\}.
+\]</div>
+<p>If we have <span class="math notranslate nohighlight">\(n\)</span> states, and since we would then have <span class="math notranslate nohighlight">\(n\)</span> equations, it seems like we should be able to solve for the <span class="math notranslate nohighlight">\(n\)</span> unknown values <span class="math notranslate nohighlight">\(V^*(x)\)</span>.
+Sadly, they are not <em>linear</em> equations, as the maximization operation is not linear. Hence, unlike the case when the policy is fixed, we cannot just solve a system of linear equations to recover <span class="math notranslate nohighlight">\(V^*\)</span>.</p>
+<p><strong>Value iteration</strong> approximates <span class="math notranslate nohighlight">\(V^*\)</span> by constructing a sequence of estimates,
+<span class="math notranslate nohighlight">\(V^0, V^1, \dots , V^n\)</span> that converges to <span class="math notranslate nohighlight">\(V^*\)</span>.
+Starting with an initial guess, <span class="math notranslate nohighlight">\(V^0\)</span>, at each iteration we update
+our approximation of the value function for each state by the update rule:</p>
+<div class="math notranslate nohighlight">
+\[
+V^{i+1}(x) \leftarrow \max_a \left\{ \bar{R}(x,a) + \gamma \sum_{x'} P(x'|x, a) V^i(x')   \right\} 
+\]</div>
+<p>Notice that the right hand side includes two terms:
+the expected reward (which we can compute exactly), and a term in <span class="math notranslate nohighlight">\(V^i\)</span> (our current best guess at the value function).
+Value iteration operates by iteratively using our <em>current best guess</em> <span class="math notranslate nohighlight">\(V^i\)</span> along with the <em>known</em> expected reward to update the approximation.
+Unlike policy iteration, we do not expect value iteration to converge to the exact result in finite time.
+Therefore, we cannot use <span class="math notranslate nohighlight">\(V^{i+1} = V^i\)</span> as our termination condition.
+Instead, we often use a condition such as <span class="math notranslate nohighlight">\(|V^{i+1} - V^i| &lt; \epsilon\)</span>, for some small value of <span class="math notranslate nohighlight">\(\epsilon\)</span>
+as the termination condition.</p>
+<p>Finally, note that we can once again use the Q-values to obtain a very concise description for the value update:</p>
+<div class="math notranslate nohighlight">
+\[
+V^{i+1}(x) \leftarrow \max_a Q(x, a; V^i).
+\]</div>
+<p>In code, this is actually easier than policy iteration, using the concise vectorized Q-table update we discussed above:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">V_k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="mi">5</span><span class="p">,),</span> <span class="mi">100</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+    <span class="n">Q_k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">T</span> <span class="o">*</span> <span class="p">(</span><span class="n">R</span> <span class="o">+</span> <span class="mf">0.9</span> <span class="o">*</span> <span class="n">V_k</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="c1"># 5 x 4</span>
+    <span class="n">V_k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">Q_k</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># max over actions</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">V_k</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[100.  98.  90.  98.  90.]
+[100.    97.64  86.76  97.64  86.76]
+[100.    97.58  85.92  97.58  85.92]
+[100.    97.56  85.72  97.56  85.72]
+[100.    97.56  85.68  97.56  85.68]
+[100.    97.56  85.67  97.56  85.67]
+[100.    97.56  85.66  97.56  85.66]
+[100.    97.56  85.66  97.56  85.66]
+[100.    97.56  85.66  97.56  85.66]
+[100.    97.56  85.66  97.56  85.66]
+</pre></div>
+</div>
+</div>
+</div>
+<p>Compare with optimal value function:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">optimal_value_function</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[100.    97.56  85.66  97.56  85.66]
+</pre></div>
+</div>
+</div>
+</div>
+<p>And we can easily <em>extract</em> the optimal policy:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Q_k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">T</span> <span class="o">*</span> <span class="p">(</span><span class="n">R</span> <span class="o">+</span> <span class="mf">0.9</span> <span class="o">*</span> <span class="n">V_k</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">pi_k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">Q_k</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;policy = </span><span class="si">{</span><span class="n">pi_k</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">([</span><span class="n">vacuum</span><span class="o">.</span><span class="n">action_space</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">pi_k</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>policy = [0 0 1 2 0]
+[&#39;L&#39;, &#39;L&#39;, &#39;R&#39;, &#39;U&#39;, &#39;L&#39;]
+</pre></div>
+</div>
+</div>
+</div>
+<section id="id1">
+<h3><span class="section-number">3.6.4.1. </span>Exercise<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p>Above we initialized the value function at 100 everywhere. Examine the effect on convergence of initializing it differently.</p></li>
+<li><p>Implement a convergence criterion that stops the iterations after convergence.</p></li>
+</ol>
+</section>
+</section>
+<section id="model-based-reinforcement-learning">
+<h2><span class="section-number">3.6.5. </span>Model-based Reinforcement Learning<a class="headerlink" href="#model-based-reinforcement-learning" title="Link to this heading">#</a></h2>
+<blockquote>
+<div><p>Just explore, then solve the MDP.</p>
+</div></blockquote>
+<p>We can attempt to <em>learn</em> the MDP and then solve it. Both policy and value iteration require access to the transition probabilities <span class="math notranslate nohighlight">\(T\)</span> and the reward function <span class="math notranslate nohighlight">\(R\)</span>. However, when faced with a new environment, we might not know how our robot will behave. And likewise, we might not have access to the reward function: how can we know in advance where we will find pots of gold?</p>
+<p>One way to learn the MDP is to randomly explore. Let’s adapt the <code class="docutils literal notranslate"><span class="pre">policy_rollout</span></code> code from the previous section to generate a whole lot of <em>experiences</em> of the form <span class="math notranslate nohighlight">\((x,a,x',r)\)</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">explore_randomly</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">horizon</span><span class="o">=</span><span class="n">N</span><span class="p">):</span>
@@ -493,28 +830,22 @@ document.write(`
 </div>
 </div>
 </div>
-<p>Let us use it to create 499 experiences and show the first 10:</p>
+<p>Let us use it to create 499 experiences and show the first 5:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">explore_randomly</span><span class="p">(</span><span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;Living Room&quot;</span><span class="p">),</span> <span class="n">horizon</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">[:</span><span class="mi">10</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">[:</span><span class="mi">5</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[(0, 1, 0, 10.0), (0, 0, 0, 10.0), (0, 2, 0, 10.0), (0, 3, 3, 0.0), (3, 3, 3, 0.0), (3, 2, 3, 0.0), (3, 1, 4, 0.0), (4, 1, 4, 0.0), (4, 1, 4, 0.0), (4, 2, 1, 0.0)]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[(0, 3, 0, 10.0), (0, 2, 0, 10.0), (0, 1, 1, 0.0), (1, 2, 1, 0.0), (1, 0, 1, 0.0)]
 </pre></div>
 </div>
 </div>
 </div>
-</section>
-<section id="model-based-reinforcement-learning">
-<h2><span class="section-number">3.6.2. </span>Model-based Reinforcement Learning<a class="headerlink" href="#model-based-reinforcement-learning" title="Link to this heading">#</a></h2>
-<blockquote>
-<div><p>Just count, then solve the MDP.</p>
-</div></blockquote>
 <p>We can <em>estimate</em> the transition probabilities <span class="math notranslate nohighlight">\(T\)</span> and reward table <span class="math notranslate nohighlight">\(R\)</span> from the data, and then we can use the algorithms from before to calculate the value function and/or optimal policy.</p>
-<p>The math is just a variant of what we saw in the learning section of the last chapter. The rewards is easiest:</p>
+<p>The math is just a variant of what we saw in the learning section of the last chapter. The rewards are the easiest to estimate:</p>
 <div class="math notranslate nohighlight">
 \[
 R(x,a,x') \approx \frac{1}{N(x,a,x')} \sum_{x,a,x'} r
@@ -549,11 +880,11 @@ P(x'|x,a) \approx \frac{N(x,a,x)}{N(x,a)}
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[30., 24., 15., 25.],
-       [27., 26., 26., 29.],
-       [15., 21.,  8.,  9.],
-       [20., 37., 27., 29.],
-       [38., 30., 33., 30.]])
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[31., 22., 27., 28.],
+       [24., 18., 23., 22.],
+       [23., 29., 22., 26.],
+       [26., 23., 24., 23.],
+       [23., 34., 25., 26.]])
 </pre></div>
 </div>
 </div>
@@ -575,9 +906,9 @@ P(x'|x,a) \approx \frac{N(x,a,x)}{N(x,a)}
  [0.2 0.  0.  0.8 0. ]]
 estimate:
 [[1.   0.   0.   0.   0.  ]
- [0.04 0.96 0.   0.   0.  ]
+ [0.27 0.73 0.   0.   0.  ]
  [1.   0.   0.   0.   0.  ]
- [0.24 0.   0.   0.76 0.  ]]
+ [0.21 0.   0.   0.79 0.  ]]
 </pre></div>
 </div>
 </div>
@@ -597,32 +928,27 @@ estimate:
  [10.  0.  0.  0.  0.]
  [10.  0.  0.  0.  0.]]
 estimate:
-[[10.  0.  0.  0.  0.]
- [10.  0.  0.  0.  0.]
- [10.  0.  0.  0.  0.]
- [10.  0.  0.  0.  0.]]
+[[10.   0.  77.1 87.8 77.1]
+ [10.   0.  77.1 87.8 77.1]
+ [10.  87.8 77.1 87.8 77.1]
+ [10.  87.8 77.1  0.  77.1]]
 </pre></div>
 </div>
 </div>
 </div>
-<p>In summary, learning in this context can simply be done by gathering lots of experiences, and estimating models for how the world behaves.</p>
+<p>In summary, learning in this context can simply be done by gathering lots of experiences, and estimating models for how the world behaves. After that, you can use either policy or value iteration to recover the optimal policy.</p>
 </section>
 <section id="model-free-reinforcement-learning">
-<h2><span class="section-number">3.6.3. </span>Model-free Reinforcement Learning<a class="headerlink" href="#model-free-reinforcement-learning" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">3.6.6. </span>Model-free Reinforcement Learning<a class="headerlink" href="#model-free-reinforcement-learning" title="Link to this heading">#</a></h2>
 <blockquote>
-<div><p>All you need is Q, la la la la.</p>
+<div><p>All you need is Q.</p>
 </div></blockquote>
-<p>A different, model-free approach is <strong>Q_learning</strong>. In the above we tried to <em>model</em> the world by trying estimate the (large) transition and reward tables. However, remember from the previous section that there is a much smaller table of Q-values <span class="math notranslate nohighlight">\(Q(x,a)\)</span> that also allow us to act optimally, because we have</p>
+<p>A different, model-free approach is <strong>Q_learning</strong>. In the above we tried to <em>model</em> the world by trying estimate the (large) transition and reward tables. However, remember from the previous section that there is a much smaller table of Q-values <span class="math notranslate nohighlight">\(Q(x,a)\)</span> that also allow us to act optimally. This is because we can calculate the optimal policy <span class="math notranslate nohighlight">\(\pi^*(x)\)</span> from the optimal Q-values <span class="math notranslate nohighlight">\(Q^*(x,a) \doteq Q(x, a; V^*)\)</span>:</p>
 <div class="math notranslate nohighlight">
 \[
-\pi^*(x) = \arg \max_a Q^*(x,a)
+\pi^*(x) = \arg \max_a Q^*(x,a).
 \]</div>
-<p>where the Q-values are defined as</p>
-<div class="math notranslate nohighlight">
-\[
-Q^*(x,a) \doteq \bar{R}(x,a) + \gamma \sum_{x'} P(x'|x, a) V^*(x')
-\]</div>
-<p>This begs the question whether we can simply learn the Q-values instead, which might be more <em>sample-efficient</em>, i.e., we would get more accurate values with less training data, as we have less quantities to estimate.</p>
+<p>This begs the question whether we can simply learn the Q-values instead, which might be more <em>sample-efficient</em>. In other words, we would get more accurate values with less training data, as we have less quantities to estimate.</p>
 <p>To do this, remember that the Bellman equation can be written as</p>
 <div class="math notranslate nohighlight">
 \[
@@ -658,16 +984,43 @@ Q^*(x,a) \approx \frac{1}{N(x,a)} \sum_{x,a,x'} R(x,a,x') + \gamma \max_{a'} Q^*
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[81.30334865 67.15849123 80.42673644 71.62679814]
- [78.48966054 68.65276306 70.26657815 61.75427645]
- [55.3542495  68.5957169  39.57026169 40.13363191]
- [60.66071566 62.4207045  75.15968273 70.28242092]
- [67.92988751 61.51524085 69.9230693  61.48692778]]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[87.22617369 84.7847882  86.82421946 78.89023542]
+ [84.37988449 69.86220613 69.32041866 65.26096775]
+ [62.19130002 72.94385751 61.43581755 62.20895283]
+ [63.86454627 64.79416264 81.93342816 71.47786543]
+ [71.50802482 65.94032192 73.85696826 65.19885745]]
 </pre></div>
 </div>
 </div>
 </div>
 <p>These values are not yet quite accurate, as you can ascertain yourself by changing the number of experiences above, but note that an optimal policy can be achieved before we even converge.</p>
+<section id="exploration-vs-exploitation">
+<h3><span class="section-number">3.6.6.1. </span>Exploration vs Exploitation<a class="headerlink" href="#exploration-vs-exploitation" title="Link to this heading">#</a></h3>
+<p>The above assumed that we gather data by acting <em>randomly</em>, but that might be very inefficient. Indeed, we might be spending a lot of time - literally - bumping our heads into the walls. A better idea might be to act randomly at first (exploration), but as time progresses, spend more and more time refining the optimal policy by trying to act optimally (exploitation).</p>
+<p>Greedy action selection can lead to bad learning outcomes. We will use Q-learning as an example, but similar problems exist for other reinforcement learning methods. During Q-learning, upon reaching a state <span class="math notranslate nohighlight">\(x\)</span>, the <strong>greedy action selection</strong> method is to simply pick the action <span class="math notranslate nohighlight">\(a^*\)</span> according to the <em>current</em> estimate of the Q-values:</p>
+<div class="math notranslate nohighlight">
+\[
+a^* = \arg \max_a \hat{Q}(x,a).
+\]</div>
+<p>Unfortunately, this tends to often lead to Q-learning getting stuck in local minima of the policy search space: state-action pairs that might be more promising are never visited as their correct (higher) Q-values have not been estimated correctly, so they always get passed over.</p>
+<p>Epsilon-greedy or <span class="math notranslate nohighlight">\(\epsilon\)</span>-greedy methods balance exploration with exploitation while learning. Instead of always choosing the best possible action according to the current estimate, we could simply choose an action at random a fraction of the time, say with probability <span class="math notranslate nohighlight">\(\epsilon\)</span>. This is the <strong>epsilon-greedy</strong> method. Typical values for <span class="math notranslate nohighlight">\(\epsilon\)</span> are 0.01 or even 0.1, i.e., 10% of the time we choose to act randomly. Schemes also exist to decrease <span class="math notranslate nohighlight">\(\epsilon\)</span> over time.</p>
+</section>
+<section id="id2">
+<h3><span class="section-number">3.6.6.2. </span>Exercise<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<p>Think about how to apply <span class="math notranslate nohighlight">\(\epsilon\)</span>-greedy methods in the model-based reinforcement learning method we discussed above.</p>
+</section>
+</section>
+<section id="summary">
+<h2><span class="section-number">3.6.7. </span>Summary<a class="headerlink" href="#summary" title="Link to this heading">#</a></h2>
+<p>We discussed</p>
+<ul class="simple">
+<li><p>The optimal policy and value function, governed by the Bellman equation.</p></li>
+<li><p>Two algorithms to compute those: policy iteration and value iteration.</p></li>
+<li><p>A model-based method to learn from experience.</p></li>
+<li><p>A model-free method, Q-learning, that updates the action values.</p></li>
+<li><p>Balancing exploitation and exploration.</p></li>
+</ul>
+<p>The field of reinforcement learning is much richer, and we will return to  it several times throughout this book.</p>
 </section>
 </section>
 
@@ -735,9 +1088,23 @@ Q^*(x,a) \approx \frac{1}{N(x,a)} \sum_{x,a,x'} R(x,a,x') + \gamma \max_{a'} Q^*
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exploring-to-get-data">3.6.1. Exploring to get Data</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-based-reinforcement-learning">3.6.2. Model-based Reinforcement Learning</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-free-reinforcement-learning">3.6.3. Model-free Reinforcement Learning</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-optimal-value-function">3.6.1. The Optimal Value Function</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#action-values-and-the-optimal-policy">3.6.2. Action Values and the Optimal Policy</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise">3.6.2.1. Exercise</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#policy-iteration">3.6.3. Policy Iteration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#value-iteration">3.6.4. Value Iteration</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">3.6.4.1. Exercise</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-based-reinforcement-learning">3.6.5. Model-based Reinforcement Learning</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-free-reinforcement-learning">3.6.6. Model-free Reinforcement Learning</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exploration-vs-exploitation">3.6.6.1. Exploration vs Exploitation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">3.6.6.2. Exercise</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">3.6.7. Summary</a></li>
 </ul>
   </nav></div>
 
