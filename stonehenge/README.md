@@ -1,7 +1,7 @@
 The images in this folder and their accompanying files were created by the authors of "Vision-Only Robot Navigation in a Neural Radiance World",
 
 ```bibtex
-@article{nerf-nav,
+@article{Adamkiewicz22ral_nerf_nav,
   author={Adamkiewicz, Michal and Chen, Timothy and Caccavale, Adam and Gardner, Rachel and Culbertson, Preston and Bohg, Jeannette and Schwager, Mac},
   journal={IEEE Robotics and Automation Letters}, 
   title={Vision-Only Robot Navigation in a Neural Radiance World}, 
