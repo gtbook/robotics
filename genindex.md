@@ -1,4 +1,2 @@
-# Index
-
-```{show-index}
+```{show-index} Index
 ```
