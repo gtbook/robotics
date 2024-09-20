@@ -393,15 +393,14 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-probability-to-model-uncertainty">2.1.1. Using Probability to Model Uncertainty</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#probability-distributions">2.1.2. Probability Distributions</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prior-probability-distributions">2.1.3. Prior Probability Distributions</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#probability-distributions-in-python">2.1.4. Probability Distributions in Python</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simulation-by-sampling">2.1.5. Simulation by Sampling</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cumulative-distribution-function">2.1.5.1. Cumulative Distribution Function</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example">2.1.5.2. Example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prior-probability-distributions">2.1.2. Prior Probability Distributions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#probability-distributions-in-python">2.1.3. Probability Distributions in Python</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simulation-by-sampling">2.1.4. Simulation by Sampling</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cumulative-distribution-function">2.1.4.1. Cumulative Distribution Function</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example">2.1.4.2. Example</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gtsam-101">2.1.6. GTSAM 101</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gtsam-101">2.1.5. GTSAM 101</a></li>
 </ul>
             </nav>
         </div>
@@ -445,15 +444,13 @@ While a comprehensive coverage of probability theory is beyond the scope of this
 we introduce key concepts and methods throughout the text, as needed,
 to deal with various kinds of uncertainty that occur in robotics applications.
 Rigorous introductions can be found in many textbooks, including <a class="reference external" href="https://probability4datascience.com/index.html">Probability for Data Science</a> (which is available online).</p>
-<p>The starting point for reasoning with uncertainty is to define the set of <strong>outcomes</strong> that might occur.
-This set of all possible outcomes is called the <strong>sample space</strong>, often denoted by <span class="math notranslate nohighlight">\(\Omega.\)</span>
+<p><code class="docutils literal notranslate"><span class="pre">{index}sample</span> <span class="pre">space</span></code>The starting point for reasoning with uncertainty is to define the set of outcomes that might occur.
+The set of all possible outcomes is called the <strong>sample space</strong>, often denoted by <span class="math notranslate nohighlight">\(\Omega.\)</span>
 In our example, when an item of trash arrives on the conveyor belt,
 there are five possible outcomes,</p>
 <p><span class="math notranslate nohighlight">\(\Omega = \{ \rm{cardboard, paper, cans, scrap \; metal, bottle}\}.\)</span></p>
-</section>
-<section id="probability-distributions">
-<h2><span class="section-number">2.1.2. </span>Probability Distributions<a class="headerlink" href="#probability-distributions" title="Link to this heading">#</a></h2>
-<p>Subsets of <span class="math notranslate nohighlight">\(\Omega\)</span> are called <strong>events</strong>.  A <strong>probability distribution</strong>, <span class="math notranslate nohighlight">\(P\)</span>, assigns a probability <span class="math notranslate nohighlight">\(0 \leq P(A) \leq 1\)</span> to each event <span class="math notranslate nohighlight">\(A \subseteq \Omega\)</span>, with <span class="math notranslate nohighlight">\(P(\emptyset) = 0\)</span> and <span class="math notranslate nohighlight">\(P(\Omega)=1\)</span>.
+<p><code class="docutils literal notranslate"><span class="pre">{index}event,</span> <span class="pre">probability</span> <span class="pre">distribution</span></code>## Probability Distributions
+A subset of the sample space <span class="math notranslate nohighlight">\(\Omega\)</span> is called an <strong>event</strong>.  A <strong>probability distribution</strong>, <span class="math notranslate nohighlight">\(P\)</span>, assigns a probability <span class="math notranslate nohighlight">\(0 \leq P(A) \leq 1\)</span> to each event <span class="math notranslate nohighlight">\(A \subseteq \Omega\)</span>, with <span class="math notranslate nohighlight">\(P(\emptyset) = 0\)</span> and <span class="math notranslate nohighlight">\(P(\Omega)=1\)</span>.
 In addition, for disjoint events, <span class="math notranslate nohighlight">\(A_i \cap A_j = \emptyset\)</span>, we have
 <span class="math notranslate nohighlight">\(P(A_i \cup A_j) = P(A_i) + P(A_j)\)</span>.
 Using this property, it is a simple matter to compute the probability for any <span class="math notranslate nohighlight">\(A \subseteq \Omega\)</span>
@@ -470,7 +467,7 @@ In robotics, this can occur when the robot acts in the world, or based on sensor
 How evidence affects the propagation of probability values is a recurring topic in this book.</p>
 </section>
 <section id="prior-probability-distributions">
-<h2><span class="section-number">2.1.3. </span>Prior Probability Distributions<a class="headerlink" href="#prior-probability-distributions" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">2.1.2. </span>Prior Probability Distributions<a class="headerlink" href="#prior-probability-distributions" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>A <em>prior</em> that describes our beliefs before any sensor data is obtained.</p>
 </div></blockquote>
@@ -520,14 +517,14 @@ but we will not address these here). Thus, from the above observed frequencies, 
 </tbody>
 </table>
 </div>
-<p>We call this type of probabilistic knowledge about the state of the world, in the absence of any other information, a <strong>prior</strong>, because it represents our belief <em>before</em> any evidence (e.g., sensor data) has been acquired.</p>
+<p><code class="docutils literal notranslate"><span class="pre">{index}prior</span></code>We call this type of probabilistic knowledge about the state of the world, in the absence of any other information, a <strong>prior</strong>, because it represents our belief <em>before</em> any evidence (e.g., sensor data) has been acquired.</p>
 <!-- Here, a word about notation is in order.  We use upper case letters to denote random quantities. For example, we use $C$ to denote the random outcome of a particular
 category of trash arriving to the sorting station.  When you see an uppercase letter, it indicates that we do not know what value this outcome will take, but
 that we do know a probability distribution for the values that could occur.
 We use lower case letters, possibly subscripted, to denote specific outcomes. For example, we might define $c_1 =$ cardboard,
 $c_2 =$ paper, etc.  Thus, we might write $P(C = c_1)$ or merely $P(c_1)$ to denote the prior probability that an item of trash is cardboard. --></section>
 <section id="probability-distributions-in-python">
-<h2><span class="section-number">2.1.4. </span>Probability Distributions in Python<a class="headerlink" href="#probability-distributions-in-python" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">2.1.3. </span>Probability Distributions in Python<a class="headerlink" href="#probability-distributions-in-python" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>We represent probability distributions using the  <code class="docutils literal notranslate"><span class="pre">DiscreteDistribution</span></code> class in GTSAM.</p>
 </div></blockquote>
@@ -635,7 +632,7 @@ to maintain consistency when using arrays to store values associated to a collec
 </div>
 </section>
 <section id="simulation-by-sampling">
-<h2><span class="section-number">2.1.5. </span>Simulation by Sampling<a class="headerlink" href="#simulation-by-sampling" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">2.1.4. </span>Simulation by Sampling<a class="headerlink" href="#simulation-by-sampling" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>We can simulate our trash sorting cell by sampling from the prior.</p>
 </div></blockquote>
@@ -654,7 +651,7 @@ We denote by <span class="math notranslate nohighlight">\(U(a,b)\)</span> the un
 In numpy, the function <em>np.random.rand()</em> generates a sample <span class="math notranslate nohighlight">\(x \sim U(0,1)\)</span>.
 How can we use this result to generate a sample from an arbitrary probability distribution?</p>
 <section id="cumulative-distribution-function">
-<h3><span class="section-number">2.1.5.1. </span>Cumulative Distribution Function<a class="headerlink" href="#cumulative-distribution-function" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">2.1.4.1. </span>Cumulative Distribution Function<a class="headerlink" href="#cumulative-distribution-function" title="Link to this heading">#</a></h3>
 <p>We begin by introducing the Cumulative Distribution Function (CDF) for a random variable <span class="math notranslate nohighlight">\(X\)</span>.
 We will more carefully introduce the notion of a discrete random variable in Section 2.2, but for now it
 is sufficient to know that a discrete random variable takes a value from a countable set,
@@ -726,7 +723,7 @@ The CDF for <span class="math notranslate nohighlight">\(X\)</span> is given by:
 </div>
 </section>
 <section id="example">
-<h3><span class="section-number">2.1.5.2. </span>Example<a class="headerlink" href="#example" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">2.1.4.2. </span>Example<a class="headerlink" href="#example" title="Link to this heading">#</a></h3>
 <p>Some numpy code to generate the CDF:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -776,7 +773,7 @@ to category 1.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/f2745f3826fb0174c1a357bb09bbe566ef296bf6b6775fc579a21861a389aed3.png" src="_images/f2745f3826fb0174c1a357bb09bbe566ef296bf6b6775fc579a21861a389aed3.png" />
+<img alt="_images/9e49b77820a9de5c37a701ad3b7407bea884435eef2962c81ca62e91db8b1bf7.png" src="_images/9e49b77820a9de5c37a701ad3b7407bea884435eef2962c81ca62e91db8b1bf7.png" />
 </div>
 </div>
 <p>Of course, GTSAM has all this machinery built-in:</p>
@@ -795,7 +792,7 @@ to category 1.</p>
 </section>
 </section>
 <section id="gtsam-101">
-<h2><span class="section-number">2.1.6. </span>GTSAM 101<a class="headerlink" href="#gtsam-101" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">2.1.5. </span>GTSAM 101<a class="headerlink" href="#gtsam-101" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>The GTSAM concepts used in this section, explained.</p>
 </div></blockquote>
@@ -841,7 +838,7 @@ to category 1.</p>
 </table>
 </div></div></div>
 </div>
-<p>As you can see, this is a PMF on the variable with id <span class="math notranslate nohighlight">\(42\)</span>, and it indeed has probabilities (that add up to one) for values <code class="docutils literal notranslate"><span class="pre">0..2</span></code>. Internally, GTSAM <em>actually</em> represents a PMF as a small <strong>decision tree</strong>, which you can reveal using <code class="docutils literal notranslate"><span class="pre">show</span></code>:</p>
+<p><code class="docutils literal notranslate"><span class="pre">{index}decision</span> <span class="pre">tree</span></code>As you can see, this is a PMF on the variable with id <span class="math notranslate nohighlight">\(42\)</span>, and it indeed has probabilities (that add up to one) for values <code class="docutils literal notranslate"><span class="pre">0..2</span></code>. Internally, GTSAM <em>actually</em> represents a PMF as a small <strong>decision tree</strong>, which you can reveal using <code class="docutils literal notranslate"><span class="pre">show</span></code>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: The decision tree representation for a discrete probability distribution.</span>
@@ -851,7 +848,7 @@ to category 1.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/03c467fafb1afd9c6e00930693c006036454869143ce7126e7456e0ce55231d9.svg" src="_images/03c467fafb1afd9c6e00930693c006036454869143ce7126e7456e0ce55231d9.svg" />
+<img alt="_images/533a76994029e96f6c1ce68b6a43e03929f55a440fe24b5b9897097926786017.svg" src="_images/533a76994029e96f6c1ce68b6a43e03929f55a440fe24b5b9897097926786017.svg" />
 </div>
 </div>
 <p>Of course, it would be much nicer if we could print out these PMFs in a more readable format, that shows us a name for each variable as well as a pretty name for each. This is where the <code class="docutils literal notranslate"><span class="pre">Variables</span></code> class comes to the rescue. We actually defined a global variable at the top of this notebook, like so:</p>
@@ -1008,15 +1005,14 @@ to category 1.</p>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-probability-to-model-uncertainty">2.1.1. Using Probability to Model Uncertainty</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#probability-distributions">2.1.2. Probability Distributions</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prior-probability-distributions">2.1.3. Prior Probability Distributions</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#probability-distributions-in-python">2.1.4. Probability Distributions in Python</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simulation-by-sampling">2.1.5. Simulation by Sampling</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cumulative-distribution-function">2.1.5.1. Cumulative Distribution Function</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example">2.1.5.2. Example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prior-probability-distributions">2.1.2. Prior Probability Distributions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#probability-distributions-in-python">2.1.3. Probability Distributions in Python</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simulation-by-sampling">2.1.4. Simulation by Sampling</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cumulative-distribution-function">2.1.4.1. Cumulative Distribution Function</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example">2.1.4.2. Example</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gtsam-101">2.1.6. GTSAM 101</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gtsam-101">2.1.5. GTSAM 101</a></li>
 </ul>
   </nav></div>
 

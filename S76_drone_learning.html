@@ -447,6 +447,9 @@ The original NeRF paper defines a large neural network that can be trained to pr
 </ul>
 <p>While the original NeRF paper was rather slow because of the large neural network, since then faster <em>voxel-based</em> versions have been developed. We work with those variants, making it possible to train your own NeRF-like representation within a notebook.
 In particular, below we extend the 1D interpolation example from Chapter 5, extend it to interpolating in 3D voxel space, and show that this can be used to create a neural <em>radiance</em> field. However, we first need to talk about volume rendering, the basic math underlying all of this.</p>
+<div class="highlight-{index}volume notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
 </section>
 <section id="volume-rendering">
 <h2><span class="section-number">7.6.2. </span>Volume Rendering<a class="headerlink" href="#volume-rendering" title="Link to this heading">#</a></h2>
@@ -508,6 +511,9 @@ As a case in point, our first function <code class="docutils literal notranslate
 </div>
 </div>
 <p>The figure shows the 25 regularly sampled points, up to a distance of 1.0 units, in two different directions. The rays share a common origin, but in NeRF we often mix rays from different viewpoints in which this is not the case. Below we train with batches of 1024 rays at a time, using the same code, which is still quite efficient on modern GPUs.</p>
+<div class="highlight-{index}opacity, notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
 </section>
 <section id="integration-along-rays">
 <h3><span class="section-number">7.6.2.2. </span>Integration along Rays<a class="headerlink" href="#integration-along-rays" title="Link to this heading">#</a></h3>
@@ -557,13 +563,16 @@ T_i &amp;\doteq \exp ( - \sum_{j=1}^{i-1} \sigma_j).
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[0.61460114 0.56901664 0.40826207]
- [0.5431075  0.5979786  0.6764335 ]]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[0.35087273 0.42145333 0.68578106]
+ [0.7047112  0.71465194 0.16223422]]
 </pre></div>
 </div>
 </div>
 </div>
 <p>Of course, because our inputs are random the result is also totally random! To remedy that we add the final piece of the puzzle below: a way to regress the densities and colors in a given volume from a set of input images.</p>
+<div class="highlight-{index}voxel notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
 </section>
 </section>
 <section id="a-differentiable-voxel-grid">
@@ -578,6 +587,9 @@ T_i &amp;\doteq \exp ( - \sum_{j=1}^{i-1} \sigma_j).
 \]</div>
 <p>with <span class="math notranslate nohighlight">\(P\in R^3\)</span>, <span class="math notranslate nohighlight">\(\sigma\in R\)</span>, and <span class="math notranslate nohighlight">\(c\in[0...255]^3\)</span>. Note that in computer vision, neural networks typically take high-dimensional inputs, e.g., entire images, so having such a low-dimensional input (3) is highly unusual. This “coordinate-based” approach is one of the breakthroughs of NeRF-style representations.</p>
 <p>We will use a <strong>voxel grid</strong> to represent <span class="math notranslate nohighlight">\(F_\Theta\)</span>. In the original NeRF paper, the authors used a fully connected neural network, also called a multi-layer perceptron (MLP) that takes a 3D coordinate as input, and in some variants also a ray direction. In DVGO, a later and much faster method, the color and density are instead stored in a voxel grid, which is the approach we adopt. The key is to create a <em>differentiable</em> 3D interpolation scheme, that we can then <em>train</em> by asking it to predict the colors in the input images.</p>
+<div class="highlight-{index}trilinear notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
 <p>We can build upon the 1D interpolation example that we introduced in Section 5.6. However, to represent 3D scenes we need to generalize it to 3D. In particular, the interpolation function has to be changed from simple linear interpolation over an interval, to <strong>trilinear interpolation</strong> on voxels.
 The code below implements trilinear interpolation: the values on the <em>eight</em> corners of each voxel are combined using three blending weights, which depend on where the queried point lies within the voxel:</p>
 <div class="cell docutils container">
@@ -641,7 +653,7 @@ The code below implements trilinear interpolation: the values on the <em>eight</
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Interpolated Output: 0.48699
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Interpolated Output: 0.56742
 </pre></div>
 </div>
 </div>
@@ -838,6 +850,9 @@ Interpolated Output:
 <li><p>the <em>extrinsic</em> calibration, position and orientation with which the image was taken, is needed to transform directions in the camera frame into the scene coordinate frame.</p></li>
 </ul>
 <p>Acquiring all this information for an arbitrary image sequence taken with some unknown, uncalibrated camera can be complicated. Cameras come in a variety of sizes and with very different lenses, and effects like radial distortion make the modeling process non-trivial. In addition, recovering the actual position and attitude of the camera in a scene is typically done through structure from motion, which can be time-consuming and tricky.</p>
+<div class="highlight-{index}camera notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
 <p>In the following, we will assume that all this hard work has been done for us, and/or the images have been simulated with exactly known camera parameters, both intrinsic and extrinsic. One popular way to accomplish this is by providing undistorted images accompanied by a <span class="math notranslate nohighlight">\(3 \times 4\)</span> <strong>camera matrix</strong> <span class="math notranslate nohighlight">\(M\)</span>. Recall that a 3D point <span class="math notranslate nohighlight">\(P\)</span> can be projected into an image via</p>
 <div class="math notranslate nohighlight">
 \[
@@ -999,7 +1014,7 @@ P = A^{-1}(\tilde{p} - a)
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/6e99e3885a61c42dd63ef1a097f620067affb4c986baacc68b893c8fec2e7836.png" src="_images/6e99e3885a61c42dd63ef1a097f620067affb4c986baacc68b893c8fec2e7836.png" />
+<img alt="_images/a01a6bf46e2a2bf2c3b81c3b7622fe212c9ebe139c59e163c21ecf54220f2243.png" src="_images/a01a6bf46e2a2bf2c3b81c3b7622fe212c9ebe139c59e163c21ecf54220f2243.png" />
 </div>
 </div>
 <p>Let us recall the training code from Chapter 5. We previously used this code to train for the parameters of a 1D interpolation grid, minimizing a Mean-Squared Error (MSE) loss function, i.e., the squared difference between the predicted values and the training data values. This is the standard loss function for continuous <em>regression</em> problems.</p>

@@ -393,23 +393,21 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reward-functions">3.5.1. Reward Functions</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#expected-reward">3.5.2. Expected Reward</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#utility-for-a-defined-sequence-of-actions">3.5.3. Utility for a Defined Sequence of Actions</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#approximating-expected-utility-using-control-tape-rollouts">3.5.4. Approximating Expected Utility Using Control Tape Rollouts</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">3.5.4.1. Exercises:</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#utility-for-a-defined-sequence-of-actions">3.5.2. Utility for a Defined Sequence of Actions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#approximating-expected-utility-using-control-tape-rollouts">3.5.3. Approximating Expected Utility Using Control Tape Rollouts</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">3.5.3.1. Exercises:</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#policies">3.5.5. Policies</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-value-function-for-a-given-policy">3.5.6. The Value Function (for a given policy)</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#thought-exercise">3.5.6.1. Thought exercise</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-value-function-for-a-given-policy">3.5.4. The Value Function (for a given policy)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#thought-exercise">3.5.4.1. Thought exercise</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#approximating-the-value-function">3.5.7. Approximating the Value Function</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#computing-the-value-function">3.5.8. Computing The Value Function*</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise">3.5.8.1. Exercise</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#approximating-the-value-function">3.5.5. Approximating the Value Function</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#computing-the-value-function">3.5.6. Computing The Value Function*</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise">3.5.6.1. Exercise</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">3.5.9. Summary</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">3.5.7. Summary</a></li>
 </ul>
             </nav>
         </div>
@@ -521,9 +519,7 @@ It simply returns a reward of 10 upon entering the living room:</p>
 </div>
 </div>
 </div>
-</section>
-<section id="expected-reward">
-<h2><span class="section-number">3.5.2. </span>Expected Reward<a class="headerlink" href="#expected-reward" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">{index}expected</span> <span class="pre">reward</span></code>## Expected Reward</p>
 <blockquote>
 <div><p>Maximizing immediate expected reward leads to greedy planning.</p>
 </div></blockquote>
@@ -611,20 +607,19 @@ we end up in the living room with 80% chance, while staying in place (the kitche
 </div>
 </div>
 <p>This makes total sense: if we stay in the kitchen, we get zero reward, but <em>if</em> we succeed to move to the living room, we receive a reward of 10. This happens only in 80% of the cases, though, so the <em>expected reward</em> is only 8.</p>
-<!-- Note that this computation can also be realized using belief states.  In
+<p><code class="docutils literal notranslate"><span class="pre">{index}greedy</span> <span class="pre">planning</span></code>&lt;!– Note that this computation can also be realized using belief states.  In
 particular, if encode the reward function as a vector (as above),
-say $R = [10, 0, 0, 0, 0]^T$,
-the the expected reward at time $k+1$ is given by
-
-$$E[ R(X_k, a, X_{k+t})] = b_{k+1} R = \left( b_k M_{a}\right) R
-$$
-
-in which $M_{a}$ denotes the transition probability matrix associated
-to action $ a$. Note that in this case, we the expected reward is computed for a given
-prior distribution on $X_k$. If we know with certainty that $X_k =x$, the belief
-vector would have a $1$ in the entry corresponding to the current room, and zero's for
+say <span class="math notranslate nohighlight">\(R = [10, 0, 0, 0, 0]^T\)</span>,
+the the expected reward at time <span class="math notranslate nohighlight">\(k+1\)</span> is given by</p>
+<div class="math notranslate nohighlight">
+\[E[ R(X_k, a, X_{k+t})] = b_{k+1} R = \left( b_k M_{a}\right) R
+\]</div>
+<p>in which <span class="math notranslate nohighlight">\(M_{a}\)</span> denotes the transition probability matrix associated
+to action <span class="math notranslate nohighlight">\( a\)</span>. Note that in this case, we the expected reward is computed for a given
+prior distribution on <span class="math notranslate nohighlight">\(X_k\)</span>. If we know with certainty that <span class="math notranslate nohighlight">\(X_k =x\)</span>, the belief
+vector would have a <span class="math notranslate nohighlight">\(1\)</span> in the entry corresponding to the current room, and zero’s for
 all other entries.
-Therefore, this form is somewhat more general than that given above. -->
+Therefore, this form is somewhat more general than that given above. –&gt;</p>
 <p>Equipped with the definition of expected reward, we can introduce a first, <strong>greedy planning</strong> algorithm:
 Given the current state <span class="math notranslate nohighlight">\(x_k\)</span>, execute the action that maximizes the expected reward:</p>
 <div class="math notranslate nohighlight">
@@ -652,7 +647,7 @@ Expected reward (Kitchen, D) = 0.0
 <p>It turns out that <span class="math notranslate nohighlight">\(8.0\)</span> is the best we can do by greedily choosing a single action, as the expected <em>immediate</em> reward for any other action is zero. Hence, whenever we find ourselves in the Kitchen, a good course of action is to always go left!</p>
 </section>
 <section id="utility-for-a-defined-sequence-of-actions">
-<h2><span class="section-number">3.5.3. </span>Utility for a Defined Sequence of Actions<a class="headerlink" href="#utility-for-a-defined-sequence-of-actions" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">3.5.2. </span>Utility for a Defined Sequence of Actions<a class="headerlink" href="#utility-for-a-defined-sequence-of-actions" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>Utility is the total discounted reward over finite or infinite horizons.</p>
 </div></blockquote>
@@ -672,7 +667,7 @@ While this is certainly not a realistic expectation,
 reasoning over an infinite time horizon often simplifies the mathematical complexities of planning into the future.
 If we merely compute the sum of all future rewards, this sum will diverge to infinity as <span class="math notranslate nohighlight">\(l\)</span> approaches infinity.</p></li>
 </ul>
-<p>We can deal with both of these disadvantages by multiplying the reward at time step <span class="math notranslate nohighlight">\(k + l\)</span> by a discounting
+<p><code class="docutils literal notranslate"><span class="pre">{index}discount</span> <span class="pre">factor,</span> <span class="pre">utility</span> <span class="pre">function</span></code>We can deal with both of these disadvantages by multiplying the reward at time step <span class="math notranslate nohighlight">\(k + l\)</span> by a discounting
 factor <span class="math notranslate nohighlight">\(\gamma^l\)</span>, with <span class="math notranslate nohighlight">\(0 &lt; \gamma \leq 1\)</span>.
 We refer to <span class="math notranslate nohighlight">\(\gamma\)</span> as the <strong>discount factor</strong>
 and to the term <span class="math notranslate nohighlight">\(\gamma^l R(x_{k+l},a_{k+l},x_{k+l+1})\)</span> as a <strong>discounted reward.</strong>
@@ -712,7 +707,7 @@ but computing the expectation for a specific action sequence is also computation
 We can, however, approximate this optimization process using the concept of rollouts, as we will now see.</p>
 </section>
 <section id="approximating-expected-utility-using-control-tape-rollouts">
-<h2><span class="section-number">3.5.4. </span>Approximating Expected Utility Using Control Tape Rollouts<a class="headerlink" href="#approximating-expected-utility-using-control-tape-rollouts" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">3.5.3. </span>Approximating Expected Utility Using Control Tape Rollouts<a class="headerlink" href="#approximating-expected-utility-using-control-tape-rollouts" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>Rollin’, rollin’, rollin’…</p>
 </div></blockquote>
@@ -733,7 +728,7 @@ This immediately suggests an approximation algorithm:</p>
 <li><p>Generate many sample trajectories for the action sequence <span class="math notranslate nohighlight">\(a_1, \dots, a_n\)</span>;</p></li>
 <li><p>compute the average of the discounted rewards over these sample trajectories.</p></li>
 </ul>
-<p>A specific sequence of actions, <span class="math notranslate nohighlight">\(a_1, \dots, a_n\)</span> is sometimes called a <strong>control tape</strong>.
+<p><code class="docutils literal notranslate"><span class="pre">{index}control</span> <span class="pre">tape,</span> <span class="pre">rollout</span></code>A specific sequence of actions, <span class="math notranslate nohighlight">\(a_1, \dots, a_n\)</span> is sometimes called a <strong>control tape</strong>.
 The process of computing a sample trajectory and
 evaluating the corresponding utility is called a <strong>rollout</strong> for the control tape.
 Each rollout produces one sample trajectory, which gives one corresponding utility value.
@@ -866,15 +861,12 @@ by simply averaging over all 20 rollouts:</p>
 </div>
 </div>
 <section id="exercises">
-<h3><span class="section-number">3.5.4.1. </span>Exercises:<a class="headerlink" href="#exercises" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">3.5.3.1. </span>Exercises:<a class="headerlink" href="#exercises" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>Execute both code segments above multiple times and observe the effect.</p></li>
 <li><p>The rewards above seems to be always either zero or 30. Why is that?</p></li>
 </ul>
-</section>
-</section>
-<section id="policies">
-<h2><span class="section-number">3.5.5. </span>Policies<a class="headerlink" href="#policies" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">{index}policy</span></code>## Policies</p>
 <blockquote>
 <div><p>A policy is a function that specifies which action to take in each state.</p>
 </div></blockquote>
@@ -962,12 +954,13 @@ a policy.
 As we will now see, this is somewhat more complicated than exploring the utility
 for a fixed sequence of actions.</p>
 </section>
+</section>
 <section id="the-value-function-for-a-given-policy">
-<h2><span class="section-number">3.5.6. </span>The Value Function (for a given policy)<a class="headerlink" href="#the-value-function-for-a-given-policy" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">3.5.4. </span>The Value Function (for a given policy)<a class="headerlink" href="#the-value-function-for-a-given-policy" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>The value function <span class="math notranslate nohighlight">\(V^\pi\)</span> measures the expected utility from each state, under a given policy <span class="math notranslate nohighlight">\(\pi\)</span>.</p>
 </div></blockquote>
-<p>We would now like to characterize the quality of any given policy.
+<p><code class="docutils literal notranslate"><span class="pre">{index}value</span> <span class="pre">function</span></code>We would now like to characterize the quality of any given policy.
 Above, we defined the utility for a specific sequence of <span class="math notranslate nohighlight">\(n\)</span> actions as</p>
 <div class="math notranslate nohighlight">
 \[
@@ -1024,12 +1017,12 @@ to apply to the state <span class="math notranslate nohighlight">\(x\)</span> at
 \[V^\pi(x) = \bar{R}(x,\pi(x)) + \gamma \sum_{x'} P(x'|x, \pi(x)) V^\pi(x')\]</div>
 <p>This has a very nice interpretation: the value of a state under a given policy is the expected reward <span class="math notranslate nohighlight">\(\bar{R}(x,\pi(x))\)</span> under that policy, <em>plus</em> the discounted expected value of the next state.</p>
 <section id="thought-exercise">
-<h3><span class="section-number">3.5.6.1. </span>Thought exercise<a class="headerlink" href="#thought-exercise" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">3.5.4.1. </span>Thought exercise<a class="headerlink" href="#thought-exercise" title="Link to this heading">#</a></h3>
 <p>Without a discount factor, we would always be hopeful that if we take one more step, we will find a pot of gold. Reflect on what various values for the discount factor mean in real life.</p>
 </section>
 </section>
 <section id="approximating-the-value-function">
-<h2><span class="section-number">3.5.7. </span>Approximating the Value Function<a class="headerlink" href="#approximating-the-value-function" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">3.5.5. </span>Approximating the Value Function<a class="headerlink" href="#approximating-the-value-function" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>We can use rollouts to approximate the value function as well.</p>
 </div></blockquote>
@@ -1107,9 +1100,7 @@ V(Dining Room) ~ 19.25
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Living Room) ~ 99.43
 V(Kitchen) ~ 97.64
 V(Office) ~ 84.74
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Hallway) ~ 97.37
+V(Hallway) ~ 97.37
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>V(Dining Room) ~ 85.89
@@ -1119,7 +1110,7 @@ V(Office) ~ 84.74
 </div>
 </section>
 <section id="computing-the-value-function">
-<h2><span class="section-number">3.5.8. </span>Computing The Value Function*<a class="headerlink" href="#computing-the-value-function" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">3.5.6. </span>Computing The Value Function*<a class="headerlink" href="#computing-the-value-function" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>For any <em>fixed</em> policy we can compute the exact value of value function.</p>
 </div></blockquote>
@@ -1263,12 +1254,12 @@ b = [10.  8.  0.  8.  0.]
 </div>
 </div>
 <section id="exercise">
-<h3><span class="section-number">3.5.8.1. </span>Exercise<a class="headerlink" href="#exercise" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">3.5.6.1. </span>Exercise<a class="headerlink" href="#exercise" title="Link to this heading">#</a></h3>
 <p>Why is the value function in the living room <span class="math notranslate nohighlight">\(100\)</span> and not the immediate reward <span class="math notranslate nohighlight">\(10\)</span>?</p>
 </section>
 </section>
 <section id="summary">
-<h2><span class="section-number">3.5.9. </span>Summary<a class="headerlink" href="#summary" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">3.5.7. </span>Summary<a class="headerlink" href="#summary" title="Link to this heading">#</a></h2>
 <p>Markov Decision Processes or MDPs can be used to model decision making in a stochastic environment, albeit with complete knowledge of the state. It is a rich subject, and we introduced many new concepts in this section:</p>
 <ul class="simple">
 <li><p>The reward function, <span class="math notranslate nohighlight">\(R : {\cal X} \times {\cal A} \times {\cal X} \rightarrow \mathbb{R}\)</span>.</p></li>
@@ -1353,23 +1344,21 @@ b = [10.  8.  0.  8.  0.]
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reward-functions">3.5.1. Reward Functions</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#expected-reward">3.5.2. Expected Reward</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#utility-for-a-defined-sequence-of-actions">3.5.3. Utility for a Defined Sequence of Actions</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#approximating-expected-utility-using-control-tape-rollouts">3.5.4. Approximating Expected Utility Using Control Tape Rollouts</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">3.5.4.1. Exercises:</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#utility-for-a-defined-sequence-of-actions">3.5.2. Utility for a Defined Sequence of Actions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#approximating-expected-utility-using-control-tape-rollouts">3.5.3. Approximating Expected Utility Using Control Tape Rollouts</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">3.5.3.1. Exercises:</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#policies">3.5.5. Policies</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-value-function-for-a-given-policy">3.5.6. The Value Function (for a given policy)</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#thought-exercise">3.5.6.1. Thought exercise</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-value-function-for-a-given-policy">3.5.4. The Value Function (for a given policy)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#thought-exercise">3.5.4.1. Thought exercise</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#approximating-the-value-function">3.5.7. Approximating the Value Function</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#computing-the-value-function">3.5.8. Computing The Value Function*</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise">3.5.8.1. Exercise</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#approximating-the-value-function">3.5.5. Approximating the Value Function</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#computing-the-value-function">3.5.6. Computing The Value Function*</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise">3.5.6.1. Exercise</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">3.5.9. Summary</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">3.5.7. Summary</a></li>
 </ul>
   </nav></div>
 

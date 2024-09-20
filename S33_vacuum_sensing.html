@@ -451,7 +451,10 @@ document.write(`
 <div><p>Dynamic Bayes nets replicate a Bayes net fragment over time.</p>
 </div></blockquote>
 <a class="reference internal image-reference" href="_images/S33-iRobot_vacuuming_robot-01.jpg"><img alt="Splash image with balancing steampunk robot sporting big eyes" class="align-center" src="_images/S33-iRobot_vacuuming_robot-01.jpg" style="width: 40%;" /></a>
-<p>The concepts we discussed in the previous section can be generalized to include sensing, and introduces a much more general framework that we will use over and over in this book. In particular, the controlled Markov chain over successive states <span class="math notranslate nohighlight">\(X_t\)</span> is an example of a <strong>Dynamic Bayes Net</strong> or <strong>DBN</strong>: a Bayes net in which  <em>Bayes net slices</em> are replicated through time, to model the evolution of states over time. Below we add observations/measurements into the mix, and show how we can simulate the complete system using a more general technique called <em>ancestral sampling</em>.</p>
+<div class="highlight-{index}pair: notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<p>The concepts we discussed in the previous section can be generalized to include sensing, and introduces a much more general framework that we will use over and over in this book. In particular, the controlled Markov chain over successive states <span class="math notranslate nohighlight">\(X_t\)</span> is an example of a <strong>dynamic Bayes net</strong> or <strong>DBN</strong>: a Bayes net in which  <em>Bayes net slices</em> are replicated through time, to model the evolution of states over time. Below we add observations/measurements into the mix, and show how we can simulate the complete system using a more general technique called <em>ancestral sampling</em>.</p>
 <p>While most of the sensor modeling here is mostly a reprise of Section 2.3, the concept of Dynamic Bayes Net is an incredible modeling tool that we will use over and over in this book. The notion of ancestral sampling is also very powerful and underlies simulation for much more general robot systems, not just the discrete-state model we consider here.</p>
 <section id="a-sensor-model">
 <h2><span class="section-number">3.3.1. </span>A Sensor Model<a class="headerlink" href="#a-sensor-model" title="Link to this heading">#</a></h2>
@@ -504,6 +507,9 @@ Specifically, let us assume for illustration’s sake that the living room and k
 <div><p>AXZ slices for the win!</p>
 </div></blockquote>
 <p>Single time step reasoning will fall short for our vacuuming robot, which operates in time. In perception, the game is to estimate which state we are in given what we measured, but the ideas we discussed before will not apply directly. For example, recall the maximum likelihood method from the previous chapter, which we could try to apply here. In our case, given a sensor reading of, say, <span class="math notranslate nohighlight">\(Z_1\)</span>=<code class="docutils literal notranslate"><span class="pre">medium</span></code>, the maximum likelihood estimate (MLE) for the state <span class="math notranslate nohighlight">\(X_1\)</span> of the robot is <code class="docutils literal notranslate"><span class="pre">dining</span> <span class="pre">room</span></code>: it corresponds to the highest value in the <code class="docutils literal notranslate"><span class="pre">medium</span></code> column. But that takes only <em>one</em> measurement into account, even if we take many steps in the environment.</p>
+<div class="highlight-{index}pair: notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
 <p>We use a <strong>dynamic Bayes net</strong>, a special type of Bayes net, to reason about multiple measurements.
 Intuitively, we should be able to use the robot’s history to obtain a better estimate of its location. For example, if the robot were just in the living room, there is no way that it could have gotten to the dining room in a single step. In this section we will see how we can reason probabilistically about such things.</p>
 <p>The key lies in unrolling time in a graph.
@@ -565,6 +571,9 @@ P(Z_{1:n},X_{1:n}|A_{1:n})= P(Z_1| X_1) P(X_1) \prod_{k=2}^{n} P(Z_k| X_k) P(X_k
 <div class="cell_output docutils container">
 <img alt="_images/8f7a674fb7ce540e5b27d4191dc9a17bb8fb1e7df4cd7dc3e1c56259657eb3a6.svg" src="_images/8f7a674fb7ce540e5b27d4191dc9a17bb8fb1e7df4cd7dc3e1c56259657eb3a6.svg" />
 </div>
+</div>
+<div class="highlight-{index}topological notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
 </div>
 <p>Sampling from the joint distribution given in Bayes net form can be done
 by sampling each variable in turn, but making sure that we always sample
