@@ -467,12 +467,9 @@ but of course <span class="math notranslate nohighlight">\(t^a_b\)</span> will b
 rotation matrix representing the 3DOF orientation of the vehicle. The
 latter can be decomposed into roll, pitch, and yaw, if so desired,
 but we will not need that until the next chapter.</p>
-<div class="highlight-{index}pair: notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
-</div>
 </section>
 <section id="the-iterative-closest-points-algorithm">
-<h2><span class="section-number">6.4.2. </span>The Iterative Closest Points Algorithm<a class="headerlink" href="#the-iterative-closest-points-algorithm" title="Link to this heading">#</a></h2>
+<span id="index-2"></span><h2><span class="section-number">6.4.2. </span>The Iterative Closest Points Algorithm<a class="headerlink" href="#the-iterative-closest-points-algorithm" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>ICP is a seminal method to align two point clouds.</p>
 </div></blockquote>
@@ -482,11 +479,8 @@ but we will not need that until the next chapter.</p>
 <li><p>Use these point correspondences to re-estimate the relative pose <span class="math notranslate nohighlight">\(\hat{T^a_b}\)</span> between the two point clouds.</p></li>
 </ol>
 <p>These two steps are iterated until convergence, hence the name <em>iterated</em> closest points. Below we  explain both steps in more detail.</p>
-<div class="highlight-{index}nearest notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
-</div>
 <section id="finding-closest-points">
-<h3><span class="section-number">6.4.2.1. </span>Finding Closest Points<a class="headerlink" href="#finding-closest-points" title="Link to this heading">#</a></h3>
+<span id="index-3"></span><h3><span class="section-number">6.4.2.1. </span>Finding Closest Points<a class="headerlink" href="#finding-closest-points" title="Link to this heading">#</a></h3>
 <p>The first step is the easiest: for each point <span class="math notranslate nohighlight">\(P^a_j\)</span> in the first point cloud, we define <span class="math notranslate nohighlight">\(P^b_j\)</span> to be its closest point in the second point cloud. Stated formally, for each point <span class="math notranslate nohighlight">\(P^a_j\)</span>, we solve the following minimization problem:</p>
 <div class="math notranslate nohighlight">
 \[
@@ -499,12 +493,9 @@ and (b) rather than computing the distance we can save the computation of a squa
 Iterating over all points in the second cloud can be quite slow, and indeed finding all nearest neighbors that way has quadratic complexity. However, very fast <em>approximate</em> nearest neighbor algorithms are available. Many of these use specialized data structures, such as “KD-trees” or “Oct-trees” (in 3D). While the details are beyond the scope of this book,
 intuitively these data structures  recursively divide up the point clouds into sub-clouds, such that sub-clouds unlikely to contain the nearest neighbor can be quickly excluded. We build this data structure once for the second cloud, and then use it for all nearest neighbor searches, leading to complexity which is approximately <span class="math notranslate nohighlight">\(O(N \log N\)</span>),
 for point clouds of size <span class="math notranslate nohighlight">\(N\)</span>.</p>
-<div class="highlight-{index}pose notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
-</div>
 </section>
 <section id="estimating-the-pairwise-transform">
-<h3><span class="section-number">6.4.2.2. </span>Estimating the Pairwise Transform<a class="headerlink" href="#estimating-the-pairwise-transform" title="Link to this heading">#</a></h3>
+<span id="index-4"></span><h3><span class="section-number">6.4.2.2. </span>Estimating the Pairwise Transform<a class="headerlink" href="#estimating-the-pairwise-transform" title="Link to this heading">#</a></h3>
 <p>The second step is the more interesting one: given a set of closest point pairs <span class="math notranslate nohighlight">\(\{(P^a_j, P^b_j)\}\)</span>, how can we estimate the relative pose <span class="math notranslate nohighlight">\(\widehat{T^a_b}\)</span> between the two point clouds? This is known as the <strong>pose alignment</strong> problem.</p>
 <p>Let us first assume that the two point clouds only differ by a rotation <span class="math notranslate nohighlight">\(R^a_b\)</span>. When this is the case, and assuming we have corresponding points <span class="math notranslate nohighlight">\(P^a\)</span> and <span class="math notranslate nohighlight">\(P^b\)</span>, then each point <span class="math notranslate nohighlight">\(P^a\)</span> in the first cloud can be expressed as a function of a point <span class="math notranslate nohighlight">\(P^b\)</span> in the second cloud:</p>
 <div class="math notranslate nohighlight">
@@ -548,13 +539,10 @@ C^a = \frac{1}{N} \sum_j P^a_j\text{    and    }C^b = \frac{1}{N} \sum_j P^b_j.
 C^a = \widehat{R^a_b} C^b + \widehat{t^a_b},
 \]</div>
 <p>and the final relative pose estimate is given by <span class="math notranslate nohighlight">\(\widehat{T^a_b} =(\widehat{R^a_b}, \widehat{t^a_b})\)</span>. By the way, all of the above math is identical for both the 2D and 3D case.</p>
-<div class="highlight-{index}PoseSLAM, notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
-</div>
 </section>
 </section>
 <section id="poseslam">
-<h2><span class="section-number">6.4.3. </span>PoseSLAM<a class="headerlink" href="#poseslam" title="Link to this heading">#</a></h2>
+<span id="index-5"></span><h2><span class="section-number">6.4.3. </span>PoseSLAM<a class="headerlink" href="#poseslam" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>PoseSLAM is SLAM with pose priors and relative pose constraints only. We can derive those from Iterative Closest Points (ICP).</p>
 </div></blockquote>
@@ -613,10 +601,7 @@ The example represents a vehicle driving around, and taking LIDAR scans
 at 5 different world poses, represented by <span class="math notranslate nohighlight">\(T_{1}\)</span> to <span class="math notranslate nohighlight">\(T_{5}\)</span>.
 The factors <span class="math notranslate nohighlight">\(f_{1}\)</span> to <span class="math notranslate nohighlight">\(f_{4}\)</span> are binary factors representing the pose
 constraints obtained by matching successive LIDAR scans using ICP.</p>
-<div class="highlight-{index}loop notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
-</div>
-<p>The factor
+<p id="index-6">The factor
 <span class="math notranslate nohighlight">\(f_{5}(T_{5},T_{2})\)</span> is a so-called <strong>loop closure</strong> constraint:
 rather than derived from two successive scans, this one is derived from
 matching the scan taken at <span class="math notranslate nohighlight">\(T_{5}\)</span> with the one at <span class="math notranslate nohighlight">\(T_{2}\)</span>.
@@ -637,10 +622,7 @@ least-squares optimization.
 Earlier in this book we have discussed MAP inference for discrete
 variables, and we have discussed probability distributions for
 continuous variables, but we have never put the two together.</p>
-<div class="highlight-{index}mean, notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
-</div>
-<p>In the case of linear measurements corrupted by zero-mean Gaussian noise, we can
+<p id="index-7">In the case of linear measurements corrupted by zero-mean Gaussian noise, we can
 recover the MAP solution by minimizing a sum of squared differences.
 Recall that a univariate Gaussian density with <strong>mean</strong> <span class="math notranslate nohighlight">\(\mu\)</span> and <strong>variance</strong> <span class="math notranslate nohighlight">\(\sigma^{2}\)</span> is
 given by</p>
@@ -699,10 +681,7 @@ measurement error to be minimized is</p>
 that maps a pose in <span class="math notranslate nohighlight">\(SE(2)\)</span> to a
 three-dimensional local coordinate vector <span class="math notranslate nohighlight">\(\xi\)</span>;
 we will describe this in more detail below.</p>
-<div class="highlight-{index}nonlinear notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
-</div>
-<p>There are two ways to deal with this nonlinear problem. The first is to
+<p id="index-8">There are two ways to deal with this nonlinear problem. The first is to
 realize that the only nonlinearities stem from the <span class="math notranslate nohighlight">\(\sin\)</span> and <span class="math notranslate nohighlight">\(\cos\)</span>
 that are associated with the unknown orientations
 <span class="math notranslate nohighlight">\(\theta_{i}\)</span>.
@@ -850,10 +829,7 @@ in code:</p>
 </div>
 </div>
 </div>
-<div class="highlight-{index}loop notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
-</div>
-<p>The first block of code creates a nonlinear factor graph and adds the unary factor
+<p id="index-9">The first block of code creates a nonlinear factor graph and adds the unary factor
 <span class="math notranslate nohighlight">\(f_{0}(T_{1})\)</span>.
 As the vehicle travels through the world, it adds
 binary factors <span class="math notranslate nohighlight">\(f_{t}(T_{t},T_{t+1})\)</span> corresponding to odometry measurements.
@@ -942,10 +918,7 @@ Value 5: (gtsam::Pose2)
 </div>
 </div>
 </div>
-<div class="highlight-{index}posterior notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
-</div>
-<p>We can also inspect the result graphically. Looking at the result as printed above only gets us so far, and more importantly, it only shows us the maximum a posteriori (MAP) solution, but not the uncertainty around it. Luckily, GTSAM can also compute the <strong>posterior marginals</strong>, which show the uncertainty on each recovered pose as a Gaussian density <span class="math notranslate nohighlight">\(P(T_i|Z)\)</span>, taking into account all the measurements <span class="math notranslate nohighlight">\(Z\)</span>.</p>
+<p id="index-10">We can also inspect the result graphically. Looking at the result as printed above only gets us so far, and more importantly, it only shows us the maximum a posteriori (MAP) solution, but not the uncertainty around it. Luckily, GTSAM can also compute the <strong>posterior marginals</strong>, which show the uncertainty on each recovered pose as a Gaussian density <span class="math notranslate nohighlight">\(P(T_i|Z)\)</span>, taking into account all the measurements <span class="math notranslate nohighlight">\(Z\)</span>.</p>
 <p>In code, we do this via the <code class="docutils literal notranslate"><span class="pre">gtsam.Marginals</span></code> object, and we can plot marginals with a special function <code class="docutils literal notranslate"><span class="pre">plot_pose2</span></code>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -974,12 +947,9 @@ much less than if there would be only odometry measurements. The pose
 with the highest uncertainty, <span class="math notranslate nohighlight">\(T_{4}\)</span>, is the one furthest away from
 the unary constraint <span class="math notranslate nohighlight">\(f_{0}(T_{1})\)</span>, which is the only factor tying
 the graph to a global coordinate frame.</p>
-<div class="highlight-{index}range, notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
-</div>
 </section>
 <section id="slam-with-landmarks">
-<h2><span class="section-number">6.4.9. </span>SLAM with Landmarks<a class="headerlink" href="#slam-with-landmarks" title="Link to this heading">#</a></h2>
+<span id="index-11"></span><h2><span class="section-number">6.4.9. </span>SLAM with Landmarks<a class="headerlink" href="#slam-with-landmarks" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>Take PoseSLAM, add landmarks.</p>
 </div></blockquote>
@@ -1128,7 +1098,7 @@ bearing-range measurements as well.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/9f05086547eef8ba6afdfed72e1612953837e3c76e1139d06ddcb7ecc552c184.png" src="_images/9f05086547eef8ba6afdfed72e1612953837e3c76e1139d06ddcb7ecc552c184.png" />
+<img alt="_images/1e61cf5d96ad3cb3cc97f9a18d38bc323f60fa5644181d77620fbfe74cd274a4.png" src="_images/1e61cf5d96ad3cb3cc97f9a18d38bc323f60fa5644181d77620fbfe74cd274a4.png" />
 </div>
 </div>
 </section>

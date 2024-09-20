@@ -472,7 +472,7 @@ Let us simulate some states randomly from the <span class="math notranslate nohi
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/bdf698a98bbb453251ba73a9e7e3630e2462ce7db5f3df680244064e36449e49.png" src="_images/bdf698a98bbb453251ba73a9e7e3630e2462ce7db5f3df680244064e36449e49.png" />
+<img alt="_images/15da6e4819aa0badf304cc4bdcf63bce8673a9e4563dcbbe26cd9090d57486cc.png" src="_images/15da6e4819aa0badf304cc4bdcf63bce8673a9e4563dcbbe26cd9090d57486cc.png" />
 </div>
 </div>
 <p>It is pretty clear that the slope is 100. Can our math corroborate?</p>
@@ -484,7 +484,7 @@ Let us simulate some states randomly from the <span class="math notranslate nohi
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>estimated C = 99.96842210654317 (cm/m)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>estimated C = 99.95892904947026 (cm/m)
 </pre></div>
 </div>
 </div>
@@ -498,7 +498,7 @@ Let us simulate some states randomly from the <span class="math notranslate nohi
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>estimated R=986.2406907628736 (cm^2), stddev=31.40446928007021 (cm)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>estimated R=902.7043448220181 (cm^2), stddev=30.045038605766813 (cm)
 </pre></div>
 </div>
 </div>
@@ -573,9 +573,9 @@ Above we would divide by <span class="math notranslate nohighlight">\(m N\)</spa
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>H_optimal=
-[[10.05 19.88]
- [30.   39.9 ]
- [49.95 60.11]]
+[[10.09 19.96]
+ [30.02 39.95]
+ [49.98 60.03]]
 </pre></div>
 </div>
 </div>
@@ -588,7 +588,7 @@ Above we would divide by <span class="math notranslate nohighlight">\(m N\)</spa
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>29.96605203777729
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>30.372797651483463
 </pre></div>
 </div>
 </div>
@@ -647,11 +647,11 @@ x_{k+1} = \begin{bmatrix} A &amp; B \end{bmatrix} \begin{bmatrix} x_k \\ u_k \en
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>A_optimal=
-[[ 1.   -0.01]
- [-0.    1.  ]]
+[[ 1.    0.  ]
+ [-0.    1.01]]
 B_optimal=
-[[0.98 0.02]
- [0.02 0.99]]
+[[ 1.    0.01]
+ [-0.01  1.03]]
 </pre></div>
 </div>
 </div>
@@ -664,7 +664,7 @@ B_optimal=
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2.0032747220254894
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2.0346003821599257
 </pre></div>
 </div>
 </div>
@@ -675,19 +675,13 @@ B_optimal=
 <blockquote>
 <div><p>We can estimate unknown parameters even if we don’t have access to ground truth state values.</p>
 </div></blockquote>
-<div class="highlight-{index}pair: notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
-</div>
-<p>The above assumed that we had perfect knowledge of the state <span class="math notranslate nohighlight">\(x_k\)</span> at all times. But what if we only had access to the controls <span class="math notranslate nohighlight">\(U\)</span> and measurements <span class="math notranslate nohighlight">\(Z\)</span>? A natural idea is to try and estimate the states with the techniques from Section 4.4, and then somehow use the posterior density <span class="math notranslate nohighlight">\(p(X|U,Z)\)</span> to estimate any unknown parameters <span class="math notranslate nohighlight">\(\Theta\)</span>. However, the estimation problem itself <em>uses</em> the parameters, so we have a chicken and egg problem!</p>
+<p id="index-1">The above assumed that we had perfect knowledge of the state <span class="math notranslate nohighlight">\(x_k\)</span> at all times. But what if we only had access to the controls <span class="math notranslate nohighlight">\(U\)</span> and measurements <span class="math notranslate nohighlight">\(Z\)</span>? A natural idea is to try and estimate the states with the techniques from Section 4.4, and then somehow use the posterior density <span class="math notranslate nohighlight">\(p(X|U,Z)\)</span> to estimate any unknown parameters <span class="math notranslate nohighlight">\(\Theta\)</span>. However, the estimation problem itself <em>uses</em> the parameters, so we have a chicken and egg problem!</p>
 <p>The <strong>expectation-maximization</strong> or <strong>EM algorithm</strong> is an algorithm that allows us to estimate measurement and motion models <em>even when the state is only observed from measurements</em>. We do need <em>some</em> initial estimate <span class="math notranslate nohighlight">\(\Theta^1\)</span> for the parameters <span class="math notranslate nohighlight">\(\Theta\)</span>, and the idea is to then alternate between two steps:</p>
 <ul class="simple">
 <li><p>E-step: calculate the density <span class="math notranslate nohighlight">\(p(X|U,Z;\Theta^t)\)</span> on hidden states <span class="math notranslate nohighlight">\(X\)</span>, <em>given</em> the guess <span class="math notranslate nohighlight">\(\Theta^t\)</span>.</p></li>
 <li><p>M-Step: maximize the <em>expected</em> log-likelihood with respect to <span class="math notranslate nohighlight">\(\Theta^{t+1}\)</span> under this density.</p></li>
 </ul>
-<div class="highlight-{index}Monte notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
-</div>
-<p>We do not discuss the detailed derivations here, but we do want to mention that a particularly simple variant of EM is to use a particle filter in the E-step. We can then simply “pretend” that the samples form a large dataset, and perform the above estimation procedures in the M-step. This is an instance of a so-called <strong>Monte Carlo EM</strong> algorithm, and the amazing fact is that this then actually converges to an ML estimate for the unknown parameters <span class="math notranslate nohighlight">\(\Theta\)</span>.</p>
+<p id="index-2">We do not discuss the detailed derivations here, but we do want to mention that a particularly simple variant of EM is to use a particle filter in the E-step. We can then simply “pretend” that the samples form a large dataset, and perform the above estimation procedures in the M-step. This is an instance of a so-called <strong>Monte Carlo EM</strong> algorithm, and the amazing fact is that this then actually converges to an ML estimate for the unknown parameters <span class="math notranslate nohighlight">\(\Theta\)</span>.</p>
 </section>
 </section>
 

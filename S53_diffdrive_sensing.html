@@ -419,11 +419,8 @@ document.write(`
 </div></blockquote>
 <a class="reference internal image-reference" href="_images/S53-Two-wheeled_Toy_Robot-04.jpg"><img alt="Splash image with steampunk robot sporting a stereo camera" class="align-center" src="_images/S53-Two-wheeled_Toy_Robot-04.jpg" style="width: 40%;" /></a>
 <p>In this section, we introduce cameras, which are among the most powerful sensors available to robots. We focus mainly on the geometric aspects of image formation, namely the relationships between 3D objects in the world and their 2D camera images. We will describe how to estimate the relevant parameters of the imaging process (camera calibration), and how two cameras can be used to estimate the 3D structure of the environment using two 2D images.</p>
-<div class="highlight-{index}Camera notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
-</div>
 <section id="cameras">
-<h2><span class="section-number">5.3.1. </span>Cameras<a class="headerlink" href="#cameras" title="Link to this heading">#</a></h2>
+<span id="index-1"></span><h2><span class="section-number">5.3.1. </span>Cameras<a class="headerlink" href="#cameras" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>The basic ideas behind cameras have been around for centuries.</p>
 </div></blockquote>
@@ -432,12 +429,9 @@ document.write(`
 <p>The question then is how to capture these fleeting images. Da Vinci wrote extensively about using the camera obscura for drawing, and several 17th century painters may have used it in their painting process, the most famous of them being <a class="reference external" href="https://en.wikipedia.org/wiki/Johannes_Vermeer">Johannes Vermeer</a>.
 The invention of <strong>photography</strong> (painting with light!) is usually credited to <a class="reference external" href="https://en.wikipedia.org/wiki/Nic%C3%A9phore_Ni%C3%A9pce">Niépce</a>, who used a light-sensitive material to capture the light around 1825. However, it was his partner <a class="reference external" href="https://en.wikipedia.org/wiki/Louis_Daguerre">Daguerre</a> who introduced photography to the world on a large scale via his <em>Daguerreotype</em> process, released into the public domain in 1839.</p>
 <p>Since the 1990s, <strong>digital cameras</strong> have replaced cameras based on chemical emulsions, using CCDs (charged-coupled devices) or CMOS sensors as the underlying technology. Both sensor types capture photons in an array of picture elements or <strong>pixels</strong>. We will not discuss in detail how these devices work, but in essence both sensor types count how many photons fall onto each pixel’s area over a given time period. Below we discuss the more practical matter of the format in which images come to us, and how they can be used for robot vision.</p>
-<div class="highlight-{index}lens, notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
-</div>
 </section>
 <section id="cameras-for-robot-vision">
-<h2><span class="section-number">5.3.2. </span>Cameras for Robot Vision<a class="headerlink" href="#cameras-for-robot-vision" title="Link to this heading">#</a></h2>
+<span id="index-2"></span><h2><span class="section-number">5.3.2. </span>Cameras for Robot Vision<a class="headerlink" href="#cameras-for-robot-vision" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>A camera is two sensors in one.</p>
 </div></blockquote>
@@ -452,10 +446,7 @@ its <strong>focal length</strong>, which, as we will see below, can be measured 
 and its <strong>field of view</strong> (FOV), typically specified in degrees (horizontal, vertical, or diagonal).
 The resolution is a property of the <em>sensor</em>, whereas focal length and field of view depend on the lens. We will investigate the relationships between these quantities below, where we talk about the camera
 imaging geometry.</p>
-<div class="highlight-{index}RGB notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
-</div>
-<p>In essence, we get access to images as multi-dimensional arrays. Expensive CCD cameras have three sensors, one per color channel (red, green, and blue or <strong>RGB</strong>), and hence their raw output can be represented as three arrays of numbers that represent light levels in a specific frequency band, roughly corresponding to the same frequency bands that receptors in our eye are sensitive to. However, most cameras now have a <em>single</em> CMOS sensor with a color filter on top (called a Bayer pattern), and specialized algorithms that hallucinate three color channels. Actually, most cameras do a great deal more processing to improve the color and lighting; this sometimes gets in the way of algorithms that rely on measuring light exactly, but those are rather rare. In most cases, we are content to simply think of a (color) image as a <span class="math notranslate nohighlight">\(H \times W \times 3\)</span> array of numbers, where <span class="math notranslate nohighlight">\(H\)</span> is the height of the image, and <span class="math notranslate nohighlight">\(W\)</span> the width.</p>
+<p id="index-3">In essence, we get access to images as multi-dimensional arrays. Expensive CCD cameras have three sensors, one per color channel (red, green, and blue or <strong>RGB</strong>), and hence their raw output can be represented as three arrays of numbers that represent light levels in a specific frequency band, roughly corresponding to the same frequency bands that receptors in our eye are sensitive to. However, most cameras now have a <em>single</em> CMOS sensor with a color filter on top (called a Bayer pattern), and specialized algorithms that hallucinate three color channels. Actually, most cameras do a great deal more processing to improve the color and lighting; this sometimes gets in the way of algorithms that rely on measuring light exactly, but those are rather rare. In most cases, we are content to simply think of a (color) image as a <span class="math notranslate nohighlight">\(H \times W \times 3\)</span> array of numbers, where <span class="math notranslate nohighlight">\(H\)</span> is the height of the image, and <span class="math notranslate nohighlight">\(W\)</span> the width.</p>
 <p>As an example, below we show an image on the left, taken by the differential drive robot on the right:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -495,12 +486,9 @@ image_data.shape = (384, 512, 3)
 </div>
 <p>We see that the image width and height are <span class="math notranslate nohighlight">\(512\)</span> and <span class="math notranslate nohighlight">\(384\)</span>, respectively. But when we access the array with numpy, the first (slowest changing) dimension is the <em>height</em>, followed by the width and then the color dimension. Hence, the numpy array has to be indexed using the <span class="math notranslate nohighlight">\((\text{row},\text{column})\)</span> convention, after which you get the RGB value in the array, as shown in the last line of code above.</p>
 <p>It is customary to use variables <span class="math notranslate nohighlight">\((i,j)\)</span> or <span class="math notranslate nohighlight">\((r,c)\)</span> to index pixels, where the latter is slightly preferred as it emphasizes the <em>row</em> and <em>column</em> semantics of these <em>integer</em> coordinates.</p>
-<div class="highlight-{index}pinhole notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
-</div>
 </section>
 <section id="camera-imaging-geometry">
-<h2><span class="section-number">5.3.3. </span>Camera Imaging Geometry<a class="headerlink" href="#camera-imaging-geometry" title="Link to this heading">#</a></h2>
+<span id="index-4"></span><h2><span class="section-number">5.3.3. </span>Camera Imaging Geometry<a class="headerlink" href="#camera-imaging-geometry" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>Points in the 3D environment project to points in a 2D image.</p>
 </div></blockquote>
@@ -569,10 +557,7 @@ Z_V = F
 <img alt="_images/a8323241096fdbf692f03e692a1a38dac55144e9dde1ca96ae7a7e194dc92a63.png" src="_images/a8323241096fdbf692f03e692a1a38dac55144e9dde1ca96ae7a7e194dc92a63.png" />
 </div>
 </div>
-<div class="highlight-{index}intrinsic notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
-</div>
-<p>The above has the disadvantage that we still have to take into account the focal length <span class="math notranslate nohighlight">\(F\)</span> when doing the projection. Dividing by the focal length yields the fundamental <em>pinhole projection equation</em>:</p>
+<p id="index-5">The above has the disadvantage that we still have to take into account the focal length <span class="math notranslate nohighlight">\(F\)</span> when doing the projection. Dividing by the focal length yields the fundamental <em>pinhole projection equation</em>:</p>
 <div class="math notranslate nohighlight">
 \[
 x = \frac{X}{Z} ~~~~ y = \frac{Y}{Z}
@@ -581,12 +566,9 @@ x = \frac{X}{Z} ~~~~ y = \frac{Y}{Z}
 Note that the image origin at <span class="math notranslate nohighlight">\((x,y)=(0,0)\)</span> is the location where the <em>optical axis</em> (the blue Z-axis above) pierces the image plane.
 This point is commonly refered to as the <strong>principal point</strong>.
 The intrinsic coordinates are in essence measuring a direction in space, but parameterized by a location in the virtual image plane rather than two angles.</p>
-<div class="highlight-{index}sensor notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
-</div>
 </section>
 <section id="camera-calibration">
-<h2><span class="section-number">5.3.4. </span>Camera Calibration<a class="headerlink" href="#camera-calibration" title="Link to this heading">#</a></h2>
+<span id="index-6"></span><h2><span class="section-number">5.3.4. </span>Camera Calibration<a class="headerlink" href="#camera-calibration" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>From intrinsic to sensor coordinates.</p>
 </div></blockquote>
@@ -605,10 +587,7 @@ To translate from intrinsic coordinates to pixel coordinates, we introduce real-
 <li><p>the middle of pixel <span class="math notranslate nohighlight">\((r, c)=(0, 0)\)</span> has sensor coordinates <span class="math notranslate nohighlight">\((u, v)=(0.5, 0.5)\)</span>;</p></li>
 <li><p>the middle of pixel <span class="math notranslate nohighlight">\((r, c)=(H-1, W-1)\)</span> has sensor coordinates <span class="math notranslate nohighlight">\((u, v)=(W-0.5, H-0.5)\)</span>.</p></li>
 </ul>
-<div class="highlight-{index}camera notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
-</div>
-<p>The simplest <strong>camera calibration model</strong> is just a linear mapping, which is most appropriate for lenses with a small field of view. For this we need four parameters <span class="math notranslate nohighlight">\(\alpha\)</span>, <span class="math notranslate nohighlight">\(\beta\)</span>, <span class="math notranslate nohighlight">\(u_0\)</span>, and <span class="math notranslate nohighlight">\(v_0\)</span>, to convert from intrinsic coordinates <span class="math notranslate nohighlight">\((x,y)\)</span> to sensor coordinates <span class="math notranslate nohighlight">\((u,v)\)</span>:</p>
+<p id="index-7">The simplest <strong>camera calibration model</strong> is just a linear mapping, which is most appropriate for lenses with a small field of view. For this we need four parameters <span class="math notranslate nohighlight">\(\alpha\)</span>, <span class="math notranslate nohighlight">\(\beta\)</span>, <span class="math notranslate nohighlight">\(u_0\)</span>, and <span class="math notranslate nohighlight">\(v_0\)</span>, to convert from intrinsic coordinates <span class="math notranslate nohighlight">\((x,y)\)</span> to sensor coordinates <span class="math notranslate nohighlight">\((u,v)\)</span>:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 \begin{aligned}
@@ -636,12 +615,9 @@ To compute <span class="math notranslate nohighlight">\(\alpha\)</span> and <spa
 <p>are sensor-specific constants that indicated the number of pixels per unit of length.</p>
 <p>Whenever <span class="math notranslate nohighlight">\(k=l\)</span>, the sensor has <em>square pixels</em>, and we can just use one proportionality constant, <span class="math notranslate nohighlight">\(f=\alpha=\beta\)</span>.
 In this case, <span class="math notranslate nohighlight">\(f\)</span> again denotes the <em>focal length</em>, but this time, expressed in pixels. This is a slight abuse of terminology, as <span class="math notranslate nohighlight">\(f\)</span> is a property of both the lens <em>and</em> the image sensor plane, but it is in widespread and we will adopt it here as well.</p>
-<div class="highlight-{index}pinhole notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
-</div>
 </section>
 <section id="pinhole-projection-equations">
-<h2><span class="section-number">5.3.5. </span>Pinhole Projection Equations<a class="headerlink" href="#pinhole-projection-equations" title="Link to this heading">#</a></h2>
+<span id="index-8"></span><h2><span class="section-number">5.3.5. </span>Pinhole Projection Equations<a class="headerlink" href="#pinhole-projection-equations" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>From 3D to pixel coordinates.</p>
 </div></blockquote>
@@ -718,12 +694,9 @@ Also, the above was a “calibration” example where we go from pixel coordinat
 </div>
 </div>
 </div>
-<div class="highlight-{index}pair: notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
-</div>
 </section>
 <section id="camera-field-of-view">
-<h2><span class="section-number">5.3.7. </span>Camera Field of View<a class="headerlink" href="#camera-field-of-view" title="Link to this heading">#</a></h2>
+<span id="index-9"></span><h2><span class="section-number">5.3.7. </span>Camera Field of View<a class="headerlink" href="#camera-field-of-view" title="Link to this heading">#</a></h2>
 <p>The last concept we need to define the camera imaging geometry
 is the camera’s <strong>field of view</strong> or <strong>FOV</strong>.
 Because the <em>left-most</em> ray we can see has <span class="math notranslate nohighlight">\(u=0\)</span>, it corresponds to <span class="math notranslate nohighlight">\(x=-u_0/f\approx-W/2f\)</span>.
@@ -786,10 +759,7 @@ The horizontal FOV can then be calculated by</p>
 <blockquote>
 <div><p>Given two cameras, we can calculate depth.</p>
 </div></blockquote>
-<div class="highlight-{index}stereo notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
-</div>
-<p>When using two cameras, we can triangulate a feature that is seen in both cameras to calculate its location in space.
+<p id="index-10">When using two cameras, we can triangulate a feature that is seen in both cameras to calculate its location in space.
 Given a projection <span class="math notranslate nohighlight">\(p=(u,v)\)</span> of a point <span class="math notranslate nohighlight">\(P=(X,Y,Z)\)</span> in a single camera we can only determine the <em>ray</em> on which the point <span class="math notranslate nohighlight">\(P\)</span> must lie.
 However, if we see <em>two</em> projections of the same feature in two cameras, placed side by side, we can <em>triangulate</em> the location of <span class="math notranslate nohighlight">\(P\)</span>.
 In particular, let us name the cameras “Left” and “Right”, abbreviated as “L” and “R”, and let the two projections be <span class="math notranslate nohighlight">\(p_L=(u_L,v_L)\)</span> and <span class="math notranslate nohighlight">\(p_R=(u_R,v_R)\)</span>. How could we recover the coordinates <span class="math notranslate nohighlight">\((X,Y,Z)\)</span> in, say, the <em>left</em> camera coordinate frame?</p>
@@ -802,10 +772,7 @@ u_L &amp;= u_0 + f \frac{X}{Z}, ~~~~~ &amp;v_L = v_0 + f \frac{Y}{Z} \\
 u_R &amp;= u_0 + f \frac{X-B}{Z}, ~~~~~ &amp;v_R = v_0 + f \frac{Y}{Z}
 \end{aligned}
 \end{split}\]</div>
-<div class="highlight-{index}disparity, notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
-</div>
-<p>Two interesting things to note: (a) <span class="math notranslate nohighlight">\(u_L\)</span> and <span class="math notranslate nohighlight">\(u_R\)</span> differ only because the <span class="math notranslate nohighlight">\(X\)</span> coordinate of the point <span class="math notranslate nohighlight">\(P\)</span>, measured in the right camera, is <span class="math notranslate nohighlight">\(B\)</span> less than its value in the left camera.
+<p id="index-11">Two interesting things to note: (a) <span class="math notranslate nohighlight">\(u_L\)</span> and <span class="math notranslate nohighlight">\(u_R\)</span> differ only because the <span class="math notranslate nohighlight">\(X\)</span> coordinate of the point <span class="math notranslate nohighlight">\(P\)</span>, measured in the right camera, is <span class="math notranslate nohighlight">\(B\)</span> less than its value in the left camera.
 and (b) <span class="math notranslate nohighlight">\(v_L\)</span> and <span class="math notranslate nohighlight">\(v_R\)</span> have the same value: <em>corresponding</em> points in a stereo pair lie on the same scanline in the images. We can use the first fact to calculate the <em>unknown depth</em> <span class="math notranslate nohighlight">\(Z\)</span>, by defining the <strong>disparity</strong> <span class="math notranslate nohighlight">\(d\)</span> as the difference of <span class="math notranslate nohighlight">\(u_L\)</span> and <span class="math notranslate nohighlight">\(u_R\)</span>,</p>
 <div class="math notranslate nohighlight">
 \[
