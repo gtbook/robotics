@@ -1,2 +1,3 @@
+# Index
 ```{show-index} Index
 ```
