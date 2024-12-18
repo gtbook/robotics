@@ -16,17 +16,19 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-
-  
-  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
@@ -37,10 +39,11 @@
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="_static/style.css?v=51e3b7cf" />
   
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="_static/documentation_options.js?v=c73c0f3e"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
@@ -68,6 +71,7 @@
     <link rel="prev" title="5.6. Deep Learning" href="S56_diffdrive_learning.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -83,19 +87,8 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="search.html"
       method="get">
@@ -103,7 +96,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search..."
          aria-label="Search..."
          autocomplete="off"
@@ -111,8 +103,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -128,7 +120,8 @@
       
       
       
-      <div class="bd-sidebar-primary bd-sidebar">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -158,21 +151,17 @@
     
     
     <img src="_static/logo.png" class="logo__image only-light" alt="Introduction to Robotics and Perception - Home"/>
-    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Introduction to Robotics and Perception - Home"/>`);</script>
+    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Introduction to Robotics and Perception - Home"/>
   
   
 </a></div>
         <div class="sidebar-primary-item">
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script></div>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         <ul class="current nav bd-sidenav">
@@ -252,9 +241,14 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -351,24 +345,16 @@
 
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-  </button>
-`);
-</script>
+</button>
 <button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="fa-solid fa-list"></span>
 </button>
@@ -438,20 +424,20 @@ robot’s configuration.</p>
 <p>The motion model for the differential drive robot relates the angular velocities of the two
 actuated wheels to the linear and angular velocity of the body-attached coordinate frame.
 The <em>forward velocity kinematics</em> in the body-attached frame are given by</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-7a6d119a-24df-49ab-ab25-b9f193830fbc">
+<span class="eqno">(5.58)<a class="headerlink" href="#equation-7a6d119a-24df-49ab-ab25-b9f193830fbc" title="Permalink to this equation">#</a></span>\[\begin{equation}
 v_x = \frac{r}{2} (\dot{\phi}_R + \dot{\phi}_L)
 ~~~~~~~~
 \omega = \frac{r}{L} (\dot{\phi}_R - \dot{\phi}_L)
-\]</div>
+\end{equation}\]</div>
 <p>which can be expressed with respect to the world coordinate frame, as a function
 of the configuration of the robot, as</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
+<div class="amsmath math notranslate nohighlight" id="equation-9de377c8-b8c8-4867-9ff8-87089e50982e">
+<span class="eqno">(5.59)<a class="headerlink" href="#equation-9de377c8-b8c8-4867-9ff8-87089e50982e" title="Permalink to this equation">#</a></span>\[\begin{equation}
 v^{\mathrm{world}}=
 \begin{bmatrix} v_x \cos \theta \\ v_x \sin \theta \\ \dot{\theta} \end{bmatrix}
 =\begin{bmatrix} \frac{r}{2} (\dot{\phi}_R + \dot{\phi}_L) \cos\theta  \\  \frac{r}{2} (\dot{\phi}_R + \dot{\phi}_L) \sin\theta  \\ \frac{r}{L} (\dot{\phi}_R - \dot{\phi}_L)\end{bmatrix}
-\end{split}\]</div>
+\end{equation}\]</div>
 <p>Using the differential kinematic equations, we can easily calculate either (a) the linear and angular velocity that will result from applied
 wheel angular velocities, or (b) the wheel angular velocities that are required to achieve the desired angular and linear
 velocities of the robot.</p>
@@ -466,21 +452,21 @@ through which each light ray passes. The pinhole is located at the lens focal ce
 at distance <span class="math notranslate nohighlight">\(F\)</span> in front of the image plane. For a 3D point
 with coordinates <span class="math notranslate nohighlight">\((X,Y,Z)\)</span>, the corresponding image plane coordinates are given by
 the perspective projection equations:</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-b4ef2f41-0b75-4e98-8fba-87cd80ab0c5a">
+<span class="eqno">(5.60)<a class="headerlink" href="#equation-b4ef2f41-0b75-4e98-8fba-87cd80ab0c5a" title="Permalink to this equation">#</a></span>\[\begin{equation}
 X_I = - F \frac{X}{Z} ~~~~~~
 Y_I = - F \frac{Y}{Z} 
-\]</div>
+\end{equation}\]</div>
 <p>In the discretization stage, image plane coordinates are mapped to pixel coordinates by
 incorporating the pixel size and the location of the image center (also called the <em>principal point</em>),
 whose image coordinates are given as <span class="math notranslate nohighlight">\((u_0, v_0)\)</span>.
 For the case of square pixels, such that there are <span class="math notranslate nohighlight">\(k\)</span> pixels per unit length, we combine
 pixel size with focal length into a single constant, <span class="math notranslate nohighlight">\(f = Fk\)</span>,
 and obtain the projection equations for pixel coordinates <span class="math notranslate nohighlight">\((r,c)\)</span> as</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-27028c1a-3921-40dc-9194-f281a4cd8773">
+<span class="eqno">(5.61)<a class="headerlink" href="#equation-27028c1a-3921-40dc-9194-f281a4cd8773" title="Permalink to this equation">#</a></span>\[\begin{equation}
 r = \left\lfloor v_0 + f \frac{Y}{Z} \right\rfloor ~~~~~~ c = \left\lfloor u_0 + f \frac{X}{Z} \right\rfloor
-\]</div>
+\end{equation}\]</div>
 <p>These equations describe the <em>forward</em> imaging geometry, i.e., how points in the world project onto the imaging sensor.
 In robotics, we often need to solve the inverse problem: computing the 3D coordinates of a point in the world
 that corresponds to a certain pixel in the image.
@@ -490,10 +476,10 @@ it is easily solved using a stereo pair of cameras, provided (a) the two cameras
 In the simplest stereo rig, the geometric relationship is restricted to a pure translation along the <span class="math notranslate nohighlight">\(x\)</span>-axis of the image
 frame.
 In this case, the <span class="math notranslate nohighlight">\(Z\)</span> coordinate of an image point can be computed using the <em>fundamental stereo equation</em>:</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-460432c4-e4ec-4193-8728-8faf062d6c75">
+<span class="eqno">(5.62)<a class="headerlink" href="#equation-460432c4-e4ec-4193-8728-8faf062d6c75" title="Permalink to this equation">#</a></span>\[\begin{equation}
 Z = B \frac{f}{d}.
-\]</div>
+\end{equation}\]</div>
 <p>in which <span class="math notranslate nohighlight">\(B\)</span> is the distance between the origins of the two camera coordinate frames,
 and <span class="math notranslate nohighlight">\(d\)</span> is the disparity for the projected point in left and right images.</p>
 </section>
@@ -679,7 +665,8 @@ and
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -739,8 +726,8 @@ By Frank Dellaert and Seth Hutchinson
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>

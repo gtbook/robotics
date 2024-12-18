@@ -16,17 +16,19 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-
-  
-  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
@@ -37,10 +39,11 @@
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="_static/style.css?v=51e3b7cf" />
   
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="_static/documentation_options.js?v=c73c0f3e"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
@@ -68,6 +71,7 @@
     <link rel="prev" title="3. A Robot Vacuum Cleaner" href="S30_vacuum_intro.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -83,19 +87,8 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="search.html"
       method="get">
@@ -103,7 +96,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search..."
          aria-label="Search..."
          autocomplete="off"
@@ -111,8 +103,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -128,7 +120,8 @@
       
       
       
-      <div class="bd-sidebar-primary bd-sidebar">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -158,21 +151,17 @@
     
     
     <img src="_static/logo.png" class="logo__image only-light" alt="Introduction to Robotics and Perception - Home"/>
-    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Introduction to Robotics and Perception - Home"/>`);</script>
+    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Introduction to Robotics and Perception - Home"/>
   
   
 </a></div>
         <div class="sidebar-primary-item">
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script></div>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         <ul class="current nav bd-sidenav">
@@ -252,9 +241,14 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -351,24 +345,16 @@
 
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-  </button>
-`);
-</script>
+</button>
 <button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="fa-solid fa-list"></span>
 </button>
@@ -393,7 +379,9 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-the-robot-s-state">3.1.1. Defining the Robot’s State</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gtsam-101">3.1.2. GTSAM 101</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-state-space-for-our-vacuum-cleaning-robot">3.1.2. The State Space for our Vacuum Cleaning Robot</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bayesian-vs-frequentist-interpretations-or-probability">3.1.3. Bayesian vs. Frequentist Interpretations or Probability</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gtsam-101">3.1.4. GTSAM 101</a></li>
 </ul>
             </nav>
         </div>
@@ -444,7 +432,7 @@ below, in Figure <a href="#fig:House" data-reference-type="ref" data-reference="
 <figcaption>The floor plan of a house in which our hypothetical vacuum cleaning robot will operate.</figcaption>
 </figure>
 <p>As we did for the trash sorting robot, we define the state to be a discrete random variable with a prior probability distribution.</p>
-<p><code class="docutils literal notranslate"><span class="pre">{index}</span> <span class="pre">discrete</span> <span class="pre">time</span> <span class="pre">systems</span></code>In this chapter, we will consider the case of <strong>discrete time systems</strong>.
+<p id="index-1">In this chapter, we will consider the case of <strong>discrete time systems</strong>.
 In particular, rather than considering the time as a continuous variable, we will consider the system evolution
 at a set of discrete moments in time, <span class="math notranslate nohighlight">\(t \in \{ t_1, t_2 \dots \}\)</span>.
 Hence, we can refer to time using the index <span class="math notranslate nohighlight">\(k \in \{ 1, 2 \dots \}\)</span>, knowing that each <span class="math notranslate nohighlight">\(k\)</span> corresponds to a known time stamp <span class="math notranslate nohighlight">\(t_k\)</span>, and we denote the random state at time <span class="math notranslate nohighlight">\(t_k\)</span> by <span class="math notranslate nohighlight">\(X_k\)</span>.
@@ -454,7 +442,7 @@ rather than evolving continuously as time passes (e.g., the position of a robot 
 While the physical vacuum cleaning robot rolls along the floor to reach its destination,
 our representation of state includes only the room in which the robot is currently located.
 Therefore, the only interesting moments in time are when the robot traverses from one room to the next, or, as we will see later in this chapter, when the robot executes an action or takes a sensor measurement.</p>
-<!-- The concept of state is an abstraction, allowing robots to reason about what is happening to them and their environment as they act. This does not necessarily mean that we, as robot programmers, have no deeper knowledge of what is going on: we do know that a vacuum cleaning robot operates in a two dimensional space, typically a single floor in a domestic residence. However, we might have programmed in "actions" that abstract to the notion of moving from room to room, and hence may only be interested in knowing which room the robot is in for the purposes of triggering those actions. Other actions that are useful but will not discuss further in this section might involve vacuum cleaning the current room, terminating when it is done or when the robot is stuck. Rather, we will concentrate below on navigation actions, moving from room to room, knowing that it might be only a small part of the repertoire that a true vacuum cleaning robot needs to be useful. --><p><code class="docutils literal notranslate"><span class="pre">{index}</span> <span class="pre">initial</span> <span class="pre">state</span></code>Since the robot will execute a sequence of actions over time, our prior distribution <span class="math notranslate nohighlight">\(P(X_1)\)</span> will only encode knowledge about the <strong>initial state</strong> <span class="math notranslate nohighlight">\(X_1\)</span> of the robot, and the probability distribution for future states must be determined using
+<!-- The concept of state is an abstraction, allowing robots to reason about what is happening to them and their environment as they act. This does not necessarily mean that we, as robot programmers, have no deeper knowledge of what is going on: we do know that a vacuum cleaning robot operates in a two dimensional space, typically a single floor in a domestic residence. However, we might have programmed in "actions" that abstract to the notion of moving from room to room, and hence may only be interested in knowing which room the robot is in for the purposes of triggering those actions. Other actions that are useful but will not discuss further in this section might involve vacuum cleaning the current room, terminating when it is done or when the robot is stuck. Rather, we will concentrate below on navigation actions, moving from room to room, knowing that it might be only a small part of the repertoire that a true vacuum cleaning robot needs to be useful. --><p id="index-2">Since the robot will execute a sequence of actions over time, our prior distribution <span class="math notranslate nohighlight">\(P(X_1)\)</span> will only encode knowledge about the <strong>initial state</strong> <span class="math notranslate nohighlight">\(X_1\)</span> of the robot, and the probability distribution for future states must be determined using
 probabilistic inference.
 In this chapter, we assume that the robot <em>always</em> starts out in the office, where its charging station is located,
 i.e., <span class="math notranslate nohighlight">\(P(X_1 = \text{Office}) = 1.\)</span></p>
@@ -487,7 +475,9 @@ i.e., <span class="math notranslate nohighlight">\(P(X_1 = \text{Office}) = 1.\)
 </div></div></div>
 </div>
 <p>We use this discrete distribution to convey our knowledge that the robot <em>always</em> starts out in the office.</p>
-<p><code class="docutils literal notranslate"><span class="pre">{index}</span> <span class="pre">state</span> <span class="pre">space</span></code>## The State Space for our Vacuum Cleaning Robot</p>
+</section>
+<section id="the-state-space-for-our-vacuum-cleaning-robot">
+<span id="index-3"></span><h2><span class="section-number">3.1.2. </span>The State Space for our Vacuum Cleaning Robot<a class="headerlink" href="#the-state-space-for-our-vacuum-cleaning-robot" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>Connected rooms, un-directionally.</p>
 </div></blockquote>
@@ -519,7 +509,9 @@ Therefore, we represent the state space by an <em>undirected</em> graph.
 Taken together, the collection of states along with connectivity information is referred to as the <strong>state space</strong>,
 which in this can be represented by the connectivity graph shown in
 Figure <a href="#fig:House-ss" data-reference-type="ref" data-reference="fig:House-ss">3.2</a>.</p>
-<p><code class="docutils literal notranslate"><span class="pre">{index}</span> <span class="pre">Bayesian</span> <span class="pre">view,</span> <span class="pre">frequentist</span> <span class="pre">view</span></code>## Bayesian vs. Frequentist Interpretations or Probability</p>
+</section>
+<section id="bayesian-vs-frequentist-interpretations-or-probability">
+<span id="index-4"></span><h2><span class="section-number">3.1.3. </span>Bayesian vs. Frequentist Interpretations or Probability<a class="headerlink" href="#bayesian-vs-frequentist-interpretations-or-probability" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>Believing with probabilities.</p>
 </div></blockquote>
@@ -548,7 +540,7 @@ views are not so different after all.</p>
 <p>In this chapter we will get comfortable with the Bayesian view, and learn how to calculate with them. This will allow use to fuse knowledge from different sources, e.g., how uncertain actions and noisy measurements can nevertheless yield enough information about our current state to make reasonable decisions.</p>
 </section>
 <section id="gtsam-101">
-<h2><span class="section-number">3.1.2. </span>GTSAM 101<a class="headerlink" href="#gtsam-101" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">3.1.4. </span>GTSAM 101<a class="headerlink" href="#gtsam-101" title="Link to this heading">#</a></h2>
 <p>The code above should feel familiar, but we used a new <code class="docutils literal notranslate"><span class="pre">Variables</span></code> method called <code class="docutils literal notranslate"><span class="pre">discrete_series</span></code> to define a <em>time series</em> of state variables. The signature of this method is</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">discrete_series</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">character</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">indices</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
                     <span class="n">domain</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">DiscreteKey</span><span class="p">]:</span>
@@ -670,7 +662,8 @@ views are not so different after all.</p>
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -680,7 +673,9 @@ views are not so different after all.</p>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-the-robot-s-state">3.1.1. Defining the Robot’s State</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gtsam-101">3.1.2. GTSAM 101</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-state-space-for-our-vacuum-cleaning-robot">3.1.2. The State Space for our Vacuum Cleaning Robot</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bayesian-vs-frequentist-interpretations-or-probability">3.1.3. Bayesian vs. Frequentist Interpretations or Probability</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gtsam-101">3.1.4. GTSAM 101</a></li>
 </ul>
   </nav></div>
 
@@ -729,8 +724,8 @@ By Frank Dellaert and Seth Hutchinson
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>

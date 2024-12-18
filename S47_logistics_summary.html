@@ -16,17 +16,19 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-
-  
-  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
@@ -37,10 +39,11 @@
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="_static/style.css?v=51e3b7cf" />
   
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="_static/documentation_options.js?v=c73c0f3e"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
@@ -68,6 +71,7 @@
     <link rel="prev" title="4.6. Some System Identification" href="S46_logistics_learning.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -83,19 +87,8 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="search.html"
       method="get">
@@ -103,7 +96,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search..."
          aria-label="Search..."
          autocomplete="off"
@@ -111,8 +103,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -128,7 +120,8 @@
       
       
       
-      <div class="bd-sidebar-primary bd-sidebar">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -158,21 +151,17 @@
     
     
     <img src="_static/logo.png" class="logo__image only-light" alt="Introduction to Robotics and Perception - Home"/>
-    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Introduction to Robotics and Perception - Home"/>`);</script>
+    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Introduction to Robotics and Perception - Home"/>
   
   
 </a></div>
         <div class="sidebar-primary-item">
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script></div>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         <ul class="current nav bd-sidenav">
@@ -252,9 +241,14 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -351,24 +345,16 @@
 
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-  </button>
-`);
-</script>
+</button>
 <button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="fa-solid fa-list"></span>
 </button>
@@ -430,17 +416,19 @@ real-world systems can be accurately approximated using Gaussian distributions.<
 <p>To model uncertainty in the motion model, we introduced the conditional Gaussian pdf.
 In particular, we assumed that noise in the motion model could be modeled as additive Gaussian noise,
 so that the state at time <span class="math notranslate nohighlight">\(k+1\)</span> is defined as</p>
-<div class="math notranslate nohighlight">
-\[x_{k+1} = x_k + u_k + w_k\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-6c715f6b-60de-40b5-9757-7a62a1e7bd3c">
+<span class="eqno">(4.67)<a class="headerlink" href="#equation-6c715f6b-60de-40b5-9757-7a62a1e7bd3c" title="Permalink to this equation">#</a></span>\[\begin{equation}
+x_{k+1} = x_k + u_k + w_k
+\end{equation}\]</div>
 <p>in which <span class="math notranslate nohighlight">\(x_k\)</span> is the state at time <span class="math notranslate nohighlight">\(k\)</span>, <span class="math notranslate nohighlight">\(w_k\)</span> is the random disturbance,
 and <span class="math notranslate nohighlight">\(u_k\)</span> is the commanded motion at time <span class="math notranslate nohighlight">\(k\)</span>.
 Under our Gaussian assumption that <span class="math notranslate nohighlight">\(w_k \sim N(\mu,\Sigma)\)</span>,
 the probability distribution for the state at time <span class="math notranslate nohighlight">\(k+1\)</span> is given by
 the conditional Gaussian pdf</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-bffd6bf7-ba8b-4223-859d-2c60fb8e0cc0">
+<span class="eqno">(4.68)<a class="headerlink" href="#equation-bffd6bf7-ba8b-4223-859d-2c60fb8e0cc0" title="Permalink to this equation">#</a></span>\[\begin{equation}
 p(x_{k+1}|x_{k}, u_k) = \mathcal{N}(x_{k_1}; x_{k} +  u_k, \Sigma)
-\]</div>
+\end{equation}\]</div>
 <p>Thus, by assuming Gaussian noise in the motion model, we arrive to a kind of
 “Gaussian in/Gaussian out” formulation, which can greatly simplify certain inference
 problems (e.g., by using the Kalman filter).</p>
@@ -448,19 +436,21 @@ problems (e.g., by using the Kalman filter).</p>
 For example, if the ideal (i.e., noise-free) sensor reading at time <span class="math notranslate nohighlight">\(k\)</span>
 is defined by a function <span class="math notranslate nohighlight">\(h(x_k)\)</span>, we can model the sensor
 output by the random variable</p>
-<div class="math notranslate nohighlight">
-\[z_k = h(x_k) + w_k\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-02f4c49d-8a5b-4818-b5b8-7ff3ad668397">
+<span class="eqno">(4.69)<a class="headerlink" href="#equation-02f4c49d-8a5b-4818-b5b8-7ff3ad668397" title="Permalink to this equation">#</a></span>\[\begin{equation}
+z_k = h(x_k) + w_k
+\end{equation}\]</div>
 <p>in which <span class="math notranslate nohighlight">\(w_k\)</span> is the noise term (unrelated to the noise in our motion model).
 If <span class="math notranslate nohighlight">\(w_k\)</span> is a Gaussian random variable,
 the conditional distribution for sensor measurement given the value of <span class="math notranslate nohighlight">\(h(x_k)\)</span>
 is given by</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
+<div class="amsmath math notranslate nohighlight" id="equation-d094ac09-1200-4eaf-a3f7-9a17e5bd49bc">
+<span class="eqno">(4.70)<a class="headerlink" href="#equation-d094ac09-1200-4eaf-a3f7-9a17e5bd49bc" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{aligned}
 p(z_k|x_k) &amp;= \mathcal{N}(z_k;\mu=h(x_k), \sigma^2) \\
 &amp;= \frac{1}{\sqrt{2\pi\sigma^2}} \exp\{-\frac{1}{2\sigma^2}(z_k-h(x_k))^2\}
 \end{aligned}
-\end{split}\]</div>
+\end{equation}\]</div>
 <p>This approach generalizes nicely to the case of multi-dimensional sensors, as we saw
 for the case of GPS-like sensors with Gaussian noise.</p>
 <p>There are, of course, many problems for which the uncertainty cannot be adequately modeled using
@@ -504,8 +494,8 @@ sensor data while executing motion commands under uncertain conditions.
 At each time step, the Bayesian filter can be understood as a two-stage process:
 in the first phase, the motion model is  used to calculate a <em>predictive distribution</em>,
 and in the second phase sensor data is used to upgrade the predictive distribution to the <em>filtering distribution</em>.</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
+<div class="amsmath math notranslate nohighlight" id="equation-0a6520f2-4e28-4513-a1d8-0c9122e3d5ee">
+<span class="eqno">(4.71)<a class="headerlink" href="#equation-0a6520f2-4e28-4513-a1d8-0c9122e3d5ee" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{align*}
 \mathbf{Prediction ~ Phase:} &amp;~~~
 P(X_{k}|\mathcal{Z}^{k-1},\mathcal{U}^{k})=\sum_{x_{k-1}}P(X_{k}|x_{k-1},u_{k-1})P(x_{k-1}|\mathcal{Z}^{k-1},\mathcal{U}^{k-1}) \\
@@ -513,7 +503,7 @@ P(X_{k}|\mathcal{Z}^{k-1},\mathcal{U}^{k})=\sum_{x_{k-1}}P(X_{k}|x_{k-1},u_{k-1}
 P(X_{k}| \mathcal{Z}^{k},\mathcal{U}^{k})
 \propto L(X_{k};z_{k})P(X_{k}|\mathcal{Z}^{k-1},\mathcal{U}^{k})
 \end{align*}
-\end{split}\]</div>
+\end{equation}\]</div>
 <p>These equations are obtained by applying the Markov property to effectively
 decouple past action and sensing histories via the marginalizing summation in the prediction phase.</p>
 <p>While elegant and compact, in the general case (i.e., for arbitrary probability distributions), direct, exact
@@ -533,16 +523,16 @@ and this can significantly improve the run-time performance of the approach.</p>
 hence the name <em>particle filtering</em>.
 Instead of evaluating the prediction equation in the Bayes filter, particle filtering
 generates a set of samples from the predictive distribution</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-2fdce2f4-c890-48ab-8e15-af2bacbddbf8">
+<span class="eqno">(4.72)<a class="headerlink" href="#equation-2fdce2f4-c890-48ab-8e15-af2bacbddbf8" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \{ x_k^{(t)} \}_{t = 1 \dots S} \sim \sum_s w_{k-1}^{(s)} P(x_{k}|x_{k-1}^{(s)},u_{k-1})P(x_{k-1}^{(s)}|\mathcal{Z}^{k-1},\mathcal{U}^{k-1}).
-\]</div>
+\end{equation}\]</div>
 <p>and then weights these samples according to the measurement likelihood, yielding an approximation to
 the filtering distribution:</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-b746e84c-d027-4b07-8967-3c167e3288b6">
+<span class="eqno">(4.73)<a class="headerlink" href="#equation-b746e84c-d027-4b07-8967-3c167e3288b6" title="Permalink to this equation">#</a></span>\[\begin{equation}
 p(X_{k}|\mathcal{Z}^{k},\mathcal{U}^{k}) \approx \{(x_k^{(t)}, L(x_k^{(t)};z_{k}))\}_{t = 1 \dots S}.
-\]</div>
+\end{equation}\]</div>
 <p>In contrast to Markov and Monte Carlo localization, The Kalman filter is an exact method that can
 be applied in the special case of linear motion and measurement models under Gaussian uncertainty.
 While these conditions may seem to be severely limiting, they are satisfied (or approximately satisfied)
@@ -570,28 +560,28 @@ In this chapter, we developed methods to estimate these parameters for the case 
 for a linear, scalar measurement model,
 <span class="math notranslate nohighlight">\(z_k = h(x_k) + n_k = C x_k + n_k\)</span>.
 The result was what we might have expected based on elementary statistics:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
+<div class="amsmath math notranslate nohighlight" id="equation-69de34cf-7d22-4f64-ac9f-fc128749f741">
+<span class="eqno">(4.74)<a class="headerlink" href="#equation-69de34cf-7d22-4f64-ac9f-fc128749f741" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{align*}
 \hat{\mu} &amp;= \frac{1}{N} \sum_i z_i \\
 \hat{C} &amp;= \frac{\sum_k x_k z_k}{\sum_k x_k^2}\\
 \widehat{\sigma^2} &amp;= \frac{1}{N-1} \sum_k (\hat{C} x_k - z_k)^2
 \end{align*}
-\end{split}\]</div>
+\end{equation}\]</div>
 <p>We then extended these ideas to develop a general method for multivariate linear regression
 in the case of a linear measurement model with zero-mean Gaussian noise,
 and vector-valued measurements <span class="math notranslate nohighlight">\(z_k \in \mathbb{R}^m\)</span>.
 In this case, we represent the measurement model as <span class="math notranslate nohighlight">\(z_k = H x_k + n_k\)</span>, and
 we assume that <span class="math notranslate nohighlight">\(n_k\)</span> is zero-mean Gaussian with covariance matrix <span class="math notranslate nohighlight">\(R = \sigma^2 I\)</span>.
 the estimates for <span class="math notranslate nohighlight">\(H\)</span> and <span class="math notranslate nohighlight">\(\sigma^2\)</span> are given by</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
+<div class="amsmath math notranslate nohighlight" id="equation-62e4ae17-ad3c-4fe1-8100-ec2c52a5b606">
+<span class="eqno">(4.75)<a class="headerlink" href="#equation-62e4ae17-ad3c-4fe1-8100-ec2c52a5b606" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{align*}
 \hat{\mu} &amp;= 0\\
 \hat{H}^T &amp;= (\sum_k x_k x_k^T)^{-1} \sum_k x_k z_k^T\\
 \widehat{\sigma^2} &amp;= \frac{1}{(m N-m n)} \sum_k \sum_i |\hat{H}_i x_k - z_{ki}|^2
 \end{align*}
-\end{split}\]</div>
+\end{equation}\]</div>
 <p>in which <span class="math notranslate nohighlight">\(N\)</span> is the number of data points.
 While the derivation for these equations is a bit more complex (these are, after all, matrix equations),
 the similarity between the scalar maximum likelihood estimate and the general multivariate linear
@@ -670,7 +660,8 @@ and in <span id="id6">[<a class="reference internal" href="bibliography.html#id3
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -730,8 +721,8 @@ By Frank Dellaert and Seth Hutchinson
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>

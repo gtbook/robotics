@@ -16,17 +16,19 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-
-  
-  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
@@ -37,10 +39,11 @@
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="_static/style.css?v=51e3b7cf" />
   
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="_static/documentation_options.js?v=c73c0f3e"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
@@ -68,6 +71,7 @@
     <link rel="prev" title="4.5. Planning for Logistics" href="S45_logistics_planning.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -83,19 +87,8 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="search.html"
       method="get">
@@ -103,7 +96,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search..."
          aria-label="Search..."
          autocomplete="off"
@@ -111,8 +103,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -128,7 +120,8 @@
       
       
       
-      <div class="bd-sidebar-primary bd-sidebar">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -158,21 +151,17 @@
     
     
     <img src="_static/logo.png" class="logo__image only-light" alt="Introduction to Robotics and Perception - Home"/>
-    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Introduction to Robotics and Perception - Home"/>`);</script>
+    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Introduction to Robotics and Perception - Home"/>
   
   
 </a></div>
         <div class="sidebar-primary-item">
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script></div>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         <ul class="current nav bd-sidenav">
@@ -252,9 +241,14 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -351,24 +345,16 @@
 
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-  </button>
-`);
-</script>
+</button>
 <button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="fa-solid fa-list"></span>
 </button>
@@ -426,32 +412,44 @@ However, in each case the motion model was the same: a conditional Gaussian wher
 <h2><span class="section-number">4.6.1. </span>Maximum Likelihood Parameter Estimation<a class="headerlink" href="#maximum-likelihood-parameter-estimation" title="Link to this heading">#</a></h2>
 <p>Let us first consider a one dimensional system (i.e., <span class="math notranslate nohighlight">\(x_k \in \mathbb{R}\)</span> is a scalar),
 and a sensor model that is linear with additive Gaussian noise:</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-ed5c6d3b-a482-4cc0-aad6-f27f8ab3a973">
+<span class="eqno">(4.51)<a class="headerlink" href="#equation-ed5c6d3b-a482-4cc0-aad6-f27f8ab3a973" title="Permalink to this equation">#</a></span>\[\begin{equation}
 z_k = h(x_k) + n_k = C x_k + n_k
-\]</div>
+\end{equation}\]</div>
 <p>Here, <span class="math notranslate nohighlight">\(n_k\)</span> denotes zero-mean, Gaussian noise with covariance <span class="math notranslate nohighlight">\(R\)</span>.</p>
 <p>In the one dimensional case, both <span class="math notranslate nohighlight">\(C\)</span> and <span class="math notranslate nohighlight">\(R=\sigma^2\)</span> are scalars, and estimating them will be similar to the Gaussian parameter estimation from Section 2.6. Remember that there we estimated a sample mean <span class="math notranslate nohighlight">\(\hat{\mu}\)</span> from a set of <span class="math notranslate nohighlight">\(N\)</span> data points, by simply computing the average of the data values:</p>
-<div class="math notranslate nohighlight">
-\[\hat{\mu} = \frac{1}{N} \sum_i z_i.\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-420886c9-7274-4764-91ed-3c37ed8ad965">
+<span class="eqno">(4.52)<a class="headerlink" href="#equation-420886c9-7274-4764-91ed-3c37ed8ad965" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\hat{\mu} = \frac{1}{N} \sum_i z_i.
+\end{equation}\]</div>
 <p>The underlying reason is that this minimizes the negative log likelihood (nll) of <span class="math notranslate nohighlight">\(\mu\)</span> given the data <span class="math notranslate nohighlight">\(X\)</span> by</p>
-<div class="math notranslate nohighlight">
-\[\hat{\mu} = \arg \min_\mu \sum_i \text{nll}(\mu; z_i) = \arg \min_\mu \sum_i \frac{1}{2\sigma^2} (\mu - z_i)^2,\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-cceccae8-a930-4a57-89f6-0255f3b70a78">
+<span class="eqno">(4.53)<a class="headerlink" href="#equation-cceccae8-a930-4a57-89f6-0255f3b70a78" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\hat{\mu} = \arg \min_\mu \sum_i \text{nll}(\mu; z_i) = \arg \min_\mu \sum_i \frac{1}{2\sigma^2} (\mu - z_i)^2,
+\end{equation}\]</div>
 <p>hence this is a <em>maximum likelihood</em> (ML) estimator of <span class="math notranslate nohighlight">\(\mu\)</span>.</p>
 <p>Suppose we are given a set of ground truth values <span class="math notranslate nohighlight">\(\{x_k\}\)</span> for the state along with corresponding
 measurement values <span class="math notranslate nohighlight">\(\{z_k\}\)</span>.
 If we generalize the scheme from Chapter 2, the negative log likelihood of <span class="math notranslate nohighlight">\(C\)</span> given the data for our measurement model becomes</p>
-<div class="math notranslate nohighlight">
-\[\hat{C} = \arg \min_C \sum_k \text{nll}(C; x_k, z_k) = \arg \min_C \sum_k \frac{1}{2\sigma^2} (C x_k - z_k)^2.\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-6ee1cd54-453e-4d8e-8f4e-2f442d55cac4">
+<span class="eqno">(4.54)<a class="headerlink" href="#equation-6ee1cd54-453e-4d8e-8f4e-2f442d55cac4" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\hat{C} = \arg \min_C \sum_k \text{nll}(C; x_k, z_k) = \arg \min_C \sum_k \frac{1}{2\sigma^2} (C x_k - z_k)^2.
+\end{equation}\]</div>
 <p>Taking the derivative with respect to <span class="math notranslate nohighlight">\(C\)</span> and setting to zero we have</p>
-<div class="math notranslate nohighlight">
-\[\sum_k x_k(\hat{C} x_k - z_k) = 0,\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-e58b2949-beed-40ed-8ef9-708c64fe98ba">
+<span class="eqno">(4.55)<a class="headerlink" href="#equation-e58b2949-beed-40ed-8ef9-708c64fe98ba" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\sum_k x_k(\hat{C} x_k - z_k) = 0,
+\end{equation}\]</div>
 <p>yielding</p>
-<div class="math notranslate nohighlight">
-\[\hat{C} = \frac{\sum_k x_k z_k}{\sum_k x_k^2}.\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-57f9aca7-e59e-4fb3-9b32-9e1d4fb2cdc8">
+<span class="eqno">(4.56)<a class="headerlink" href="#equation-57f9aca7-e59e-4fb3-9b32-9e1d4fb2cdc8" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\hat{C} = \frac{\sum_k x_k z_k}{\sum_k x_k^2}.
+\end{equation}\]</div>
 <p>Fitting the variance then be done using</p>
-<div class="math notranslate nohighlight">
-\[\widehat{\sigma^2} = \frac{1}{N-1} \sum_k (\hat{C} x_k - z_k)^2.\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-afa7cc72-f517-4f52-88c1-9d26ee5014c3">
+<span class="eqno">(4.57)<a class="headerlink" href="#equation-afa7cc72-f517-4f52-88c1-9d26ee5014c3" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\widehat{\sigma^2} = \frac{1}{N-1} \sum_k (\hat{C} x_k - z_k)^2.
+\end{equation} \]</div>
 </section>
 <section id="ml-code-example">
 <h2><span class="section-number">4.6.2. </span>ML Code Example<a class="headerlink" href="#ml-code-example" title="Link to this heading">#</a></h2>
@@ -472,7 +470,7 @@ Let us simulate some states randomly from the <span class="math notranslate nohi
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/15da6e4819aa0badf304cc4bdcf63bce8673a9e4563dcbbe26cd9090d57486cc.png" src="_images/15da6e4819aa0badf304cc4bdcf63bce8673a9e4563dcbbe26cd9090d57486cc.png" />
+<img alt="_images/6f84911f3f2a0cb9ec482975397f3d5fbb1fc9dd906cacb9a83536f658074b52.png" src="_images/6f84911f3f2a0cb9ec482975397f3d5fbb1fc9dd906cacb9a83536f658074b52.png" />
 </div>
 </div>
 <p>It is pretty clear that the slope is 100. Can our math corroborate?</p>
@@ -484,7 +482,7 @@ Let us simulate some states randomly from the <span class="math notranslate nohi
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>estimated C = 99.95892904947026 (cm/m)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>estimated C = 99.96405028900641 (cm/m)
 </pre></div>
 </div>
 </div>
@@ -498,7 +496,7 @@ Let us simulate some states randomly from the <span class="math notranslate nohi
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>estimated R=902.7043448220181 (cm^2), stddev=30.045038605766813 (cm)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>estimated R=1020.9113497046357 (cm^2), stddev=31.951703392849584 (cm)
 </pre></div>
 </div>
 </div>
@@ -517,34 +515,44 @@ We can use the code above to do so for <span class="math notranslate nohighlight
 <section id="multivariate-linear-regression">
 <h2><span class="section-number">4.6.4. </span>Multivariate Linear Regression<a class="headerlink" href="#multivariate-linear-regression" title="Link to this heading">#</a></h2>
 <p>For more general measurement processes or motion models, we typically need heavier machinery. The scalar case above is an instance of <em>linear regression</em>, and it can be generalized to the multivariate case. Let us assume a multivariate linear measurement model</p>
-<div class="math notranslate nohighlight">
-\[z_k = H x_k + n_k\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-4c85f6ba-ed64-40d6-9d51-8e9f8b72e2b6">
+<span class="eqno">(4.58)<a class="headerlink" href="#equation-4c85f6ba-ed64-40d6-9d51-8e9f8b72e2b6" title="Permalink to this equation">#</a></span>\[\begin{equation}
+z_k = H x_k + n_k
+\end{equation}\]</div>
 <p>where now <span class="math notranslate nohighlight">\(z_k\in\mathbb{R}^m\)</span>, <span class="math notranslate nohighlight">\(x_k\in\mathbb{R}^n\)</span>, and <span class="math notranslate nohighlight">\(H\)</span> an <span class="math notranslate nohighlight">\(m \times n\)</span> matrix. Again, <span class="math notranslate nohighlight">\(n_k\)</span> is assumed zero mean Gaussian, with covariance matrix <span class="math notranslate nohighlight">\(R\)</span>.</p>
 <p>The negative log likelihood of <span class="math notranslate nohighlight">\(H\)</span> given the data for our measurement model is</p>
-<div class="math notranslate nohighlight">
-\[\hat{H} = \arg \min_H \sum_k \text{nll}(H; x_k, z_k) = \arg \min_H \sum_k \frac{1}{2} (H x_k - z_k)^T R^{-1}(H x_k - z_k).\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-fe5628a7-c4cf-49bf-b7e6-aa839e6c77a8">
+<span class="eqno">(4.59)<a class="headerlink" href="#equation-fe5628a7-c4cf-49bf-b7e6-aa839e6c77a8" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\hat{H} = \arg \min_H \sum_k \text{nll}(H; x_k, z_k) = \arg \min_H \sum_k \frac{1}{2} (H x_k - z_k)^T R^{-1}(H x_k - z_k).
+\end{equation}\]</div>
 <p>Unfortunately, the estimation process for arbitrary <span class="math notranslate nohighlight">\(R\)</span> is out of scope for this text. But if we assume <em>isotropic</em> noise with covariance matrix <span class="math notranslate nohighlight">\(I \sigma^2\)</span>, then the optimization problem simplifies to</p>
-<div class="math notranslate nohighlight">
-\[\hat{H} = \arg \min_H \frac{1}{2\sigma^2} \sum_k \sum_i (H_i x_k - z_{ki})^2,\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-dc419a73-fb75-4076-9a8e-e614d50be9c1">
+<span class="eqno">(4.60)<a class="headerlink" href="#equation-dc419a73-fb75-4076-9a8e-e614d50be9c1" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\hat{H} = \arg \min_H \frac{1}{2\sigma^2} \sum_k \sum_i (H_i x_k - z_{ki})^2,
+\end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(H_i\)</span> is the <span class="math notranslate nohighlight">\(i^th\)</span> row of <span class="math notranslate nohighlight">\(H\)</span>. Making use of the fact that the scalar <span class="math notranslate nohighlight">\(H_i x_k\)</span> can be re-written as <span class="math notranslate nohighlight">\(x_k^T H_i^T\)</span>, and then setting the derivative with respect to <span class="math notranslate nohighlight">\(H_i^T\)</span> to zero we have, for all <span class="math notranslate nohighlight">\(i\)</span>:</p>
-<div class="math notranslate nohighlight">
-\[\sum_k x_k (x_k^T \hat{H}_i^T - z_{ki}) = 0,\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-ea87c191-2394-41a4-aeaa-7f5ba038a651">
+<span class="eqno">(4.61)<a class="headerlink" href="#equation-ea87c191-2394-41a4-aeaa-7f5ba038a651" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\sum_k x_k (x_k^T \hat{H}_i^T - z_{ki}) = 0,
+\end{equation}\]</div>
 <p>yielding the following expression for the <span class="math notranslate nohighlight">\(i^{th}\)</span> row of <span class="math notranslate nohighlight">\(H\)</span>:</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-13e91fc1-9359-4ed7-be2e-b906f5b76704">
+<span class="eqno">(4.62)<a class="headerlink" href="#equation-13e91fc1-9359-4ed7-be2e-b906f5b76704" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \hat{H}_i^T = (\sum_k x_k x_k^T)^{-1} \sum_k x_k z_{ki}.
-\]</div>
+\end{equation}\]</div>
 <p>Note the resemblance with the scalar case, but be mindful that the quantity in parentheses is an <span class="math notranslate nohighlight">\(n\times n\)</span> matrix whose inverse will exist only if its rank is equal to the dimensionality of the system, <span class="math notranslate nohighlight">\(n\)</span>.
 This rank condition is farily easy to satisfy, and is essentially a requirement that the data set
 be sufficiently rich.
 It is interesting to note that the <span class="math notranslate nohighlight">\(i^{th}\)</span> row of <span class="math notranslate nohighlight">\(\hat{H}\)</span> is formed as sum of the input vectors <span class="math notranslate nohighlight">\(x_k\)</span>, weighted by the <span class="math notranslate nohighlight">\(i^{th}\)</span> element of the measurement. Finally, we can collect the above for all <span class="math notranslate nohighlight">\(i\)</span> and write:</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-7b638ce3-01c8-49f1-b810-52103f297c42">
+<span class="eqno">(4.63)<a class="headerlink" href="#equation-7b638ce3-01c8-49f1-b810-52103f297c42" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \hat{H}^T = (\sum_k x_k x_k^T)^{-1} \sum_k x_k z_k^T.
-\]</div>
+\end{equation}\]</div>
 <p>After this, we can again recover the variance <span class="math notranslate nohighlight">\(\sigma^2\)</span> by</p>
-<div class="math notranslate nohighlight">
-\[\widehat{\sigma^2} = \frac{1}{(m N-m n)} \sum_k \sum_i |\hat{H}_i x_k - z_{ki}|^2.\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-da7a5632-e2fd-40ec-81b4-2ef19526e508">
+<span class="eqno">(4.64)<a class="headerlink" href="#equation-da7a5632-e2fd-40ec-81b4-2ef19526e508" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\widehat{\sigma^2} = \frac{1}{(m N-m n)} \sum_k \sum_i |\hat{H}_i x_k - z_{ki}|^2.
+\end{equation}\]</div>
 <p>in which <span class="math notranslate nohighlight">\(N\)</span> is the number of data points.
 Above we would divide by <span class="math notranslate nohighlight">\(m N\)</span> as that is how many elements there are in the double sum. However, to get an unbiased estimate we need to subtract <span class="math notranslate nohighlight">\(mn\)</span> from the denominator as that is how many entries we already estimated with <span class="math notranslate nohighlight">\(H\)</span>.</p>
 </section>
@@ -573,9 +581,9 @@ Above we would divide by <span class="math notranslate nohighlight">\(m N\)</spa
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>H_optimal=
-[[10.09 19.96]
- [30.02 39.95]
- [49.98 60.03]]
+[[10.01 20.05]
+ [29.97 40.04]
+ [49.95 60.1 ]]
 </pre></div>
 </div>
 </div>
@@ -588,7 +596,7 @@ Above we would divide by <span class="math notranslate nohighlight">\(m N\)</spa
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>30.372797651483463
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>30.791954619666853
 </pre></div>
 </div>
 </div>
@@ -600,13 +608,15 @@ Above we would divide by <span class="math notranslate nohighlight">\(m N\)</spa
 <div><p>Linear regression can be used to estimate all of the parameters of a general linear motion model.</p>
 </div></blockquote>
 <p>Assuming we have a dataset of triplets <span class="math notranslate nohighlight">\(x_k, u_k, x_{k+1}\)</span>, i.e., the current state <span class="math notranslate nohighlight">\(x_k\in\mathbb{R}^n\)</span>, the control <span class="math notranslate nohighlight">\(u_k\in\mathbb{R}^p\)</span>, and the next state <span class="math notranslate nohighlight">\(x_{k+1}\in\mathbb{R}^n\)</span>. Note the similarities with the reinforcement learning setup in Section 3.6! If we assume a <em>linear process model</em> then we should have:</p>
-<div class="math notranslate nohighlight">
-\[x_{k+1} = A x_k + B u_k + w_k\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-f1f9171e-8c27-4d38-b5da-be6a3ee08b5d">
+<span class="eqno">(4.65)<a class="headerlink" href="#equation-f1f9171e-8c27-4d38-b5da-be6a3ee08b5d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+x_{k+1} = A x_k + B u_k + w_k
+\end{equation}\]</div>
 <p>where typically the covariance on the <em>process noise</em> <span class="math notranslate nohighlight">\(w_k\)</span> is denoted as <span class="math notranslate nohighlight">\(Q\)</span>. We only have to note that we can write this in the form needed by the multivariate ML estimator, as</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
+<div class="amsmath math notranslate nohighlight" id="equation-ed105310-972f-4d98-85fd-21ea5f5b508d">
+<span class="eqno">(4.66)<a class="headerlink" href="#equation-ed105310-972f-4d98-85fd-21ea5f5b508d" title="Permalink to this equation">#</a></span>\[\begin{equation}
 x_{k+1} = \begin{bmatrix} A &amp; B \end{bmatrix} \begin{bmatrix} x_k \\ u_k \end{bmatrix} + w_k
-\end{split}\]</div>
+\end{equation}\]</div>
 <p>Again, we generate some random states, controls, and next states:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -647,11 +657,11 @@ x_{k+1} = \begin{bmatrix} A &amp; B \end{bmatrix} \begin{bmatrix} x_k \\ u_k \en
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>A_optimal=
-[[ 1.    0.  ]
- [-0.    1.01]]
+[[1. 0.]
+ [0. 1.]]
 B_optimal=
-[[ 1.    0.01]
- [-0.01  1.03]]
+[[ 1.01 -0.01]
+ [ 0.03  1.  ]]
 </pre></div>
 </div>
 </div>
@@ -664,7 +674,7 @@ B_optimal=
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2.0346003821599257
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2.0095234781380076
 </pre></div>
 </div>
 </div>
@@ -740,7 +750,8 @@ B_optimal=
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -804,8 +815,8 @@ By Frank Dellaert and Seth Hutchinson
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>

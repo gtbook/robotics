@@ -16,17 +16,19 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-
-  
-  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
@@ -37,10 +39,11 @@
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="_static/style.css?v=51e3b7cf" />
   
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="_static/documentation_options.js?v=c73c0f3e"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
@@ -68,6 +71,7 @@
     <link rel="prev" title="2.1. Modeling the World State" href="S21_sorter_state.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -83,19 +87,8 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="search.html"
       method="get">
@@ -103,7 +96,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search..."
          aria-label="Search..."
          autocomplete="off"
@@ -111,8 +103,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -128,7 +120,8 @@
       
       
       
-      <div class="bd-sidebar-primary bd-sidebar">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -158,21 +151,17 @@
     
     
     <img src="_static/logo.png" class="logo__image only-light" alt="Introduction to Robotics and Perception - Home"/>
-    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Introduction to Robotics and Perception - Home"/>`);</script>
+    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Introduction to Robotics and Perception - Home"/>
   
   
 </a></div>
         <div class="sidebar-primary-item">
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script></div>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         <ul class="current nav bd-sidenav">
@@ -252,9 +241,14 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -351,24 +345,16 @@
 
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-  </button>
-`);
-</script>
+</button>
 <button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="fa-solid fa-list"></span>
 </button>
@@ -636,10 +622,15 @@ This is the concept of <strong>expectation</strong> in probability theory.</p>
 <span class="math notranslate nohighlight">\(X \in \{ x_1, \dots , x_n \}\)</span>.
 The <strong>expected value</strong> of <span class="math notranslate nohighlight">\(X\)</span>, which we denote by <span class="math notranslate nohighlight">\(E[X]\)</span> is defined
 by</p>
-<div class="math notranslate nohighlight">
-\[E[X] = \sum_{i=1}^n x_i p_X(x_i)\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-0d8c9ea2-c664-495f-a471-fa406f5736d8">
+<span class="eqno">(2.6)<a class="headerlink" href="#equation-0d8c9ea2-c664-495f-a471-fa406f5736d8" title="Permalink to this equation">#</a></span>\[\begin{equation}
+E[X] = \sum_{i=1}^n x_i p_X(x_i)
+\end{equation}\]</div>
 <p>For the example above, the expected value of cost, <span class="math notranslate nohighlight">\(E[X]\)</span>, is given by</p>
-<p><span class="math notranslate nohighlight">\(E[X] = (0 \times 0.2) + (0 \times 0.3)  + (5 \times 0.25) + (10 \times 0.2)  + (3 \times 0.05)  = 3.4\)</span></p>
+<div class="amsmath math notranslate nohighlight" id="equation-3373f4b6-af47-4e65-b179-9f2d28e4d9ad">
+<span class="eqno">(2.7)<a class="headerlink" href="#equation-3373f4b6-af47-4e65-b179-9f2d28e4d9ad" title="Permalink to this equation">#</a></span>\[\begin{equation}
+E[X] = (0 \times 0.2) + (0 \times 0.3)  + (5 \times 0.25) + (10 \times 0.2)  + (3 \times 0.05)  = 3.4
+\end{equation}\]</div>
 <p>Note that we never really <em>expect</em> to see the cost <span class="math notranslate nohighlight">\(3.4\)</span>. The term <em>expected value</em> is a technical term,
 defined by the equation above. The expected value is related to what we would
 expect to see if we took the average over many trials.
@@ -750,24 +741,32 @@ Probability theorists take this as a given, along with the axioms.</p>
 For a discrete random variable <span class="math notranslate nohighlight">\(X\)</span> with <span class="math notranslate nohighlight">\(\Omega = \{ x_1 \dots x_n\}\)</span>,
 <span class="math notranslate nohighlight">\(E[X]\)</span> (also called the mean, and often denoted by <span class="math notranslate nohighlight">\(\mu\)</span>)
 can be computed as above</p>
-<div class="math notranslate nohighlight">
-\[\mu = E[X] = \sum_{i=1}^n x_i p_X(x_i)\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-e21c590f-ee4d-435b-add3-4279123771d9">
+<span class="eqno">(2.8)<a class="headerlink" href="#equation-e21c590f-ee4d-435b-add3-4279123771d9" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\mu = E[X] = \sum_{i=1}^n x_i p_X(x_i)
+\end{equation}\]</div>
 <p>The variance of a <em>random variable</em>,
 typically denoted by <span class="math notranslate nohighlight">\(\sigma^2\)</span>, is merely the expected value of the squared difference between
 the random variable <span class="math notranslate nohighlight">\(X\)</span> and the mean. The variance is also a property of probability distributions, and it can
 be computed as</p>
-<div class="math notranslate nohighlight">
-\[\sigma^2 = E[(X-\mu)^2] = \sum_{i=1}^n p_X(x_i) (x_i - \mu)^2 \]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-ef9b2b54-b464-4195-a248-95acd345d4c8">
+<span class="eqno">(2.9)<a class="headerlink" href="#equation-ef9b2b54-b464-4195-a248-95acd345d4c8" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\sigma^2 = E[(X-\mu)^2] = \sum_{i=1}^n p_X(x_i) (x_i - \mu)^2
+\end{equation}\]</div>
 <p>Note that the expressions for <span class="math notranslate nohighlight">\(\mu\)</span> and <span class="math notranslate nohighlight">\(\sigma^2\)</span> depend only on the probability distribution (in this case,
 the pmf <span class="math notranslate nohighlight">\(p_X\)</span>) and the values taken by the random variable <span class="math notranslate nohighlight">\(X\)</span>.</p>
 <p id="index-6">A <strong>statistic</strong> is any function of data (including the identity function).
 Consider a set of measurements <span class="math notranslate nohighlight">\(\{ z_1, \dots z_N \}\)</span>.
 The average of these values, often denoted by <span class="math notranslate nohighlight">\(\bar{z}\)</span>, is a statistic, and it can be computed as</p>
-<div class="math notranslate nohighlight">
-\[\bar{z} = \frac{1}{N} \sum_{i=1}^{N} z_i\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-011c51c7-2925-43e3-9dc5-af0e51cbbe4a">
+<span class="eqno">(2.10)<a class="headerlink" href="#equation-011c51c7-2925-43e3-9dc5-af0e51cbbe4a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\bar{z} = \frac{1}{N} \sum_{i=1}^{N} z_i
+\end{equation}\]</div>
 <p>Likewise, the variance of the <em>data</em>, often denoted by <span class="math notranslate nohighlight">\(\hat{\sigma}^2\)</span> can be computed as</p>
-<div class="math notranslate nohighlight">
-\[\hat{\sigma}^2 = \frac{1}{N-1} \sum_{i=1}^{N} (z_i- \bar{z})^2\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-99418623-5196-4f6f-be97-2a5dfa71045c">
+<span class="eqno">(2.11)<a class="headerlink" href="#equation-99418623-5196-4f6f-be97-2a5dfa71045c" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\hat{\sigma}^2 = \frac{1}{N-1} \sum_{i=1}^{N} (z_i- \bar{z})^2
+\end{equation}\]</div>
 <p>Note that the definitions of <span class="math notranslate nohighlight">\(\bar{z}\)</span> and <span class="math notranslate nohighlight">\(\hat{\sigma}^2\)</span> depend <em>only</em> on the data itself.</p>
 <p>Certain similarities are immediately obvious between these two sets of definitions.
 The mean of a random variable seems similar to the average of a data set.
@@ -779,8 +778,10 @@ then the average of the data will tend toward the expected value of <span class=
 This property can be written formally as the <strong>weak law of large numbers</strong>, which
 states that for any <span class="math notranslate nohighlight">\(\epsilon &gt; 0\)</span>, if <span class="math notranslate nohighlight">\(\bar{z}_N\)</span> denotes the average of a data set of size <span class="math notranslate nohighlight">\(N\)</span>,
 then</p>
-<div class="math notranslate nohighlight">
-\[\lim_{N \rightarrow \infty} P( \mid \bar{z}_N - \mu \mid &lt; \epsilon ) = 1 \]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-91295f6e-204e-498d-95e2-87d7dbbf5431">
+<span class="eqno">(2.12)<a class="headerlink" href="#equation-91295f6e-204e-498d-95e2-87d7dbbf5431" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\lim_{N \rightarrow \infty} P( \mid \bar{z}_N - \mu \mid &lt; \epsilon ) = 1
+\end{equation}\]</div>
 <p>i.e., the average of <span class="math notranslate nohighlight">\(N\)</span> data points will become arbitrarily close to <span class="math notranslate nohighlight">\(\mu\)</span> as <span class="math notranslate nohighlight">\(N\)</span> becomes
 large. This occurs with probability one, a nuance that we will not discuss here.
 This is one explanation for why simulation by sampling works, and why the results tend
@@ -854,7 +855,8 @@ for inferential reasoning about the real world.</p>
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -917,8 +919,8 @@ By Frank Dellaert and Seth Hutchinson
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>

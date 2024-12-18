@@ -16,17 +16,19 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-
-  
-  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
@@ -37,10 +39,11 @@
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="_static/style.css?v=51e3b7cf" />
   
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="_static/documentation_options.js?v=c73c0f3e"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
@@ -68,6 +71,7 @@
     <link rel="prev" title="7.4. Visual SLAM" href="S74_drone_perception.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -83,19 +87,8 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="search.html"
       method="get">
@@ -103,7 +96,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search..."
          aria-label="Search..."
          autocomplete="off"
@@ -111,8 +103,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -128,7 +120,8 @@
       
       
       
-      <div class="bd-sidebar-primary bd-sidebar">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -158,21 +151,17 @@
     
     
     <img src="_static/logo.png" class="logo__image only-light" alt="Introduction to Robotics and Perception - Home"/>
-    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Introduction to Robotics and Perception - Home"/>`);</script>
+    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Introduction to Robotics and Perception - Home"/>
   
   
 </a></div>
         <div class="sidebar-primary-item">
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script></div>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         <ul class="current nav bd-sidenav">
@@ -252,9 +241,14 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -351,24 +345,16 @@
 
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-  </button>
-`);
-</script>
+</button>
 <button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="fa-solid fa-list"></span>
 </button>
@@ -478,10 +464,10 @@ we discretize the time interval in which we expect to fly, and solve for a corre
 <li><p>a smoothness objective that bounds velocity and/or acceleration.</p></li>
 </ul>
 <p>If these objectives are in conflict, we can assign them weights such that we trade off some against others. <em>Constrained optimization</em> techniques allow to set hard constraints and/or bounds, but we do not use those here. Instead, we opt for a simple nonlinear least-squares scheme that finds the path <span class="math notranslate nohighlight">\(X^*\)</span> that minimizes the following objective:</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-65c6b3ef-9c41-40c6-a8ae-9105f813d1bb">
+<span class="eqno">(7.57)<a class="headerlink" href="#equation-65c6b3ef-9c41-40c6-a8ae-9105f813d1bb" title="Permalink to this equation">#</a></span>\[\begin{equation}
 X^* = \arg \min \sum_{k=1}^K \phi_k(X_k)^2  + \sum_{k=1}^{K-1} \psi_k(X_k, X_{k+1})^2
-\]</div>
+\end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(X_k\)</span> is the position at time, and <span class="math notranslate nohighlight">\(\phi_k(X_k)\)</span> and <span class="math notranslate nohighlight">\(\psi_k(X_k, X_{k+1})\)</span> are unary and binary objectives, respectively, that we want to minimize.
 Desired start and goal position, as well as obstacle avoidance are examples of unary objectives, while smoothness is a binary objective, which can be expressed in terms of the distance between successive points along the path.</p>
 <p>It will not come as any surprise that we can also use factor graph optimization to solve this optimization problem.
@@ -523,7 +509,7 @@ and it creates a map that contains a random arrangement of obstacles. Width and 
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/d515f40c43026e12415c760aede5120f0bd3abd59ef5f2eb202396641831cc54.png" src="_images/d515f40c43026e12415c760aede5120f0bd3abd59ef5f2eb202396641831cc54.png" />
+<img alt="_images/d3094779fd6f2adcf8ee5fc9b37815cf58a2b0d0f0d775a8f11b917b51ee99a8.png" src="_images/d3094779fd6f2adcf8ee5fc9b37815cf58a2b0d0f0d775a8f11b917b51ee99a8.png" />
 </div>
 </div>
 <p>A disadvantage to the map shown above is that large areas of the map contain cells with zero cost,
@@ -559,7 +545,7 @@ Convolving an image with a kernel is relatively easy in PyTorch, although we nee
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/e4769e4b38bdea81549d5877f1c5d307cadcd179003cec667beae9489798b88f.png" src="_images/e4769e4b38bdea81549d5877f1c5d307cadcd179003cec667beae9489798b88f.png" />
+<img alt="_images/347487a97b915decaabf0dd3aa9cfa90862c61997de535db15eecee1900b857c.png" src="_images/347487a97b915decaabf0dd3aa9cfa90862c61997de535db15eecee1900b857c.png" />
 </div>
 </div>
 <section id="making-costs-truly-differentiable">
@@ -679,10 +665,10 @@ we can compute the directional derivatives of the Gaussian kernel, <em>or</em> w
 </div>
 </div>
 <p>Let us discretize the path using <span class="math notranslate nohighlight">\(M=100\)</span> discrete time steps, using the keys <span class="math notranslate nohighlight">\(k\in 1...M\)</span>. We can define a start and goal point, and initialize the path as straight line. In other words, we initialize according to this formula:</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-963a945f-4816-4618-8e3c-c03e7ae6a725">
+<span class="eqno">(7.58)<a class="headerlink" href="#equation-963a945f-4816-4618-8e3c-c03e7ae6a725" title="Permalink to this equation">#</a></span>\[\begin{equation}
 X_k = (1-\alpha)\ X_{\text{start}} + \alpha\ X_{\text{goal}} \text{~~~with~} \alpha = \frac{k-1}{M-1},
-\]</div>
+\end{equation}\]</div>
 <p>Who knows, we might be lucky and hit no obstacles along the way:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -708,7 +694,7 @@ X_k = (1-\alpha)\ X_{\text{start}} + \alpha\ X_{\text{goal}} \text{~~~with~} \al
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/522d4b9ec10b7de55494b6ac6da40399802a200bc41ea6a74b99790d30452aea.png" src="_images/522d4b9ec10b7de55494b6ac6da40399802a200bc41ea6a74b99790d30452aea.png" />
+<img alt="_images/3b26403e1ec98d3d1cedfa0448e6f43cb0d19febcba3b20a4dad0189cf76c010.png" src="_images/3b26403e1ec98d3d1cedfa0448e6f43cb0d19febcba3b20a4dad0189cf76c010.png" />
 </div>
 </div>
 <p>Plotting this path on the cost map shows that, in this instance, we are not lucky, however: the path definitely passes through some obstacles. We can immediately create all obstacle cost factors now, and evaluate the cost to confirm that this is not a zero-cost path. Since these factors are nonlinear, we store them in a <code class="docutils literal notranslate"><span class="pre">gtsam.NonlinearFactorGraph</span></code>:</p>
@@ -740,7 +726,7 @@ X_k = (1-\alpha)\ X_{\text{start}} + \alpha\ X_{\text{goal}} \text{~~~with~} \al
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/e051390321eab6a821ca18e1403956a36109b8266c915a477ebc755f4016de3a.png" src="_images/e051390321eab6a821ca18e1403956a36109b8266c915a477ebc755f4016de3a.png" />
+<img alt="_images/64e4ca2fccbb0268df0bd4a67f305fabb7724be1a04093461dce4e385bb76150.png" src="_images/64e4ca2fccbb0268df0bd4a67f305fabb7724be1a04093461dce4e385bb76150.png" />
 </div>
 </div>
 <p>A complete path/trajectory optimization problem needs more than just obstacle factors, however. We also need to add start and goal factors, as well as smoothness factors.  Smoothness factors are implemented using a <code class="docutils literal notranslate"><span class="pre">gtsam.BetweenFactor</span></code>,
@@ -805,7 +791,7 @@ Both of these can be implemented as simple “priors” on the variables with ke
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/f143b322d8d3d2d25a5a99301cc7cdea8f3e039b0df5acf522564f3ddd9e3dc9.png" src="_images/f143b322d8d3d2d25a5a99301cc7cdea8f3e039b0df5acf522564f3ddd9e3dc9.png" />
+<img alt="_images/2dae5b3c57a452501f111473f430695e88c66422c74d517544c60ccbe3be7bfe.png" src="_images/2dae5b3c57a452501f111473f430695e88c66422c74d517544c60ccbe3be7bfe.png" />
 </div>
 </div>
 <p>The cost profile along this final path is not entirely down to zero, as we have to navigate some tight obstacle configurations along the way. However, when plotted on the same scale it looks much better than for the initial path:</p>
@@ -820,7 +806,7 @@ Both of these can be implemented as simple “priors” on the variables with ke
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/1b8aea315dc372976dd5ca56b25051e9d983feba5ceeab94bddf57a6fc9f1470.png" src="_images/1b8aea315dc372976dd5ca56b25051e9d983feba5ceeab94bddf57a6fc9f1470.png" />
+<img alt="_images/9ed62e171ab5d9987c0609f0d04f66623f158a6d4d58824974fede1b7149f458.png" src="_images/9ed62e171ab5d9987c0609f0d04f66623f158a6d4d58824974fede1b7149f458.png" />
 </div>
 </div>
 <section id="exercise">
@@ -883,7 +869,7 @@ Here, we set the altitude to be a 1.5m. We choose <span class="math notranslate 
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/e4ed8f6cbe96109e5c9908d46ac67d03757a45aaca396163f4b23ba5028e1242.png" src="_images/e4ed8f6cbe96109e5c9908d46ac67d03757a45aaca396163f4b23ba5028e1242.png" />
+<img alt="_images/5b03097fc5fe6de284a506e7f1b191ae5965a5ac8ca307a62794231b1897a76f.png" src="_images/5b03097fc5fe6de284a506e7f1b191ae5965a5ac8ca307a62794231b1897a76f.png" />
 </div>
 </div>
 <p>Finally, it is instructive to inspect the velocity profiles as well:</p>
@@ -904,7 +890,7 @@ Here, we set the altitude to be a 1.5m. We choose <span class="math notranslate 
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/606707a851127166aec6f5c92fcba60484e76c94fba8c4a4fddd2465c9aed9b7.png" src="_images/606707a851127166aec6f5c92fcba60484e76c94fba8c4a4fddd2465c9aed9b7.png" />
+<img alt="_images/8844f0bd3f705fcb772e774f419a24d0cf737cee9d0671d680a0749ccac92d32.png" src="_images/8844f0bd3f705fcb772e774f419a24d0cf737cee9d0671d680a0749ccac92d32.png" />
 </div>
 </div>
 <p>You can see that, for our chosen T=20, the drone flies at velocities between 1 and 1.6 m/s, which is what we expected for T=20.</p>
@@ -913,18 +899,18 @@ Here, we set the altitude to be a 1.5m. We choose <span class="math notranslate 
 <div><p>What we want, in theory…</p>
 </div></blockquote>
 <p>We control the position of the drone using a 3DOF vectored thrust input: thrust magnitude, roll, and pitch. The idea outlined here is a simplified version of the geometric controller in a 2019 paper by <span id="id1">Gamagedara <em>et al.</em> [<a class="reference internal" href="bibliography.html#id14" title="Kanishke Gamagedara, Mahdis Bisheban, Evan Kaufman, and Taeyoung Lee. Geometric controls of a quadrotor uav with decoupled yaw control. In 2019 American Control Conference (ACC), 3285-3290. 2019. doi:10.23919/ACC.2019.8815189.">2019</a>]</span>, but while the paper is fairly advanced, the idea is rather simple. Remember the translational equations of motion from Section 7.2:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
+<div class="amsmath math notranslate nohighlight" id="equation-75023e74-10f3-42f0-9257-4c7f50a625b3">
+<span class="eqno">(7.59)<a class="headerlink" href="#equation-75023e74-10f3-42f0-9257-4c7f50a625b3" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{align}
 \dot r^n &amp;= v^n \\
 m \dot v ^n &amp;= R^n_b f + m g^n
 \end{align}
-\end{split}\]</div>
+\end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(m\)</span> is the mass. Let us concentrate on the dynamics part: we <em>know</em> the acceleration <span class="math notranslate nohighlight">\(\dot v^n_d\)</span> we want from our planned trajectory, and gravity is a given. Hence, to make the drone do what we want, we can only change the quantity <span class="math notranslate nohighlight">\(R^n_b f\)</span>. Let us call that the <strong>vectored thrust</strong> <span class="math notranslate nohighlight">\(T^n\)</span>, where the superscript <span class="math notranslate nohighlight">\(n\)</span> denotes that the thrust is defined in the navigation frame. Then, to obtain the <em>desired</em> acceleration <span class="math notranslate nohighlight">\(\dot v^n_d\)</span>, the vectored thrust <span class="math notranslate nohighlight">\(T^n\)</span> has to satisfy</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-ee58f690-a3f7-46b7-8c41-f15f6248797c">
+<span class="eqno">(7.60)<a class="headerlink" href="#equation-ee58f690-a3f7-46b7-8c41-f15f6248797c" title="Permalink to this equation">#</a></span>\[\begin{equation}
 T^n = m \dot v^n_d - m g^n.
-\]</div>
+\end{equation}\]</div>
 <p>You can think of <span class="math notranslate nohighlight">\(T^n\)</span>, which is a 3D vector, as a thrust vector that pushes the drone toward where it needs to be. It can move the drone forwards or backwards by pitching appropriately, and left or right by rolling. But of course, at all times we need to make sure it cancels gravity as well, which explains the second term above. Even after gravity compensation, to gain or lose altitude, the thrust magnitude can be adjusted to make either happen. In control parlance, <span class="math notranslate nohighlight">\(T^n\)</span> can be thought of as a <em>virtual control input</em>.</p>
 <p>All of this is implemented in the <code class="docutils literal notranslate"><span class="pre">vectored_thrust</span></code> function below. It takes a <code class="docutils literal notranslate"><span class="pre">Drone</span></code> instance like the one we developed in Section 7.2, as well as a desired acceleration <span class="math notranslate nohighlight">\(a^n_d\)</span>. We redefined the <code class="docutils literal notranslate"><span class="pre">Drone</span></code> class in the <code class="docutils literal notranslate"><span class="pre">gtbook.drone</span></code> module so we can use it here, as well.</p>
 <div class="cell docutils container">
@@ -973,7 +959,7 @@ desired_thrust[-1] = [-0.18333472  0.19575027  9.81      ]
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/31cee0e991fc06cfa03a65ec74241f27e70c85836a1a026d8a2fc11fbd93313a.png" src="_images/31cee0e991fc06cfa03a65ec74241f27e70c85836a1a026d8a2fc11fbd93313a.png" />
+<img alt="_images/a39810edeab023bc44e8dad6c7d88c4482c64bdc4a8c1f872c39201b066274bf.png" src="_images/a39810edeab023bc44e8dad6c7d88c4482c64bdc4a8c1f872c39201b066274bf.png" />
 </div>
 </div>
 <p>The figure above shows the desired vectored thrust for the optimized trajectory for our example. If you execute this section’s notebook on colab you would be able to rotate the figure and ascertain that all thrust vectors, even if they are of different lengths, all have exactly the same vertical projection magnitude. This is of course by design, to cancel out gravity in the absence of any requested vertical height changes.</p>
@@ -996,10 +982,10 @@ In our case, we will use the position and velocity errors.
 We define
 the <em>desired</em> position <span class="math notranslate nohighlight">\(X_d\)</span> and <em>desired</em> velocity <span class="math notranslate nohighlight">\(\dot X_d\)</span> at any given time,
 which leads to the following controller:</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-cfebad74-c4cd-4148-be6f-0e07a7eb4c4c">
+<span class="eqno">(7.61)<a class="headerlink" href="#equation-cfebad74-c4cd-4148-be6f-0e07a7eb4c4c" title="Permalink to this equation">#</a></span>\[\begin{equation}
 T^n = m \dot v^n_d - m g^n - K_x (X - X_d) - K_v (\dot X - \dot X_d)
-\]</div>
+\end{equation}\]</div>
 <p>This now requires tuning two additional parameters, <span class="math notranslate nohighlight">\(K_x\)</span> and <span class="math notranslate nohighlight">\(K_v\)</span>, for the <em>proportional</em> and <em>derivative</em> control terms respectively (such a controller is called, appropriately, PD control).</p>
 <p>It <em>is</em> important to note that <span class="math notranslate nohighlight">\(X_d\)</span> and <span class="math notranslate nohighlight">\(\dot{X}_d\)</span> are exactly the optimal trajectory that we optimized for above. The subscript <span class="math notranslate nohighlight">\(d\)</span> denotes “desired” and strictly speaking these are functions of time <span class="math notranslate nohighlight">\(t\)</span>, as are the current position <span class="math notranslate nohighlight">\(X\)</span> and velocity <span class="math notranslate nohighlight">\(\dot X\)</span>. However, we chose to not clutter up the notation too much by explicitly omitting the time dependence.</p>
 <p>The proposed controller is relatively easy to implement in code:</p>
@@ -1061,7 +1047,7 @@ T^n = m \dot v^n_d - m g^n - K_x (X - X_d) - K_v (\dot X - \dot X_d)
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/dc0185e571eaf4951bb1d282dd1ae51cfdf028cff573ed8e68d0a6e8ecc7381e.png" src="_images/dc0185e571eaf4951bb1d282dd1ae51cfdf028cff573ed8e68d0a6e8ecc7381e.png" />
+<img alt="_images/097310313da45e73ede7d00bb9c9035a96bbf926b1a1d07179dcabd2dd12f524.png" src="_images/097310313da45e73ede7d00bb9c9035a96bbf926b1a1d07179dcabd2dd12f524.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -1075,7 +1061,7 @@ T^n = m \dot v^n_d - m g^n - K_x (X - X_d) - K_v (\dot X - \dot X_d)
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/ed07212ecedd4bd692fd875c9c84e1828668af3b649111a03e61e30981cb2bbe.png" src="_images/ed07212ecedd4bd692fd875c9c84e1828668af3b649111a03e61e30981cb2bbe.png" />
+<img alt="_images/030b985876dee471b689dd2df15bfb7ab46f0a619b4db7b9160c87591d49f8d0.png" src="_images/030b985876dee471b689dd2df15bfb7ab46f0a619b4db7b9160c87591d49f8d0.png" />
 </div>
 </div>
 <section id="exercises">
@@ -1089,44 +1075,38 @@ T^n = m \dot v^n_d - m g^n - K_x (X - X_d) - K_v (\dot X - \dot X_d)
 <section id="vectoring-using-fast-rotational-dynamics">
 <h2><span class="section-number">7.5.4. </span>Vectoring using Fast Rotational Dynamics<a class="headerlink" href="#vectoring-using-fast-rotational-dynamics" title="Link to this heading">#</a></h2>
 <p>While we cannot <em>instantaneously</em> produce the desired vectored thrust <span class="math notranslate nohighlight">\(T^n\)</span> at any given time, the dynamics of a quadrotor are fast enough that we can get rather close. Remember that the inertia matrix, which resists rotational acceleration, is typically small around the roll and pitch axes. Let us recall the the (approximate) rotational equations of motion, in the body frame <span class="math notranslate nohighlight">\(B\)</span>:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
+<div class="amsmath math notranslate nohighlight" id="equation-aab1b19d-6c16-489b-a21e-c2fb072e19a0">
+<span class="eqno">(7.62)<a class="headerlink" href="#equation-aab1b19d-6c16-489b-a21e-c2fb072e19a0" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{align}
 \dot{R}^n_b	&amp;= R^n_b\hat{\omega}^b \\
 I \dot{\omega}^b &amp;\approx \tau^b
 \end{align}
-\end{split}\]</div>
+\end{equation}\]</div>
 <p>For typical drone configurations the inertial matrix <span class="math notranslate nohighlight">\(I\)</span> can be well approximated as <span class="math notranslate nohighlight">\(\text{diag}(I_{xx},I_{yy},I_zz)\)</span>, with the roll-pitch components <span class="math notranslate nohighlight">\(I_{xx}, I_{yy} &lt;&lt; I_{zz}\)</span>, the yaw component. Since <span class="math notranslate nohighlight">\(I_{xx}\)</span> and <span class="math notranslate nohighlight">\(I_{yy}\)</span> are small, and we have four powerful motors that can provide differential thrust very quickly, those dynamics are quite fast. Hence, if the attitude <span class="math notranslate nohighlight">\(R^n_b\)</span> does not yet align the total thrust <span class="math notranslate nohighlight">\(f\)</span> with the desired thrust vector <span class="math notranslate nohighlight">\(T^n\)</span>, we can quickly make it so by rotating.</p>
 <p>To figure out how to make the drone tilt, think of a video game where you are given a two axis controller and the screen displays the <em>current</em> orientation of the drone’s Z-axis <span class="math notranslate nohighlight">\(\hat k^n_b\)</span> and the <em>desired</em> thrust vector <span class="math notranslate nohighlight">\(T^n\)</span>. Your job is to align the two by rolling (rotate around the body X-axis <span class="math notranslate nohighlight">\(\hat x^n_b\)</span>) and pitching (rotating around the body Y-axis <span class="math notranslate nohighlight">\(\hat y^n_n\)</span>). Looking at the drone from the outside, in the navigation frame, this will actually be rather hard: typically the controls are fixed to the <em>body</em> frame, and at every step you need to perform a mental rotation to find the right action. That is why racing drone pilots much prefer to use a “first person view” or FPV display and controller.</p>
 <p><code class="docutils literal notranslate"><span class="pre">{index}</span> <span class="pre">proportional</span></code>The mathematical equivalent of FPV for a control <em>algorithm</em> is to rotate everything into the body frame. Taking the desired thrust vector <span class="math notranslate nohighlight">\(T^n\)</span> and multiplying it with the transpose of the attitude <span class="math notranslate nohighlight">\(R^n_b\)</span> (which is the inverse rotation, recall Sections 6.1 and 7.1) yields the desired thrust vector <span class="math notranslate nohighlight">\(T^b\)</span> in the body frame:</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-1183c751-bcfb-47ee-b028-f86c02db9951">
+<span class="eqno">(7.63)<a class="headerlink" href="#equation-1183c751-bcfb-47ee-b028-f86c02db9951" title="Permalink to this equation">#</a></span>\[\begin{equation}
 T^b = (R^n_b)^T T^n.
-\]</div>
+\end{equation}\]</div>
 <p>Let us examine each component of this three-vector <span class="math notranslate nohighlight">\(T^b\)</span>, in the body frame, in turn. Let us name the 3 components <span class="math notranslate nohighlight">\(T_F\)</span>,  <span class="math notranslate nohighlight">\(T_L\)</span>, and <span class="math notranslate nohighlight">\(T_U\)</span>, as we are using the XYZ = Forward-Left-Up convention.</p>
-<ul>
-<li><p>When <span class="math notranslate nohighlight">\(T_F\)</span> is <em>positive</em>, the desired thrust vector is ahead of the drone, and we should <em>pitch</em> forward. Looking from the tip of the Left/<span class="math notranslate nohighlight">\(y\)</span>-axis, this corresponds to a counter-clockwise, i.e., positive angular velocity <span class="math notranslate nohighlight">\(\omega^b_y&gt;0\)</span> around the Left/<span class="math notranslate nohighlight">\(y\)</span>-axis Likewise, if <span class="math notranslate nohighlight">\(T_F\)</span> is <em>negative</em>, we should rotate clockwise around the <span class="math notranslate nohighlight">\(y\)</span>-axis, i.e., <span class="math notranslate nohighlight">\(\omega^b_y&gt;0\)</span>. This inspires a control law for the torque around Y as follows:</p>
-<div class="math notranslate nohighlight">
-\[
-    \tau^b_y = K_F T_F;
-    \]</div>
-</li>
-<li><p>When <span class="math notranslate nohighlight">\(T_L\)</span> is positive, the desired thrust vector is to the left, and we should <em>roll</em>. Looking from the tip of the Forward/<span class="math notranslate nohighlight">\(x\)</span>-axis, this corresponds to a clock-wise, i.e., <em>negative</em> angular velocity <span class="math notranslate nohighlight">\(\omega^b_x\)</span>. This inspires a control law for the torque around X as follows:</p>
-<div class="math notranslate nohighlight">
-\[
-    \tau^b_x = - K_L T_L;
-    \]</div>
-</li>
-<li><p>The component <span class="math notranslate nohighlight">\(T_U\)</span> along the body Up/<span class="math notranslate nohighlight">\(z\)</span>-axis is a good approximation of the total thrust we need, and in fact is exactly correct if the thrust vector is already aligned correctly. So, we set</p>
-<div class="math notranslate nohighlight">
-\[
-    f = T_U
-    \]</div>
-</li>
-</ul>
-<p>The three control laws above constitute a simple yet effective controller for the drone, with <span class="math notranslate nohighlight">\(K_F\)</span> and <span class="math notranslate nohighlight">\(K_L\)</span> constants that govern how aggressive the controller is.
+<ul class="simple">
+<li><p>When <span class="math notranslate nohighlight">\(T_F\)</span> is <em>positive</em>, the desired thrust vector is ahead of the drone, and we should <em>pitch</em> forward. Looking from the tip of the Left/<span class="math notranslate nohighlight">\(y\)</span>-axis, this corresponds to a counter-clockwise, i.e., positive angular velocity <span class="math notranslate nohighlight">\(\omega^b_y&gt;0\)</span> around the Left/<span class="math notranslate nohighlight">\(y\)</span>-axis Likewise, if <span class="math notranslate nohighlight">\(T_F\)</span> is <em>negative</em>, we should rotate clockwise around the <span class="math notranslate nohighlight">\(y\)</span>-axis, i.e., <span class="math notranslate nohighlight">\(\omega^b_y&gt;0\)</span>. This inspires a control law for the torque around Y as follows:
+\begin{equation}
+\tau^b_y = K_F T_F;
+\end{equation}</p></li>
+<li><p>When <span class="math notranslate nohighlight">\(T_L\)</span> is positive, the desired thrust vector is to the left, and we should <em>roll</em>. Looking from the tip of the Forward/<span class="math notranslate nohighlight">\(x\)</span>-axis, this corresponds to a clock-wise, i.e., <em>negative</em> angular velocity <span class="math notranslate nohighlight">\(\omega^b_x\)</span>. This inspires a control law for the torque around X as follows:
+\begin{equation}
+\tau^b_x = - K_L T_L;
+\end{equation}</p></li>
+<li><p>The component <span class="math notranslate nohighlight">\(T_U\)</span> along the body Up/<span class="math notranslate nohighlight">\(z\)</span>-axis is a good approximation of the total thrust we need, and in fact is exactly correct if the thrust vector is already aligned correctly. So, we set
+\begin{equation}
+f = T_U
+\end{equation}
+The three control laws above constitute a simple yet effective controller for the drone, with <span class="math notranslate nohighlight">\(K_F\)</span> and <span class="math notranslate nohighlight">\(K_L\)</span> constants that govern how aggressive the controller is.
 The torque control laws above correspond to simple <strong>proportional</strong> controllers in control theory, with <span class="math notranslate nohighlight">\(-T_F\)</span> and <span class="math notranslate nohighlight">\(T_L\)</span> acting as errors to be driven to zero.<br />
-The higher the values of <span class="math notranslate nohighlight">\(K_F\)</span> and <span class="math notranslate nohighlight">\(K_L\)</span>, the faster the controller will try to remove those errors, but this could also lead to oscillations and even instabilities. While this is out of scope for the current text, we can obtain a more stable aggressive controller by adding a derivative term as well that is a function of the angular velocity.</p>
+The higher the values of <span class="math notranslate nohighlight">\(K_F\)</span> and <span class="math notranslate nohighlight">\(K_L\)</span>, the faster the controller will try to remove those errors, but this could also lead to oscillations and even instabilities. While this is out of scope for the current text, we can obtain a more stable aggressive controller by adding a derivative term as well that is a function of the angular velocity.</p></li>
+</ul>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">attitude_controller</span><span class="p">(</span><span class="n">nT</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">nRb</span><span class="p">:</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Rot3</span><span class="p">,</span> <span class="n">K</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">):</span>
@@ -1158,29 +1138,29 @@ control[0] = [0.034 0.026 9.81 ]
 <section id="calculating-motor-thrust-vectors">
 <h3><span class="section-number">7.5.4.1. </span>Calculating Motor Thrust Vectors<a class="headerlink" href="#calculating-motor-thrust-vectors" title="Link to this heading">#</a></h3>
 <p>Creating the requested torque and thrust by the control law is done by adjusting the individual motor thrusts <span class="math notranslate nohighlight">\(f_i\)</span>. Recalling the force-torque equation in Section 7.2, if we ensure <span class="math notranslate nohighlight">\(f_{1} + f_{3} = f_{2} + f_{4}\)</span> we obtain :</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
+<div class="amsmath math notranslate nohighlight" id="equation-7717ac49-b101-4cc7-b316-b04672da5a8b">
+<span class="eqno">(7.64)<a class="headerlink" href="#equation-7717ac49-b101-4cc7-b316-b04672da5a8b" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \tau^b = l \begin{bmatrix}
 f_{1}-f_{2}-f_{3}+f_{4}\\
 f_{1}+f_{2}-f_{3}-f_{4}\\
 0
 \end{bmatrix}
-\end{split}\]</div>
+\end{equation}\]</div>
 <p>The thrust vector magnitude <span class="math notranslate nohighlight">\(F^b_z = f\)</span> can be adjusted quickly as well:</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-a5bf4c23-f574-4e0f-b535-62ad671b482d">
+<span class="eqno">(7.65)<a class="headerlink" href="#equation-a5bf4c23-f574-4e0f-b535-62ad671b482d" title="Permalink to this equation">#</a></span>\[\begin{equation}
 f = f_1 + f_2 + f_3 + f_4.
-\]</div>
+\end{equation}\]</div>
 <p>and hence we now have four equations in four unknowns. Solving for the forces yields</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
+<div class="amsmath math notranslate nohighlight" id="equation-e61ebe3a-c4c5-4c78-aa0a-e22b79cec256">
+<span class="eqno">(7.66)<a class="headerlink" href="#equation-e61ebe3a-c4c5-4c78-aa0a-e22b79cec256" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{align}
 f_1 &amp;= 0.25 \left( f + \tau_x/l + \tau_y/l \right) \\
 f_2 &amp;= 0.25 \left( f - \tau_x/l + \tau_y/l \right) \\
 f_3 &amp;= 0.25 \left( f + \tau_x/l - \tau_y/l \right) \\
 f_4 &amp;= 0.25 \left( f - \tau_x/l - \tau_y/l \right)
 \end{align}
-\end{split}\]</div>
+\end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(l\)</span> is the arm length, and <span class="math notranslate nohighlight">\(\tau_x\)</span> and <span class="math notranslate nohighlight">\(\tau_y\)</span> are the roll and pitch moment, respectively.</p>
 <p>The piece of code below implements this; however, this simplified code does not make any guarantees on not hitting torque limits. Hence, in practice more sophisticated approaches are used return a solution subject to actual control limits, while still trying to deliver some desired torques and/or thrust.</p>
 <div class="cell docutils container">
@@ -1262,7 +1242,7 @@ The code below does this.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/86337b0275697be53738b38203d2da4afdac31ca3aa0d2d464f2bd86411caf22.png" src="_images/86337b0275697be53738b38203d2da4afdac31ca3aa0d2d464f2bd86411caf22.png" />
+<img alt="_images/0875afc8160af36842b952e5e77a55c02fc62df27d8c8abced116f9d778e731a.png" src="_images/0875afc8160af36842b952e5e77a55c02fc62df27d8c8abced116f9d778e731a.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -1275,7 +1255,7 @@ The code below does this.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/f040f91fe150064ddf8dd59a47c6777d376573a1ec28cb4dc22c32e677732b40.png" src="_images/f040f91fe150064ddf8dd59a47c6777d376573a1ec28cb4dc22c32e677732b40.png" />
+<img alt="_images/7698eb306dab5672c046ca1e123e6eb3e7da2ae772c220837307ad899f89e267.png" src="_images/7698eb306dab5672c046ca1e123e6eb3e7da2ae772c220837307ad899f89e267.png" />
 </div>
 </div>
 <p>From the 3D plot above we see that the controller tracks the desired trajectory quite well.</p>
@@ -1347,7 +1327,8 @@ The code below does this.</p>
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -1422,8 +1403,8 @@ By Frank Dellaert and Seth Hutchinson
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>

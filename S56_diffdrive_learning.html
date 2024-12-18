@@ -16,17 +16,19 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-
-  
-  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
@@ -37,10 +39,11 @@
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="_static/style.css?v=51e3b7cf" />
   
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="_static/documentation_options.js?v=c73c0f3e"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
@@ -68,6 +71,7 @@
     <link rel="prev" title="5.5. Path Planning" href="S55_diffdrive_planning.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -83,19 +87,8 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="search.html"
       method="get">
@@ -103,7 +96,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search..."
          aria-label="Search..."
          autocomplete="off"
@@ -111,8 +103,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -128,7 +120,8 @@
       
       
       
-      <div class="bd-sidebar-primary bd-sidebar">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -158,21 +151,17 @@
     
     
     <img src="_static/logo.png" class="logo__image only-light" alt="Introduction to Robotics and Perception - Home"/>
-    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Introduction to Robotics and Perception - Home"/>`);</script>
+    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Introduction to Robotics and Perception - Home"/>
   
   
 </a></div>
         <div class="sidebar-primary-item">
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script></div>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         <ul class="current nav bd-sidenav">
@@ -252,9 +241,14 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -351,24 +345,16 @@
 
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-  </button>
-`);
-</script>
+</button>
 <button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="fa-solid fa-list"></span>
 </button>
@@ -432,13 +418,10 @@ We will often refer to the <em>training dataset</em> as <span class="math notran
 </ol>
 <p>Whether we are talking about classification or regression, the supervised leaning process normally follows these steps:</p>
 <ol class="arabic simple">
-<li><p>Define a model <span class="math notranslate nohighlight">\(f\)</span> and its parameters <span class="math notranslate nohighlight">\(\theta\)</span> that allow you to output a prediction <span class="math notranslate nohighlight">\(\hat{y}\)</span> from the input features <span class="math notranslate nohighlight">\(x\)</span>:</p></li>
-</ol>
-<div class="math notranslate nohighlight">
-\[
+<li><p>Define a model <span class="math notranslate nohighlight">\(f\)</span> and its parameters <span class="math notranslate nohighlight">\(\theta\)</span> that allow you to output a prediction <span class="math notranslate nohighlight">\(\hat{y}\)</span> from the input features <span class="math notranslate nohighlight">\(x\)</span>:
+\begin{equation}
 \hat{y} = f(x; \theta)
-\]</div>
-<ol class="arabic simple" start="2">
+\end{equation}</p></li>
 <li><p>Divide your data into <em>training</em>, <em>validation</em>, and <em>test</em> datasets. Typically, the largest portion of the data is used for training, while setting aside smaller validation and test portions of the data.</p></li>
 <li><p>Train the model using the training data <span class="math notranslate nohighlight">\(D_{\text{train}}\)</span>, while monitoring for “overfitting” on the validation dataset <span class="math notranslate nohighlight">\(D_{\text{val}}\)</span>. We train by adjusting the parameters <span class="math notranslate nohighlight">\(\theta\)</span> to minimize a training loss, both of which we look at in more detail below.</p></li>
 <li><p>After we decided to stop the training process, we typically test the model on the held-out dataset <span class="math notranslate nohighlight">\(D_{\text{test}}\)</span> that the training process has never seen, to get an independent assessment on how well the model will generalize towards new, unseen data.</p></li>
@@ -486,9 +469,9 @@ We will often refer to the <em>training dataset</em> as <span class="math notran
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Interpolated Output: tensor([[ 0.4449,  0.2529],
-        [-1.4470,  0.1746],
-        [-0.8373,  0.5579]], grad_fn=&lt;AddBackward0&gt;)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Interpolated Output: tensor([[-0.8334,  0.2926],
+        [ 1.1245, -0.5362],
+        [-0.4073,  0.6088]], grad_fn=&lt;AddBackward0&gt;)
 </pre></div>
 </div>
 </div>
@@ -506,8 +489,10 @@ We will often refer to the <em>training dataset</em> as <span class="math notran
 <div><p>A loss function for every occasion.</p>
 </div></blockquote>
 <p>Different tasks require different loss functions, and a lot of creativity and research goes into crafting loss functions for complex tasks. For “vanilla” regression tasks, we typically use a <strong>mean squared error</strong> loss function as we already encountered before:</p>
-<div class="math notranslate nohighlight">
-\[\mathcal{L}_{\text{MSE}}(\theta; D) \doteq \frac{1}{|D|} \sum_{(x,y)\in D}|f(x;\theta)-y|^2\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-28413fa7-29a6-4a10-b700-f98e83f3c3e5">
+<span class="eqno">(5.55)<a class="headerlink" href="#equation-28413fa7-29a6-4a10-b700-f98e83f3c3e5" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\mathcal{L}_{\text{MSE}}(\theta; D) \doteq \frac{1}{|D|} \sum_{(x,y)\in D}|f(x;\theta)-y|^2
+\end{equation}\]</div>
 <p>Above <span class="math notranslate nohighlight">\(f(x;\theta)\)</span> is the continuous prediction function implemented by, say, a neural network, where <span class="math notranslate nohighlight">\(\theta\)</span> represents the weights in all layers. Note that the formula above can be easily generalized to vector-valued labels <span class="math notranslate nohighlight">\(y\)</span>. In fact, our 1D interpolation example above yielded a 2-dimensional output, so let us illustrate the MSE loss in that case:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -517,7 +502,7 @@ We will often refer to the <em>training dataset</em> as <span class="math notran
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Our MSE Loss: 16.910192489624023
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Our MSE Loss: 14.77929973602295
 </pre></div>
 </div>
 </div>
@@ -532,18 +517,22 @@ We will often refer to the <em>training dataset</em> as <span class="math notran
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Pytorch MSE Loss: 16.910192489624023
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Pytorch MSE Loss: 14.77929973602295
 </pre></div>
 </div>
 </div>
 </div>
 <p id="index-3">For classification, the <strong>cross entropy</strong> loss function is very popular: it measures the average disagreement of the predicted labels with the ground truth labels:</p>
-<div class="math notranslate nohighlight">
-\[\mathcal{L}_{\text{CE}}(\theta; D) \doteq \sum_c \sum_{(x,y=c)\in D}\log\frac{1}{p_c(x;\theta)}\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-849f3935-875a-4645-9648-666d4829eae4">
+<span class="eqno">(5.56)<a class="headerlink" href="#equation-849f3935-875a-4645-9648-666d4829eae4" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\mathcal{L}_{\text{CE}}(\theta; D) \doteq \sum_c \sum_{(x,y=c)\in D}\log\frac{1}{p_c(x;\theta)}
+\end{equation}\]</div>
 <p>This formula seems perhaps unintuitive and rather complicated. However, it is actually quite intuitive once you understand a few concepts.
 In particular, in the multi-class classification problem we assume that the model outputs a probability <span class="math notranslate nohighlight">\(p_c(x;\theta)\)</span> for every class <span class="math notranslate nohighlight">\(c\in[N]\)</span>, where <span class="math notranslate nohighlight">\(N\)</span> is the number of classes. The quantity</p>
-<div class="math notranslate nohighlight">
-\[\log\frac{1}{p_c(x;\theta)}\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-f4c85bd1-d08a-4b2f-832b-212de3ad63dd">
+<span class="eqno">(5.57)<a class="headerlink" href="#equation-f4c85bd1-d08a-4b2f-832b-212de3ad63dd" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\log\frac{1}{p_c(x;\theta)}
+\end{equation}\]</div>
 <p>is called the <em>surprise</em> that we should experience when seeing a label <span class="math notranslate nohighlight">\(y=c\)</span>.
 Indeed, for example, if we see class <span class="math notranslate nohighlight">\(3\)</span> and the probability output by the network is <span class="math notranslate nohighlight">\(p_3(x;\theta)=1\)</span>, we are not surprised at all, as <span class="math notranslate nohighlight">\(\log\frac{1}{1}=\log 1 = 0\)</span>.
 However, if the probability is only <span class="math notranslate nohighlight">\(0.01\)</span>, our surprise is <span class="math notranslate nohighlight">\(\log\frac{1}{0.01}=\log 100 = 2\)</span>.
@@ -580,12 +569,12 @@ The lower the probability, the higher the surprise. Hence, the cross-entropy abo
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>dataset[12]: (tensor(4.7717), tensor([ 1.1732, -0.0645]))
-dataset[10:15]: (tensor([13.1600,  5.9575,  4.7717,  3.9100,  9.3615]), tensor([[-0.7112, -0.5108],
-        [ 0.9359, -0.3553],
-        [ 1.1732, -0.0645],
-        [ 1.0005,  0.4209],
-        [ 0.2809, -1.0812]]))
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>dataset[12]: (tensor(13.9283), tensor([-0.9617, -0.2921]))
+dataset[10:15]: (tensor([ 1.6632, 11.9661, 13.9283, 16.8256,  4.4216]), tensor([[ 0.5282,  1.0051],
+        [-0.4519, -0.8554],
+        [-0.9617, -0.2921],
+        [-0.9975,  0.2402],
+        [ 1.1137, -0.0949]]))
 </pre></div>
 </div>
 </div>
@@ -652,7 +641,7 @@ dataset[10:15]: (tensor([13.1600,  5.9575,  4.7717,  3.9100,  9.3615]), tensor([
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/49d17d6550fd7046ebb19cca5275af13d7022a681a08cd91ca85c751a0ac2619.png" src="_images/49d17d6550fd7046ebb19cca5275af13d7022a681a08cd91ca85c751a0ac2619.png" />
+<img alt="_images/8f7fccd1db45f128e85ec10ca7c25566290a9c5a690764085c02f82be7ed7f4e.png" src="_images/8f7fccd1db45f128e85ec10ca7c25566290a9c5a690764085c02f82be7ed7f4e.png" />
 </div>
 </div>
 <p>Note that gradient descent converges rather slow. You could try experimenting with the learning rate to speed this up.</p>
@@ -679,7 +668,7 @@ dataset[10:15]: (tensor([13.1600,  5.9575,  4.7717,  3.9100,  9.3615]), tensor([
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/8ad1e4212cf4b41e762ab6eeac6189ef38cd6e454288242584f4ef83044586a1.png" src="_images/8ad1e4212cf4b41e762ab6eeac6189ef38cd6e454288242584f4ef83044586a1.png" />
+<img alt="_images/4da628b6b06719003317a2ecbdb5c83c7993c7a9904557a70d059717d6953c8e.png" src="_images/4da628b6b06719003317a2ecbdb5c83c7993c7a9904557a70d059717d6953c8e.png" />
 </div>
 </div>
 </section>
@@ -739,7 +728,7 @@ dataset[10:15]: (tensor([13.1600,  5.9575,  4.7717,  3.9100,  9.3615]), tensor([
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/3bbf1ea2ff9bce3fc65a43a2244543661dd7a947db0070e320833f235a6aa9b5.png" src="_images/3bbf1ea2ff9bce3fc65a43a2244543661dd7a947db0070e320833f235a6aa9b5.png" />
+<img alt="_images/53a9ee57169b5957c94c968947b116ab9ec254632e43f1fb63303f00703c40a6.png" src="_images/53a9ee57169b5957c94c968947b116ab9ec254632e43f1fb63303f00703c40a6.png" />
 </div>
 </div>
 <p>Note that we converged <em>much</em> faster in this case: in just 30 iterations we reached the same low loss as with 300 iterations before. The answer is because with 250 training samples and mini-batches of size 25, each epoch adjusts the model’s parameters 10 times. This effectively boosts the learning rate by a factor of 10. However, note that because each mini-batch looks at only one 10th of the dataset, each mini-batch’s adjustment could <em>adversely</em> affect the performance on the other training samples.</p>
@@ -805,7 +794,8 @@ dataset[10:15]: (tensor([13.1600,  5.9575,  4.7717,  3.9100,  9.3615]), tensor([
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -871,8 +861,8 @@ By Frank Dellaert and Seth Hutchinson
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>

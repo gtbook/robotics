@@ -16,17 +16,19 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-
-  
-  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
@@ -37,10 +39,11 @@
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="_static/style.css?v=51e3b7cf" />
   
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="_static/documentation_options.js?v=c73c0f3e"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
@@ -68,6 +71,7 @@
     <link rel="prev" title="2. A Trash Sorting Robot" href="S20_sorter_intro.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -83,19 +87,8 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="search.html"
       method="get">
@@ -103,7 +96,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search..."
          aria-label="Search..."
          autocomplete="off"
@@ -111,8 +103,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -128,7 +120,8 @@
       
       
       
-      <div class="bd-sidebar-primary bd-sidebar">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -158,21 +151,17 @@
     
     
     <img src="_static/logo.png" class="logo__image only-light" alt="Introduction to Robotics and Perception - Home"/>
-    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Introduction to Robotics and Perception - Home"/>`);</script>
+    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Introduction to Robotics and Perception - Home"/>
   
   
 </a></div>
         <div class="sidebar-primary-item">
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script></div>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         <ul class="current nav bd-sidenav">
@@ -252,9 +241,14 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -351,24 +345,16 @@
 
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-  </button>
-`);
-</script>
+</button>
 <button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="fa-solid fa-list"></span>
 </button>
@@ -393,14 +379,15 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-probability-to-model-uncertainty">2.1.1. Using Probability to Model Uncertainty</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prior-probability-distributions">2.1.2. Prior Probability Distributions</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#probability-distributions-in-python">2.1.3. Probability Distributions in Python</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simulation-by-sampling">2.1.4. Simulation by Sampling</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cumulative-distribution-function">2.1.4.1. Cumulative Distribution Function</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example">2.1.4.2. Example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#probability-distributions">2.1.2. Probability Distributions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prior-probability-distributions">2.1.3. Prior Probability Distributions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#probability-distributions-in-python">2.1.4. Probability Distributions in Python</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simulation-by-sampling">2.1.5. Simulation by Sampling</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cumulative-distribution-function">2.1.5.1. Cumulative Distribution Function</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example">2.1.5.2. Example</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gtsam-101">2.1.5. GTSAM 101</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gtsam-101">2.1.6. GTSAM 101</a></li>
 </ul>
             </nav>
         </div>
@@ -444,20 +431,27 @@ While a comprehensive coverage of probability theory is beyond the scope of this
 we introduce key concepts and methods throughout the text, as needed,
 to deal with various kinds of uncertainty that occur in robotics applications.
 Rigorous introductions can be found in many textbooks, including <a class="reference external" href="https://probability4datascience.com/index.html">Probability for Data Science</a> (which is available online).</p>
-<p><code class="docutils literal notranslate"><span class="pre">{index}</span> <span class="pre">sample</span> <span class="pre">space</span></code>The starting point for reasoning with uncertainty is to define the set of outcomes that might occur.
+<p id="index-1">The starting point for reasoning with uncertainty is to define the set of outcomes that might occur.
 The set of all possible outcomes is called the <strong>sample space</strong>, often denoted by <span class="math notranslate nohighlight">\(\Omega.\)</span>
 In our example, when an item of trash arrives on the conveyor belt,
 there are five possible outcomes,</p>
-<p><span class="math notranslate nohighlight">\(\Omega = \{ \rm{cardboard, paper, cans, scrap \; metal, bottle}\}.\)</span></p>
-<p><code class="docutils literal notranslate"><span class="pre">{index}</span> <span class="pre">event,</span> <span class="pre">probability</span> <span class="pre">distribution</span></code>## Probability Distributions
-A subset of the sample space <span class="math notranslate nohighlight">\(\Omega\)</span> is called an <strong>event</strong>.  A <strong>probability distribution</strong>, <span class="math notranslate nohighlight">\(P\)</span>, assigns a probability <span class="math notranslate nohighlight">\(0 \leq P(A) \leq 1\)</span> to each event <span class="math notranslate nohighlight">\(A \subseteq \Omega\)</span>, with <span class="math notranslate nohighlight">\(P(\emptyset) = 0\)</span> and <span class="math notranslate nohighlight">\(P(\Omega)=1\)</span>.
+<div class="amsmath math notranslate nohighlight" id="equation-6a8b07f0-d87e-4454-b760-2b8f1c5d7430">
+<span class="eqno">(2.1)<a class="headerlink" href="#equation-6a8b07f0-d87e-4454-b760-2b8f1c5d7430" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\Omega = \{ \rm{cardboard, paper, cans, scrap \; metal, bottle}\}.
+\end{equation}\]</div>
+</section>
+<section id="probability-distributions">
+<span id="index-2"></span><h2><span class="section-number">2.1.2. </span>Probability Distributions<a class="headerlink" href="#probability-distributions" title="Link to this heading">#</a></h2>
+<p>A subset of the sample space <span class="math notranslate nohighlight">\(\Omega\)</span> is called an <strong>event</strong>.  A <strong>probability distribution</strong>, <span class="math notranslate nohighlight">\(P\)</span>, assigns a probability <span class="math notranslate nohighlight">\(0 \leq P(A) \leq 1\)</span> to each event <span class="math notranslate nohighlight">\(A \subseteq \Omega\)</span>, with <span class="math notranslate nohighlight">\(P(\emptyset) = 0\)</span> and <span class="math notranslate nohighlight">\(P(\Omega)=1\)</span>.
 In addition, for disjoint events, <span class="math notranslate nohighlight">\(A_i \cap A_j = \emptyset\)</span>, we have
 <span class="math notranslate nohighlight">\(P(A_i \cup A_j) = P(A_i) + P(A_j)\)</span>.
 Using this property, it is a simple matter to compute the probability for any <span class="math notranslate nohighlight">\(A \subseteq \Omega\)</span>
 if we are provided with the probabilities of the individual outcomes.
 Further, since <span class="math notranslate nohighlight">\(P(\Omega)=1\)</span>, it follows immediately that</p>
-<div class="math notranslate nohighlight">
-\[P(\Omega) = \sum_{\omega \in \Omega} P(\{\omega\}) = 1\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-6fd58e19-43ad-4b68-a1fd-1b51c153a7a5">
+<span class="eqno">(2.2)<a class="headerlink" href="#equation-6fd58e19-43ad-4b68-a1fd-1b51c153a7a5" title="Permalink to this equation">#</a></span>\[\begin{equation}
+P(\Omega) = \sum_{\omega \in \Omega} P(\{\omega\}) = 1
+\end{equation}\]</div>
 <p>i.e., that the probabilities of the individual outcomes sum to unity.
 As a slight abuse of notation, for singleton events, we will often write <span class="math notranslate nohighlight">\(P(\omega)\)</span> rather than <span class="math notranslate nohighlight">\(P(\{\omega\})\)</span>
 to simplify notation.</p>
@@ -467,7 +461,7 @@ In robotics, this can occur when the robot acts in the world, or based on sensor
 How evidence affects the propagation of probability values is a recurring topic in this book.</p>
 </section>
 <section id="prior-probability-distributions">
-<h2><span class="section-number">2.1.2. </span>Prior Probability Distributions<a class="headerlink" href="#prior-probability-distributions" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">2.1.3. </span>Prior Probability Distributions<a class="headerlink" href="#prior-probability-distributions" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>A <em>prior</em> that describes our beliefs before any sensor data is obtained.</p>
 </div></blockquote>
@@ -489,8 +483,10 @@ Suppose, for example, that the owner of the trash-sorting facility has told us (
 <p>It is common to assume that outcomes occur in proportion to their probability (there are a number of
 technical conditions that underlie this assumption, such as the condition that outcomes are independent,
 but we will not address these here). Thus, from the above observed frequencies, we might estimate that the probability of seeing a piece of cardboard in the work cell is given by</p>
-<div class="math notranslate nohighlight">
-\[P(\mathrm{cardboard}) \approx 200/1000 = 0.2\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-00f70dfe-4fdb-4b43-bdcc-770c11f427d1">
+<span class="eqno">(2.3)<a class="headerlink" href="#equation-00f70dfe-4fdb-4b43-bdcc-770c11f427d1" title="Permalink to this equation">#</a></span>\[\begin{equation}
+P(\mathrm{cardboard}) \approx 200/1000 = 0.2
+\end{equation}\]</div>
 <p>Using the same logic, we can do the same for all categories, yielding:</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
@@ -517,14 +513,14 @@ but we will not address these here). Thus, from the above observed frequencies, 
 </tbody>
 </table>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">{index}</span> <span class="pre">prior</span></code>We call this type of probabilistic knowledge about the state of the world, in the absence of any other information, a <strong>prior</strong>, because it represents our belief <em>before</em> any evidence (e.g., sensor data) has been acquired.</p>
+<p id="index-3">We call this type of probabilistic knowledge about the state of the world, in the absence of any other information, a <strong>prior</strong>, because it represents our belief <em>before</em> any evidence (e.g., sensor data) has been acquired.</p>
 <!-- Here, a word about notation is in order.  We use upper case letters to denote random quantities. For example, we use $C$ to denote the random outcome of a particular
 category of trash arriving to the sorting station.  When you see an uppercase letter, it indicates that we do not know what value this outcome will take, but
 that we do know a probability distribution for the values that could occur.
 We use lower case letters, possibly subscripted, to denote specific outcomes. For example, we might define $c_1 =$ cardboard,
 $c_2 =$ paper, etc.  Thus, we might write $P(C = c_1)$ or merely $P(c_1)$ to denote the prior probability that an item of trash is cardboard. --></section>
 <section id="probability-distributions-in-python">
-<h2><span class="section-number">2.1.3. </span>Probability Distributions in Python<a class="headerlink" href="#probability-distributions-in-python" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">2.1.4. </span>Probability Distributions in Python<a class="headerlink" href="#probability-distributions-in-python" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>We represent probability distributions using the  <code class="docutils literal notranslate"><span class="pre">DiscreteDistribution</span></code> class in GTSAM.</p>
 </div></blockquote>
@@ -627,12 +623,12 @@ to maintain consistency when using arrays to store values associated to a collec
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/63fb2c2c5568cefc3f102d932d7997ae06c90e1a33af3e5578ae549f0c8ec255.png" src="_images/63fb2c2c5568cefc3f102d932d7997ae06c90e1a33af3e5578ae549f0c8ec255.png" />
+<img alt="_images/db17d39d22046e863dc1a082668bfb91b971bcc53234fb00b4a15b25270e668e.png" src="_images/db17d39d22046e863dc1a082668bfb91b971bcc53234fb00b4a15b25270e668e.png" />
 </div>
 </div>
 </section>
 <section id="simulation-by-sampling">
-<h2><span class="section-number">2.1.4. </span>Simulation by Sampling<a class="headerlink" href="#simulation-by-sampling" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">2.1.5. </span>Simulation by Sampling<a class="headerlink" href="#simulation-by-sampling" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>We can simulate our trash sorting cell by sampling from the prior.</p>
 </div></blockquote>
@@ -651,26 +647,26 @@ We denote by <span class="math notranslate nohighlight">\(U(a,b)\)</span> the un
 In numpy, the function <em>np.random.rand()</em> generates a sample <span class="math notranslate nohighlight">\(x \sim U(0,1)\)</span>.
 How can we use this result to generate a sample from an arbitrary probability distribution?</p>
 <section id="cumulative-distribution-function">
-<h3><span class="section-number">2.1.4.1. </span>Cumulative Distribution Function<a class="headerlink" href="#cumulative-distribution-function" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">2.1.5.1. </span>Cumulative Distribution Function<a class="headerlink" href="#cumulative-distribution-function" title="Link to this heading">#</a></h3>
 <p>We begin by introducing the Cumulative Distribution Function (CDF) for a random variable <span class="math notranslate nohighlight">\(X\)</span>.
 We will more carefully introduce the notion of a discrete random variable in Section 2.2, but for now it
 is sufficient to know that a discrete random variable takes a value from a countable set,
 each of which is assigned a probability value.
 For a random variable <span class="math notranslate nohighlight">\(X\)</span>, the CDF for <span class="math notranslate nohighlight">\(X\)</span> is denoted by <span class="math notranslate nohighlight">\(F_X\)</span>, and is defined as</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-fd73969f-cafa-4bfc-b4e6-188433aa1dbd">
+<span class="eqno">(2.4)<a class="headerlink" href="#equation-fd73969f-cafa-4bfc-b4e6-188433aa1dbd" title="Permalink to this equation">#</a></span>\[\begin{equation}
 F_X(\alpha) = P(X \leq \alpha)
-\]</div>
+\end{equation}\]</div>
 <p>It follows immediately that <span class="math notranslate nohighlight">\(0 \leq F_X(\alpha) \leq 1\)</span>,
 since <span class="math notranslate nohighlight">\(F_X(\alpha)\)</span> is itself a probability.
 In the case of discrete random variables,
 say <span class="math notranslate nohighlight">\(X \in \{ x_0, \dots x_{n-1}\}\)</span>, we can compute the CDF
 <span class="math notranslate nohighlight">\(F_X(\alpha)\)</span> by summing the probabilities assigned
 to all <span class="math notranslate nohighlight">\(x_i \leq \alpha\)</span></p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-32c13565-f05d-4d9c-adc1-abbcfe39dcc3">
+<span class="eqno">(2.5)<a class="headerlink" href="#equation-32c13565-f05d-4d9c-adc1-abbcfe39dcc3" title="Permalink to this equation">#</a></span>\[\begin{equation}
 F_X(\alpha) = \sum_{x_i \leq \alpha} P(x_i) = \sum_{i=0}^{k-1} P(x_i)
-\]</div>
+\end{equation}\]</div>
 <p>in which the rightmost summation follows if we choose <span class="math notranslate nohighlight">\(k\)</span> such that <span class="math notranslate nohighlight">\(x_{k-1} \leq \alpha &lt; x_k\)</span>.
 The terminology <em>Cumulative Distribution Function</em> is due to the fact that <span class="math notranslate nohighlight">\(F_X(\alpha)\)</span>
 is the accumulated probability assigned to all outcomes less than or equal to <span class="math notranslate nohighlight">\(\alpha\)</span>,
@@ -723,7 +719,7 @@ The CDF for <span class="math notranslate nohighlight">\(X\)</span> is given by:
 </div>
 </section>
 <section id="example">
-<h3><span class="section-number">2.1.4.2. </span>Example<a class="headerlink" href="#example" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">2.1.5.2. </span>Example<a class="headerlink" href="#example" title="Link to this heading">#</a></h3>
 <p>Some numpy code to generate the CDF:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -773,7 +769,7 @@ to category 1.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/a8ab12585a2056dd36cd736fbf785be24ab7e41c65817b8d7cc1a471c09ebe0a.png" src="_images/a8ab12585a2056dd36cd736fbf785be24ab7e41c65817b8d7cc1a471c09ebe0a.png" />
+<img alt="_images/0c560100e19b013939884c892baa57876be4fb2e02a5ceaf2bce7d82611de2b9.png" src="_images/0c560100e19b013939884c892baa57876be4fb2e02a5ceaf2bce7d82611de2b9.png" />
 </div>
 </div>
 <p>Of course, GTSAM has all this machinery built-in:</p>
@@ -786,13 +782,13 @@ to category 1.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/7bad8f0a41b4c99c5927d9679b378cc08d40a34bb3d5dd274439b596394f1a85.png" src="_images/7bad8f0a41b4c99c5927d9679b378cc08d40a34bb3d5dd274439b596394f1a85.png" />
+<img alt="_images/3ad6258a0d093d37e5034140dd8f7b8f1ab48cea625f5567147cdcc6d3cea319.png" src="_images/3ad6258a0d093d37e5034140dd8f7b8f1ab48cea625f5567147cdcc6d3cea319.png" />
 </div>
 </div>
 </section>
 </section>
 <section id="gtsam-101">
-<h2><span class="section-number">2.1.5. </span>GTSAM 101<a class="headerlink" href="#gtsam-101" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">2.1.6. </span>GTSAM 101<a class="headerlink" href="#gtsam-101" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>The GTSAM concepts used in this section, explained.</p>
 </div></blockquote>
@@ -838,7 +834,7 @@ to category 1.</p>
 </table>
 </div></div></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">{index}</span> <span class="pre">decision</span> <span class="pre">tree</span></code>As you can see, this is a PMF on the variable with id <span class="math notranslate nohighlight">\(42\)</span>, and it indeed has probabilities (that add up to one) for values <code class="docutils literal notranslate"><span class="pre">0..2</span></code>. Internally, GTSAM <em>actually</em> represents a PMF as a small <strong>decision tree</strong>, which you can reveal using <code class="docutils literal notranslate"><span class="pre">show</span></code>:</p>
+<p id="index-4">As you can see, this is a PMF on the variable with id <span class="math notranslate nohighlight">\(42\)</span>, and it indeed has probabilities (that add up to one) for values <code class="docutils literal notranslate"><span class="pre">0..2</span></code>. Internally, GTSAM <em>actually</em> represents a PMF as a small <strong>decision tree</strong>, which you can reveal using <code class="docutils literal notranslate"><span class="pre">show</span></code>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: The decision tree representation for a discrete probability distribution.</span>
@@ -848,7 +844,7 @@ to category 1.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/4455abf87efcc4e16f2d3388e3a3d92a7e22ad4bb491b68dc54ea341daa1cb7b.svg" src="_images/4455abf87efcc4e16f2d3388e3a3d92a7e22ad4bb491b68dc54ea341daa1cb7b.svg" />
+<img alt="_images/feeac03a74300cf6568c8dfa9f038fd74ad597744cd79d03b81bec56e222b921.svg" src="_images/feeac03a74300cf6568c8dfa9f038fd74ad597744cd79d03b81bec56e222b921.svg" />
 </div>
 </div>
 <p>Of course, it would be much nicer if we could print out these PMFs in a more readable format, that shows us a name for each variable as well as a pretty name for each. This is where the <code class="docutils literal notranslate"><span class="pre">Variables</span></code> class comes to the rescue. We actually defined a global variable at the top of this notebook, like so:</p>
@@ -995,7 +991,8 @@ to category 1.</p>
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -1005,14 +1002,15 @@ to category 1.</p>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-probability-to-model-uncertainty">2.1.1. Using Probability to Model Uncertainty</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prior-probability-distributions">2.1.2. Prior Probability Distributions</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#probability-distributions-in-python">2.1.3. Probability Distributions in Python</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simulation-by-sampling">2.1.4. Simulation by Sampling</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cumulative-distribution-function">2.1.4.1. Cumulative Distribution Function</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example">2.1.4.2. Example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#probability-distributions">2.1.2. Probability Distributions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prior-probability-distributions">2.1.3. Prior Probability Distributions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#probability-distributions-in-python">2.1.4. Probability Distributions in Python</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simulation-by-sampling">2.1.5. Simulation by Sampling</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cumulative-distribution-function">2.1.5.1. Cumulative Distribution Function</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example">2.1.5.2. Example</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gtsam-101">2.1.5. GTSAM 101</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gtsam-101">2.1.6. GTSAM 101</a></li>
 </ul>
   </nav></div>
 
@@ -1061,8 +1059,8 @@ By Frank Dellaert and Seth Hutchinson
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>

@@ -16,17 +16,19 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-
-  
-  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
@@ -37,10 +39,11 @@
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="_static/style.css?v=51e3b7cf" />
   
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="_static/documentation_options.js?v=c73c0f3e"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
@@ -68,6 +71,7 @@
     <link rel="prev" title="6.5. Planning for Autonomous Driving." href="S65_driving_planning.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -83,19 +87,8 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="search.html"
       method="get">
@@ -103,7 +96,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search..."
          aria-label="Search..."
          autocomplete="off"
@@ -111,8 +103,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -128,7 +120,8 @@
       
       
       
-      <div class="bd-sidebar-primary bd-sidebar">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -158,21 +151,17 @@
     
     
     <img src="_static/logo.png" class="logo__image only-light" alt="Introduction to Robotics and Perception - Home"/>
-    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Introduction to Robotics and Perception - Home"/>`);</script>
+    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Introduction to Robotics and Perception - Home"/>
   
   
 </a></div>
         <div class="sidebar-primary-item">
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script></div>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         <ul class="current nav bd-sidenav">
@@ -252,9 +241,14 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -351,24 +345,16 @@
 
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-  </button>
-`);
-</script>
+</button>
 <button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="fa-solid fa-list"></span>
 </button>
@@ -428,36 +414,37 @@ document.write(`
 <div><p>DQN is an early deep learning RL method akin to Q-learning.</p>
 </div></blockquote>
 <p>Recall from Section 3.6 that we can define a policy in terms of <strong>Q-values</strong>, sometimes also called state-action values, and that we can define the optimal policy as</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-39b1862f-e68a-4e1f-99f2-5f72bebd2222">
+<span class="eqno">(6.67)<a class="headerlink" href="#equation-39b1862f-e68a-4e1f-99f2-5f72bebd2222" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \pi^*(x) = \arg \max_a Q^*(x,a)
-\]</div>
+\end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(Q^*(x,a)\)</span> denote the Q-values for the <em>optimal</em> policy. In Q-learning, we start with some random Q-values and then iteratively improve the estimate for the optimal Q-values by alpha-blending between old and new estimates:</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-216e4a58-968e-40a1-9629-bc473f7d44b6">
+<span class="eqno">(6.68)<a class="headerlink" href="#equation-216e4a58-968e-40a1-9629-bc473f7d44b6" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \hat{Q}(x,a) \leftarrow (1-\alpha) \hat{Q}(x,a) + \alpha~\text{target}(x,a,x')
-\]</div>
+\end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\text{target}(x,a,x') \doteq R(x,a,x') + \gamma \max_{a'} \hat{Q}(x',a')\)</span> is the “target” value that we think is an improvement on the previous value <span class="math notranslate nohighlight">\(\hat{Q}(x,a)\)</span>. Indeed: the target <span class="math notranslate nohighlight">\(\text{target}(x,a,x')\)</span> uses the current estimate of the Q-values for future states, but improves on this by using the <em>known</em> reward <span class="math notranslate nohighlight">\(R(x,a,x')\)</span> for the current action in the current state.</p>
 <p id="index-3">In the <strong>deep Q-network</strong> or DQN method we use a <em>supervised learning</em> approach to Q-learning, by training a neural network, parameterized by <span class="math notranslate nohighlight">\(\theta\)</span>, to approximate the optimal Q-values:</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-6218967a-803c-405a-83de-02f694ec49d3">
+<span class="eqno">(6.69)<a class="headerlink" href="#equation-6218967a-803c-405a-83de-02f694ec49d3" title="Permalink to this equation">#</a></span>\[\begin{equation}
 Q^*(x,a) \approx Q(x,a; \theta)
-\]</div>
+\end{equation}\]</div>
 <p>It might be worthwhile to re-visit Section 5.6, where we introduced neural networks and how to train them using stochastic gradient descent (SGD). In the context of RL, the DQN method uses two additional ideas that are crucial in making the training converge to something sensible in difficult problems. The first is splitting the training into <em>execution</em> and <em>experience replay</em> phases:</p>
 <ul class="simple">
 <li><p>during the <strong>execution phase</strong>, the policy is executed (possibly with some degree of randomness) and the experiences <span class="math notranslate nohighlight">\((x,a,r,x')\)</span>, with <span class="math notranslate nohighlight">\(r\)</span> the reward, are stored in a dataset <span class="math notranslate nohighlight">\(D\)</span>;</p></li>
 <li><p>during <strong>experience replay</strong>, we <em>randomly sample</em> from these experiences to create mini-batches of data, which are in turn used to perform SGD on the parameters <span class="math notranslate nohighlight">\(\theta\)</span>.</p></li>
 </ul>
 <p>The second idea is to calculate the target values</p>
-<div class="math notranslate nohighlight">
-\[
-\text{target}(x,a,x') \doteq R(x,a,x') + \gamma \max_{a'} \hat{Q}(x',a'; \theta^{old})\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-6f4f1258-2736-4019-9090-f284121fc89f">
+<span class="eqno">(6.70)<a class="headerlink" href="#equation-6f4f1258-2736-4019-9090-f284121fc89f" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\text{target}(x,a,x') \doteq R(x,a,x') + \gamma \max_{a'} \hat{Q}(x',a'; \theta^{old})
+\end{equation}\]</div>
 <p>with the parameters <span class="math notranslate nohighlight">\(\theta^{old}\)</span> from the previous epoch, to provide a more stable approximation target.
 The mini-batch loss we minimize using SGD is then</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-c28fbf63-6424-4f4a-b6e4-4c232b13605e">
+<span class="eqno">(6.71)<a class="headerlink" href="#equation-c28fbf63-6424-4f4a-b6e4-4c232b13605e" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathcal{L}_{\text{DQN}}(\theta; D) \doteq \sum_{(x,a,r,x')\in D} [R(x,a,x') + \gamma \max_{a'} \hat{Q}(x',a'; \theta^{old}) - Q(x,a; \theta)]^2
-\]</div>
+\end{equation}\]</div>
 <p>With this basic scheme, a team from DeepMind was able to achieve human or super-human performance on about 50 Atari 2600 games in 2015 <span id="id1">[<a class="reference internal" href="bibliography.html#id50" title="Volodymyr Mnih, Koray Kavukcuoglu, David Silver, Andrei A. Rusu, Joel Veness, Marc G. Bellemare, Alex Graves, Martin Riedmiller, Andreas K. Fidjeland, Georg Ostrovski, Stig Petersen, Charles Beattie, Amir Sadik, Ioannis Antonoglou, Helen King, Dharshan Kumaran, Daan Wierstra, Shane Legg, and Demis Hassabis. Human-level control through deep reinforcement learning. Nature, 518(7540):529–533, February 2015. URL: https://doi.org/10.1038/nature14236, doi:10.1038/nature14236.">Mnih <em>et al.</em>, 2015</a>]</span>.</p>
 <p>DQN is a so-called <strong>off-policy</strong> method, in that each execution phase uses the best policy we computed so far, but we can still replay earlier experiences gathered with “lesser” policies. Nothing in the experience replay phase references the policy: every experience leads to a valid Q-value backup and a valid supervised learning signal.</p>
 </section>
@@ -467,33 +454,39 @@ The mini-batch loss we minimize using SGD is then</p>
 <div><p>Policy optimization takes a black box optimization approach to a deep policy.</p>
 </div></blockquote>
 <p>Whereas the above gets at an optimal policy indirectly, via deep Q-learning, a different and very popular idea is to directly parameterize the policy using a neural network, with weights <span class="math notranslate nohighlight">\(\theta\)</span>. It is common to make this a <strong>stochastic policy</strong>,</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-7399407d-6225-4632-8e67-915d83c5f29e">
+<span class="eqno">(6.72)<a class="headerlink" href="#equation-7399407d-6225-4632-8e67-915d83c5f29e" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \pi(a|x; \theta)
-\]</div>
+\end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(a \in {\cal A}\)</span> is an action, <span class="math notranslate nohighlight">\(x \in {\cal X}\)</span> is a state, and the policy outputs a <em>probability</em> for each action <span class="math notranslate nohighlight">\(a\)</span> based on the state <span class="math notranslate nohighlight">\(x\)</span>. One of the reasons to prefer stochastic policies is that they are differentiable, as they output continuous values rather than discrete actions. This allows us to optimize for them via gradient descent, as we explore in the next section.</p>
 <p>In Chapter 5 we used <em>supervised</em> learning to train neural networks, and we just applied this for learning Q-values in DQN. It is useful to consider how this might work for training a <em>policy</em>. Recall from Section 5.6 that we defined the empirical cross-entropy loss as</p>
-<div class="math notranslate nohighlight">
-\[\mathcal{L}_{\text{CE}}(\theta; D) \doteq \sum_c \sum_{(x,y=c)\in D}\log\frac{1}{p_c(x;\theta)}\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-8cc935ec-65f5-47c0-bc8c-31aa2b84dee7">
+<span class="eqno">(6.73)<a class="headerlink" href="#equation-8cc935ec-65f5-47c0-bc8c-31aa2b84dee7" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\mathcal{L}_{\text{CE}}(\theta; D) \doteq \sum_c \sum_{(x,y=c)\in D}\log\frac{1}{p_c(x;\theta)}
+\end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(D\)</span> is a dataset of supervised learning examples. Above <span class="math notranslate nohighlight">\(y\)</span> takes on a discrete class value <span class="math notranslate nohighlight">\(c\)</span>, but another very common way to write this is via a “one-hot encoding”. Let <span class="math notranslate nohighlight">\(y_c\)</span> be 1 if <span class="math notranslate nohighlight">\(y=c\)</span> and 0 otherwise, then our loss becomes:</p>
-<div class="math notranslate nohighlight">
-\[\mathcal{L}_{\text{CE}}(\theta; D) = -\sum_{(x,y)\in D} \sum_c y_c \log p_c(x;\theta)\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-81e341bd-3a9b-4f2c-904b-71f9331b66ef">
+<span class="eqno">(6.74)<a class="headerlink" href="#equation-81e341bd-3a9b-4f2c-904b-71f9331b66ef" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\mathcal{L}_{\text{CE}}(\theta; D) = -\sum_{(x,y)\in D} \sum_c y_c \log p_c(x;\theta)
+\end{equation}\]</div>
 <p>This formulation is equivalent, but now we are summing over all classes for each data point, with <span class="math notranslate nohighlight">\(y_c\)</span> acting as a <em>weight</em>, either one or zero. When someone is so kind as to give us the optimal action <span class="math notranslate nohighlight">\(y_a\)</span> (as a one-hot encoding) for every state <span class="math notranslate nohighlight">\(x\)</span> in some dataset <span class="math notranslate nohighlight">\(D\)</span>, we can apply this same loss function to a stochastic policy, obtaining</p>
-<div class="math notranslate nohighlight">
-\[\mathcal{L}_{\text{CE}}(\theta; D) = -\sum_{(x,y)\in D} \sum_a y_a \log \pi(a| x; \theta)\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-09638b39-28f5-4cd0-888e-a3394020fc8a">
+<span class="eqno">(6.75)<a class="headerlink" href="#equation-09638b39-28f5-4cd0-888e-a3394020fc8a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\mathcal{L}_{\text{CE}}(\theta; D) = -\sum_{(x,y)\in D} \sum_a y_a \log \pi(a| x; \theta)
+\end{equation}\]</div>
 <p>In <strong>policy optimization</strong> we gather data by rolling out a set of trajectories <span class="math notranslate nohighlight">\(\tau_i\)</span>. In supervised learning we have a dataset <span class="math notranslate nohighlight">\(D\)</span> and labels <span class="math notranslate nohighlight">\(y_c\)</span>, but we have to proceed a bit differently in a reinforcement learning setting. In particular, for <em>on-policy</em> RL we gather data by executing our current best guess for the policy for some rollout length or horizon <span class="math notranslate nohighlight">\(H\)</span>, and we do this many different times starting from different initial conditions, each time obtaining a <em>trajectory</em> <span class="math notranslate nohighlight">\(\tau_i\)</span>.
 That still leaves the training signal: where does that come from?
 The key idea is to estimate how good a particular action is by estimating the state-action values <span class="math notranslate nohighlight">\(Q\)</span> from the roll-out rewards.
 In detail, we estimate the expected discounted reward starting at <span class="math notranslate nohighlight">\(x_{it}\)</span>, and taking action <span class="math notranslate nohighlight">\(a_{it}\)</span>, as</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-26ae6900-b4c4-42d7-b9a6-83ffd66c0428">
+<span class="eqno">(6.76)<a class="headerlink" href="#equation-26ae6900-b4c4-42d7-b9a6-83ffd66c0428" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \hat{Q}(x_{it},a_{it}) \doteq \sum_{k=t}^H \gamma^{k-t}R(x_{ik},a_{ik},x_{ik}').
-\]</div>
+\end{equation}\]</div>
 <p>Note in each rollout we can only sum until <span class="math notranslate nohighlight">\(k=H\)</span>, so Q-values earlier in the rollout will be estimated more accurately. Regardless, we can then use these estimated Q-values as an alternative to the “one or zero” weight above, obtaining</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-580d53bc-0f0e-4cb3-bf11-321355c25d4a">
+<span class="eqno">(6.77)<a class="headerlink" href="#equation-580d53bc-0f0e-4cb3-bf11-321355c25d4a" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathcal{L}(\theta) = - \sum_i \sum_{t=1}^H \hat{Q}(x_{it},a_{it}) \log \pi(a_{it}|x_{it}, \theta)
-\]</div>
+\end{equation}\]</div>
 <p>As you can see, once again estimated Q-values are involved, and they are expected to converge to the optimal Q-values over time.
 This time, however, we parameterize the <em>policy</em> instead. The Q-values act as weights in a surrogate loss function that looks very much like the supervised cross-entropy loss, but now our supervision comes from <em>experience</em>.</p>
 <p>Putting this all together yields the basic policy optimization algorithm:</p>
@@ -520,16 +513,16 @@ More sophisticated “black-box” approaches such as genetic algorithms or evol
 <div><p>Policy gradient methods are akin to policy iteration, with a neural flavor.</p>
 </div></blockquote>
 <p>In a nutshell, policy gradient methods calculate the gradient of the surrogate loss <span class="math notranslate nohighlight">\(\mathcal{L}(\theta)\)</span> defined above with respect to the policy parameters <span class="math notranslate nohighlight">\(\theta\)</span>:</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-61b4adce-dd56-454d-b0ee-6f2dcbe24a07">
+<span class="eqno">(6.78)<a class="headerlink" href="#equation-61b4adce-dd56-454d-b0ee-6f2dcbe24a07" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \nabla_\theta \mathcal{L}(\theta) \leftarrow - \sum_i \sum_{t=1}^H \hat{Q}(x_{it},a_{it}) \nabla_\theta \log \pi(a_{it}|x_{it}, \theta),
-\]</div>
+\end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\nabla_\theta \log \pi(a_{it}|x_{it}, \theta)\)</span> is the gradient of the logarithm of the stochastic policy. This is easily obtained via back-propagation using any neural network framework of choice. In the case that actions are discrete, as in our example above, a stochastic policy network typically has a “softmax” function at the end. Then <span class="math notranslate nohighlight">\(\nabla_\theta \log \pi(a_{it}|x_{it}, \theta)\)</span> is the derivative of the “logit” layer right before the softmax function.
 We then use gradient descent to update the policy parameters:</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-4e0913de-f1d4-459e-bebf-16e3669686a7">
+<span class="eqno">(6.79)<a class="headerlink" href="#equation-4e0913de-f1d4-459e-bebf-16e3669686a7" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \theta \leftarrow \theta - \alpha \nabla_\theta \mathcal{L}(\theta)
-\]</div>
+\end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\alpha\)</span> is a learning rate.</p>
 <p>The algorithm above, using the estimated Q-values, is almost identical to the REINFORCE method <span id="id2">[<a class="reference internal" href="bibliography.html#id43" title="R. J. Williams. Simple statistical gradient-following algorithms for connectionist reinforcement learning. Machine Learning, 8:229-259, 1992.">Williams, 1992</a>]</span>. That algorithm further improves on performance by not using the raw Q-values but rather the difference between the Q-values and some baseline policy. This has the effect of reducing the variance in the estimated Q-values due to using only a finite amount of data.
 The REINFORCE algorithm was introduced in 1992 and hence pre-dates the deep-learning revolution by about 20 years. It should also be said that in DRL, the neural networks that are used are typically not very deep. Several modern methods, such as “proximal policy optimization” (PPO) <span id="id3">[<a class="reference internal" href="bibliography.html#id44" title="John Schulman, Filip Wolski, Prafulla Dhariwal, Alec Radford, and Oleg Klimov. Proximal policy optimization algorithms. CoRR, 2017. URL: http://arxiv.org/abs/1707.06347, arXiv:1707.06347.">Schulman <em>et al.</em>, 2017</a>]</span> apply a number of techniques to improve this basic method even further and make it more sample-efficient. PPO is now one of the most often-used DRL methods.</p>
@@ -591,7 +584,8 @@ The REINFORCE algorithm was introduced in 1992 and hence pre-dates the deep-lear
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -652,8 +646,8 @@ By Frank Dellaert and Seth Hutchinson
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>

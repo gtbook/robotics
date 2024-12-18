@@ -16,17 +16,19 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-
-  
-  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
@@ -37,10 +39,11 @@
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="_static/style.css?v=51e3b7cf" />
   
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="_static/documentation_options.js?v=c73c0f3e"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
@@ -68,6 +71,7 @@
     <link rel="prev" title="3.2. Actions over time" href="S32_vacuum_actions.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -83,19 +87,8 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="search.html"
       method="get">
@@ -103,7 +96,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search..."
          aria-label="Search..."
          autocomplete="off"
@@ -111,8 +103,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -128,7 +120,8 @@
       
       
       
-      <div class="bd-sidebar-primary bd-sidebar">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -158,21 +151,17 @@
     
     
     <img src="_static/logo.png" class="logo__image only-light" alt="Introduction to Robotics and Perception - Home"/>
-    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Introduction to Robotics and Perception - Home"/>`);</script>
+    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Introduction to Robotics and Perception - Home"/>
   
   
 </a></div>
         <div class="sidebar-primary-item">
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script></div>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         <ul class="current nav bd-sidenav">
@@ -252,9 +241,14 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -351,24 +345,16 @@
 
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-  </button>
-`);
-</script>
+</button>
 <button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="fa-solid fa-list"></span>
 </button>
@@ -540,10 +526,10 @@ over time, we call it a dynamic Bayes net or <strong>DBN</strong>.</p>
 </div>
 <p>Observe that after the first time step, the Bayes net is repeating the same “AXZ” pattern (or <em>slice</em>!) over and over again. Formally, the joint distribution <span class="math notranslate nohighlight">\(P(Z_{1:n},X_{1:n}|A_{1:n})\)</span> over states <span class="math notranslate nohighlight">\(X_{1:n} \doteq (X_1 \dots, X_n)\)</span> and measurements <span class="math notranslate nohighlight">\(Z_{1:n} \doteq (Z_1, \dots , Z_n)\)</span>, <em>given</em>
 the action sequence <span class="math notranslate nohighlight">\(A_{1:n} \doteq (A_1, \dots , A_n)\)</span> can be computed, given the DBN factorization, as</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-1cd50845-4be0-4bbf-b6f1-3f18c609f7cf">
+<span class="eqno">(3.15)<a class="headerlink" href="#equation-1cd50845-4be0-4bbf-b6f1-3f18c609f7cf" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P(Z_{1:n},X_{1:n}|A_{1:n})= P(Z_1| X_1) P(X_1) \prod_{k=2}^{n} P(Z_k| X_k) P(X_k|A_{k-1},X_{k-1}).
-\]</div>
+\end{equation}\]</div>
 <p>The AXZ slice at time <span class="math notranslate nohighlight">\(k\)</span> is given by <span class="math notranslate nohighlight">\(P(Z_k| X_k) P(X_k|A_{k-1},X_{k-1})\)</span>, whereas the chain is “jump-started” using the initial state distribution <span class="math notranslate nohighlight">\(P(X_1)\)</span> and the corresponding measurement model <span class="math notranslate nohighlight">\(P(Z_1|X_1)\)</span>.</p>
 </section>
 <section id="ancestral-sampling">
@@ -552,8 +538,10 @@ P(Z_{1:n},X_{1:n}|A_{1:n})= P(Z_1| X_1) P(X_1) \prod_{k=2}^{n} P(Z_k| X_k) P(X_k
 <div><p>Ancestry matters!</p>
 </div></blockquote>
 <p>How do we sample over such a complex Bayes net? Recall the example Bayes net example above with the four variables W,X,Y,Z, and joint distribution</p>
-<div class="math notranslate nohighlight">
-\[P(W,X,Y,Z)=P(W|X,Z)P(X|Y,Z)P(Y|Z)P(Z):\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-2ba7ba33-5fbd-4c0e-90ae-7b62a479a040">
+<span class="eqno">(3.16)<a class="headerlink" href="#equation-2ba7ba33-5fbd-4c0e-90ae-7b62a479a040" title="Permalink to this equation">#</a></span>\[\begin{equation}
+P(W,X,Y,Z)=P(W|X,Z)P(X|Y,Z)P(Y|Z)P(Z):
+\end{equation} \]</div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: The Bayes net for the four-variable problem we considered before.</span>
@@ -593,20 +581,19 @@ to ancestral sampling from the DBN associated with the robot, i.e., the controll
 In this case one topological sort is
 rather obvious, and so is a simulation algorithm to sample from
 <span class="math notranslate nohighlight">\(P(X_{1:n},Z_{1:n}|A_{1:n})\)</span>:</p>
-<ol class="arabic">
-<li><p>First, assign <span class="math notranslate nohighlight">\(k\leftarrow1\)</span>, and sample the initial state <span class="math notranslate nohighlight">\(x_1\)</span> from <span class="math notranslate nohighlight">\(P(X_1)\)</span>, a prior
-over the state. We write</p>
-<div class="math notranslate nohighlight">
-\[x_1 \sim P(X_1)\]</div>
-</li>
-<li><p>Next, simulate the sensor reading by sampling from the sensor model</p>
-<div class="math notranslate nohighlight">
-\[z_{k} \sim P(Z_{k}|X_{k}=x_{k})\]</div>
-</li>
-<li><p>Lastly, simulate the effect of the (given) action <span class="math notranslate nohighlight">\(a_k\)</span> by sampling the next state <span class="math notranslate nohighlight">\(x_{k+1}\)</span>:</p>
-<div class="math notranslate nohighlight">
-\[x_{k+1} \sim P(X_{k+1}|X_{k}=s_{k},A_{k}=a_{k}).\]</div>
-</li>
+<ol class="arabic simple">
+<li><p>First, assign <span class="math notranslate nohighlight">\(k\leftarrow1\)</span>, and sample the initial state <span class="math notranslate nohighlight">\(x_1\)</span> from <span class="math notranslate nohighlight">\(P(X_1)\)</span>, a prior over the state. We write
+\begin{equation}
+x_1 \sim P(X_1)
+\end{equation}</p></li>
+<li><p>Next, simulate the sensor reading by sampling from the sensor model
+\begin{equation}
+z_{k} \sim P(Z_{k}|X_{k}=x_{k})
+\end{equation}</p></li>
+<li><p>Lastly, simulate the effect of the (given) action <span class="math notranslate nohighlight">\(a_k\)</span> by sampling the next state <span class="math notranslate nohighlight">\(x_{k+1}\)</span>:
+\begin{equation}
+x_{k+1} \sim P(X_{k+1}|X_{k}=s_{k},A_{k}=a_{k}).
+\end{equation}</p></li>
 <li><p>Increase <span class="math notranslate nohighlight">\(k\leftarrow k+1\)</span> and return to step <span class="math notranslate nohighlight">\(2\)</span>.</p></li>
 </ol>
 <p>Note that this algorithm is generic for all robot models with this action/sensing structure.</p>
@@ -740,7 +727,8 @@ We used this functionality to pass the given action sequence above.</p>
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -812,8 +800,8 @@ By Frank Dellaert and Seth Hutchinson
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>

@@ -16,17 +16,19 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-
-  
-  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
@@ -37,10 +39,11 @@
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="_static/style.css?v=51e3b7cf" />
   
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="_static/documentation_options.js?v=c73c0f3e"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
@@ -68,6 +71,7 @@
     <link rel="prev" title="6.4. SLAM" href="S64_driving_perception.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -83,19 +87,8 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="search.html"
       method="get">
@@ -103,7 +96,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search..."
          aria-label="Search..."
          autocomplete="off"
@@ -111,8 +103,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -128,7 +120,8 @@
       
       
       
-      <div class="bd-sidebar-primary bd-sidebar">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -158,21 +151,17 @@
     
     
     <img src="_static/logo.png" class="logo__image only-light" alt="Introduction to Robotics and Perception - Home"/>
-    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Introduction to Robotics and Perception - Home"/>`);</script>
+    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Introduction to Robotics and Perception - Home"/>
   
   
 </a></div>
         <div class="sidebar-primary-item">
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script></div>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         <ul class="current nav bd-sidenav">
@@ -252,9 +241,14 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -351,24 +345,16 @@
 
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-  </button>
-`);
-</script>
+</button>
 <button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="fa-solid fa-list"></span>
 </button>
@@ -392,9 +378,11 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#planning-using-motion-primitives">6.5.1. Planning using Motion Primitives</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#polynomial-trajectories">6.5.2. Polynomial Trajectories</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#following-nonlinear-trajectories">6.5.3. Following Nonlinear Trajectories</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#motion-primitives">6.5.1. Motion Primitives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#planning-using-motion-primitives">6.5.2. Planning using Motion Primitives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#polynomial-trajectories">6.5.3. Polynomial Trajectories</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#splines">6.5.4. Splines</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#following-nonlinear-trajectories">6.5.5. Following Nonlinear Trajectories</a></li>
 </ul>
             </nav>
         </div>
@@ -440,7 +428,8 @@ is required over short time horizons.
 These conditions are exactly those confronted by self-driving cars,
 and for this reason, in this chapter we introduce a new approach,
 one that exploits motion primitives for motion planning.</p>
-<p><code class="docutils literal notranslate"><span class="pre">{index}</span> <span class="pre">motion</span> <span class="pre">primitives</span></code>## Motion Primitives</p>
+<section id="motion-primitives">
+<span id="index-1"></span><h2><span class="section-number">6.5.1. </span>Motion Primitives<a class="headerlink" href="#motion-primitives" title="Link to this heading">#</a></h2>
 <p>Consider a car traveling in reverse that wishes to suddenly change its orientation
 by completing a rapid 180-degree turn (a favorite maneuver for drivers like James Bond and Steve McQueen).
 How would we go about implementing this type of maneuver in an autonomous vehicle?</p>
@@ -464,7 +453,6 @@ with little reasoning.  This is the basic idea of <strong>motion primitives</str
 for a car.
 The primitive <span class="math notranslate nohighlight">\(P_1\)</span> corresponds to driving forward, while motion primitives <span class="math notranslate nohighlight">\(P_2\)</span>, <span class="math notranslate nohighlight">\(P_3\)</span>, and <span class="math notranslate nohighlight">\(P_4\)</span> correspond to veering
 to the left at increasingly sharp angles.</p>
-<p><code class="docutils literal notranslate"><span class="pre">{index}</span> <span class="pre">polynomial</span> <span class="pre">trajectories,</span> <span class="pre">splines</span></code></p>
 <figure id="fig:MotionPrimitives">
 <img src="https://github.com/gtbook/robotics/blob/main/Figures6/motion-primitives.png?raw=1" style="width:18cm" alt="">
 <figcaption>Four motion primitives for a car veering to its left. </figcaption>
@@ -480,8 +468,9 @@ a feedback control law to be executed from an initial state until some final sta
 We can parameterize these primitives by duration, by geometric properties (e.g., angle, distance),
 or by state feedback conditions.
 Below, we will see how to do this by using <strong>polynomial trajectories</strong>, which generalize to <strong>splines</strong>.</p>
+</section>
 <section id="planning-using-motion-primitives">
-<h2><span class="section-number">6.5.1. </span>Planning using Motion Primitives<a class="headerlink" href="#planning-using-motion-primitives" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">6.5.2. </span>Planning using Motion Primitives<a class="headerlink" href="#planning-using-motion-primitives" title="Link to this heading">#</a></h2>
 <p>The use of motion primitives can greatly reduce the cost of planning, since the set
 of actions available at any moment in time is small and easily computed.
 For the car example above, if we assume a symmetric set of motion primitives for veering to the right,
@@ -506,7 +495,7 @@ In this case, immediate driving decisions depend on the car just ahead, and the 
 cars in adjacent lanes.</p>
 </section>
 <section id="polynomial-trajectories">
-<h2><span class="section-number">6.5.2. </span>Polynomial Trajectories<a class="headerlink" href="#polynomial-trajectories" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">6.5.3. </span>Polynomial Trajectories<a class="headerlink" href="#polynomial-trajectories" title="Link to this heading">#</a></h2>
 <p>Let’s begin with the simple problem of changing lanes along a straight stretch of highway. The situation is illustrated in the figure below.</p>
 <figure id="fig:LaneChange">
 <img src="https://github.com/gtbook/robotics/blob/main/Figures6/lane-change.png?raw=1" style="width:18cm" alt="">
@@ -519,8 +508,10 @@ Below, we will generalize further by defining <span class="math notranslate nohi
 <p>For now, let us assume that the lane change maneuver begins at <span class="math notranslate nohighlight">\(s=0\)</span>, <span class="math notranslate nohighlight">\(d=0\)</span>, and that the desired ending configuration is <span class="math notranslate nohighlight">\( s = s_\mathrm{g}, d= d_\mathrm{g}\)</span>, i.e., at the end of the maneuver (at <span class="math notranslate nohighlight">\( s = s_\mathrm{g}\)</span>),
 the car will have reached the center of the left lane (i.e., <span class="math notranslate nohighlight">\( d = d_\mathrm{g}\)</span>).</p>
 <p>At first glance, it might seem that this could be accomplished by a simple linear trajectory of the form</p>
-<div class="math notranslate nohighlight">
-\[ d(x) = \frac{ d_\mathrm{g}}{s_\mathrm{g} } s \]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-254c62c3-b851-4adf-b247-355b7910877a">
+<span class="eqno">(6.57)<a class="headerlink" href="#equation-254c62c3-b851-4adf-b247-355b7910877a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+ d(x) = \frac{ d_\mathrm{g}}{s_\mathrm{g} } s 
+\end{equation}\]</div>
 <p>At the start of the maneuver, <span class="math notranslate nohighlight">\(s=0\)</span>, which matches the initial condition <span class="math notranslate nohighlight">\(d(0)=0\)</span>, and at <span class="math notranslate nohighlight">\( s = s_\mathrm{g}\)</span>
 we match the end condition <span class="math notranslate nohighlight">\(d(s_\mathrm{g}) = d_\mathrm{g}\)</span>.
 This trajectory is illustrated in the figure below.</p>
@@ -531,8 +522,10 @@ This trajectory is illustrated in the figure below.</p>
 <span class="math notranslate nohighlight">\(\frac{ d_\mathrm{g}}{s_\mathrm{g} }\)</span> at <span class="math notranslate nohighlight">\(s=0^+\)</span>. Cars, of course, are not capable of executing maneuvers with velocity discontinuities (under normal driving conditions), so this trajectory could not be executed by a normal car.
 However, it is not difficult to generalize this approach to solve this problem.</p>
 <p>Consider the <span class="math notranslate nohighlight">\(m^{th}\)</span> order polynomial</p>
-<div class="math notranslate nohighlight">
-\[ d(s) = \sum_{i=0}^m \alpha_i s^i \]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-e0a3f659-eb16-40c0-83de-8e5d97c026b4">
+<span class="eqno">(6.58)<a class="headerlink" href="#equation-e0a3f659-eb16-40c0-83de-8e5d97c026b4" title="Permalink to this equation">#</a></span>\[\begin{equation}
+ d(s) = \sum_{i=0}^m \alpha_i s^i 
+\end{equation}\]</div>
 <p>For <span class="math notranslate nohighlight">\(m=1\)</span>, we obtain the linear trajectory above by setting
 <span class="math notranslate nohighlight">\(\alpha_0 = 0, \alpha_1 = \frac{ d_\mathrm{g}}{s_\mathrm{g} }\)</span>.
 In other words, if we begin with the general linear trajectory
@@ -547,17 +540,17 @@ we would require a cubic polynomial, and if we wished to also satisfy lateral ac
 The lateral velocity and acceleration for the trajectory are given by the first and second derivatives of <span class="math notranslate nohighlight">\(d\)</span>,
 which we denote by <span class="math notranslate nohighlight">\(d'\)</span> and <span class="math notranslate nohighlight">\(d''\)</span>, respectively.
 For a fifth order polynomial, we have</p>
-<div class="math notranslate nohighlight">
-\[\begin{split} 
+<div class="amsmath math notranslate nohighlight" id="equation-a3d23ea9-4d87-4996-91d4-5147f07f3546">
+<span class="eqno">(6.59)<a class="headerlink" href="#equation-a3d23ea9-4d87-4996-91d4-5147f07f3546" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{aligned}
 d(s) &amp;=&amp; \alpha_0 + \alpha_1 s + \alpha_2 s^2 + \alpha_3 s^3 + \alpha_4 s^4 + \alpha_5 s^5\\
 d'(s) &amp;=&amp; \alpha_1 + 2 \alpha_2 s + 3 \alpha_3 s^2 + 4 \alpha_4 s^3 + 5 \alpha_5 s^4\\
 d''(s) &amp;=&amp;  2 \alpha_2  +6 \alpha_3  s + 12 \alpha_4 s^2 + 20 \alpha_5 s^3 
 \end{aligned}
-\end{split}\]</div>
+\end{equation}\]</div>
 <p>For a simple lane change, it is typically desirable to have zero lateral velocity and zero lateral acceleration at the initial and final positions. This leads to the following system of equations:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split} 
+<div class="amsmath math notranslate nohighlight" id="equation-2628c87d-50ed-4ffe-ae47-88a2002fc4a4">
+<span class="eqno">(6.60)<a class="headerlink" href="#equation-2628c87d-50ed-4ffe-ae47-88a2002fc4a4" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{aligned}
 y(0) = 0&amp; =&amp; \alpha_0 \\
 y'(0) = 0 &amp; =&amp; \alpha_1 \\
@@ -569,10 +562,12 @@ y'(x_\mathrm{g}) = 0 &amp;=&amp;
 y''(x_\mathrm{g}) =  0 &amp;=&amp;
   2 \alpha_2  +6 \alpha_3  x_\mathrm{g} + 12 \alpha_4 x_\mathrm{g}^2 + 20 \alpha_5 x_\mathrm{g}^3 
 \end{aligned}
-\end{split}\]</div>
+\end{equation}\]</div>
 <p>Note that these six equations are all linear in the parameters <span class="math notranslate nohighlight">\(\alpha_i\)</span>, so it is a simple matter to solve
 these.</p>
-<p><code class="docutils literal notranslate"><span class="pre">{index}</span> <span class="pre">splines</span></code>## Splines</p>
+</section>
+<section id="splines">
+<span id="index-3"></span><h2><span class="section-number">6.5.4. </span>Splines<a class="headerlink" href="#splines" title="Link to this heading">#</a></h2>
 <p>While the derivation above produced a single polynomial trajectory,
 it is a simple matter to extend this formalism to construct trajectories
 that are composed of multiple consecutive polynomial segments.
@@ -590,29 +585,29 @@ sequence of couples <span class="math notranslate nohighlight">\((s_0,d_0) \dots
 and we want to ensure that the lateral position of the car is given by <span class="math notranslate nohighlight">\(d_i\)</span> at longitudinal
 position <span class="math notranslate nohighlight">\(s_i\)</span>.
 We can build the trajectory <span class="math notranslate nohighlight">\(d\)</span> from a sequence of polynomials <span class="math notranslate nohighlight">\(P_k\)</span> as follows</p>
-<div class="math notranslate nohighlight">
-\[\begin{split} 
+<div class="amsmath math notranslate nohighlight" id="equation-f20cdbfc-496f-4024-b0f1-aeb573caabd6">
+<span class="eqno">(6.61)<a class="headerlink" href="#equation-f20cdbfc-496f-4024-b0f1-aeb573caabd6" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{align}
 d(s) &amp;= P_k(s)  \;\;\;\;\;\ s_k \leq s &lt; s_{k+1},\;\; 0 \leq k &lt; n\\
 P_k(s)  &amp;= \sum_{i=0}^{d} \alpha_{ki} (s-s_k)^i \\
 \end{align}
-\end{split}\]</div>
+\end{equation}\]</div>
 <p>The coefficients <span class="math notranslate nohighlight">\(\alpha_{ki}\)</span> are chosen to ensure the desired continuity and smoothness properties.
 For example, if we want to ensure that position, velocity, and accelerations are continuous
 throughout the trajectory, we must enforce</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
+<div class="amsmath math notranslate nohighlight" id="equation-af56da0c-010c-478e-91cc-1b17f1290796">
+<span class="eqno">(6.62)<a class="headerlink" href="#equation-af56da0c-010c-478e-91cc-1b17f1290796" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{align}
 d_k = &amp;P_{k-1}(s_k) = P_{k}(s_k), \;\;\; k = 1, \dots n-1 \\
 &amp;P'_{k-1}(s_k) = P'_{k}(s_k), \;\;\; k = 1, \dots n-1 \\
 &amp;P''_{k-1}(s_k) = P''_{k}(s_k), \;\;\; k = 1, \dots n-1 
 \end{align}
-\end{split}\]</div>
+\end{equation}\]</div>
 <p>Note that the first set of constraints also ensure that <span class="math notranslate nohighlight">\(d(s_k) = d_k\)</span> for each transition point.
 In order to satisfy the boundary conditions for the start and end of the trajectory, we
 must enforce</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
+<div class="amsmath math notranslate nohighlight" id="equation-5dc4d384-5a00-4fbc-8c9f-7525af74f821">
+<span class="eqno">(6.63)<a class="headerlink" href="#equation-5dc4d384-5a00-4fbc-8c9f-7525af74f821" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{align}
 d_0 = &amp;P_{0}(s_0)  \\
 d_n = &amp;P_{n}(s_n)  \\
@@ -621,7 +616,7 @@ v_n = &amp;P'_{n}(s_n)  \\
 a_0 = &amp;P''_{0}(s_0)  \\
 a_n = &amp;P''_{n}(s_n)  \\
 \end{align}
-\end{split}\]</div>
+\end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(v_k\)</span> and <span class="math notranslate nohighlight">\(a_k\)</span> denote the velocity and acceleration, respectively,
 at position <span class="math notranslate nohighlight">\(s_k\)</span>.</p>
 <p>Note that in this formulation, the accelerations and velocities at the junctions of two
@@ -637,7 +632,7 @@ of the two linear segments with the lane-changing trajectory.
 You should count the constraints, and convince yourself that this is true.</p>
 </section>
 <section id="following-nonlinear-trajectories">
-<h2><span class="section-number">6.5.3. </span>Following Nonlinear Trajectories<a class="headerlink" href="#following-nonlinear-trajectories" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">6.5.5. </span>Following Nonlinear Trajectories<a class="headerlink" href="#following-nonlinear-trajectories" title="Link to this heading">#</a></h2>
 <p>All of the above can be generalized to the case of nonlinear trajectories, such
 as a car driving on a curvy road, or making a turn at an intersection.
 In these situations, the desired trajectory is often determined by a desired
@@ -661,10 +656,10 @@ This is essentially a Frenet frame for planar curves (the binormal being orthogo
 <figcaption>Local coordinate frame relative to a given desired trajectory. </figcaption>
 </figure>
 <p>Using this convention, at time <span class="math notranslate nohighlight">\(t\)</span> we can denote the position of the car as</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-71734334-7a25-4df2-9162-d01f87c1475d">
+<span class="eqno">(6.64)<a class="headerlink" href="#equation-71734334-7a25-4df2-9162-d01f87c1475d" title="Permalink to this equation">#</a></span>\[\begin{equation}
 x(t) = x(s,d) = \gamma(s(t)) + d(t) n_\gamma(s(t))
-\]</div>
+\end{equation}\]</div>
 <p>A simple way to bring the car into coincidence with the desired trajectory is to choose a target point
 along the desired trajectory and plan a local trajectory for the car to reach this target
 point at some desired time, <span class="math notranslate nohighlight">\(T\)</span>, traveling at the desired velocity.
@@ -680,12 +675,12 @@ to the desired trajectory).
 Thus, at time <span class="math notranslate nohighlight">\(T\)</span>, we need to satisfy <span class="math notranslate nohighlight">\(d(T) = \dot{d}(T) = \ddot{d}(T) = 0\)</span>.
 As we have seen above, these six constraints uniquely determine a quintic polynomial trajectory for <span class="math notranslate nohighlight">\(d\)</span>.</p>
 <p>Given <span class="math notranslate nohighlight">\(d(t)\)</span>, the trajectory for the car is simply given by</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-1485c35a-d44c-4ded-a247-84c152fca6f9">
+<span class="eqno">(6.65)<a class="headerlink" href="#equation-1485c35a-d44c-4ded-a247-84c152fca6f9" title="Permalink to this equation">#</a></span>\[\begin{equation}
 x(t) = \gamma(s(t)) + d(t) n_\gamma(s(t))
-\]</div>
+\end{equation}\]</div>
 <p>which brings the car onto the desired trajectory, with desired velocity, at time <span class="math notranslate nohighlight">\(t = T\)</span>.</p>
-<p><code class="docutils literal notranslate"><span class="pre">{index}</span> <span class="pre">jerk</span></code>Obviously, the termination time <span class="math notranslate nohighlight">\(T\)</span> plays a significant role in determining the quality of the solution.
+<p id="index-4">Obviously, the termination time <span class="math notranslate nohighlight">\(T\)</span> plays a significant role in determining the quality of the solution.
 For example, if we choose <span class="math notranslate nohighlight">\(T\)</span> to be too small, the car might need to accelerate quickly to an unsafe velocity
 to reach the target point at <span class="math notranslate nohighlight">\(t = T\)</span>.
 How, then, should we choose the value of <span class="math notranslate nohighlight">\(T\)</span>?
@@ -698,10 +693,10 @@ Mathematically, the instantaneous change in lateral cceleration is given by the 
 derivative of <span class="math notranslate nohighlight">\(d\)</span>, which is known as the <strong>jerk</strong>.
 For a given trajectory <span class="math notranslate nohighlight">\(d(t)\)</span>, defined on the interval <span class="math notranslate nohighlight">\([0,T]\)</span>, the following
 cost functional penalizes aggregate jerk and total exectution time</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-fdf181b9-2c25-43d9-8ed7-4413bf6303e2">
+<span class="eqno">(6.66)<a class="headerlink" href="#equation-fdf181b9-2c25-43d9-8ed7-4413bf6303e2" title="Permalink to this equation">#</a></span>\[\begin{equation}
 J(d) = \int_0^T \left(\frac{d}{dt}\ddot{d}(\tau)\right)^2  d\tau + \beta T
-\]</div>
+\end{equation}\]</div>
 <p>In general, it may not be possible to solve this optimization problem in real time.
 In such cases, rather than using <span class="math notranslate nohighlight">\(J\)</span> to solve find the optimal <span class="math notranslate nohighlight">\(d\)</span>, we
 can use a generate-and-test approach.
@@ -766,7 +761,8 @@ these proposed trajectories, ultimately choosing the value of <span class="math 
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -775,9 +771,11 @@ these proposed trajectories, ultimately choosing the value of <span class="math 
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#planning-using-motion-primitives">6.5.1. Planning using Motion Primitives</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#polynomial-trajectories">6.5.2. Polynomial Trajectories</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#following-nonlinear-trajectories">6.5.3. Following Nonlinear Trajectories</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#motion-primitives">6.5.1. Motion Primitives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#planning-using-motion-primitives">6.5.2. Planning using Motion Primitives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#polynomial-trajectories">6.5.3. Polynomial Trajectories</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#splines">6.5.4. Splines</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#following-nonlinear-trajectories">6.5.5. Following Nonlinear Trajectories</a></li>
 </ul>
   </nav></div>
 
@@ -826,8 +824,8 @@ By Frank Dellaert and Seth Hutchinson
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>

@@ -16,17 +16,19 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-
-  
-  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
@@ -37,10 +39,11 @@
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="_static/style.css?v=51e3b7cf" />
   
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="_static/documentation_options.js?v=c73c0f3e"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
@@ -68,6 +71,7 @@
     <link rel="prev" title="1. Introduction" href="S10_introduction.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -83,19 +87,8 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="search.html"
       method="get">
@@ -103,7 +96,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search..."
          aria-label="Search..."
          autocomplete="off"
@@ -111,8 +103,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -128,7 +120,8 @@
       
       
       
-      <div class="bd-sidebar-primary bd-sidebar">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -158,21 +151,17 @@
     
     
     <img src="_static/logo.png" class="logo__image only-light" alt="Introduction to Robotics and Perception - Home"/>
-    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Introduction to Robotics and Perception - Home"/>`);</script>
+    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Introduction to Robotics and Perception - Home"/>
   
   
 </a></div>
         <div class="sidebar-primary-item">
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script></div>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         <ul class="current nav bd-sidenav">
@@ -252,9 +241,14 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -351,24 +345,16 @@
 
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-  </button>
-`);
-</script>
+</button>
 <button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="fa-solid fa-list"></span>
 </button>
@@ -445,8 +431,10 @@ High-level, symbolic representations are appropriate when low-level controllers 
 <p>Above, to represent the position and orientation of an object in the robot’s workspace, we attached a coordinate frame to the object. We do the same for the robot (assuming the robot can be modeled as a single rigid body), and we call this frame the <em>body frame</em> or the <em>body-attached frame</em>.  Now, as for objects, specifying the location of the robot is equivalent to specifying the position and orientation of the body-attached frame, and such a specification defines a configuration for the robot. For example, we can define the configuration of a DDR using the coordinates <span class="math notranslate nohighlight">\(q = (x, y, \theta)\)</span>, which specify the location of the origin of the body-attached frame along with its orientation relative to a fixed reference frame.</p>
 <p>For a drone, we might specify the configuration as <span class="math notranslate nohighlight">\(q = (x,y,z,\phi,\theta,\psi)\)</span>, in which <span class="math notranslate nohighlight">\(x,y,z\)</span> give the position of the origin of the body-attached frame,  and the angles <span class="math notranslate nohighlight">\(\phi, \theta, \psi\)</span> define the roll, pitch, and yaw angles for the drone’s orientation.
 The configuration of a robot answers the question of where the robot is at a specific instant in time. If we wish instead to describe the motion of a robot, we must consider the configuration to be time varying, and in this case both the configuration and its time derivative (a velocity) are relevant. We often package the configuration and its time derivative into a single vector</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}x(t) = \left[ \begin{array}{c} q(t) \\ \dot{q}(t) \end{array}\right]\end{split}\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-a6625d19-219c-4d48-865f-f593c6abc02d">
+<span class="eqno">(1.1)<a class="headerlink" href="#equation-a6625d19-219c-4d48-865f-f593c6abc02d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+x(t) = \left[ \begin{array}{c} q(t) \\ \dot{q}(t) \end{array}\right]
+\end{equation}\]</div>
 <p>In many disciplines related to robotics, <span class="math notranslate nohighlight">\(x(t)\)</span> is referred to as the system’s <em>state</em>. This is particularly true in the areas of dynamical systems and control theory. In this text, we will maintain a more general use of the term <em>state</em>, but when relevant, we will adopt robot-specific terminology.
 When the robot is modeled as a rigid body moving in three-space, we often replace <span class="math notranslate nohighlight">\(\dot{x}\)</span> with a six-vector that includes the time derivative of the position of the origin of the robot’s body-attached frame along with the angular velocity vector, denoted by <span class="math notranslate nohighlight">\(\omega\)</span>. Note that <span class="math notranslate nohighlight">\(\omega\)</span> is not actually the time derivative of any relevant quantity describing the robot’s motion, but is instead a parameterization of the derivative of a rotation matrix. We will use 3D rotation matrices, their derivatives, and angular velocity in Chapter 7, to describe the motion of drones.</p>
 <p>In many applications, position and velocity provide a sufficiently detailed description of robot motion. This is not true, however, when we must explicitly consider forces that affect the robot’s motion, as with the drone, whose motion is determined by aerodynamic forces.  For example, we can regard the logistics robot as a device that responds to position and velocity commands: we issue a command to the robot to move to a certain position at a certain velocity, and the robot has no difficulty in executing this command (though there may be uncertainty associated to the motion). There are, however, numerous applications in which simple geometric descriptions of robot motion are not adequate. Consider for example the case of a quadrotor that maneuvers by exploiting aerodynamic forces. In these cases, we typically consider position, velocity, and acceleration, i.e., in terms of <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(\dot{x}\)</span>, or, if making the configuration and its derivatives more explicit, in terms of <span class="math notranslate nohighlight">\(q, \dot{q},\)</span> and <span class="math notranslate nohighlight">\(\ddot{q}\)</span>.</p>
@@ -460,19 +448,25 @@ When the robot is modeled as a rigid body moving in three-space, we often replac
 <p>Models of actions allow robots to construct plans to achieve their goals. In particular, by modeling the affects of actions on the world and on the robot itself, a planning system can construct a sequence of actions to achieve its goals.  Action models are intimately connected to state models. Since actions change the state of the world and the robot, the choice of state model determines the vocabulary for the action models. As such, action models tend to mirror the abstraction level chosen for the state.</p>
 <p>For high-level state models, such as the trash sorting robot or vacuum cleaning robot, the actions are also defined at a high level. For the trash sorting robot, we will merely assume that actions exist to transfer an object to each of three possible bins, essentially omitting all details of how the action might be implemented. For the vacuum cleaning robot, actions take the form of directed edges in a place graph, in which the vertices represent rooms. As we will see in Chapter 3, if, for example, the robot state is <em>living room</em>, the action “move right” corresponds to changing the state to <em>kitchen</em> (though, when uncertainty comes into play, other outcomes are also possible). In the absence of uncertainty, the action acts as a deterministic mapping from the current state to a next state. For the vacuuming robot, the state space is merely the set of rooms, and one action exists for each possible transit from one room to another.</p>
 <p>For robot’s that have continuous configuration or state spaces, we have the choice of whether to represent actions in discrete or continuous time. In the case of discrete time, we typically represent actions at time instant <span class="math notranslate nohighlight">\(k\)</span> as <span class="math notranslate nohighlight">\(u_k\)</span>, and define a corresponding mapping from state at time <span class="math notranslate nohighlight">\(k\)</span> to the state at time <span class="math notranslate nohighlight">\(k+1\)</span>:</p>
-<div class="math notranslate nohighlight">
-\[x_{k+1} = f(x_k, u_k)\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-0ec68945-980f-4128-9cfd-e0ecdc031f81">
+<span class="eqno">(1.2)<a class="headerlink" href="#equation-0ec68945-980f-4128-9cfd-e0ecdc031f81" title="Permalink to this equation">#</a></span>\[\begin{equation}
+x_{k+1} = f(x_k, u_k)
+\end{equation}\]</div>
 <p>Here, the function <span class="math notranslate nohighlight">\(f(x,u)\)</span> defines the effect of the action on the current state. Typically, for discrete time systems we assume that the time discretization is uniform, <span class="math notranslate nohighlight">\(\Delta t\)</span>, and that the time corresponding to time instant <span class="math notranslate nohighlight">\(k\)</span> is thus equal to <span class="math notranslate nohighlight">\(k \Delta t\)</span>.  It should be emphasized that discrete time systems can have continuous state representations, for example, our logistics robot will have <span class="math notranslate nohighlight">\(x_k \in \mathbb{R}^2\)</span>, which takes continuous values in the plane, even though we only note these values at discrete moments in time.
 Note that we have made several notational choices here. First, we use <span class="math notranslate nohighlight">\(u\)</span> to denote the action, mainly due to this usage in the control theory community. We use the index <span class="math notranslate nohighlight">\(k\)</span> instead of <span class="math notranslate nohighlight">\(t\)</span> to denote the discrete time instant, preferring to reserve <span class="math notranslate nohighlight">\(t\)</span> for the case of continuous time systems.
 Further, we will use <span class="math notranslate nohighlight">\(x\)</span> to denote state for discrete time systems, even if we are interested only in the configuration <span class="math notranslate nohighlight">\(q\)</span>.</p>
 <p>In some cases, continuous time representations are preferred. For example, the drone in Chapter 7 moves in continuous time. For continuous time systems, we typically represent the system dynamics as an ordinary differential equation of the form:</p>
-<div class="math notranslate nohighlight">
-\[ \dot{x} = f(x(t), u(t))\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-9e43e3b5-c4fb-403c-875a-b45303dc5ef6">
+<span class="eqno">(1.3)<a class="headerlink" href="#equation-9e43e3b5-c4fb-403c-875a-b45303dc5ef6" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\dot{x} = f(x(t), u(t))
+\end{equation}\]</div>
 <p>In the case of drones, the system dynamics relate the instantaneous velocity of the drone (both linear and angular velocity) to the input thrusts provided by the propellors.
 Even if we choose to represent actions using continuous time, it is often necessary to discretize time for the purpose of computation
 (e.g., to determine a drone trajectory using nonlinear optimization). In this case, we typically compute a discrete time approximation for time <span class="math notranslate nohighlight">\((k+1) \Delta t\)</span> by integrating the system dynamics over the relevant time interval:</p>
-<div class="math notranslate nohighlight">
-\[x_{k+1} = x_k + \int_{k \Delta t}^{(k+1) \Delta t} \dot{x}(t) dt\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-73ab45af-6a59-4c94-b2c6-6f55ca3f6064">
+<span class="eqno">(1.4)<a class="headerlink" href="#equation-73ab45af-6a59-4c94-b2c6-6f55ca3f6064" title="Permalink to this equation">#</a></span>\[\begin{equation}
+x_{k+1} = x_k + \int_{k \Delta t}^{(k+1) \Delta t} \dot{x}(t) dt
+\end{equation}\]</div>
 </section>
 <section id="sensors">
 <span id="index-2"></span><h2><span class="section-number">1.1.3. </span>Sensors<a class="headerlink" href="#sensors" title="Link to this heading">#</a></h2>
@@ -480,8 +474,10 @@ Even if we choose to represent actions using continuous time, it is often necess
 <div><p>Actions allow the robot to affect the world. Sensors allow the robot to perceive the world.</p>
 </div></blockquote>
 <p>A robot’s sensors provide information that can be used to infer things about the world, about the robot, and about the robot’s location in the world.  In general, an abstract sensor model can be written as</p>
-<div class="math notranslate nohighlight">
-\[z = h(x) \]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-8c4d1f0b-93f0-48d1-8bbd-fe2ddaa62d6d">
+<span class="eqno">(1.5)<a class="headerlink" href="#equation-8c4d1f0b-93f0-48d1-8bbd-fe2ddaa62d6d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+z = h(x) 
+\end{equation}\]</div>
 <p>in which the measurement is denoted by <span class="math notranslate nohighlight">\(z\)</span> and the function <span class="math notranslate nohighlight">\(h(\cdot)\)</span> maps from the current state to a sensor value.  The form of <span class="math notranslate nohighlight">\(h\)</span> depends, of course, on the sensor. For the trash sorting robot of Chapter 2, one sensor measures the electrical conductivity of an object, and merely returns “true” or “false.” Another sensor returns the real-valued weight of the object in kilograms. These sensors are simple to implement, fairly robust, and require physical contact with the object of interest.</p>
 <p>Simple non-contact sensors include proximity sensors (which detect the presence of a nearby obstacle), RFID sensors (which return a distance to the nearest RFID beacon), and GPS-style location sensors (which return the coordinates of the sensor in the GPS system’s coordinate frame). Each of these returns a set of scalar values, and each is used by the logistics robot of Chapter 4.</p>
 <p>Inertial Measurement Units (<em>IMUs</em>) measure how a rigid body moves through space. These sensors are ubiquitous nowadays. For example, every modern phone is equipped with such sensors.  In this book, we will use IMUs in Chapter 7 to measure the state of a drone that flies through three-dimensional space. The measurements returned by the sensor include gyroscope, accelerometer, and magnetometer readings.</p>
@@ -545,7 +541,8 @@ Even if we choose to represent actions using continuous time, it is often necess
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -609,8 +606,8 @@ By Frank Dellaert and Seth Hutchinson
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>

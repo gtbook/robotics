@@ -16,17 +16,19 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-
-  
-  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
@@ -37,10 +39,11 @@
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="_static/style.css?v=51e3b7cf" />
   
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="_static/documentation_options.js?v=c73c0f3e"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
@@ -68,6 +71,7 @@
     <link rel="prev" title="2.5. Decision Theory" href="S25_sorter_decision_theory.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -83,19 +87,8 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="search.html"
       method="get">
@@ -103,7 +96,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search..."
          aria-label="Search..."
          autocomplete="off"
@@ -111,8 +103,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -128,7 +120,8 @@
       
       
       
-      <div class="bd-sidebar-primary bd-sidebar">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -158,21 +151,17 @@
     
     
     <img src="_static/logo.png" class="logo__image only-light" alt="Introduction to Robotics and Perception - Home"/>
-    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Introduction to Robotics and Perception - Home"/>`);</script>
+    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Introduction to Robotics and Perception - Home"/>
   
   
 </a></div>
         <div class="sidebar-primary-item">
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script></div>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         <ul class="current nav bd-sidenav">
@@ -252,9 +241,14 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -351,24 +345,16 @@
 
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-  </button>
-`);
-</script>
+</button>
 <button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="fa-solid fa-list"></span>
 </button>
@@ -396,11 +382,12 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#smoothing">2.6.1.1. Smoothing</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modeling-a-sensor-from-data">2.6.2. Modeling a Sensor from Data</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#comparison">2.6.2.1. Comparison</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modeling-a-sensor-from-data">2.6.2. Modeling a Sensor from Data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fitting-a-gaussian">2.6.3. Fitting a Gaussian</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#comparison">2.6.3.1. Comparison</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">2.6.3. Summary</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">2.6.4. Summary</a></li>
 </ul>
             </nav>
         </div>
@@ -451,12 +438,14 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/14ed49306cbfddb2a3af752c1d180eebc821ee36b8944abed33a59ee7a003c8d.png" src="_images/14ed49306cbfddb2a3af752c1d180eebc821ee36b8944abed33a59ee7a003c8d.png" />
+<img alt="_images/bbff5bf3c3c7e919a08220d049b92d05e47c741264de87b5ab2537d0febe0686.png" src="_images/bbff5bf3c3c7e919a08220d049b92d05e47c741264de87b5ab2537d0febe0686.png" />
 </div>
 </div>
 <p>We can then estimate the probability of each category <span class="math notranslate nohighlight">\(c_k\)</span> simply by dividing the count <span class="math notranslate nohighlight">\(N_k\)</span> by the number of data points <span class="math notranslate nohighlight">\(N\)</span>:</p>
-<div class="math notranslate nohighlight">
-\[P(x_k) \approx \frac{N_k}{N}\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-73d427f7-7c11-445c-9be0-ebf5ed2d5fd8">
+<span class="eqno">(2.45)<a class="headerlink" href="#equation-73d427f7-7c11-445c-9be0-ebf5ed2d5fd8" title="Permalink to this equation">#</a></span>\[\begin{equation}
+P(x_k) \approx \frac{N_k}{N}
+\end{equation}\]</div>
 <p>In our example:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -498,7 +487,7 @@ Estimated PMF: [0.12 0.44 0.28 0.04 0.12]
 </table>
 </div></div></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">{index}</span> <span class="pre">sufficient</span> <span class="pre">statistic</span></code>Note that the counts are the only quantities one needs to estimate a PMF: a statistician would say that the counts are a <strong>sufficient statistic</strong> for the purpose of estimating the probability distribution. In fact, GTSAM can just take the counts themselves, as it normalizes internally:</p>
+<p id="index-1">Note that the counts are the only quantities one needs to estimate a PMF: a statistician would say that the counts are a <strong>sufficient statistic</strong> for the purpose of estimating the probability distribution. In fact, GTSAM can just take the counts themselves, as it normalizes internally:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">prior</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">DiscreteDistribution</span><span class="p">(</span><span class="n">Category</span><span class="p">,</span> <span class="s2">&quot;3/11/7/1/3&quot;</span><span class="p">)</span>
@@ -529,7 +518,7 @@ Estimated PMF: [0.12 0.44 0.28 0.04 0.12]
 <blockquote>
 <div><p>We make up fake data to deal with sparse data sets.</p>
 </div></blockquote>
-<p><code class="docutils literal notranslate"><span class="pre">{index}</span> <span class="pre">Smoothing</span></code>A trick that statisticians and machine learning practitioners sometimes employ is “smoothing”, which is especially important when you have very little data. Indeed, sometimes a category value will get zero counts, even though you <em>know</em> that occasionally that category will appear in practice. <strong>Smoothing</strong> is the process of letting the estimator know this by adding “pseudo-counts”. For example, a very common approach is to simply add 1 to every count:</p>
+<p id="index-2">A trick that statisticians and machine learning practitioners sometimes employ is “smoothing”, which is especially important when you have very little data. Indeed, sometimes a category value will get zero counts, even though you <em>know</em> that occasionally that category will appear in practice. <strong>Smoothing</strong> is the process of letting the estimator know this by adding “pseudo-counts”. For example, a very common approach is to simply add 1 to every count:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">counts</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
@@ -612,7 +601,7 @@ Estimated PMF: [0.12 0.44 0.28 0.04 0.12]
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/855d30610385ba09197d1388c76e0339d3f3167cecfa7f574ec7951c0a4f0b94.png" src="_images/855d30610385ba09197d1388c76e0339d3f3167cecfa7f574ec7951c0a4f0b94.png" />
+<img alt="_images/89dabbbc5864bf6f129b5694a886128a84cfaa61e16dd0bd020b10954aa8b54f.png" src="_images/89dabbbc5864bf6f129b5694a886128a84cfaa61e16dd0bd020b10954aa8b54f.png" />
 </div>
 </div>
 </section>
@@ -678,24 +667,34 @@ Estimated PMF: [0.12 0.44 0.28 0.04 0.12]
 </div>
 <p>Once again, note that the <em>rows</em> are normalized to be proper PMFs, given the conditioning variable. The columns are not, and instead form likelihoods over the category, when a particular value is observed for <code class="docutils literal notranslate"><span class="pre">ThreeValued</span></code> .</p>
 <p>Again, we can add pseudo-counts to all counts if we have very little data, or to specific groups if you only have prior knowledge about a particular setting. If you really know nothing about the behavior of a sensor, adding a pseudo-count of 1 is a good thing to do in general: it prevents according zero probability to a rare event. The downside is that you will have a biased view of the CPT, but this disadvantage quickly goes away as you add more and more data.</p>
-<p><code class="docutils literal notranslate"><span class="pre">{index}</span> <span class="pre">empirical</span> <span class="pre">mean</span></code>## Fitting a Gaussian</p>
+</section>
+<section id="fitting-a-gaussian">
+<span id="index-3"></span><h2><span class="section-number">2.6.3. </span>Fitting a Gaussian<a class="headerlink" href="#fitting-a-gaussian" title="Link to this heading">#</a></h2>
 <p>Recall that a Gaussian distribution is completely specified by two parameters: the mean <span class="math notranslate nohighlight">\(\mu\)</span>
-and the varianced <span class="math notranslate nohighlight">\(\sigma^2\)</span>.</p>
+and the variance <span class="math notranslate nohighlight">\(\sigma^2\)</span>.</p>
 <p>If we observe <em>continuous</em> data that we suspect is generated from a Gaussian density, then we can easily compute an estimate of the mean <span class="math notranslate nohighlight">\(\hat{\mu}\)</span> by</p>
-<div class="math notranslate nohighlight">
-\[\hat{\mu} = \frac{1}{N} \sum_i x_i.\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-4f59ab0a-9987-458e-a70f-008e421bc27c">
+<span class="eqno">(2.46)<a class="headerlink" href="#equation-4f59ab0a-9987-458e-a70f-008e421bc27c" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\hat{\mu} = \frac{1}{N} \sum_i x_i.
+\end{equation} \]</div>
 <p>The estimate <span class="math notranslate nohighlight">\(\hat{\mu}\)</span> is sometimes called the <strong>empirical mean</strong>.
 The other parameter we need is the variance <span class="math notranslate nohighlight">\(\sigma^2\)</span> defined as the expectation of the squared
 deviation from the mean:</p>
-<div class="math notranslate nohighlight">
-\[E[(x-\mu)^2].\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-81ac2eea-7b2d-4578-a003-418fec714832">
+<span class="eqno">(2.47)<a class="headerlink" href="#equation-81ac2eea-7b2d-4578-a003-418fec714832" title="Permalink to this equation">#</a></span>\[\begin{equation}
+E[(x-\mu)^2].
+\end{equation}\]</div>
 <p>Estimating the variance can be done after we obtaine the empirical mean <span class="math notranslate nohighlight">\(\hat{\mu}\)</span>, by</p>
-<div class="math notranslate nohighlight">
-\[\widehat{\sigma^2} = \frac{1}{N-1} \sum_i (x_i-\hat{\mu})^2.\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-e20cd994-a1ba-4685-b98a-4666e5392783">
+<span class="eqno">(2.48)<a class="headerlink" href="#equation-e20cd994-a1ba-4685-b98a-4666e5392783" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\widehat{\sigma^2} = \frac{1}{N-1} \sum_i (x_i-\hat{\mu})^2.
+\end{equation} \]</div>
 <p>The standard deviation, <span class="math notranslate nohighlight">\(\sigma\)</span>, is defined as the square root of the variance, and hence
 an estimate of the standard deviation is given by:</p>
-<div class="math notranslate nohighlight">
-\[\widehat{\sigma} = \sqrt{\widehat{\sigma^2}}.\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-1355f868-956a-45ff-867b-e26c3a9f1c4c">
+<span class="eqno">(2.49)<a class="headerlink" href="#equation-1355f868-956a-45ff-867b-e26c3a9f1c4c" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\widehat{\sigma} = \sqrt{\widehat{\sigma^2}}.
+\end{equation}\]</div>
 <p><em>Note</em>: Above we divide by <span class="math notranslate nohighlight">\(N-1\)</span> and not by <span class="math notranslate nohighlight">\(N\)</span>. Informally, the reason is that we already “used up” one data point by estimating the mean from our samples, and we correct for that to get an “unbiased” estimate for the variance.</p>
 <p>Below is some python code to do just that, using the <code class="docutils literal notranslate"><span class="pre">numpy</span></code> library. Let us first generate some “data” from a Gaussian with known mean and standard deviation:</p>
 <div class="cell docutils container">
@@ -719,7 +718,7 @@ an estimate of the standard deviation is given by:</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/3253533611269dc9537e5f773b5cf9813065c1e70eaf893d8597132d31cc2292.png" src="_images/3253533611269dc9537e5f773b5cf9813065c1e70eaf893d8597132d31cc2292.png" />
+<img alt="_images/12db95d15d5d985c2656b8014873766e77930b46f4ce5ac6a28bd4f7be6cdcc1.png" src="_images/12db95d15d5d985c2656b8014873766e77930b46f4ce5ac6a28bd4f7be6cdcc1.png" />
 </div>
 </div>
 <p>The sample mean is easy enough to compute with <code class="docutils literal notranslate"><span class="pre">np.mean</span></code> :</p>
@@ -731,7 +730,7 @@ an estimate of the standard deviation is given by:</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>203.3858645813122
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>198.76960797035156
 </pre></div>
 </div>
 </div>
@@ -743,7 +742,7 @@ an estimate of the standard deviation is given by:</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2832.573706714551
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2497.9970204099545
 </pre></div>
 </div>
 </div>
@@ -760,7 +759,7 @@ an estimate of the standard deviation is given by:</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2832.573706714551
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2497.9970204099545
 </pre></div>
 </div>
 </div>
@@ -774,13 +773,13 @@ an estimate of the standard deviation is given by:</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>53.221928814301265
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>49.97996619056434
 </pre></div>
 </div>
 </div>
 </div>
 <section id="comparison">
-<h3><span class="section-number">2.6.2.1. </span>Comparison<a class="headerlink" href="#comparison" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">2.6.3.1. </span>Comparison<a class="headerlink" href="#comparison" title="Link to this heading">#</a></h3>
 <p>We can now plot our estimated Gaussian together with the data in Figure <a href="#fig:histogram-and-gaussian" data-reference-type="ref" data-reference="fig:histogram-and-gaussian">2.14</a></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -795,13 +794,13 @@ an estimate of the standard deviation is given by:</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/04861d147bfcd46030818b5839b65ccc9e8204ff3780a4f02edfa9590ebb6e03.png" src="_images/04861d147bfcd46030818b5839b65ccc9e8204ff3780a4f02edfa9590ebb6e03.png" />
+<img alt="_images/3bc5aa0992592e43b4914bbea6e0a56b1440dc55746a544939f96944b99f4ba5.png" src="_images/3bc5aa0992592e43b4914bbea6e0a56b1440dc55746a544939f96944b99f4ba5.png" />
 </div>
 </div>
 </section>
 </section>
 <section id="summary">
-<h2><span class="section-number">2.6.3. </span>Summary<a class="headerlink" href="#summary" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">2.6.4. </span>Summary<a class="headerlink" href="#summary" title="Link to this heading">#</a></h2>
 <p>We saw above that learning conditional probability tables amounts to counting the occurrence of certain events. In the case of sensor models, it is really about the co-occurrence of an event: how often do we see a particular sensor reading in a particular state? Finally if the sensor is continuous, we can posit a parametric model. In this case we use the Gaussian, and use techniques from statistics to estimate its parameters. For a Gaussian, we need to only estimate its mean <span class="math notranslate nohighlight">\(\mu\)</span> and its a variance <span class="math notranslate nohighlight">\(\sigma^2\)</span>, and we used techniques from statistics to estimate these.</p>
 <p>In the case of discrete sensors we also looked at a very simple form of smoothing to cope with the absence of certain counts, which is common for rare events. In fact, this amounts to introducing what is called a <em>hyperprior</em> on the parameters to be estimated - in this case the numbers of a conditional probability table. Hyperpriors can also be used for estimating parameters of a Gaussian, but that is beyond the scope of this section.</p>
 <p>You might think it is a bit of a stretch to call these procedures “learning”. And indeed, they are simple parameter estimation problems as encountered in a statistics 101 class. However, although we will look at much more sophisticated learning approaches, even these simple algorithms <em>learn</em> about the world from data. Based on the sensor models, a robot will change how it acts in the world. Together with a value system, supplied in the form of a cost matrix by its user, the robot will make more optimal decisions by observing how the world behaves.</p>
@@ -863,7 +862,8 @@ an estimate of the standard deviation is given by:</p>
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -876,11 +876,12 @@ an estimate of the standard deviation is given by:</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#smoothing">2.6.1.1. Smoothing</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modeling-a-sensor-from-data">2.6.2. Modeling a Sensor from Data</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#comparison">2.6.2.1. Comparison</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modeling-a-sensor-from-data">2.6.2. Modeling a Sensor from Data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fitting-a-gaussian">2.6.3. Fitting a Gaussian</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#comparison">2.6.3.1. Comparison</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">2.6.3. Summary</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">2.6.4. Summary</a></li>
 </ul>
   </nav></div>
 
@@ -929,8 +930,8 @@ By Frank Dellaert and Seth Hutchinson
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>

@@ -16,17 +16,19 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-
-  
-  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
@@ -37,10 +39,11 @@
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="_static/style.css?v=51e3b7cf" />
   
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="_static/documentation_options.js?v=c73c0f3e"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
@@ -68,6 +71,7 @@
     <link rel="prev" title="6. Autonomous Vehicles" href="S60_driving_intro.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -83,19 +87,8 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="search.html"
       method="get">
@@ -103,7 +96,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search..."
          aria-label="Search..."
          autocomplete="off"
@@ -111,8 +103,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -128,7 +120,8 @@
       
       
       
-      <div class="bd-sidebar-primary bd-sidebar">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -158,21 +151,17 @@
     
     
     <img src="_static/logo.png" class="logo__image only-light" alt="Introduction to Robotics and Perception - Home"/>
-    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Introduction to Robotics and Perception - Home"/>`);</script>
+    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Introduction to Robotics and Perception - Home"/>
   
   
 </a></div>
         <div class="sidebar-primary-item">
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script></div>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         <ul class="current nav bd-sidenav">
@@ -252,9 +241,14 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -351,24 +345,16 @@
 
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-  </button>
-`);
-</script>
+</button>
 <button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="fa-solid fa-list"></span>
 </button>
@@ -465,9 +451,9 @@ we can express the <span class="math notranslate nohighlight">\(y\)</span>-axis 
 by projecting <span class="math notranslate nohighlight">\(y_1\)</span> onto <span class="math notranslate nohighlight">\(x_0\)</span> and <span class="math notranslate nohighlight">\(y_0\)</span>.
 Because all of these vectors are unit vectors,
 the projections can be achieved using the dot product:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-x_{1}^{0}=
+<div class="amsmath math notranslate nohighlight" id="equation-307ae28e-b201-4797-a851-c67235b12253">
+<span class="eqno">(6.1)<a class="headerlink" href="#equation-307ae28e-b201-4797-a851-c67235b12253" title="Permalink to this equation">#</a></span>\[\begin{align}
+x_{1}^{0} &amp;=
 \begin{bmatrix}
 x_0 \cdot x_1 \\
 y_0 \cdot x_1
@@ -476,8 +462,8 @@ y_0 \cdot x_1
 \cos \theta \\
 \sin \theta
 \end{bmatrix}
-~~~~~~~~~~~
-y_{1}^{0}=
+\\
+y_{1}^{0} &amp;=
 \begin{bmatrix}
 x_0 \cdot y_1 \\
 y_0 \cdot y_1
@@ -486,13 +472,13 @@ y_0 \cdot y_1
 -\sin \theta \\
 \cos \theta
 \end{bmatrix}
-\end{split}\]</div>
+\end{align}\]</div>
 <p>Above, we adopt the notational convention that a subscript indicates the target
 frame, and the superscript indicates the reference frame.
 Thus, <span class="math notranslate nohighlight">\(x_1^0\)</span> denotes the <span class="math notranslate nohighlight">\(x\)</span>-axis of Frame 1, expressed in coordinates relative to Frame 0.</p>
 <p id="index-1">We can group these two vectors into a <strong>rotation matrix</strong></p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
+<div class="amsmath math notranslate nohighlight" id="equation-2170c1d6-5ff0-413e-b408-0a8d7ee06380">
+<span class="eqno">(6.2)<a class="headerlink" href="#equation-2170c1d6-5ff0-413e-b408-0a8d7ee06380" title="Permalink to this equation">#</a></span>\[\begin{equation}
 R_{1}^{0}
 =\begin{bmatrix}
 x_0 \cdot x_1 &amp;  x_0 \cdot y_1\\
@@ -502,7 +488,7 @@ y_0 \cdot x_1 &amp; y_0 \cdot y_1
 \cos \theta &amp;  -\sin \theta\\
 \sin \theta &amp; \cos \theta
 \end{bmatrix}
-\end{split}\]</div>
+\end{equation}\]</div>
 <p>that describes the orientation of Frame 1 w.r.t. Frame 0.
 Using the notational convention defined above, <span class="math notranslate nohighlight">\(R_{1}^{0}\)</span> indicates the reference frame
 as the superscript (Frame 0) and the target frame as the subscript (Frame 1).</p>
@@ -554,25 +540,25 @@ of rotations in 3D, and the corresponding group of 3D rotation matrices, <span c
 <p>We can use rotation matrices to perform coordinate transformations under pure rotation.
 Consider a point <span class="math notranslate nohighlight">\(P\)</span> that is rigidly attached to Frame 1 and, as illustrated in the Figures above, whose coordinates w.r.t. Frame 1
 are given by</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
+<div class="amsmath math notranslate nohighlight" id="equation-9666bf3e-19c2-44ce-80ee-fa6b6f6249e9">
+<span class="eqno">(6.3)<a class="headerlink" href="#equation-9666bf3e-19c2-44ce-80ee-fa6b6f6249e9" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P_{}^{1}=\begin{bmatrix}
 p_x \\
 p_y
 \end{bmatrix}
-\end{split}\]</div>
+\end{equation}\]</div>
 <p>Using the definition of coordinates, we can describe the point <span class="math notranslate nohighlight">\(P\)</span>
 using the equation</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-8ea1e721-8a41-4b97-9479-206263db26bc">
+<span class="eqno">(6.4)<a class="headerlink" href="#equation-8ea1e721-8a41-4b97-9479-206263db26bc" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P = p_x x_1 + p_y y_1
-\]</div>
+\end{equation}\]</div>
 <p>in which <span class="math notranslate nohighlight">\(x_1\)</span> and <span class="math notranslate nohighlight">\(y_1\)</span> are the vectors defining the coordinate axes of Frame 1.</p>
 <p>To compute the coordinates <span class="math notranslate nohighlight">\(P^0\)</span> of <span class="math notranslate nohighlight">\(P\)</span> w.r.t. Frame 0, we merely project <span class="math notranslate nohighlight">\(P\)</span> onto the <span class="math notranslate nohighlight">\(x\)</span>- and <span class="math notranslate nohighlight">\(y\)</span>- axes
 of Frame 0. Since the vectors <span class="math notranslate nohighlight">\(x_0\)</span> and <span class="math notranslate nohighlight">\(y_0\)</span> are unit vectors, this projection can again be accomplished
 using a the dot product:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
+<div class="amsmath math notranslate nohighlight" id="equation-ecdbef32-78f9-46bc-8106-9b6e07923cd4">
+<span class="eqno">(6.5)<a class="headerlink" href="#equation-ecdbef32-78f9-46bc-8106-9b6e07923cd4" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P^0 = 
 \begin{bmatrix}
 x_0 \cdot P \\
@@ -598,12 +584,12 @@ p_x    \\
 p_y
 \end{bmatrix}
 = R^0_1 P^1
-\end{split}\]</div>
+\end{equation}\]</div>
 <p>Summarizing the above, we have</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-73a3b8b7-88d9-487d-9ea0-4c32b5b4fa78">
+<span class="eqno">(6.6)<a class="headerlink" href="#equation-73a3b8b7-88d9-487d-9ea0-4c32b5b4fa78" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P^0 =  R^0_1 P^1
-\]</div>
+\end{equation}\]</div>
 <p>which is how a rotation <span class="math notranslate nohighlight">\(R^0_1\)</span> <em>acts</em> on a point <span class="math notranslate nohighlight">\(P^1\)</span>.</p>
 </section>
 <section id="the-group-so-2-in-gtsam">
@@ -706,13 +692,13 @@ the same translation as the frame.
 To calculate the coordinates of <span class="math notranslate nohighlight">\(P\)</span> relative to Frame 0, we merely
 perform the rotational coordinate transformation as above,
 and then add the translation from the origin of Frame 0 to the origin of Frame 1:</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-40e0abb9-0ad1-4aaf-8a95-ee3e31430a4b">
+<span class="eqno">(6.7)<a class="headerlink" href="#equation-40e0abb9-0ad1-4aaf-8a95-ee3e31430a4b" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P^0 =  R^0_1 P^1 + d^0_1
-\]</div>
+\end{equation}\]</div>
 <p id="index-5">We can write the above coordinate transformation as a matrix equation:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
+<div class="amsmath math notranslate nohighlight" id="equation-31ac8d48-227a-420b-a38d-cf80428d2007">
+<span class="eqno">(6.8)<a class="headerlink" href="#equation-31ac8d48-227a-420b-a38d-cf80428d2007" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{bmatrix}
 P^0 \\ 1
 \end{bmatrix}
@@ -724,38 +710,38 @@ R_{1}^{0} &amp; d_{1}^{0}\\
 \begin{bmatrix}
 P^1 \\ 1
 \end{bmatrix}
-\end{split}\]</div>
+\end{equation}\]</div>
 <p>in which <span class="math notranslate nohighlight">\(0_2\)</span> denotes the row vector <span class="math notranslate nohighlight">\([0~ 0]\)</span>.
 Note that the bottom row of this matrix equation is merely the equation</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
+<div class="amsmath math notranslate nohighlight" id="equation-db866937-5246-4b83-9200-bcf8e7d27586">
+<span class="eqno">(6.9)<a class="headerlink" href="#equation-db866937-5246-4b83-9200-bcf8e7d27586" title="Permalink to this equation">#</a></span>\[\begin{equation}
 1 = \begin{bmatrix} 0 &amp; 0 &amp; 1 \end{bmatrix} 
 \begin{bmatrix} p_x \\ p_y \\ 1 \end{bmatrix}
-\end{split}\]</div>
+\end{equation}\]</div>
 <p>which holds for any <span class="math notranslate nohighlight">\(p_x, p_y\)</span>.</p>
 <p>It is convenient to define the 3-vector <span class="math notranslate nohighlight">\(\tilde{P}\)</span> as</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
+<div class="amsmath math notranslate nohighlight" id="equation-b21c1893-f533-4bee-abcb-134f5b23a323">
+<span class="eqno">(6.10)<a class="headerlink" href="#equation-b21c1893-f533-4bee-abcb-134f5b23a323" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \tilde{P} =
 \begin{bmatrix}
 P \\ 1
 \end{bmatrix}
-\end{split}\]</div>
+\end{equation}\]</div>
 <p>which we call the homogeneous coordinates of the point <span class="math notranslate nohighlight">\(P\)</span>.
 Using this convention, we can write the <em>homogeneous coordinate transformation</em> as</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-684889b8-75aa-41d0-b464-d36997ff5130">
+<span class="eqno">(6.11)<a class="headerlink" href="#equation-684889b8-75aa-41d0-b464-d36997ff5130" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \tilde{P}^0 = T^0_1 \tilde{P}^1
-\]</div>
+\end{equation}\]</div>
 <p>The set of matrices of the form</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
+<div class="amsmath math notranslate nohighlight" id="equation-34717206-02e0-4a6b-9c9c-160d4cee0049">
+<span class="eqno">(6.12)<a class="headerlink" href="#equation-34717206-02e0-4a6b-9c9c-160d4cee0049" title="Permalink to this equation">#</a></span>\[\begin{equation}
 T =
 \begin{bmatrix}
 R &amp; d\\
 0_2 &amp; 1
 \end{bmatrix}
-\end{split}\]</div>
+\end{equation}\]</div>
 <p>with <span class="math notranslate nohighlight">\(R \in SO(2)\)</span> and <span class="math notranslate nohighlight">\(d \in \mathbb{R}^2\)</span> is called
 the <strong>special Euclidean group of order 2</strong>, denoted by SE(2).</p>
 </section>
@@ -773,19 +759,27 @@ only the individual motions in the sequence?
 The answer is suprisingly simple.
 Suppose the point <span class="math notranslate nohighlight">\(P\)</span> is rigidly attached to the robot.
 Using the coordinate transformation equation <span class="math notranslate nohighlight">\(\tilde{P}^i = T^i_j \tilde{P}^j\)</span>, we have the following:</p>
-<div class="math notranslate nohighlight">
-\[\tilde{P}^0 = T^0_1 \tilde{P}^1, ~~~~~ \tilde{P}^1 = T^1_2 \tilde{P}^2, ~~~~~ \tilde{P}^0 = T^0_2 \tilde{P}^2\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-c59f0179-9024-43dd-ac65-77866f0059b6">
+<span class="eqno">(6.13)<a class="headerlink" href="#equation-c59f0179-9024-43dd-ac65-77866f0059b6" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\tilde{P}^0 = T^0_1 \tilde{P}^1, ~~~~~ \tilde{P}^1 = T^1_2 \tilde{P}^2, ~~~~~ \tilde{P}^0 = T^0_2 \tilde{P}^2
+\end{equation} \]</div>
 <p>Combining the first two of these gives</p>
-<div class="math notranslate nohighlight">
-\[\tilde{P}^0 = T^0_1 T^1_2 \tilde{P}^2\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-95c3ce50-58e3-4666-b61d-bea743c84346">
+<span class="eqno">(6.14)<a class="headerlink" href="#equation-95c3ce50-58e3-4666-b61d-bea743c84346" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\tilde{P}^0 = T^0_1 T^1_2 \tilde{P}^2
+\end{equation}\]</div>
 <p>and since this equation holds for every possible <span class="math notranslate nohighlight">\(\tilde{P}^2\)</span> we have</p>
-<div class="math notranslate nohighlight">
-\[T^0_2 = T^0_1 T^1_2 \]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-4fa66dbd-7f74-4a5f-a4a0-1c2756334242">
+<span class="eqno">(6.15)<a class="headerlink" href="#equation-4fa66dbd-7f74-4a5f-a4a0-1c2756334242" title="Permalink to this equation">#</a></span>\[\begin{equation}
+T^0_2 = T^0_1 T^1_2 
+\end{equation}\]</div>
 <p>It is easy to show (by induction) that this result extends to an arbitarily long sequence of transformations.
 Therefore, if we have a sequence of robot configurations <span class="math notranslate nohighlight">\(T^{i-1}_i\)</span>, for <span class="math notranslate nohighlight">\(i = 1, \dots , n\)</span> we can compute
 the composite transformation <span class="math notranslate nohighlight">\(T^0_n\)</span> using</p>
-<div class="math notranslate nohighlight">
-\[T^0_n = T^0_1 \dots T^{n-1}_n \]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-6dc295e1-c0f7-499d-9988-7821d0b62b39">
+<span class="eqno">(6.16)<a class="headerlink" href="#equation-6dc295e1-c0f7-499d-9988-7821d0b62b39" title="Permalink to this equation">#</a></span>\[\begin{equation}
+T^0_n = T^0_1 \dots T^{n-1}_n 
+\end{equation}\]</div>
 </section>
 <section id="the-group-se-2-in-gtsam">
 <h2><span class="section-number">6.1.7. </span>The Group <span class="math notranslate nohighlight">\(SE(2)\)</span> in GTSAM<a class="headerlink" href="#the-group-se-2-in-gtsam" title="Link to this heading">#</a></h2>
@@ -801,11 +795,11 @@ all <span class="math notranslate nohighlight">\(T \in SE(2)\)</span> we have <s
 <li><p><em>Associativity</em>: For all <span class="math notranslate nohighlight">\(T_1, T_2, T_3 \in SE(2)\)</span>, <span class="math notranslate nohighlight">\((T_1 T_2) T_3 = T_1 (T_2 T_3)\)</span>.</p></li>
 </ol>
 <p>However, in contrast to 2D rotations, 2D rigid transforms do <em>not</em> commute. Also, The inverse <span class="math notranslate nohighlight">\(T^{-1}\)</span> is not just the transpose; instead, we have:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
+<div class="amsmath math notranslate nohighlight" id="equation-779a6787-ad31-4ce0-bdc6-959755503d25">
+<span class="eqno">(6.17)<a class="headerlink" href="#equation-779a6787-ad31-4ce0-bdc6-959755503d25" title="Permalink to this equation">#</a></span>\[\begin{equation}
 T^{-1} = \begin{bmatrix}R &amp; d\\0_2 &amp; 1\end{bmatrix}^{-1}
  = \begin{bmatrix}R^T &amp; -R^T d\\0_2 &amp; 1\end{bmatrix}
-\end{split}\]</div>
+\end{equation}\]</div>
 <p>which you can easily verify by multiplying to obtain <span class="math notranslate nohighlight">\(I\)</span>.</p>
 <p>Again, all of this is built into GTSAM,where both 2D poses and 2D rigid transforms are represented by the type <code class="docutils literal notranslate"><span class="pre">Pose2</span></code>:</p>
 <div class="cell docutils container">
@@ -937,15 +931,15 @@ While <code class="docutils literal notranslate"><span class="pre">Point2</span>
 </pre></div>
 </div>
 <p>Both have them have three overloads, but we show only the most commonly used one above. When using code, it is often a good idea to use indices to keep the different coordinate frames apart. For example, for a pose <span class="math notranslate nohighlight">\(T^a_b\)</span> the method <code class="docutils literal notranslate"><span class="pre">transformFrom</span></code> implements the following</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-f54b0d55-ae66-4806-a7ed-3d516f756804">
+<span class="eqno">(6.18)<a class="headerlink" href="#equation-f54b0d55-ae66-4806-a7ed-3d516f756804" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P^a = T^a_b P^b
-\]</div>
+\end{equation}\]</div>
 <p>i.e., it transforms <em>from</em> frame B to frame A. The other method, <code class="docutils literal notranslate"><span class="pre">transformTo</span></code> transforms <em>to</em> frame B and hence implements</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-c9e8417a-6efe-4f86-8151-e55df0f61d4f">
+<span class="eqno">(6.19)<a class="headerlink" href="#equation-c9e8417a-6efe-4f86-8151-e55df0f61d4f" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P^b = (T^a_b)^{-1} P^a
-\]</div>
+\end{equation}\]</div>
 </section>
 </section>
 
@@ -1004,7 +998,8 @@ P^b = (T^a_b)^{-1} P^a
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -1070,8 +1065,8 @@ By Frank Dellaert and Seth Hutchinson
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>

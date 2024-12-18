@@ -16,17 +16,19 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-
-  
-  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
@@ -37,10 +39,11 @@
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="_static/style.css?v=51e3b7cf" />
   
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="_static/documentation_options.js?v=c73c0f3e"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
@@ -68,6 +71,7 @@
     <link rel="prev" title="5.2. Motion Model for the Differential Drive Robot" href="S52_diffdrive_actions.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -83,19 +87,8 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="search.html"
       method="get">
@@ -103,7 +96,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search..."
          aria-label="Search..."
          autocomplete="off"
@@ -111,8 +103,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -128,7 +120,8 @@
       
       
       
-      <div class="bd-sidebar-primary bd-sidebar">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -158,21 +151,17 @@
     
     
     <img src="_static/logo.png" class="logo__image only-light" alt="Introduction to Robotics and Perception - Home"/>
-    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Introduction to Robotics and Perception - Home"/>`);</script>
+    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Introduction to Robotics and Perception - Home"/>
   
   
 </a></div>
         <div class="sidebar-primary-item">
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script></div>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         <ul class="current nav bd-sidenav">
@@ -252,9 +241,14 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -351,24 +345,16 @@
 
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-  </button>
-`);
-</script>
+</button>
 <button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="fa-solid fa-list"></span>
 </button>
@@ -514,12 +500,12 @@ Computer vision folks use a very specific camera convention which will make the 
 </div>
 <p>Note that we specify the location of the person’s feet in <em>camera coordinates</em>, and if we are holding the camera level at a height of 1.7 meters, the feet will be 1.7 meters <em>below</em> the pinhole position.</p>
 <p>Thinking back to the camera obscura example, the pinhole camera model specifies that a 3D point <span class="math notranslate nohighlight">\((X,Y,Z)\)</span> in camera coordinates will be projected onto an image plane <em>behind</em> the camera:</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-edc6bc0c-e646-46a1-87ad-9ce4bb65d37e">
+<span class="eqno">(5.14)<a class="headerlink" href="#equation-edc6bc0c-e646-46a1-87ad-9ce4bb65d37e" title="Permalink to this equation">#</a></span>\[\begin{equation}
 X_I = - F \frac{X}{Z} ~~~~
 Y_I = - F \frac{Y}{Z} ~~~~
 Z_I = -F
-\]</div>
+\end{equation}\]</div>
 <p>Here, <span class="math notranslate nohighlight">\(F\)</span> denotes the focal length measured in meters,
 which is defined as the distance from the image plane to the pinhole, i.e., the center of the lens.
 The following figure shows the geometry:</p>
@@ -534,16 +520,16 @@ The following figure shows the geometry:</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/92c318b9d8371c3b37aa35226826e5dae55bf5840fde1bb67a5989eff7bcb031.png" src="_images/92c318b9d8371c3b37aa35226826e5dae55bf5840fde1bb67a5989eff7bcb031.png" />
+<img alt="_images/349c6ffee63392c97f2ecbfd33c9efca62ece212ea7f95338d975e60ba506364.png" src="_images/349c6ffee63392c97f2ecbfd33c9efca62ece212ea7f95338d975e60ba506364.png" />
 </div>
 </div>
 <p>However, it is not easy to debug algorithms with a true <em>upside down</em>  pinhole image. Instead, we can define a <em>virtual image plane</em> at a distance <span class="math notranslate nohighlight">\(F\)</span> <em>in front</em> of the pinhole, which is non-physical, but has the advantage that the image now appears right-side up. We simply have to reflect the projected coordinates:</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-cf3dffd0-cab9-49f9-89e9-2797ff2ebc81">
+<span class="eqno">(5.15)<a class="headerlink" href="#equation-cf3dffd0-cab9-49f9-89e9-2797ff2ebc81" title="Permalink to this equation">#</a></span>\[\begin{equation}
 X_V = F \frac{X}{Z} ~~~~
 Y_V = F \frac{Y}{Z} ~~~~
 Z_V = F
-\]</div>
+\end{equation}\]</div>
 <p>The virtual image geometry is shown below:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -554,14 +540,14 @@ Z_V = F
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/a8323241096fdbf692f03e692a1a38dac55144e9dde1ca96ae7a7e194dc92a63.png" src="_images/a8323241096fdbf692f03e692a1a38dac55144e9dde1ca96ae7a7e194dc92a63.png" />
+<img alt="_images/71726e5673e5f16398e16af8273dd509e05f04cff98cbb5f794c843a8486c349.png" src="_images/71726e5673e5f16398e16af8273dd509e05f04cff98cbb5f794c843a8486c349.png" />
 </div>
 </div>
 <p id="index-5">The above has the disadvantage that we still have to take into account the focal length <span class="math notranslate nohighlight">\(F\)</span> when doing the projection. Dividing by the focal length yields the fundamental <em>pinhole projection equation</em>:</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-59798b69-d17f-40f6-959a-77e8e6b3cf59">
+<span class="eqno">(5.16)<a class="headerlink" href="#equation-59798b69-d17f-40f6-959a-77e8e6b3cf59" title="Permalink to this equation">#</a></span>\[\begin{equation}
 x = \frac{X}{Z} ~~~~ y = \frac{Y}{Z}
-\]</div>
+\end{equation}\]</div>
 <p>The dimensionless <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> coordinates are called the <strong>intrinsic camera coordinates</strong>, and can be thought of as the image of the scene in a virtual image plane situated at a focal length of 1.0.
 Note that the image origin at <span class="math notranslate nohighlight">\((x,y)=(0,0)\)</span> is the location where the <em>optical axis</em> (the blue Z-axis above) pierces the image plane.
 This point is commonly refered to as the <strong>principal point</strong>.
@@ -588,13 +574,13 @@ To translate from intrinsic coordinates to pixel coordinates, we introduce real-
 <li><p>the middle of pixel <span class="math notranslate nohighlight">\((r, c)=(H-1, W-1)\)</span> has sensor coordinates <span class="math notranslate nohighlight">\((u, v)=(W-0.5, H-0.5)\)</span>.</p></li>
 </ul>
 <p id="index-7">The simplest <strong>camera calibration model</strong> is just a linear mapping, which is most appropriate for lenses with a small field of view. For this we need four parameters <span class="math notranslate nohighlight">\(\alpha\)</span>, <span class="math notranslate nohighlight">\(\beta\)</span>, <span class="math notranslate nohighlight">\(u_0\)</span>, and <span class="math notranslate nohighlight">\(v_0\)</span>, to convert from intrinsic coordinates <span class="math notranslate nohighlight">\((x,y)\)</span> to sensor coordinates <span class="math notranslate nohighlight">\((u,v)\)</span>:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
+<div class="amsmath math notranslate nohighlight" id="equation-5c96b06d-b7d6-44c0-b6dd-ee38bdbd1636">
+<span class="eqno">(5.17)<a class="headerlink" href="#equation-5c96b06d-b7d6-44c0-b6dd-ee38bdbd1636" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{aligned}
 u &amp;= u_0 + \alpha x \\
 v &amp;= v_0 + \beta y
 \end{aligned}
-\end{split}\]</div>
+\end{equation}\]</div>
 <p>As an example, consider the <a class="reference external" href="https://www.flir.com/products/firefly-s/?model=FFY-U3-04S2C-C">FireFly S</a> machine vision camera, which has the following specifications:</p>
 <ul class="simple">
 <li><p>sensor: <a class="reference external" href="https://www.phase1vision.com/userfiles/product_files/imx273_287_296_297_flyer.pdf">Sony IMX297</a> (CMOS)</p></li>
@@ -604,14 +590,16 @@ v &amp;= v_0 + \beta y
 </ul>
 <p>We typically expect the <em>image center</em>, corresponding to <span class="math notranslate nohighlight">\((x,y)=(0.0,0.0)\)</span>, to be close to <span class="math notranslate nohighlight">\((u_0,v_0)=(W/2,H/2)\)</span>.
 For the sensor above this would be <span class="math notranslate nohighlight">\((u_0,v_0)=(364.0, 272.0)\)</span>.
-To compute <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span> we have to take into account the lens focal length <span class="math notranslate nohighlight">\(F\)</span>. Since <span class="math notranslate nohighlight">\(u\)</span> and <span class="math notranslate nohighlight">\(v\)</span> are expressed in pixels, and <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> are dimensionless, it is clear that <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span> must also be expressed in pixels. They can be computed as</p>
-<ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(\alpha = F k = 8mm/6.9\mu m \approx 1160px\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(\beta = F l = 8mm/6.9\mu m \approx 1160px\)</span></p></li>
-</ul>
-<p>where</p>
-<div class="math notranslate nohighlight">
-\[k = 1px/6.9\mu~~~~~\mathrm{and}~~~~l = 1px/6.9\mu\]</div>
+To compute <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span> we have to take into account the lens focal length <span class="math notranslate nohighlight">\(F\)</span>. Since <span class="math notranslate nohighlight">\(u\)</span> and <span class="math notranslate nohighlight">\(v\)</span> are expressed in pixels, and <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> are dimensionless, it is clear that <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span> must also be expressed in pixels. They can be computed as
+\begin{aligned}
+\alpha = F k &amp;= 8\text{mm}/6.9\mu\text{m} \approx 1160\text{px}\
+\beta = F l &amp;= 8\text{mm}/6.9\mu\text{m} \approx 1160\text{px}
+\end{aligned}
+where</p>
+<div class="amsmath math notranslate nohighlight" id="equation-95624567-3bea-464d-b9b5-db141c4bc33c">
+<span class="eqno">(5.18)<a class="headerlink" href="#equation-95624567-3bea-464d-b9b5-db141c4bc33c" title="Permalink to this equation">#</a></span>\[\begin{equation}
+k = \text{px}/6.9\mu\text{m}~~~~~\mathrm{and}~~~~l = \text{px}/6.9\mu\text{m}
+\end{equation}\]</div>
 <p>are sensor-specific constants that indicated the number of pixels per unit of length.</p>
 <p>Whenever <span class="math notranslate nohighlight">\(k=l\)</span>, the sensor has <em>square pixels</em>, and we can just use one proportionality constant, <span class="math notranslate nohighlight">\(f=\alpha=\beta\)</span>.
 In this case, <span class="math notranslate nohighlight">\(f\)</span> again denotes the <em>focal length</em>, but this time, expressed in pixels. This is a slight abuse of terminology, as <span class="math notranslate nohighlight">\(f\)</span> is a property of both the lens <em>and</em> the image sensor plane, but it is in widespread and we will adopt it here as well.</p>
@@ -623,23 +611,23 @@ In this case, <span class="math notranslate nohighlight">\(f\)</span> again deno
 </div></blockquote>
 <p>Putting all of the above together,
 we finally obtain the fundamental <strong>pinhole projection</strong> equation, projecting a point <span class="math notranslate nohighlight">\(P\)</span> in 3D camera coordinates <span class="math notranslate nohighlight">\(P=(X,Y,Z)\)</span>, to its 2D image projection <span class="math notranslate nohighlight">\(p=(u,v)\)</span> in sensor coordinates:</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-be377619-dd26-4cdf-b87e-a7f3a521eb98">
+<span class="eqno">(5.19)<a class="headerlink" href="#equation-be377619-dd26-4cdf-b87e-a7f3a521eb98" title="Permalink to this equation">#</a></span>\[\begin{equation}
 u = u_0 + f \frac{X}{Z} ~~~~ v = v_0 + f \frac{Y}{Z}.
-\]</div>
+\end{equation}\]</div>
 <p>To obtain integer pixel coordinates <span class="math notranslate nohighlight">\((r,c)\)</span>, we simply need to use the <em>floor</em> function, truncating the fractional pixel sensor coordinates to a location in the image array. Note that in doing so we also flip horizontal and vertical:</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-741ffc42-c00d-4c8f-b68f-fd802f0178e4">
+<span class="eqno">(5.20)<a class="headerlink" href="#equation-741ffc42-c00d-4c8f-b68f-fd802f0178e4" title="Permalink to this equation">#</a></span>\[\begin{equation}
 (r,c) = (\lfloor v \rfloor, \lfloor u \rfloor)
-\]</div>
+\end{equation}\]</div>
 <p>We can also go the other way, <em>calibrating</em> the sensor coordinates <span class="math notranslate nohighlight">\((u,v)\)</span> to the dimensionless intrinsic coordinates <span class="math notranslate nohighlight">\((x,y)\)</span>:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
+<div class="amsmath math notranslate nohighlight" id="equation-35bda9aa-5796-4aed-afab-4d5dd34872e7">
+<span class="eqno">(5.21)<a class="headerlink" href="#equation-35bda9aa-5796-4aed-afab-4d5dd34872e7" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{aligned}
 x &amp;= (u-u_0)/f \\
 y &amp;= (v-v_0)/f
 \end{aligned}
-\end{split}\]</div>
+\end{equation}\]</div>
 </section>
 <section id="camera-calibration-in-gtsam">
 <h2><span class="section-number">5.3.6. </span>Camera Calibration in GTSAM<a class="headerlink" href="#camera-calibration-in-gtsam" title="Link to this heading">#</a></h2>
@@ -701,8 +689,10 @@ Also, the above was a “calibration” example where we go from pixel coordinat
 is the camera’s <strong>field of view</strong> or <strong>FOV</strong>.
 Because the <em>left-most</em> ray we can see has <span class="math notranslate nohighlight">\(u=0\)</span>, it corresponds to <span class="math notranslate nohighlight">\(x=-u_0/f\approx-W/2f\)</span>.
 The horizontal FOV can then be calculated by</p>
-<div class="math notranslate nohighlight">
-\[\mathrm{HFOV} = 2 \arctan(W/2f)~~\mathrm{rad} = 360 \arctan(W/2f) / \pi~~\mathrm{degrees}\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-631aea69-62c4-4f86-8ab8-541a8de2dd58">
+<span class="eqno">(5.22)<a class="headerlink" href="#equation-631aea69-62c4-4f86-8ab8-541a8de2dd58" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\mathrm{HFOV} = 2 \arctan(W/2f)~~\mathrm{rad} = 360 \arctan(W/2f) / \pi~~\mathrm{degrees}
+\end{equation}\]</div>
 <p>For the sensor-lens combination above we get a relatively narrow field of view of about 35 degrees:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -734,11 +724,15 @@ The horizontal FOV can then be calculated by</p>
 </div>
 </div>
 <p>We can also ask the opposite question: what lens focal length should we choose to get a certain filed of view. For example, for a <em>diagonal</em> field of view we have</p>
-<div class="math notranslate nohighlight">
-\[\mathrm{DFOV} = 360 \arctan(\sqrt{W^2+H^2}/2f) / \pi~~\mathrm{degrees}\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-8c0e6bbd-8fb5-486b-b048-8ea5a0ef2f7b">
+<span class="eqno">(5.23)<a class="headerlink" href="#equation-8c0e6bbd-8fb5-486b-b048-8ea5a0ef2f7b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\mathrm{DFOV} = 360 \arctan(\sqrt{W^2+H^2}/2f) / \pi~~\mathrm{degrees}
+\end{equation}\]</div>
 <p>and hence</p>
-<div class="math notranslate nohighlight">
-\[f = \frac{\sqrt{W^2+H^2}}{2 \tan(\mathrm{DFOV} \pi/360)}\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-150726c3-c452-4393-a023-655d6a287c66">
+<span class="eqno">(5.24)<a class="headerlink" href="#equation-150726c3-c452-4393-a023-655d6a287c66" title="Permalink to this equation">#</a></span>\[\begin{equation}
+f = \frac{\sqrt{W^2+H^2}}{2 \tan(\mathrm{DFOV} \pi/360)}
+\end{equation}\]</div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">f45</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">728</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="mi">544</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="o">/</span><span class="n">math</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">4</span><span class="p">)</span>
@@ -764,34 +758,34 @@ Given a projection <span class="math notranslate nohighlight">\(p=(u,v)\)</span>
 However, if we see <em>two</em> projections of the same feature in two cameras, placed side by side, we can <em>triangulate</em> the location of <span class="math notranslate nohighlight">\(P\)</span>.
 In particular, let us name the cameras “Left” and “Right”, abbreviated as “L” and “R”, and let the two projections be <span class="math notranslate nohighlight">\(p_L=(u_L,v_L)\)</span> and <span class="math notranslate nohighlight">\(p_R=(u_R,v_R)\)</span>. How could we recover the coordinates <span class="math notranslate nohighlight">\((X,Y,Z)\)</span> in, say, the <em>left</em> camera coordinate frame?</p>
 <p>We can easily work out the answer <em>if</em> the cameras have the same calibration <em>and</em> the camera pair is in a “stereo” configuration. The latter means that the cameras have exactly the same orientation with respect to the world, and the right camera is displaced only horizontally with respect to the left camera. We call the displacement the <strong>stereo baseline</strong> <span class="math notranslate nohighlight">\(B\)</span>. In that case we have</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
+<div class="amsmath math notranslate nohighlight" id="equation-8b20a415-2497-4690-9714-485d3e709d95">
+<span class="eqno">(5.25)<a class="headerlink" href="#equation-8b20a415-2497-4690-9714-485d3e709d95" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{aligned}
 u_L &amp;= u_0 + f \frac{X}{Z}, ~~~~~ &amp;v_L = v_0 + f \frac{Y}{Z} \\
 \\
 u_R &amp;= u_0 + f \frac{X-B}{Z}, ~~~~~ &amp;v_R = v_0 + f \frac{Y}{Z}
 \end{aligned}
-\end{split}\]</div>
+\end{equation}\]</div>
 <p id="index-11">Two interesting things to note: (a) <span class="math notranslate nohighlight">\(u_L\)</span> and <span class="math notranslate nohighlight">\(u_R\)</span> differ only because the <span class="math notranslate nohighlight">\(X\)</span> coordinate of the point <span class="math notranslate nohighlight">\(P\)</span>, measured in the right camera, is <span class="math notranslate nohighlight">\(B\)</span> less than its value in the left camera.
 and (b) <span class="math notranslate nohighlight">\(v_L\)</span> and <span class="math notranslate nohighlight">\(v_R\)</span> have the same value: <em>corresponding</em> points in a stereo pair lie on the same scanline in the images. We can use the first fact to calculate the <em>unknown depth</em> <span class="math notranslate nohighlight">\(Z\)</span>, by defining the <strong>disparity</strong> <span class="math notranslate nohighlight">\(d\)</span> as the difference of <span class="math notranslate nohighlight">\(u_L\)</span> and <span class="math notranslate nohighlight">\(u_R\)</span>,</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-203a9066-76d0-4d2f-947d-8d6179cd384a">
+<span class="eqno">(5.26)<a class="headerlink" href="#equation-203a9066-76d0-4d2f-947d-8d6179cd384a" title="Permalink to this equation">#</a></span>\[\begin{equation}
 d \doteq u_L - u_R = f \frac{X}{Z} - f \frac{X-B}{Z},
-\]</div>
+\end{equation}\]</div>
 <p>and then performing some algebraic manipulation to obtain the <strong>fundamental stereo equation</strong>:</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-7e608b8b-c456-4a19-9bdf-68207ff28ca4">
+<span class="eqno">(5.27)<a class="headerlink" href="#equation-7e608b8b-c456-4a19-9bdf-68207ff28ca4" title="Permalink to this equation">#</a></span>\[\begin{equation}
 Z = B \frac{f}{d}.
-\]</div>
+\end{equation}\]</div>
 <p>The fraction <span class="math notranslate nohighlight">\(f/d\)</span> is dimensionless, as both disparity <span class="math notranslate nohighlight">\(d\)</span> and focal length <span class="math notranslate nohighlight">\(f\)</span> are expressed in pixels, and hence the resulting depth <span class="math notranslate nohighlight">\(Z\)</span> is expressed in the units of the baseline <span class="math notranslate nohighlight">\(B\)</span>.
 Using this together with the projection equations above,
 we can now completely reconstruct the location of the point <span class="math notranslate nohighlight">\(P\)</span> in (left) camera coordinates:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
+<div class="amsmath math notranslate nohighlight" id="equation-7529f07d-d7f7-4f6d-805b-70d6c0132ddb">
+<span class="eqno">(5.28)<a class="headerlink" href="#equation-7529f07d-d7f7-4f6d-805b-70d6c0132ddb" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{bmatrix}X\\Y\\Z\end{bmatrix}
 = \begin{bmatrix}Z(u_L-u_0)/f\\Z(v_L-v_0)/f\\B f/d\end{bmatrix}
 = B \frac{f}{d} \begin{bmatrix}(u_L-u_0)/f\\(v_L-v_0)/f\\1\end{bmatrix}
-\end{split}\]</div>
+\end{equation}\]</div>
 <p>Stereo cameras are used very often on robotics platforms because of this ability to reconstruct the world in 3D, at least in principle. This is akin to our own (human) ability to perceive depth by virtue of having two eyes, a feature we have in common with many animals - primarily predators, who need accurate depth vision to hunt prey. In practice, using a stereo camera is not as easy, as it has to be carefully calibrated and finding <em>correspondences</em> between left and right cameras is not always straightforward. However, the latter has been alleviated quite a bit by recent advances in neural networks, which we will discuss below.</p>
 </section>
 </section>
@@ -851,7 +845,8 @@ we can now completely reconstruct the location of the point <span class="math no
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -916,8 +911,8 @@ By Frank Dellaert and Seth Hutchinson
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>

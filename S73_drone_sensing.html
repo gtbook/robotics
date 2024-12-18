@@ -16,17 +16,19 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-
-  
-  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
@@ -37,10 +39,11 @@
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="_static/style.css?v=51e3b7cf" />
   
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="_static/documentation_options.js?v=c73c0f3e"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
@@ -68,6 +71,7 @@
     <link rel="prev" title="7.2. Multi-rotor Aircraft" href="S72_drone_actions.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -83,19 +87,8 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="search.html"
       method="get">
@@ -103,7 +96,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search..."
          aria-label="Search..."
          autocomplete="off"
@@ -111,8 +103,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -128,7 +120,8 @@
       
       
       
-      <div class="bd-sidebar-primary bd-sidebar">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -158,21 +151,17 @@
     
     
     <img src="_static/logo.png" class="logo__image only-light" alt="Introduction to Robotics and Perception - Home"/>
-    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Introduction to Robotics and Perception - Home"/>`);</script>
+    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Introduction to Robotics and Perception - Home"/>
   
   
 </a></div>
         <div class="sidebar-primary-item">
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script></div>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         <ul class="current nav bd-sidenav">
@@ -252,9 +241,14 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -351,24 +345,16 @@
 
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-  </button>
-`);
-</script>
+</button>
 <button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="fa-solid fa-list"></span>
 </button>
@@ -426,10 +412,10 @@ document.write(`
 <span id="index-2"></span><h3><span class="section-number">7.3.1.1. </span>Gyroscopes<a class="headerlink" href="#gyroscopes" title="Link to this heading">#</a></h3>
 <p>A <strong>gyroscope</strong> measures <em>changes</em> in orientation around three orthogonal axes, i.e., an angular velocity <span class="math notranslate nohighlight">\(\omega\)</span>.
 This is useful for drones, as they fly in 3D space and have to carefully control and hence measure their attitude <span class="math notranslate nohighlight">\(R^n_b\)</span>. Gyroscopes do not directly measure attitude however, only the <em>rate of change</em> in orientation, and hence we need to integrate the angular velocity <span class="math notranslate nohighlight">\(\omega(t)\)</span> over time:</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-ac67425d-d91e-4220-83a9-04f1567bfc64">
+<span class="eqno">(7.54)<a class="headerlink" href="#equation-ac67425d-d91e-4220-83a9-04f1567bfc64" title="Permalink to this equation">#</a></span>\[\begin{equation}
 R^n_b(t) = R^n_b(0) \int_{\tau=0}^t \exp \hat{\omega}(\tau) d\tau
-\]</div>
+\end{equation}\]</div>
 <p>Above, the exponential map <span class="math notranslate nohighlight">\(\exp \hat{\omega}(\tau)\)</span> is as defined in the previous section, where we have also shown how to numerically integrate forward in rotation space.</p>
 <p>Unfortunately, when the gyroscope measurements are corrupted by random noise, this noise is also integrated over time. In addition, gyroscopes also suffer from <strong>bias</strong>, a non-zero offset of the measurements that changes slowly over time. If we know this bias, e.g., by estimating it, then we can subtract it first. However, if we do <em>not</em> know the bias, the resulting error grows linearly over time when it is integrated.</p>
 <p>Both effects mean that we will gradually lose track of the correct attitude <span class="math notranslate nohighlight">\(R^n_b(t)\)</span>, a process known as <em>drift</em>.
@@ -485,7 +471,7 @@ a camera towards the front of the drone will have a positive <span class="math n
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/b9a865cabb23f3ea3fc447aab0bc06b42cdfdcbe915fe0ed8984aedefdb8d33e.png" src="_images/b9a865cabb23f3ea3fc447aab0bc06b42cdfdcbe915fe0ed8984aedefdb8d33e.png" />
+<img alt="_images/eb2bce13636942697f9fdbe4b495b0c2721a00d779f4a17043449a89edd0452f.png" src="_images/eb2bce13636942697f9fdbe4b495b0c2721a00d779f4a17043449a89edd0452f.png" />
 </div>
 </div>
 <p>To specify the <em>orientation</em> <span class="math notranslate nohighlight">\(R^b_c\)</span> for each of the cameras, we need to remember that (a) the <span class="math notranslate nohighlight">\(z\)</span>-axis points into the scene, and (b) the <span class="math notranslate nohighlight">\(y\)</span>-axis points down. The easiest way to specify this is by using the <code class="docutils literal notranslate"><span class="pre">gtsam.Rot3</span></code> constructor that takes three column vectors:</p>
@@ -513,7 +499,7 @@ a camera towards the front of the drone will have a positive <span class="math n
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/b4ff056db45bf4df3f86982dcef38f858bc321064ec704c1fdd3e2c5be023d7d.png" src="_images/b4ff056db45bf4df3f86982dcef38f858bc321064ec704c1fdd3e2c5be023d7d.png" />
+<img alt="_images/85f16f27582361d30d841767b06c4f0e282ed1a2745586d470d3dbe3e8f5b8e1.png" src="_images/85f16f27582361d30d841767b06c4f0e282ed1a2745586d470d3dbe3e8f5b8e1.png" />
 </div>
 </div>
 <p>Especially for visual odometry, which we will cover in the next section, having both forward and backward looking cameras is a good idea, yielding high quality estimates of the drone’s rotation. Cameras pointed to the side will often suffer from motion blur in forward flight mode, especially with close obstacles at high speed.</p>
@@ -525,10 +511,10 @@ a camera towards the front of the drone will have a positive <span class="math n
 </div></blockquote>
 <p>We have seen in Chapter 5 how to project points specified in the <em>camera</em> frame onto the image plane. However, for visual odometry or visual SLAM, an additional step is needed: we need to transform the 3D points from the navigation frame into the camera frame. This involves both the camera extrinsics and the drone’s pose <span class="math notranslate nohighlight">\(T^n_b\)</span> in the navigation frame itself.</p>
 <p>Let us start by reviewing the fundamental projection equation from chapter 5:</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-82a7cdb9-7ca7-4cc2-9e9d-ded818017c7e">
+<span class="eqno">(7.55)<a class="headerlink" href="#equation-82a7cdb9-7ca7-4cc2-9e9d-ded818017c7e" title="Permalink to this equation">#</a></span>\[\begin{equation}
 u = u_0 + f \frac{X^c}{Z^c} ~~~~ v = v_0 + f \frac{Y^c}{Z^c}.
-\]</div>
+\end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(u_0\)</span>, <span class="math notranslate nohighlight">\(v_0\)</span>, and <span class="math notranslate nohighlight">\(f\)</span> are the <em>intrinsic</em> camera calibration parameters, and <span class="math notranslate nohighlight">\(P^c=(X^c,Y^c,Z^c)\)</span> are the coordinates of a 3D point in the <em>camera</em> coordinate frame, hence the superscript <span class="math notranslate nohighlight">\(C\)</span>. But what if we are given the 3D coordinates <span class="math notranslate nohighlight">\(P^n=(X^n,Y^n,Z^n)\)</span> in the ENU navigation frame, rather than in the camera frame? Because the camera is mounted on the drone, we do this in two steps:</p>
 <ul class="simple">
 <li><p>convert from navigation to body frame: <span class="math notranslate nohighlight">\(P^b = (R^n_b)^T (P^n - t^n_b)\)</span></p></li>
@@ -594,10 +580,10 @@ u2,v2 = [409.39 179.7 ] in image 2
 </div>
 </div>
 <p>Again, this is exactly what we expect for a stereo rig. In this case the disparity is <span class="math notranslate nohighlight">\(412.4-409.4\approx3\)</span> pixels, and if we plug that into the fundamental stereo equation from Section 5.2, with baseline <span class="math notranslate nohighlight">\(10cm\)</span> (check the extrinsics!), we indeed obtain that the point is at a depth of <span class="math notranslate nohighlight">\(10m\)</span>:</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-1f2fe2fd-1925-4f6b-9f6a-f7cb7dc9d054">
+<span class="eqno">(7.56)<a class="headerlink" href="#equation-1f2fe2fd-1925-4f6b-9f6a-f7cb7dc9d054" title="Permalink to this equation">#</a></span>\[\begin{equation}
 Z = B \frac{f}{d} = 0.1 \frac{300}{3} = 10
-\]</div>
+\end{equation}\]</div>
 <p>In actuality, the disparity is a tiny bit larger, and if we plug in the exact number, we get the <em>true</em> depth from the camera center:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -672,7 +658,8 @@ depth = 9.9 meters
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -738,8 +725,8 @@ By Frank Dellaert and Seth Hutchinson
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>

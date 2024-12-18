@@ -16,17 +16,19 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-
-  
-  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
@@ -37,10 +39,11 @@
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="_static/style.css?v=51e3b7cf" />
   
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="_static/documentation_options.js?v=c73c0f3e"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
@@ -68,6 +71,7 @@
     <link rel="prev" title="4.1. Continuous State" href="S41_logistics_state.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -83,19 +87,8 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="search.html"
       method="get">
@@ -103,7 +96,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search..."
          aria-label="Search..."
          autocomplete="off"
@@ -111,8 +103,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -128,7 +120,8 @@
       
       
       
-      <div class="bd-sidebar-primary bd-sidebar">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -158,21 +151,17 @@
     
     
     <img src="_static/logo.png" class="logo__image only-light" alt="Introduction to Robotics and Perception - Home"/>
-    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Introduction to Robotics and Perception - Home"/>`);</script>
+    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Introduction to Robotics and Perception - Home"/>
   
   
 </a></div>
         <div class="sidebar-primary-item">
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script></div>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         <ul class="current nav bd-sidenav">
@@ -252,9 +241,14 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -351,24 +345,16 @@
 
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-  </button>
-`);
-</script>
+</button>
 <button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="fa-solid fa-list"></span>
 </button>
@@ -437,14 +423,14 @@ document.write(`
 <div><p>A mobile robot with three omni wheels can move in any direction.</p>
 </div></blockquote>
 <p>As an example, let us imagine that our warehouse robot is circular and has three omni wheels mounted on its rim. The coordinates of each wheel, in body coordinates, are</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
+<div class="amsmath math notranslate nohighlight" id="equation-019c34a9-1650-44fc-be90-944493245620">
+<span class="eqno">(4.10)<a class="headerlink" href="#equation-019c34a9-1650-44fc-be90-944493245620" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{aligned}
 p^i_x &amp;= R \cos(\theta^i) \\
 p^i_y &amp;= R \sin(\theta^i) \\
 \theta^i &amp;= i \frac{2\pi}{3}
 \end{aligned}
-\end{split}\]</div>
+\end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(R\)</span> is the radius of the robot. The angle <span class="math notranslate nohighlight">\(\theta^i\)</span> is angle between the robot’s x-axis and the wheel’s axis.
 As we will see below, this configuration of wheels allows the robot to move instantaneously in any direction in the plane.</p>
 <p>In code, we create a small function:</p>
@@ -519,11 +505,12 @@ are defined in the local coordinate frame of the robot, but since our robot
 does not rotate, we can define them directly in the world coordinate frame.
 Let <span class="math notranslate nohighlight">\(\theta\)</span> denote the angle from the world <span class="math notranslate nohighlight">\(x\)</span>-axis to the axle axis of the wheel.
 The vectors <span class="math notranslate nohighlight">\(u_\|\)</span> and <span class="math notranslate nohighlight">\(u_\perp\)</span> are given by</p>
-<div class="math notranslate nohighlight">
-\[\begin{split} u_\| =\left[ \begin{array}{c} -\sin \theta \\ \cos \theta \end{array}\right]
+<div class="amsmath math notranslate nohighlight" id="equation-e06c4ac7-f23f-4e84-9675-8227b79a762c">
+<span class="eqno">(4.11)<a class="headerlink" href="#equation-e06c4ac7-f23f-4e84-9675-8227b79a762c" title="Permalink to this equation">#</a></span>\[\begin{equation}
+u_\| =\left[ \begin{array}{c} -\sin \theta \\ \cos \theta \end{array}\right]
 \;\;\;\;\;\;\; \rm{and} \;\;\;\;\;\;\;
 u_\perp =\left[ \begin{array}{c} \cos \theta \\ \sin \theta \end{array}\right]
-\end{split}\]</div>
+\end{equation}\]</div>
 <p id="index-1">When an object moves with a purely translational motion (i.e., there is no rotation), every point
 on the object moves with the same velocity.
 Suppose that the robot, and therefore this specific wheel,
@@ -535,8 +522,8 @@ steering direction by projecting <span class="math notranslate nohighlight">\(v\
 <figcaption>Wheel velocity v.</figcaption>
 </figure>
 <p>In particular, we can write</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
+<div class="amsmath math notranslate nohighlight" id="equation-af1a330c-cecf-43d2-abac-0e7959a64219">
+<span class="eqno">(4.12)<a class="headerlink" href="#equation-af1a330c-cecf-43d2-abac-0e7959a64219" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{aligned}
 v &amp;= (v \cdot u_\| )u_\| + (v \cdot u_\perp) u_\perp \\
 &amp;=
@@ -545,15 +532,15 @@ v &amp;= (v \cdot u_\| )u_\| + (v \cdot u_\perp) u_\perp \\
 (v_x \cos \theta + v_y \sin \theta) u_\perp \\
 &amp;= v_{\parallel}u_\| +  v_{\perp}u_\perp\\
 \end{aligned}
-\end{split}\]</div>
+\end{equation}\]</div>
 <p>which gives</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
+<div class="amsmath math notranslate nohighlight" id="equation-75192a55-ec17-4ea9-8058-0c4e02dfd7af">
+<span class="eqno">(4.13)<a class="headerlink" href="#equation-75192a55-ec17-4ea9-8058-0c4e02dfd7af" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{aligned}
 v^i_{\parallel} &amp;= - v_x \sin \theta^i + v_y \cos \theta^i \\
 v^i_{\perp} &amp;= v_x \cos \theta^i + v_y \sin \theta^i
 \end{aligned}
-\end{split}\]</div>
+\end{equation}\]</div>
 <p>Note that in the above equation there is some possible confusion in the notation:
 <span class="math notranslate nohighlight">\(u_\|\)</span> and <span class="math notranslate nohighlight">\(u_\perp\)</span> are unit vectors that denote directions of motion,
 while <span class="math notranslate nohighlight">\(v_{\parallel}\)</span> and <span class="math notranslate nohighlight">\(v_{\perp}\)</span> are scalar quantities (the speed in the directions
@@ -562,7 +549,7 @@ of the unit vectors <span class="math notranslate nohighlight">\(u_\|\)</span> a
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">wheel_velocity</span><span class="p">(</span><span class="n">vx</span><span class="p">:</span><span class="nb">float</span><span class="p">,</span> <span class="n">vy</span><span class="p">:</span><span class="nb">float</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calulate parallel and perpendicular velocities at wheel i&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate parallel and perpendicular velocities at wheel i&quot;&quot;&quot;</span>
     <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">theta</span> <span class="o">=</span> <span class="n">wheel_pose</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
     <span class="n">para</span> <span class="o">=</span> <span class="o">-</span> <span class="n">vx</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">+</span> <span class="n">vy</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
     <span class="n">perp</span> <span class="o">=</span>   <span class="n">vx</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">+</span> <span class="n">vy</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
@@ -621,28 +608,28 @@ of the unit vectors <span class="math notranslate nohighlight">\(u_\|\)</span> a
 at exactly the right speed to accommodate any movement in this direction. Because this allows the wheel to “slide”, we also call this the <strong>sliding direction</strong>.</p>
 <p>On the other hand, the contact of each wheel must move exactly opposite to the parallel or <strong>driving direction</strong> of the velocity, because it cannot slide in that direction. As a consequence, if the radius of each wheel is <span class="math notranslate nohighlight">\(r\)</span>, the wheel’s angular velocity <span class="math notranslate nohighlight">\(\omega^i\)</span> (i.e., the angular rate at which the wheel spins about its axle)
 must satisfy</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
+<div class="amsmath math notranslate nohighlight" id="equation-38f3542f-5262-4f43-a25f-d14b5d96f5ee">
+<span class="eqno">(4.14)<a class="headerlink" href="#equation-38f3542f-5262-4f43-a25f-d14b5d96f5ee" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \omega^i = \frac{v^i_\parallel}{r} = 
 \frac{1}{r} (-\sin \theta^i, \cos \theta^i) \begin{pmatrix}v_x \\ v_y \end{pmatrix}
-\end{split}\]</div>
+\end{equation}\]</div>
 <p>Because we have three wheels, we can stack three instances of the above equation
 to obtain a matrix equation
 that maps a desired robot velocity <span class="math notranslate nohighlight">\(v=(v_x,v_y)\)</span> to the appropriate commanded wheel velocities:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
+<div class="amsmath math notranslate nohighlight" id="equation-56b4cf5a-b08c-43d9-9d87-38ee76048a69">
+<span class="eqno">(4.15)<a class="headerlink" href="#equation-56b4cf5a-b08c-43d9-9d87-38ee76048a69" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{pmatrix}\omega^1 \\ \omega^2 \\ \omega^3 \end{pmatrix} 
 = \frac{1}{r} \begin{pmatrix}- \sin\theta^1 &amp; \cos\theta^1 \\ - \sin\theta^2 &amp; \cos\theta^2 \\ - \sin\theta^3 &amp; \cos\theta^3 \end{pmatrix}
 \begin{pmatrix}v_x \\ v_y \end{pmatrix}
-\end{split}\]</div>
+\end{equation}\]</div>
 <p>in which the <span class="math notranslate nohighlight">\(3\times2\)</span> matrix is called the <strong>Jacobian matrix</strong>.</p>
 <p>For the three regularly arranged omni wheels with <span class="math notranslate nohighlight">\(\theta^1=0\)</span>, <span class="math notranslate nohighlight">\(\theta^2=2\pi/3\)</span>, and <span class="math notranslate nohighlight">\(\theta^3=4\pi/3\)</span> this becomes</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
+<div class="amsmath math notranslate nohighlight" id="equation-fdd65786-ed59-486f-a212-67dc5c2af57c">
+<span class="eqno">(4.16)<a class="headerlink" href="#equation-fdd65786-ed59-486f-a212-67dc5c2af57c" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{pmatrix}\omega^1 \\ \omega^2 \\ \omega^3 \end{pmatrix} 
 = \frac{1}{r} \begin{pmatrix}0 &amp; 1 \\ -0.866 &amp; -0.5 \\ 0.866 &amp; -0.5  \end{pmatrix}
 \begin{pmatrix}v_x \\ v_y \end{pmatrix}.
-\end{split}\]</div>
+\end{equation}\]</div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">jacobian_matrix</span><span class="p">():</span>
@@ -713,14 +700,16 @@ be <span class="math notranslate nohighlight">\(x_{k+1} = x_k + u_k\)</span>.</p
 <p id="index-3">Given the uncertainty inherent to the use of omni-wheels, we will instead develop a probabilistic
 motion model.
 Recall that we created a DBN with discrete actions, states, and measurements in the previous chapter. Here we do the same, except with <em>continuous</em> densities, specifying a DBN that encodes the joint density <span class="math notranslate nohighlight">\(p(X|U)\)</span> on the continuous states <span class="math notranslate nohighlight">\(X\doteq\{x_k\}_{k=1}^N\)</span>,</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-9345614a-c85c-4294-bc45-0fe5cb5b48f9">
+<span class="eqno">(4.17)<a class="headerlink" href="#equation-9345614a-c85c-4294-bc45-0fe5cb5b48f9" title="Permalink to this equation">#</a></span>\[\begin{equation}
 p(X|U) = p(x_1) \prod_{k=2}^{N} p(x_{k}|x_{k-1}, u_{k-1})
-\]</div>
+\end{equation}\]</div>
 <p>where we assume that the <strong>control variables</strong> <span class="math notranslate nohighlight">\(U\doteq\{u_k\}_{k=1}^{N-1}\)</span> are <em>given</em> to us.</p>
 <p>Let us assume we <em>know</em> that the robot starts out in the warehouse at coordinates <span class="math notranslate nohighlight">\(\mu_1 =(20,10)^T\)</span>, with some noise/error in position of magnitude on the order of plus or minus half a meter. We can encode this knowledge into a continuous Gaussian prior as</p>
-<div class="math notranslate nohighlight">
-\[p(x_1) = \mathcal{N}(x_1;\mu=\mu_1,\Sigma=P) \propto \exp\{ - \frac{1}{2} (x_1-\mu_1)^TP^{-1}(x_1-\mu_1) \}\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-56cab6a4-d8f3-470d-bc93-fe750b161c9b">
+<span class="eqno">(4.18)<a class="headerlink" href="#equation-56cab6a4-d8f3-470d-bc93-fe750b161c9b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+p(x_1) = \mathcal{N}(x_1;\mu=\mu_1,\Sigma=P) \propto \exp\{ - \frac{1}{2} (x_1-\mu_1)^TP^{-1}(x_1-\mu_1) \}
+\end{equation}\]</div>
 <p>with the covariance matrix <span class="math notranslate nohighlight">\(P=\text{diag}(0.5^2,0.5^2)\)</span>.</p>
 <p id="index-4">A Gaussian <em>motion model</em> is a bit trickier.
 Here we need a <em>conditional</em> Gaussian density that depends on the current state
@@ -728,43 +717,49 @@ and the commanded motion.
 The usual way to incorporate uncertainty into a motion model is to assume that
 a random disturbance is added to the nominal motion of the robot.
 We can model this as</p>
-<div class="math notranslate nohighlight">
-\[x_{k+1} = x_k + u_k + w_k\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-3db85db8-4e24-4123-a9cd-819d861c52c4">
+<span class="eqno">(4.19)<a class="headerlink" href="#equation-3db85db8-4e24-4123-a9cd-819d861c52c4" title="Permalink to this equation">#</a></span>\[\begin{equation}
+x_{k+1} = x_k + u_k + w_k
+\end{equation}\]</div>
 <p>in which <span class="math notranslate nohighlight">\(w_k\)</span> is a random vector whose probability distribution is typically based on empirical
 observations of the system. In our case, we will assume that this disturbance
 is Gaussian, <span class="math notranslate nohighlight">\(w_k \sim N(\mu,\Sigma)\)</span>.
 In this case, it can be shown that the conditional distribution of <span class="math notranslate nohighlight">\(x_{k+1}\)</span>
 given <span class="math notranslate nohighlight">\(x_k\)</span> and <span class="math notranslate nohighlight">\(u_k\)</span> is given by a <strong>conditional Gaussian density</strong> of the form</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-29cc112f-64b1-4708-ab2c-704db8c27eab">
+<span class="eqno">(4.20)<a class="headerlink" href="#equation-29cc112f-64b1-4708-ab2c-704db8c27eab" title="Permalink to this equation">#</a></span>\[\begin{equation}
 p(x_{k+1}|x_{k}, u_k) = \mathcal{N}(x_{k_1}; x_{k} +  u_k, \Sigma)
-\]</div>
+\end{equation}\]</div>
 <p>i.e., the conditional distribution for the next state is a Gaussian, with mean equal to the
 nominal (i.e., noise-free) next state <span class="math notranslate nohighlight">\(x_k + u_k\)</span>, and variance equal to the variance of the uncertainty
 in the motion model.</p>
 <p>It is easy to generalize this motion model to linear systems of the form</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-388a5f07-f72d-425b-b65e-f4581e16c07c">
+<span class="eqno">(4.21)<a class="headerlink" href="#equation-388a5f07-f72d-425b-b65e-f4581e16c07c" title="Permalink to this equation">#</a></span>\[\begin{equation}
 x_{k+1} = A x_k + B u_k + w_k
-\]</div>
+\end{equation}\]</div>
 <p>which is the general form for a linear time-invariant (LTI) system with additive noise.
 The matrix <span class="math notranslate nohighlight">\(A \in \mathbb{R}^{n \times n}\)</span> is called the system matrix,
 and the matrix <span class="math notranslate nohighlight">\(B\)</span> maps control input <span class="math notranslate nohighlight">\(u_k\)</span> to a vector in the state space.
 The motion model for this general LTI system is given by</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-340634d2-d558-4cb2-92d9-4d1438ec021a">
+<span class="eqno">(4.22)<a class="headerlink" href="#equation-340634d2-d558-4cb2-92d9-4d1438ec021a" title="Permalink to this equation">#</a></span>\[\begin{equation}
 p(x_{k+1}|x_{k}, u_k) = \mathcal{N}(x_{k+1};\mu=A x_{k} + B u_k, \Sigma=Q)
-\]</div>
+\end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(Q\)</span> is the traditional symbol used for motion model covariance. If we assume the robot executes action <span class="math notranslate nohighlight">\(u_k\)</span> with a standard deviation of 0.2m, then we will have <span class="math notranslate nohighlight">\(Q=\text{diag}(0.2^2,0.2^2)\)</span>.</p>
 </section>
 <section id="gaussian-dbns-in-code">
 <h2><span class="section-number">4.2.7. </span>Gaussian DBNs in Code<a class="headerlink" href="#gaussian-dbns-in-code" title="Link to this heading">#</a></h2>
 <p>In GTSAM, a Gaussian density is specified using the class <code class="docutils literal notranslate"><span class="pre">GaussianDensity</span></code>, which corresponds to a negative log-probability given by</p>
-<div class="math notranslate nohighlight">
-\[\frac{1}{2 \sigma^2} \|x - \mu\|^2.\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-eb6160d6-64f3-48f0-b212-1575f678658e">
+<span class="eqno">(4.23)<a class="headerlink" href="#equation-eb6160d6-64f3-48f0-b212-1575f678658e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\frac{1}{2 \sigma^2} \|x - \mu\|^2.
+\end{equation}\]</div>
 <p>with a named constructor <code class="docutils literal notranslate"><span class="pre">FromMeanAndStddev</span></code> that takes <span class="math notranslate nohighlight">\(\mu\)</span> and <span class="math notranslate nohighlight">\(\sigma\)</span>. For their part, Gaussian <em>conditional</em> densities are specified using the class <code class="docutils literal notranslate"><span class="pre">GaussianConditional</span></code>, which correspond to a negative log-probability given by</p>
-<div class="math notranslate nohighlight">
-\[\frac{1}{2 \sigma^2} \|x - (A_1 p_1 + A_2 p_2 + b)\|^2.\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-d3707c74-0ad6-4505-b6e2-1975f9c79507">
+<span class="eqno">(4.24)<a class="headerlink" href="#equation-d3707c74-0ad6-4505-b6e2-1975f9c79507" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\frac{1}{2 \sigma^2} \|x - (A_1 p_1 + A_2 p_2 + b)\|^2.
+\end{equation}\]</div>
 <p>i.e., the mean on <span class="math notranslate nohighlight">\(x\)</span> is a linear function of the conditioning variables <span class="math notranslate nohighlight">\(p_1\)</span> and <span class="math notranslate nohighlight">\(p_2\)</span>. Again, a named constructor <code class="docutils literal notranslate"><span class="pre">FromMeanAndStddev</span></code> is there to assist us. Details are given in the GTSAM 101 section at the end of this section, as always.</p>
 <p>All of the above is used in the following piece of code, which builds the dynamic Bayes net:</p>
 <div class="cell docutils container">
@@ -966,7 +961,8 @@ error 0.5 w&#39;*w = 10.0
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -1035,8 +1031,8 @@ By Frank Dellaert and Seth Hutchinson
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>

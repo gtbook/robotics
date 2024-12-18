@@ -16,17 +16,19 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-
-  
-  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
@@ -37,10 +39,11 @@
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="_static/style.css?v=51e3b7cf" />
   
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="_static/documentation_options.js?v=c73c0f3e"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
@@ -68,6 +71,7 @@
     <link rel="prev" title="5.1. State Space for a Differential Drive Robot" href="S51_diffdrive_state.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -83,19 +87,8 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="search.html"
       method="get">
@@ -103,7 +96,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search..."
          aria-label="Search..."
          autocomplete="off"
@@ -111,8 +103,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -128,7 +120,8 @@
       
       
       
-      <div class="bd-sidebar-primary bd-sidebar">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -158,21 +151,17 @@
     
     
     <img src="_static/logo.png" class="logo__image only-light" alt="Introduction to Robotics and Perception - Home"/>
-    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Introduction to Robotics and Perception - Home"/>`);</script>
+    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Introduction to Robotics and Perception - Home"/>
   
   
 </a></div>
         <div class="sidebar-primary-item">
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script></div>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         <ul class="current nav bd-sidenav">
@@ -252,9 +241,14 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -351,24 +345,16 @@
 
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-  </button>
-`);
-</script>
+</button>
 <button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="fa-solid fa-list"></span>
 </button>
@@ -425,37 +411,36 @@ Second, because the robot can rotate, we must take account of its angular veloci
 This is illustrated in the figure below.
 Suppose the robot is following a path <span class="math notranslate nohighlight">\(\gamma(s)\)</span> (where <span class="math notranslate nohighlight">\(s\)</span> parameterizes the path).
 The instantaneous linear velocity expressed with respect to the body frame is given by:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
+<div class="amsmath math notranslate nohighlight" id="equation-3fa332a5-d198-4aa3-880e-239e57133553">
+<span class="eqno">(5.3)<a class="headerlink" href="#equation-3fa332a5-d198-4aa3-880e-239e57133553" title="Permalink to this equation">#</a></span>\[\begin{equation}
 v^{\mathrm{body,linear}}
 \begin{bmatrix} v_x \\ 0 \end{bmatrix}
-\end{split}\]</div>
+\end{equation}\]</div>
 <p>Note that the velocity is tangent to the curve <span class="math notranslate nohighlight">\(\gamma\)</span> at <span class="math notranslate nohighlight">\(s\)</span>, and that in the body-attached frame the y-component of the velocity
 is zero (i.e., in the body-attached frame, <span class="math notranslate nohighlight">\(v_y = 0\)</span>).
 The steering direction is determined by the angle <span class="math notranslate nohighlight">\(\theta\)</span> as <span class="math notranslate nohighlight">\([\cos \theta, \sin \theta]^T\)</span>,
 so that the linear velocity with respect to the world frame is given by</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
+<div class="amsmath math notranslate nohighlight" id="equation-5ba86a3c-e454-43e2-afab-09cee9612328">
+<span class="eqno">(5.4)<a class="headerlink" href="#equation-5ba86a3c-e454-43e2-afab-09cee9612328" title="Permalink to this equation">#</a></span>\[\begin{equation}
 v^{\mathrm{world,linear}}
 \begin{bmatrix} v_x \cos \theta \\ v_x \sin \theta \end{bmatrix}
-\end{split}\]</div>
+\end{equation}\]</div>
 <p>Because our robot moves in the plane, the z-axis of the body-attached frame is always parallel to the z-axis of the world frame.
 This greatly simplifies the description of angular velocity, which in this case we may define as <span class="math notranslate nohighlight">\(\omega = \dot{\theta}\)</span>,
 the instantaneous rate of change of the robot’s orientation.</p>
 <p>It is common to combine the angular and linear velocity into a single vector,</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
+<div class="amsmath math notranslate nohighlight" id="equation-f20f2d04-ff60-4259-aafd-1dffb4373a48">
+<span class="eqno">(5.5)<a class="headerlink" href="#equation-f20f2d04-ff60-4259-aafd-1dffb4373a48" title="Permalink to this equation">#</a></span>\[\begin{equation}
 v^{\mathrm{body}}=
 \begin{bmatrix} v_x   \\ 0 \\ \dot{\theta} \end{bmatrix}
 ~~~~~~~
 v^{\mathrm{world}}=
 \begin{bmatrix} v_x \cos \theta \\ v_x \sin \theta \\ \dot{\theta} \end{bmatrix}
-\end{split}\]</div>
+\end{equation}\]</div>
 <figure id="fig:DDR-velocity">
 <img src="https://github.com/gtbook/robotics/blob/main/Figures5/DDR-velocity.png?raw=1" style="width:9cm" alt="">
 <figcaption>The linear velocity is always in the steering direction.</figcaption>
-</figure>
-<section id="the-relationship-between-wheel-rotation-and-robot-velocity">
+</figure><section id="the-relationship-between-wheel-rotation-and-robot-velocity">
 <h2><span class="section-number">5.2.1. </span>The Relationship Between Wheel Rotation and Robot Velocity<a class="headerlink" href="#the-relationship-between-wheel-rotation-and-robot-velocity" title="Link to this heading">#</a></h2>
 <p>Because the wheels of the DDR are independently actuated, it is possible to achieve a large range of robot velocities.
 We can derive the relationship between wheel rotation and robot velocity by considering first the motion of a single
@@ -467,15 +452,15 @@ its orientation. In the figure, a red star is used to denote this point.)
 As we have seen in the previous chapter when modeling the forward motion of an omni-wheel,
 the relationship between the forward linear speed of the wheel and the rotation speed is
 given by</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-9dfef486-49f8-42ef-a19c-45916d012e94">
+<span class="eqno">(5.6)<a class="headerlink" href="#equation-9dfef486-49f8-42ef-a19c-45916d012e94" title="Permalink to this equation">#</a></span>\[\begin{equation}
 v_\mathrm{right} = r \dot{\phi}_R
-\]</div>
+\end{equation}\]</div>
 <p>The same reasoning can be applied to the left wheel  to obtain</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-03a1be42-db4d-4583-906d-41c731a790c0">
+<span class="eqno">(5.7)<a class="headerlink" href="#equation-03a1be42-db4d-4583-906d-41c731a790c0" title="Permalink to this equation">#</a></span>\[\begin{equation}
 v_\mathrm{left} = r \dot{\phi}_L
-\]</div>
+\end{equation}\]</div>
 <figure id="fig:DDR-one-wheel">
 <img src="https://github.com/gtbook/robotics/blob/main/Figures5/DDR-one-wheel.png?raw=1" style="width:9cm" alt="">
 <figcaption>The linear velocity is always in the steering direction.</figcaption>
@@ -486,10 +471,10 @@ and the robot will move in purely translational motion (i.e., <span class="math 
 <span class="math notranslate nohighlight">\(v_x = v_\mathrm{left} = v_\mathrm{right}\)</span>, since all points on the robot move with exactly the
 same velocity for pure translational motion.
 Using the results above, we obtain</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-50503c85-1a48-480b-82d1-b5d6cb8e2019">
+<span class="eqno">(5.8)<a class="headerlink" href="#equation-50503c85-1a48-480b-82d1-b5d6cb8e2019" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \dot{\phi}_L = \dot{\phi}_R = \frac{v_x}{r}
-\]</div>
+\end{equation}\]</div>
 <figure id="fig:DDR-pure-translation">
 <img src="https://github.com/gtbook/robotics/blob/main/Figures5/DDR-pure-translation.png?raw=1" style="width:9cm" alt="">
 <figcaption>When the wheels spin in the same direction with the same speed, the robot moves with pure translation.</figcaption>
@@ -502,61 +487,59 @@ with both <span class="math notranslate nohighlight">\(v_\mathrm{left}\)</span> 
 Note that the linear velocity of the robot, <span class="math notranslate nohighlight">\(v_x\)</span>, is zero in this case,
 since <span class="math notranslate nohighlight">\(v_\mathrm{left}\)</span> and <span class="math notranslate nohighlight">\(v_\mathrm{right}\)</span> “cancel one another out” with respect to the linear velocity of the robot.
 Applying the equation of circular motion yields</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-75bdd975-7995-42f1-a352-78c2412ca62f">
+<span class="eqno">(5.9)<a class="headerlink" href="#equation-75bdd975-7995-42f1-a352-78c2412ca62f" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \frac{L}{2} \omega = -v_\mathrm{left} = -r\dot{\phi}_R
 ~~~~~~~
 \frac{L}{2} \omega =  v_\mathrm{right} = r\dot{\phi}_R
-\]</div>
+\end{equation}\]</div>
 <p>which leads to</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-956754d4-1c98-4dcb-8723-fa80c9244897">
+<span class="eqno">(5.10)<a class="headerlink" href="#equation-956754d4-1c98-4dcb-8723-fa80c9244897" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \dot{\phi}_L= -\frac{L}{2} \frac{\omega}{r}
 ~~~~~~~
 \dot{\phi}_R= \frac{L}{2} \frac{\omega}{r}
-\]</div>
+\end{equation}\]</div>
 <figure id="fig:DDR-pure-rotation">
 <img src="https://github.com/gtbook/robotics/blob/main/Figures5/DDR-pure-rotation.png?raw=1" style="width:9cm" alt="">
 <figcaption>When the wheels spin in the opposite direction with the same speed, the robot moves with pure rotation..</figcaption>
 </figure>
-<p><code class="docutils literal notranslate"><span class="pre">{index}</span> <span class="pre">inverse</span> <span class="pre">velocity</span> <span class="pre">kinematics</span></code>We have now considered the two special cases of pure translation and pure rotation.
+<p id="index-1">We have now considered the two special cases of pure translation and pure rotation.
 Because instantaneous velocities lie in a vector space, we can add these in the same
 way that we would add any vectors.
 Therefore, by spinning the wheels at different rates, we can obtain various linear combinations
 of the above pure translations and rotations.
 Adding the equations for linear and angular velocities of the two wheels, we obtain</p>
-<div class="math notranslate nohighlight">
-\[
-\dot{\phi}_L = \frac{v_x}{r} -\frac{L}{2} \frac{\omega}{r}
-~~~~~~~
+<div class="amsmath math notranslate nohighlight" id="equation-e3e15d52-53fe-481e-b3c5-9ca009d9adf6">
+<span class="eqno">(5.11)<a class="headerlink" href="#equation-e3e15d52-53fe-481e-b3c5-9ca009d9adf6" title="Permalink to this equation">#</a></span>\[\begin{align}
+\dot{\phi}_L = \frac{v_x}{r} -\frac{L}{2} \frac{\omega}{r} \\
 \dot{\phi}_R = \frac{v_x}{r} + \frac{L}{2} \frac{\omega}{r}
-\]</div>
+\end{align}\]</div>
 <p>These two equations define the <strong>inverse velocity kinematics</strong> for our DDR:
 Given a desired <em>output</em> specified by <span class="math notranslate nohighlight">\(v\)</span> and <span class="math notranslate nohighlight">\(\omega\)</span>,
 determine the required <span class="math notranslate nohighlight">\(input\)</span> specified as <span class="math notranslate nohighlight">\(\dot{\phi}_R\)</span> and <span class="math notranslate nohighlight">\(\dot{\phi}_L\)</span>.
 These equations can be used to determine the required wheel actuation to achieve
 the desired linear and angular velocities of the robot.</p>
-<p><code class="docutils literal notranslate"><span class="pre">{index}</span> <span class="pre">forward</span> <span class="pre">velocity</span> <span class="pre">kinematics</span></code>The <strong>forward velocity kinematics</strong>
+<p id="index-2">The <strong>forward velocity kinematics</strong>
 are easily obtained from the above equations via simple algebra:</p>
-<div class="math notranslate nohighlight">
-\[
-v_x = \frac{r}{2} (\dot{\phi}_R + \dot{\phi}_L)
-~~~~~~~~
+<div class="amsmath math notranslate nohighlight" id="equation-5fe710f0-5ac4-440f-aba6-e5e46150f8a6">
+<span class="eqno">(5.12)<a class="headerlink" href="#equation-5fe710f0-5ac4-440f-aba6-e5e46150f8a6" title="Permalink to this equation">#</a></span>\[\begin{align}
+v_x = \frac{r}{2} (\dot{\phi}_R + \dot{\phi}_L) \\
 \omega = \frac{r}{L} (\dot{\phi}_R - \dot{\phi}_L)
-\]</div>
+\end{align}\]</div>
 <p>This leads immediately to the system equations with respect to the body-attached frame
 and with respect to the world frame</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-v^{\mathrm{body}}=
+<div class="amsmath math notranslate nohighlight" id="equation-f3ec1ea5-7a0a-4731-9991-2cb175ee9ea8">
+<span class="eqno">(5.13)<a class="headerlink" href="#equation-f3ec1ea5-7a0a-4731-9991-2cb175ee9ea8" title="Permalink to this equation">#</a></span>\[\begin{align}
+v^{\mathrm{body}} =
 \begin{bmatrix} v_x   \\ 0 \\ \dot{\theta} \end{bmatrix}
-=
+&amp;=
 \begin{bmatrix} \frac{r}{2} (\dot{\phi}_R + \dot{\phi}_L)   \\ 0 \\ \frac{r}{L} (\dot{\phi}_R - \dot{\phi}_L)\end{bmatrix}
-~~~~~~~
-v^{\mathrm{world}}=
+\\
+v^{\mathrm{world}} =
 \begin{bmatrix} v_x \cos \theta \\ v_x \sin \theta \\ \dot{\theta} \end{bmatrix}
-=\begin{bmatrix} \frac{r}{2} (\dot{\phi}_R + \dot{\phi}_L) \cos\theta  \\  \frac{r}{2} (\dot{\phi}_R + \dot{\phi}_L) \sin\theta  \\ \frac{r}{L} (\dot{\phi}_R - \dot{\phi}_L)\end{bmatrix}
-\end{split}\]</div>
+&amp;=\begin{bmatrix} \frac{r}{2} (\dot{\phi}_R + \dot{\phi}_L) \cos\theta  \\  \frac{r}{2} (\dot{\phi}_R + \dot{\phi}_L) \sin\theta  \\ \frac{r}{L} (\dot{\phi}_R - \dot{\phi}_L)\end{bmatrix}
+\end{align}\]</div>
 </section>
 <section id="kinematics-in-code">
 <h2><span class="section-number">5.2.2. </span>Kinematics in Code<a class="headerlink" href="#kinematics-in-code" title="Link to this heading">#</a></h2>
@@ -665,7 +648,8 @@ v^{\mathrm{world}}=
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -724,8 +708,8 @@ By Frank Dellaert and Seth Hutchinson
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>

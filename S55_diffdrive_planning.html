@@ -16,17 +16,19 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-
-  
-  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
@@ -37,10 +39,11 @@
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="_static/style.css?v=51e3b7cf" />
   
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="_static/documentation_options.js?v=c73c0f3e"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
@@ -68,6 +71,7 @@
     <link rel="prev" title="5.4. Computer Vision 101" href="S54_diffdrive_perception.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -83,19 +87,8 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="search.html"
       method="get">
@@ -103,7 +96,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search..."
          aria-label="Search..."
          autocomplete="off"
@@ -111,8 +103,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -128,7 +120,8 @@
       
       
       
-      <div class="bd-sidebar-primary bd-sidebar">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -158,21 +151,17 @@
     
     
     <img src="_static/logo.png" class="logo__image only-light" alt="Introduction to Robotics and Perception - Home"/>
-    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Introduction to Robotics and Perception - Home"/>`);</script>
+    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Introduction to Robotics and Perception - Home"/>
   
   
 </a></div>
         <div class="sidebar-primary-item">
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script></div>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         <ul class="current nav bd-sidenav">
@@ -252,9 +241,14 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -351,24 +345,16 @@
 
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-  </button>
-`);
-</script>
+</button>
 <button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="fa-solid fa-list"></span>
 </button>
@@ -416,7 +402,7 @@ document.write(`
 <div><p>Samples are useful for planning as well.</p>
 </div></blockquote>
 <a class="reference internal image-reference" href="_images/S55-Two-wheeled_Toy_Robot-05.jpg"><img alt="Splash image with steampunk differential drive robot" class="align-center" src="_images/S55-Two-wheeled_Toy_Robot-05.jpg" style="width: 40%;" /></a>
-<p><code class="docutils literal notranslate"><span class="pre">{index}</span> <span class="pre">complete</span></code>Path planning is the problem of finding a collision-free path for
+<p id="index-1">Path planning is the problem of finding a collision-free path for
 the robot from its starting configuration to a goal configuration.
 This is one of the oldest fundamental problems in robotics.
 Ideally, a path planning algorithm would guarantee to find a collision-free path whenever such a path
@@ -444,15 +430,15 @@ which is sometimes referred to as the <em>configuration space obstacle region</e
 <p>Let <span class="math notranslate nohighlight">\(R(q)\)</span> denote the set of points in the workspace that are occupied by the robot when the robot is in configuration <span class="math notranslate nohighlight">\(q\)</span>,
 and let <span class="math notranslate nohighlight">\({\cal O}\)</span> denote the obstacle region in the workspace.
 We can define the set <span class="math notranslate nohighlight">\({\cal Q}_\mathrm{obst}\)</span> as</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-45652421-f67a-4bb7-9234-5d4aa2074245">
+<span class="eqno">(5.48)<a class="headerlink" href="#equation-45652421-f67a-4bb7-9234-5d4aa2074245" title="Permalink to this equation">#</a></span>\[\begin{equation}
 {\cal Q}_\mathrm{obst} = \{ q \in {\cal Q} \mid R(q) \cap {\cal O} = \emptyset \}
-\]</div>
+\end{equation}\]</div>
 <p>The free configuration space is merely the complement of this set in <span class="math notranslate nohighlight">\(\cal Q\)</span>:</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-a00a6576-c028-4b22-a0cb-cc37e197f41e">
+<span class="eqno">(5.49)<a class="headerlink" href="#equation-a00a6576-c028-4b22-a0cb-cc37e197f41e" title="Permalink to this equation">#</a></span>\[\begin{equation}
 {\cal Q}_\mathrm{free} = {\cal Q} \backslash {\cal Q}_\mathrm{obst}
-\]</div>
+\end{equation}\]</div>
 <p>We can now formally define a free path as a continuous map from the unit interval
 (or any convenient interval that represents path length) as <span class="math notranslate nohighlight">\(\gamma : [0,1] \rightarrow {\cal Q}_\mathrm{free}\)</span>,
 such that <span class="math notranslate nohighlight">\(q(0) = q_\mathrm{init}\)</span> and <span class="math notranslate nohighlight">\(q(1) = q_\mathrm{goal}\)</span>.
@@ -507,34 +493,34 @@ construct a convex potential function with the desired behavior.</p>
 (though it will likely be one of many minima for the function)
 that ensures collision-free paths.
 We can define such a potential function as</p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-2e529c1b-d22c-4729-a5a8-620851ccc073">
+<span class="eqno">(5.50)<a class="headerlink" href="#equation-2e529c1b-d22c-4729-a5a8-620851ccc073" title="Permalink to this equation">#</a></span>\[\begin{equation}
 U(q) = U_\mathrm{attr}(q) + U_\mathrm{rep}(q)
-\]</div>
+\end{equation}\]</div>
 <p>in which <span class="math notranslate nohighlight">\(U_\mathrm{attr}\)</span> is the <em>attractive potential</em> with a single global minimum at <span class="math notranslate nohighlight">\(q_\mathrm{goal}\)</span>,
 and <span class="math notranslate nohighlight">\(U_\mathrm{rep}\)</span> is the repulsive potential, whose value goes to infinity on the boundary
 of <span class="math notranslate nohighlight">\({\cal Q}_\mathrm{obst}\)</span>.</p>
 <p>There are many possible candidates for these two potentials, but the desired behavior
 can be captured by using a parabolic well for <span class="math notranslate nohighlight">\(U_\mathrm{attr}\)</span>, and defining <span class="math notranslate nohighlight">\(U_\mathrm{rep}\)</span>
 in terms of the inverse distance to the nearest obstacle:</p>
-<div class="math notranslate nohighlight">
-\[ 
+<div class="amsmath math notranslate nohighlight" id="equation-aae334bb-617d-48f4-b2d5-e74b1e87370c">
+<span class="eqno">(5.51)<a class="headerlink" href="#equation-aae334bb-617d-48f4-b2d5-e74b1e87370c" title="Permalink to this equation">#</a></span>\[\begin{equation}
 U_\mathrm{attr}(q) = \frac{1}{2} \| q -  q_\mathrm{goal} \|^2 ~~~~~~~~~~~~ U_\mathrm{rep}(q) = \frac{1}{d(q)}
-\]</div>
+\end{equation}\]</div>
 <p>in which <span class="math notranslate nohighlight">\(d(q)\)</span> is defined as the minimum distance from configuration <span class="math notranslate nohighlight">\(q\)</span> to the boundary of
 <span class="math notranslate nohighlight">\({\cal Q}_\mathrm{obst}\)</span>.
 If we denote the boundary of the obstacle region by <span class="math notranslate nohighlight">\(\partial {\cal Q}_\mathrm{obst}\)</span>,
 we define <span class="math notranslate nohighlight">\(d(q)\)</span> by:</p>
-<div class="math notranslate nohighlight">
-\[ 
+<div class="amsmath math notranslate nohighlight" id="equation-f484c7d4-8c66-4bb5-ac98-08f1e1fad367">
+<span class="eqno">(5.52)<a class="headerlink" href="#equation-f484c7d4-8c66-4bb5-ac98-08f1e1fad367" title="Permalink to this equation">#</a></span>\[\begin{equation}
 d(q) = \min_{q' \in \partial {\cal Q}_\mathrm{obst} } \| q - q'\|^{\frac{1}{2}}
-\]</div>
+\end{equation}\]</div>
 <p>Path planning can now be implemented using simple gradient descent.
 Let <span class="math notranslate nohighlight">\(q^0 = q_\mathrm{init}\)</span>, and iterate over <span class="math notranslate nohighlight">\(k\)</span> until <span class="math notranslate nohighlight">\(\| q^k - q_\mathrm{goal} \| &lt; \epsilon\)</span></p>
-<div class="math notranslate nohighlight">
-\[
+<div class="amsmath math notranslate nohighlight" id="equation-d6231698-84ef-477b-8484-50c5d0392e01">
+<span class="eqno">(5.53)<a class="headerlink" href="#equation-d6231698-84ef-477b-8484-50c5d0392e01" title="Permalink to this equation">#</a></span>\[\begin{equation}
 q^{k+1} = q^k - \alpha_k \nabla U(q)
-\]</div>
+\end{equation}\]</div>
 <p>Here, <span class="math notranslate nohighlight">\(\alpha_k\)</span> is a constant that determines the step size for each iteration.
 Note that this algorithm stops making progress if <span class="math notranslate nohighlight">\(\nabla U(q)= 0\)</span>,
 which occurs for any local minimum in the potential field.
@@ -580,7 +566,7 @@ First, generate vertices <span class="math notranslate nohighlight">\(v_\mathrm{
 corresponding to configurations <span class="math notranslate nohighlight">\(q_\mathrm{init}\)</span> and <span class="math notranslate nohighlight">\(q_\mathrm{goal}\)</span>, and connect these
 to the existing graph.
 Second, search the graph for a path from <span class="math notranslate nohighlight">\(v_\mathrm{init}\)</span> to <span class="math notranslate nohighlight">\(v_\mathrm{goal}\)</span> in <span class="math notranslate nohighlight">\(G\)</span>.</p>
-<p><code class="docutils literal notranslate"><span class="pre">{index}</span> <span class="pre">probabilistically</span> <span class="pre">complete</span></code>It should be clear that such a method has no hope to yield a complete algorithm.
+<p id="index-2">It should be clear that such a method has no hope to yield a complete algorithm.
 The mere fact that every node in the graph is the result of random sampling is enough
 to preclude any proof that this approach will guarantee to find a path when a path exists.
 There is, however, another useful completeness concept that applies in this case.
@@ -588,9 +574,10 @@ Suppose a free path exists.
 Let <span class="math notranslate nohighlight">\(p_f(n)\)</span> denote the probability that the algorithm fails to find a path
 after adding <span class="math notranslate nohighlight">\(n\)</span> random vertices to the graph.
 A path planning algorithm is said to be <strong>probabilistically complete</strong> if</p>
-<div class="math notranslate nohighlight">
-\[ \lim_{n\rightarrow \infty} p_f(n) = 0
-\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-332d5f90-5a71-4f11-b0f4-30f930339183">
+<span class="eqno">(5.54)<a class="headerlink" href="#equation-332d5f90-5a71-4f11-b0f4-30f930339183" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\lim_{n\rightarrow \infty} p_f(n) = 0
+\end{equation}\]</div>
 <p>Not only are PRM methods probabilistically complete, but in addition
 they have the property that <span class="math notranslate nohighlight">\(p_f(n)\)</span> decreases to zero exponentially as <span class="math notranslate nohighlight">\(n\)</span> increases.
 This is a powerful result, even if it fails to provide a deterministic guarantee of completeness.</p>
@@ -694,7 +681,6 @@ We adopt a rather simple strategy: turn towards the target, and drive some fract
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[0. 0.] [9. 9.]
-Found motion.
 </pre></div>
 </div>
 </div>
@@ -735,7 +721,7 @@ Found motion.
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/735afdaae4693d4248ecf377db1d4f8697966c85031b6f1b985531b96d3f4d1b.png" src="_images/735afdaae4693d4248ecf377db1d4f8697966c85031b6f1b985531b96d3f4d1b.png" />
+<img alt="_images/fb9e1a664894240368ce4876264e126ad556a9afb68319ab040c1c76792b8fa6.png" src="_images/fb9e1a664894240368ce4876264e126ad556a9afb68319ab040c1c76792b8fa6.png" />
 </div>
 </div>
 <p>You can see that the RRT increasingly “fills” the entire area of interest.
@@ -798,7 +784,8 @@ The algorithm terminates when it finds a leaf vertex that is near the goal.</p>
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -861,8 +848,8 @@ By Frank Dellaert and Seth Hutchinson
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>

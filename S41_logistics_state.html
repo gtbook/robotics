@@ -16,17 +16,19 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-
-  
-  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
@@ -37,10 +39,11 @@
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="_static/style.css?v=51e3b7cf" />
   
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="_static/documentation_options.js?v=c73c0f3e"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
@@ -68,6 +71,7 @@
     <link rel="prev" title="4. Warehouse Robots in 2D" href="S40_logistics_intro.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -83,19 +87,8 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="search.html"
       method="get">
@@ -103,7 +96,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search..."
          aria-label="Search..."
          autocomplete="off"
@@ -111,8 +103,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -128,7 +120,8 @@
       
       
       
-      <div class="bd-sidebar-primary bd-sidebar">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -158,21 +151,17 @@
     
     
     <img src="_static/logo.png" class="logo__image only-light" alt="Introduction to Robotics and Perception - Home"/>
-    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Introduction to Robotics and Perception - Home"/>`);</script>
+    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Introduction to Robotics and Perception - Home"/>
   
   
 </a></div>
         <div class="sidebar-primary-item">
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script></div>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         <ul class="current nav bd-sidenav">
@@ -252,9 +241,14 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -351,24 +345,16 @@
 
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-  </button>
-`);
-</script>
+</button>
 <button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="fa-solid fa-list"></span>
 </button>
@@ -430,8 +416,10 @@ Furthermore, because these robots typically move at relatively low speeds, we ne
 <p>For this special case of robots that translate in the plane, and whose instantaneous
 velocity is the command input, the state space is merely the location of the robot
 in the world with respect to some global coordinate frame:</p>
-<div class="math notranslate nohighlight">
-\[x\in {\cal D} \subset \mathbb{R}^2\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-ef29f22e-83b8-4205-bc64-17fec7bb5046">
+<span class="eqno">(4.1)<a class="headerlink" href="#equation-ef29f22e-83b8-4205-bc64-17fec7bb5046" title="Permalink to this equation">#</a></span>\[\begin{equation}
+x\in {\cal D} \subset \mathbb{R}^2
+\end{equation}\]</div>
 <p>In the remainder of this chapter, we will consider a rectangular warehouse
 that is 100 by 50 meters, a good size warehouse, similar to a typical DIY store.
 In this case, <span class="math notranslate nohighlight">\( {\cal D} = [0,100] \times [0,50]\)</span>.</p>
@@ -456,8 +444,10 @@ robot motion.</p>
 <p>As we have seen with the trash sorting robot, a one-dimensional Gaussian density can be used
 to represent continuous random variables.
 The Gaussian probability density function (pdf) is defined by</p>
-<div class="math notranslate nohighlight">
-\[\mathcal{N}(x;\mu,\sigma^2) \doteq \frac{1}{k} \exp\{ - \frac{1}{2} \frac{(x-\mu)^2}{\sigma^2} \}\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-a7b71dd1-ccaf-460a-964c-847cf37110b4">
+<span class="eqno">(4.2)<a class="headerlink" href="#equation-a7b71dd1-ccaf-460a-964c-847cf37110b4" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\mathcal{N}(x;\mu,\sigma^2) \doteq \frac{1}{k} \exp\{ - \frac{1}{2} \frac{(x-\mu)^2}{\sigma^2} \}
+\end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\mu\)</span> is the mean, <span class="math notranslate nohighlight">\(\sigma^2\)</span> is the variance, and <span class="math notranslate nohighlight">\(k=\sqrt{2\pi}\sigma\)</span> is a normalization constant.
 It is instructive to consider the term in the exponent.</p>
 <ol class="arabic simple">
@@ -466,8 +456,10 @@ It is instructive to consider the term in the exponent.</p>
 <li><p>The term <span class="math notranslate nohighlight">\(\sigma^{-2}(x-\mu)^2\)</span> is a weighted squared-distance to the mean.</p></li>
 </ol>
 <p>Thus, we can interpret the negative log of a 1D Gaussian as a simple quadratic error or “energy” function. This fact is worth emphasizing: <em>a Gaussian density is the probability density associated with a quadratic error function with zero error at the mean <span class="math notranslate nohighlight">\(\mu\)</span> and variance <span class="math notranslate nohighlight">\(\sigma^2\)</span>.</em> We suggestively write this quadratic below as</p>
-<div class="math notranslate nohighlight">
-\[\mathcal{E}(x;\mu,\sigma^2) \doteq \frac{1}{2} (x-\mu)\sigma^{-2}(x-\mu)\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-1b52fda1-1f79-4e40-b01e-7dc5968dd87d">
+<span class="eqno">(4.3)<a class="headerlink" href="#equation-1b52fda1-1f79-4e40-b01e-7dc5968dd87d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\mathcal{E}(x;\mu,\sigma^2) \doteq \frac{1}{2} (x-\mu)\sigma^{-2}(x-\mu)
+\end{equation}\]</div>
 <p><code class="docutils literal notranslate"><span class="pre">{index}</span> <span class="pre">covariance</span> <span class="pre">matrix,</span> <span class="pre">multivariate</span> <span class="pre">Gaussian</span> <span class="pre">density</span></code>The energy analogy can be extended to the multivariate case.
 In the 1D case, the mean and variance are scalars.
 For the <span class="math notranslate nohighlight">\(n\)</span>-dimensional case when <span class="math notranslate nohighlight">\(x\in\mathbb{R}^n\)</span>, the mean is a vector,  <span class="math notranslate nohighlight">\(\mu\in\mathbb{R}^n\)</span>,
@@ -475,19 +467,25 @@ and the concept of variance is extended to define a
 <strong>covariance matrix</strong> <span class="math notranslate nohighlight">\(\Sigma\in\mathbb{R}^{n\times n}\)</span>,
 a symmetric, positive definite matrix that characterizes the “spread” of a quadratic in multiple dimensions.
 This allows us to generalize the 1D error function above to the <span class="math notranslate nohighlight">\(n\)</span>-dimensional case as</p>
-<div class="math notranslate nohighlight">
-\[\mathcal{E}(x;\mu,\Sigma) \doteq \frac{1}{2} (x-\mu)^T\Sigma^{-1}(x-\mu)\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-cebe6ccd-00ac-4f76-9a0d-663a8e67bc20">
+<span class="eqno">(4.4)<a class="headerlink" href="#equation-cebe6ccd-00ac-4f76-9a0d-663a8e67bc20" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\mathcal{E}(x;\mu,\Sigma) \doteq \frac{1}{2} (x-\mu)^T\Sigma^{-1}(x-\mu)
+\end{equation}\]</div>
 <p>We define a <strong>multivariate Gaussian density</strong> using the error function <span class="math notranslate nohighlight">\(\mathcal{E}(x;\mu,\Sigma)\)</span>
 as follows</p>
-<div class="math notranslate nohighlight">
-\[\mathcal{N}(x;\mu,\Sigma) \doteq \frac{1}{k} \exp\{ - \frac{1}{2} (x-\mu)^T\Sigma^{-1}(x-\mu) \}\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-fb8902b7-4174-4ba8-871e-c73a2156f66a">
+<span class="eqno">(4.5)<a class="headerlink" href="#equation-fb8902b7-4174-4ba8-871e-c73a2156f66a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\mathcal{N}(x;\mu,\Sigma) \doteq \frac{1}{k} \exp\{ - \frac{1}{2} (x-\mu)^T\Sigma^{-1}(x-\mu) \}
+\end{equation}\]</div>
 <p>The (non-obvious) normalization constant k can be written very elegantly in terms of the determinant of <span class="math notranslate nohighlight">\(2\pi\Sigma\)</span>:</p>
-<div class="math notranslate nohighlight">
-\[k=\sqrt{(2\pi)^{n}|\Sigma|}=\sqrt{|2\pi\Sigma|}.\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-6a32744c-e349-41f4-a2d0-e40c925593d7">
+<span class="eqno">(4.6)<a class="headerlink" href="#equation-6a32744c-e349-41f4-a2d0-e40c925593d7" title="Permalink to this equation">#</a></span>\[\begin{equation}
+k=\sqrt{(2\pi)^{n}|\Sigma|}=\sqrt{|2\pi\Sigma|}.
+\end{equation}\]</div>
 <p>Another name for multivariate Gaussian probability density is the multivariate normal distribution. We prefer to use <em>density</em> to denote its continuous nature, and Gaussian instead of “normal”, but it is good to be aware of both nomenclatures.</p>
 <p>To better understand the multivariate Gaussian pdf, consider a simple two-dimensional example,</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
+<div class="amsmath math notranslate nohighlight" id="equation-2793f84f-3296-4188-9dc3-8237ba113bb4">
+<span class="eqno">(4.7)<a class="headerlink" href="#equation-2793f84f-3296-4188-9dc3-8237ba113bb4" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{aligned}
 \mu &amp;= \begin{bmatrix} 4 \\ 10 \end{bmatrix} \\
 \\
@@ -496,11 +494,12 @@ as follows</p>
 0 &amp; \sigma^2_{yy} 
 \end{bmatrix}
 \end{aligned}
-\end{split}\]</div>
+\end{equation}\]</div>
 <p>If we evaluate <span class="math notranslate nohighlight">\(\mathcal{E}(x;\mu,\Sigma)\)</span> for this case, we obtain</p>
-<div class="math notranslate nohighlight">
-\[\mathcal{E}(x;\mu,\Sigma) = \frac{1}{\sigma^2_{xx}}(x - 4)^2 + \frac{1}{\sigma^2_{yy}}(y - 10)^2
-\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-8f1dd989-01ca-42a7-858a-645f152ac6b8">
+<span class="eqno">(4.8)<a class="headerlink" href="#equation-8f1dd989-01ca-42a7-858a-645f152ac6b8" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\mathcal{E}(x;\mu,\Sigma) = \frac{1}{\sigma^2_{xx}}(x - 4)^2 + \frac{1}{\sigma^2_{yy}}(y - 10)^2
+\end{equation}\]</div>
 <p>which is the familiar equation of an axis-aligned ellipse in the plane with center at <span class="math notranslate nohighlight">\((4, 10)\)</span>.
 This form gives a nice geometric interpretation to the Gaussian pdf.
 For any constant <span class="math notranslate nohighlight">\(k\)</span>,
@@ -540,7 +539,7 @@ which is why there are so many ellipses in the figures below.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/b407391167387fcf887f8e69dd3c7f4d01c9d3ef0436c09eb389326a922c2662.png" src="_images/b407391167387fcf887f8e69dd3c7f4d01c9d3ef0436c09eb389326a922c2662.png" />
+<img alt="_images/60662b30b580cf95514acd1ec33e1135051052e643456db1392f5ed9e58b290f.png" src="_images/60662b30b580cf95514acd1ec33e1135051052e643456db1392f5ed9e58b290f.png" />
 </div>
 </div>
 <p>The first two Gaussians above are <em>axis-parallel</em>, and the covariance matrices simply contain the squared standard deviations of the <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> dimensions on their diagonals. The third Gaussian shows off the case where <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> are positively correlated, around a mean of <span class="math notranslate nohighlight">\((50,15)\)</span>.</p>
@@ -589,7 +588,7 @@ increases.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/65e57c23f199553cdfbb439ea1faad24b4ef55657cf4a08ef6e21a6b897a1508.png" src="_images/65e57c23f199553cdfbb439ea1faad24b4ef55657cf4a08ef6e21a6b897a1508.png" />
+<img alt="_images/8f7d0c0bdda10169080e652505a081f4f564551abfb38407805e8ead296e9cb3.png" src="_images/8f7d0c0bdda10169080e652505a081f4f564551abfb38407805e8ead296e9cb3.png" />
 </div>
 </div>
 </section>
@@ -627,7 +626,7 @@ and these can form the basis for perception algorithms used in localization (as 
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/b4bd7bd9ade6685b0e0d6db6b6f12ca880eec53b640142969cee0abdadda8fc9.png" src="_images/b4bd7bd9ade6685b0e0d6db6b6f12ca880eec53b640142969cee0abdadda8fc9.png" />
+<img alt="_images/51709c6eb39a78c63ce1be5ec2802d58d21c8cd7357fdd67e58077cc60fd69b0.png" src="_images/51709c6eb39a78c63ce1be5ec2802d58d21c8cd7357fdd67e58077cc60fd69b0.png" />
 </div>
 </div>
 </section>
@@ -636,8 +635,10 @@ and these can form the basis for perception algorithms used in localization (as 
 <p>In general, for continuous random variables, probability mass is computed by integrating probability density
 over a domain.
 In the 2D case,  we can find the probability of the state <span class="math notranslate nohighlight">\(x\)</span> being contained in any finite region <span class="math notranslate nohighlight">\({\cal R}\)</span> by integrating the pdf over <span class="math notranslate nohighlight">\({\cal R}\)</span>:</p>
-<div class="math notranslate nohighlight">
-\[P(x\in {\cal R}) = \int_{x\in {\cal R}} p(x) dx\]</div>
+<div class="amsmath math notranslate nohighlight" id="equation-1c330437-c446-4f34-a255-d486fa3481e8">
+<span class="eqno">(4.9)<a class="headerlink" href="#equation-1c330437-c446-4f34-a255-d486fa3481e8" title="Permalink to this equation">#</a></span>\[\begin{equation}
+P(x\in {\cal R}) = \int_{x\in {\cal R}} p(x) dx
+\end{equation}\]</div>
 <p>In the case of Gaussian pdfs, it is not possible to compute this integral in closed form, but
 thanks to the nice geometric properties of the level sets of Gaussian pdfs, there
 are efficient numerical methods to do so.</p>
@@ -737,7 +738,8 @@ show_map(image=None, markers=None, file: str = None, marker={})
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -800,8 +802,8 @@ By Frank Dellaert and Seth Hutchinson
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>
