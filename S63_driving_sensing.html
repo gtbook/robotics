@@ -378,13 +378,16 @@
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simulating-a-2d-lidar">6.3.1. Simulating a 2D LIDAR</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#geometry-of-a-moving-lidar">6.3.2. Geometry of a Moving LIDAR</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#real-lidar-scans">6.3.3. Real LIDAR Scans</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gtsam-101">6.3.4. GTSAM 101</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#d-and-3d-points">6.3.4.1. 2D and 3D Points</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#d-and-3d-rotations">6.3.4.2. 2D and 3D Rotations</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reading-and-visualizing-lidar-clouds">6.3.4.3. Reading and Visualizing LIDAR clouds</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lidar">6.3.1. LIDAR</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ray-intersection">6.3.2. Ray Intersection</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simulating-a-2d-lidar">6.3.3. Simulating a 2D LIDAR</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#geometry-of-a-moving-lidar">6.3.4. Geometry of a Moving LIDAR</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#real-lidar-scans">6.3.5. Real LIDAR Scans</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-3d-maps">6.3.6. Creating 3D Maps</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gtsam-101">6.3.7. GTSAM 101</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#d-and-3d-points">6.3.7.1. 2D and 3D Points</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#d-and-3d-rotations">6.3.7.2. 2D and 3D Rotations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reading-and-visualizing-lidar-clouds">6.3.7.3. Reading and Visualizing LIDAR clouds</a></li>
 </ul>
 </li>
 </ul>
@@ -405,44 +408,47 @@
 <div><p>LIDAR, a sensor found in most autonomous cars, can be used to construct a 3D representation of the robot’s environment in real time.</p>
 </div></blockquote>
 <a class="reference internal image-reference" href="_images/S63-Autonomous_Vehicle_with_LIDAR_and_cameras-07.jpg"><img alt="Splash image with steampunk autonomous car" class="align-center" src="_images/S63-Autonomous_Vehicle_with_LIDAR_and_cameras-07.jpg" style="width: 40%;" /></a>
-<p><code class="docutils literal notranslate"><span class="pre">{index}</span> <span class="pre">Time</span> <span class="pre">of</span> <span class="pre">Flight,</span> <span class="pre">ToF,</span> <span class="pre">direct</span> <span class="pre">ToF,</span> <span class="pre">Indirect</span> <span class="pre">ToF,</span> <span class="pre">2D</span> <span class="pre">LIDAR,</span> <span class="pre">3D</span> <span class="pre">LIDAR</span></code>## LIDAR</p>
+<section id="lidar">
+<span id="index-1"></span><h2><span class="section-number">6.3.1. </span>LIDAR<a class="headerlink" href="#lidar" title="Link to this heading">#</a></h2>
 <p>LIDAR (LIght raDAR) is a technology that measures distance to an object by using laser light and the <strong>Time of Flight</strong> or <strong>ToF</strong> principle. There are several variants in use, and the simplest to explain is the <strong>direct ToF</strong> sensor, which sends out a short pulse and measures the elapsed time <span class="math notranslate nohighlight">\(\Delta t\)</span> for the light to bounce off an object and return to a detector collocated with the laser pulse emitter. If the object is situated at a distance <span class="math notranslate nohighlight">\(d\)</span> from the emitter-detector pair, we have</p>
-<div class="amsmath math notranslate nohighlight" id="equation-829a54d7-96a4-418d-aa26-be7f467944e5">
-<span class="eqno">(6.26)<a class="headerlink" href="#equation-829a54d7-96a4-418d-aa26-be7f467944e5" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-84566750-3880-439d-92e6-dd2387dd3c62">
+<span class="eqno">(6.26)<a class="headerlink" href="#equation-84566750-3880-439d-92e6-dd2387dd3c62" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \Delta t = \frac{2 d}{c} 
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(c\approx300,000km/s\)</span> is the speed of light. For example, for an object at 15m, we have</p>
-<div class="amsmath math notranslate nohighlight" id="equation-2b56e21e-5306-40a0-ac8b-e2a899547281">
-<span class="eqno">(6.27)<a class="headerlink" href="#equation-2b56e21e-5306-40a0-ac8b-e2a899547281" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-cd71012b-9d7a-417a-a50e-71f2be496705">
+<span class="eqno">(6.27)<a class="headerlink" href="#equation-cd71012b-9d7a-417a-a50e-71f2be496705" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \Delta t \approx \frac{2 \times 0.015}{300,000} = 0.1\mu s
 \end{equation}\]</div>
 <p>Assuming we can measure <span class="math notranslate nohighlight">\(\Delta t\)</span> accurately, we can then easily compute the distance:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-ff5e5d01-ee09-46e6-9976-300b0f0cec84">
-<span class="eqno">(6.28)<a class="headerlink" href="#equation-ff5e5d01-ee09-46e6-9976-300b0f0cec84" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-70092622-03bb-493b-8eaf-75f8f3986aed">
+<span class="eqno">(6.28)<a class="headerlink" href="#equation-70092622-03bb-493b-8eaf-75f8f3986aed" title="Permalink to this equation">#</a></span>\[\begin{equation}
 d= c\frac{\Delta t}{2}
 \end{equation}\]</div>
 <p>In a <em>scanning LIDAR</em>, there is typically one detector, whereas in a <em>flash LIDAR</em> a single pulse is emitted in a wide field of view, and an <em>array</em> of detectors, akin to a CCD sensor, is used to detect the returning light pulses in multiple directions at once.</p>
 <p>In practice, <em>indirect</em> time of flight sensors are more prevalent in robotics and autonomous driving applications than direct ToF sensors. There are multiple reasons for this: measuring elapsed times at the nano-second scale is difficult and expensive, and the amount of light energy that needs to be emitted for direct ToF can also be a problem from an eye-safety perspective.
 <strong>Indirect ToF</strong> is an attractive alternative, where the light is emitted with a waveform, e.g., a sine wave, and the returned light is correlated with the amplitude of the emitted light to calculate a phase shift. The elapsed time <span class="math notranslate nohighlight">\(\Delta t\)</span> and distance <span class="math notranslate nohighlight">\(d\)</span> can then be calculated from the phase shift.</p>
 <p>Two common scanning LIDAR technologies are in use for robotics: <strong>2D LIDAR</strong>, which consists of a single laser beam that is rotated around a fixed axis, and <strong>3D LIDAR</strong>, which has multiple laser/detector pairs rotated at different inclinations. 2D LIDARs are also often deployed on aircraft to create highly detailed digital elevation maps, where the third dimension is provided by the aircraft’s forward motion. LIDAR altimeters are even deployed from satellites in orbit around Earth or <a class="reference external" href="https://pgda.gsfc.nasa.gov/products/62">other planets</a>.</p>
-<p><code class="docutils literal notranslate"><span class="pre">{index}</span> <span class="pre">ray</span> <span class="pre">direction</span></code>## Ray Intersection</p>
+</section>
+<section id="ray-intersection">
+<span id="index-2"></span><h2><span class="section-number">6.3.2. </span>Ray Intersection<a class="headerlink" href="#ray-intersection" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>Intersecting rays is as easy as computing a dot product.</p>
 </div></blockquote>
 <p>To perform inference about the environment with LIDAR, we have to model how LIDAR beams interact with it, which in the case of polygonal objects comes down to line-line or line-plane intersections.</p>
 <p>We examine the 2D line-line intersection case first. Assume we have a line in 2D with equation <span class="math notranslate nohighlight">\(\hat{n} \cdot p = d\)</span>, where <span class="math notranslate nohighlight">\(\hat{n}\)</span> is a normal vector and <span class="math notranslate nohighlight">\(d&gt;0\)</span> is the distance of the line to the origin. The hat notation signifies that the normal vector <span class="math notranslate nohighlight">\(\hat{n}\)</span> is normalized to length 1. Then if we have a ray of points <span class="math notranslate nohighlight">\(p = \hat{r} s\)</span> where <span class="math notranslate nohighlight">\(\hat{r}\)</span> is the <strong>ray direction</strong> and <span class="math notranslate nohighlight">\(s&gt;0\)</span> is a scalar, we can find the intersection by plugging the ray equation into the line equation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-e8549534-ab2a-489c-b445-56a1a537d9e0">
-<span class="eqno">(6.29)<a class="headerlink" href="#equation-e8549534-ab2a-489c-b445-56a1a537d9e0" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-8992a86d-2285-45b5-a764-c69d9efe8418">
+<span class="eqno">(6.29)<a class="headerlink" href="#equation-8992a86d-2285-45b5-a764-c69d9efe8418" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \hat{n} \cdot (\hat{r} s) = d,
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(a \cdot b \doteq a^T b = b^T a\)</span> is the standard vector dot product. We find the range <span class="math notranslate nohighlight">\(s\)</span> to the object as:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-004c6356-8e05-43cc-8d9c-f17fb183c531">
-<span class="eqno">(6.30)<a class="headerlink" href="#equation-004c6356-8e05-43cc-8d9c-f17fb183c531" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-38189148-1874-46fd-9514-539ded703312">
+<span class="eqno">(6.30)<a class="headerlink" href="#equation-38189148-1874-46fd-9514-539ded703312" title="Permalink to this equation">#</a></span>\[\begin{equation}
 s = \frac{d}{\hat{n} \cdot \hat{r}}.
 \end{equation}\]</div>
 <p>We can ensure that <span class="math notranslate nohighlight">\(s&gt;0\)</span> and avoid a division by zero by checking the dot product before doing the division:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-e45546e6-8405-4734-808b-a92957db3cfa">
-<span class="eqno">(6.31)<a class="headerlink" href="#equation-e45546e6-8405-4734-808b-a92957db3cfa" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-74f47992-0d8f-4270-9aa9-e24ac6203b1c">
+<span class="eqno">(6.31)<a class="headerlink" href="#equation-74f47992-0d8f-4270-9aa9-e24ac6203b1c" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \hat{n} \cdot \hat{r} &gt; 0
 \end{equation}\]</div>
 <p>The following code implements this:</p>
@@ -467,8 +473,9 @@ In this case, the equation <span class="math notranslate nohighlight">\(\hat{n} 
 </div>
 </div>
 </div>
+</section>
 <section id="simulating-a-2d-lidar">
-<h2><span class="section-number">6.3.1. </span>Simulating a 2D LIDAR<a class="headerlink" href="#simulating-a-2d-lidar" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">6.3.3. </span>Simulating a 2D LIDAR<a class="headerlink" href="#simulating-a-2d-lidar" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>Computing line intersections is the main computation when simulating 2D LIDAR.</p>
 </div></blockquote>
@@ -529,10 +536,10 @@ In this case, the equation <span class="math notranslate nohighlight">\(\hat{n} 
 <p>As you can see, the resulting scan of this corridor-like environment does not produce a uniform sampling on the walls. Because the rays are distributed uniformly in <em>angle</em> space, they graze the walls at increasingly shallow angles, and the distance between successive intersection points increases. Of course, this depends on the angle that the wall makes with the rays: the end of the corridor is far away and hence is sampled fairly uniformly. This is a typical pattern when working with LIDAR scanners.</p>
 </section>
 <section id="geometry-of-a-moving-lidar">
-<h2><span class="section-number">6.3.2. </span>Geometry of a Moving LIDAR<a class="headerlink" href="#geometry-of-a-moving-lidar" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">6.3.4. </span>Geometry of a Moving LIDAR<a class="headerlink" href="#geometry-of-a-moving-lidar" title="Link to this heading">#</a></h2>
 <p>Above we assumed that the ray is situated at the <em>world</em> origin, but we can also generalize to the case where the rays are defined in a <em>body coordinate frame</em> <span class="math notranslate nohighlight">\((R^w_b,t^w_b)\)</span>. In this case, it is convenient to transform the plane to the body frame. We can do this by expressing a point <span class="math notranslate nohighlight">\(p^w\)</span> in world coordinates as a function of a point in body coordinates: <span class="math notranslate nohighlight">\(p^w = R^w_b p^b + t^w_b\)</span> and plugging that into the plane equation:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c6bab34f-b84d-46fc-921c-ad8e2c2f2454">
-<span class="eqno">(6.32)<a class="headerlink" href="#equation-c6bab34f-b84d-46fc-921c-ad8e2c2f2454" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d764b210-2c47-4443-9971-487ffbc82838">
+<span class="eqno">(6.32)<a class="headerlink" href="#equation-d764b210-2c47-4443-9971-487ffbc82838" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{aligned}
 \hat{n}^w \cdot p^w &amp;= d^w \\
 \hat{n}^w \cdot \{ R^w_b p^b + t^w_b \} &amp;= d^w \\
@@ -540,8 +547,8 @@ In this case, the equation <span class="math notranslate nohighlight">\(\hat{n} 
 \end{aligned}
 \end{equation}\]</div>
 <p>Hence, we obtain a new plane equation in the body frame as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-45da645e-d4b9-48a3-81c2-d32d3d5bdf9c">
-<span class="eqno">(6.33)<a class="headerlink" href="#equation-45da645e-d4b9-48a3-81c2-d32d3d5bdf9c" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-5e27930f-ef1c-4272-8056-fffd5f0b1f91">
+<span class="eqno">(6.33)<a class="headerlink" href="#equation-5e27930f-ef1c-4272-8056-fffd5f0b1f91" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \hat{n}^b \cdot p^b = d^b
 \end{equation}\]</div>
 <p>with transformed plane parameters <span class="math notranslate nohighlight">\(\hat{n}^b \doteq (R^w_b)^T \hat{n}^w\)</span> and <span class="math notranslate nohighlight">\(d^b \doteq d^w - \hat{n}^w \cdot t^w_b\)</span>.</p>
@@ -616,7 +623,7 @@ In this case, the equation <span class="math notranslate nohighlight">\(\hat{n} 
 <p>As you can see above, when the robot rotates 20 degrees <em>counter-clockwise</em>, the resulting scan in body coordinates seems to be rotated 20 degrees in the <em>opposite</em> direction. This makes sense! The forward direction for the robot is along the horizontal X-axis, and as you can see in the scan, the robot seems to be “looking” at the correct (upper-right) corner of our little hallway example. This perhaps counter-intuitive behavior is something to always keep in mind when looking at animations of LIDAR scans.</p>
 </section>
 <section id="real-lidar-scans">
-<h2><span class="section-number">6.3.3. </span>Real LIDAR Scans<a class="headerlink" href="#real-lidar-scans" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">6.3.5. </span>Real LIDAR Scans<a class="headerlink" href="#real-lidar-scans" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>From theory to practice.</p>
 </div></blockquote>
@@ -655,7 +662,7 @@ The scans are slightly rotated and translated from each other, and this will be 
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/74b15b5393f010842a90ff50997b8f02410564a03075e85da986f3b8d84a57cb.png" src="_images/74b15b5393f010842a90ff50997b8f02410564a03075e85da986f3b8d84a57cb.png" />
+<img alt="_images/67edbe4ef6e24b1fe106334ebe5eddbc5eda00cb1c39c2654018b2a54fa67a50.png" src="_images/67edbe4ef6e24b1fe106334ebe5eddbc5eda00cb1c39c2654018b2a54fa67a50.png" />
 </div>
 </div>
 <p>Finally, let us look at scans that are taken a bit further apart, in this case there are 8 scans that we skipped:</p>
@@ -669,17 +676,19 @@ The scans are slightly rotated and translated from each other, and this will be 
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/65e9a9bc23bea642603f518a3998b455c37d8e03797e2e666f86496fc181e637.png" src="_images/65e9a9bc23bea642603f518a3998b455c37d8e03797e2e666f86496fc181e637.png" />
+<img alt="_images/087910623f12d92f04bd6c674f8216ea17c092375281e3e19952ed6f95b4cdfd.png" src="_images/087910623f12d92f04bd6c674f8216ea17c092375281e3e19952ed6f95b4cdfd.png" />
 </div>
 </div>
 <p>By inspecting (you can do this interactively using the <a class="reference external" href="https://gtbook.github.io/gtbook/driving.html">gtbook website</a>) you can see that the car is <em>still</em> turning, but as the two scans are further apart the “mis-alginment” is more pronounced.</p>
-<p><code class="docutils literal notranslate"><span class="pre">{index}</span> <span class="pre">point</span> <span class="pre">cloud</span> <span class="pre">map</span></code>## Creating 3D Maps</p>
+</section>
+<section id="creating-3d-maps">
+<span id="index-3"></span><h2><span class="section-number">6.3.6. </span>Creating 3D Maps<a class="headerlink" href="#creating-3d-maps" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>Point clouds can be used to represent the 3D world.</p>
 </div></blockquote>
 <p>If we know the exact pose at which a LIDAR scan was taken, we can transform the points in the scan into absolute coordinates, and create an extended <strong>point cloud map</strong> of the environment. In math, suppose we <em>know</em> that a scan was taken at <span class="math notranslate nohighlight">\(T^w_b\)</span>, then we can transform all LIDAR points <span class="math notranslate nohighlight">\(P^b\)</span>, which are given in body coordinates, to world coordinates:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-668ba43e-17c7-47c8-b949-4a07bd47802c">
-<span class="eqno">(6.34)<a class="headerlink" href="#equation-668ba43e-17c7-47c8-b949-4a07bd47802c" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-de2d11ad-7b82-4013-9f36-a92b56398e69">
+<span class="eqno">(6.34)<a class="headerlink" href="#equation-de2d11ad-7b82-4013-9f36-a92b56398e69" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P^w = \phi(T^w_b, P^b)
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\phi\)</span> the the action of <span class="math notranslate nohighlight">\(SE(3)\)</span> on points in <span class="math notranslate nohighlight">\(\mathbb{R}^3\)</span>. Earlier in this chapter we saw this can be done by matrix multiplication, but GTSAM actually implements <span class="math notranslate nohighlight">\(\phi\)</span> directly as <code class="docutils literal notranslate"><span class="pre">Pose3::transformFrom</span></code>. This method can be applied to a single <code class="docutils literal notranslate"><span class="pre">Point3</span></code> (just a <span class="math notranslate nohighlight">\(3\times 1\)</span> vector, really) or on many points simultaneously, by passing in a <span class="math notranslate nohighlight">\(3\times N\)</span> matrix:</p>
@@ -699,12 +708,12 @@ P^w = \phi(T^w_b, P^b)
 <p>We will use this capability in the next section to produce large scale sparse point cloud maps of the environment around an autonomous vehicle.</p>
 </section>
 <section id="gtsam-101">
-<h2><span class="section-number">6.3.4. </span>GTSAM 101<a class="headerlink" href="#gtsam-101" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">6.3.7. </span>GTSAM 101<a class="headerlink" href="#gtsam-101" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>A deeper dive in the GTSAM concepts used above.</p>
 </div></blockquote>
 <section id="d-and-3d-points">
-<h3><span class="section-number">6.3.4.1. </span>2D and 3D Points<a class="headerlink" href="#d-and-3d-points" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">6.3.7.1. </span>2D and 3D Points<a class="headerlink" href="#d-and-3d-points" title="Link to this heading">#</a></h3>
 <p>In GTSAM <code class="docutils literal notranslate"><span class="pre">Point2</span></code> and <code class="docutils literal notranslate"><span class="pre">Point3</span></code> are simply functions that return 2D and 3D numpy vectors, respectively:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -724,7 +733,7 @@ P^w = \phi(T^w_b, P^b)
 </div>
 </section>
 <section id="d-and-3d-rotations">
-<h3><span class="section-number">6.3.4.2. </span>2D and 3D Rotations<a class="headerlink" href="#d-and-3d-rotations" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">6.3.7.2. </span>2D and 3D Rotations<a class="headerlink" href="#d-and-3d-rotations" title="Link to this heading">#</a></h3>
 <p>2D and 3D rotations are represented internally by <span class="math notranslate nohighlight">\(2 \times 2\)</span> matrices and <span class="math notranslate nohighlight">\(3 \times 3\)</span> matrices, respectively, but these are wrapped into the classes <code class="docutils literal notranslate"><span class="pre">Rot2</span></code> and <code class="docutils literal notranslate"><span class="pre">Rot3</span></code>. We can print them, and get the rotation matrix via the <code class="docutils literal notranslate"><span class="pre">matrix()</span></code> method:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -785,7 +794,7 @@ P^w = \phi(T^w_b, P^b)
 <p>We will look at 3D rotations in much more detail in Chapter 7, when we look at drones.</p>
 </section>
 <section id="reading-and-visualizing-lidar-clouds">
-<h3><span class="section-number">6.3.4.3. </span>Reading and Visualizing LIDAR clouds<a class="headerlink" href="#reading-and-visualizing-lidar-clouds" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">6.3.7.3. </span>Reading and Visualizing LIDAR clouds<a class="headerlink" href="#reading-and-visualizing-lidar-clouds" title="Link to this heading">#</a></h3>
 <p>The utility functions <code class="docutils literal notranslate"><span class="pre">read_lidar_points</span></code> and <code class="docutils literal notranslate"><span class="pre">visualize_clouds</span></code> are not part of GTSAM, but are part of the gtbook library that accompanies this book. On the <a class="reference external" href="https://gtbook.github.io/gtbook/driving.html">gtbook website</a> you can find much more detailed documentation as well as the source code, but <code class="docutils literal notranslate"><span class="pre">help</span></code> is very comprehensive for those functions:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -909,13 +918,16 @@ visualize_clouds(clouds: list, show_grid_lines: bool = False, cloud_colors=None,
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simulating-a-2d-lidar">6.3.1. Simulating a 2D LIDAR</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#geometry-of-a-moving-lidar">6.3.2. Geometry of a Moving LIDAR</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#real-lidar-scans">6.3.3. Real LIDAR Scans</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gtsam-101">6.3.4. GTSAM 101</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#d-and-3d-points">6.3.4.1. 2D and 3D Points</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#d-and-3d-rotations">6.3.4.2. 2D and 3D Rotations</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reading-and-visualizing-lidar-clouds">6.3.4.3. Reading and Visualizing LIDAR clouds</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lidar">6.3.1. LIDAR</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ray-intersection">6.3.2. Ray Intersection</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simulating-a-2d-lidar">6.3.3. Simulating a 2D LIDAR</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#geometry-of-a-moving-lidar">6.3.4. Geometry of a Moving LIDAR</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#real-lidar-scans">6.3.5. Real LIDAR Scans</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-3d-maps">6.3.6. Creating 3D Maps</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gtsam-101">6.3.7. GTSAM 101</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#d-and-3d-points">6.3.7.1. 2D and 3D Points</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#d-and-3d-rotations">6.3.7.2. 2D and 3D Rotations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reading-and-visualizing-lidar-clouds">6.3.7.3. Reading and Visualizing LIDAR clouds</a></li>
 </ul>
 </li>
 </ul>
