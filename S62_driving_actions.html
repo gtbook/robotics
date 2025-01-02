@@ -184,7 +184,7 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="S30_vacuum_intro.html">3. A Robot Vacuum Cleaner</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="S31_vacuum_state.html">3.1. Modeling the State of the Vacuum Cleaning Robot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S32_vacuum_actions.html">3.2. Actions over time</a></li>
-<li class="toctree-l2"><a class="reference internal" href="S33_vacuum_sensing.html">3.3. Dynamic Bayes Nets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S33_vacuum_sensing.html">3.3. Dynamic Bayesian Networks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S34_vacuum_perception.html">3.4. Perception with Graphical Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S35_vacuum_decision.html">3.5. Markov Decision Processes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S36_vacuum_RL.html">3.6. Learning to Act Optimally</a></li>
@@ -460,16 +460,16 @@ The inputs to the car are</p>
 <span class="math notranslate nohighlight">\(\dot{q} = f(q, u_1, u_2)\)</span>.
 The first two components, <span class="math notranslate nohighlight">\(\dot{x}\)</span> and <span class="math notranslate nohighlight">\(\dot{y}\)</span> are straightforward functions
 of  <span class="math notranslate nohighlight">\(v_\mathrm{car}\)</span> and <span class="math notranslate nohighlight">\(\theta\)</span></p>
-<div class="amsmath math notranslate nohighlight" id="equation-386113fb-29a8-43aa-80a5-f4456a7c2c22">
-<span class="eqno">(6.20)<a class="headerlink" href="#equation-386113fb-29a8-43aa-80a5-f4456a7c2c22" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-6bf37e1f-7fe3-4829-bab1-921fca1839d7">
+<span class="eqno">(6.20)<a class="headerlink" href="#equation-6bf37e1f-7fe3-4829-bab1-921fca1839d7" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{aligned}
 \dot{x} &amp;=  v_\mathrm{car} \cos \theta = u_1 \cos \theta \\
 \dot{y} &amp;=  v_\mathrm{car} \sin \theta = u_1 \sin \theta 
 \end{aligned}
 \end{equation}\]</div>
 <p>The steering angle is also straightforward:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-841e611a-0bb1-4601-8b88-3fa35145a92e">
-<span class="eqno">(6.21)<a class="headerlink" href="#equation-841e611a-0bb1-4601-8b88-3fa35145a92e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-44e84ebe-135a-4a46-9569-f1438b176faf">
+<span class="eqno">(6.21)<a class="headerlink" href="#equation-44e84ebe-135a-4a46-9569-f1438b176faf" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \dot{\phi} = u_2
 \end{equation}\]</div>
 <p>Note that using this model, we cannot directly control the car’s orientation <span class="math notranslate nohighlight">\(\theta\)</span>.
@@ -477,22 +477,22 @@ We cannot even directly choose the steering angle <span class="math notranslate 
 We have direct control only over <span class="math notranslate nohighlight">\(\dot{\phi}\)</span>.</p>
 <p>The equation for <span class="math notranslate nohighlight">\(\dot{\theta}\)</span> is slightly more complex.
 From the figure below, we observe the following</p>
-<div class="amsmath math notranslate nohighlight" id="equation-664ae753-5f27-40fe-9c0a-0f02425a92fc">
-<span class="eqno">(6.22)<a class="headerlink" href="#equation-664ae753-5f27-40fe-9c0a-0f02425a92fc" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d52852b8-a8a4-4761-8e02-fcf8132ae949">
+<span class="eqno">(6.22)<a class="headerlink" href="#equation-d52852b8-a8a4-4761-8e02-fcf8132ae949" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{aligned}
 v_\mathrm{wheel} \cos \phi &amp;=  v_\mathrm{car}  \\
 v_\mathrm{wheel} \sin \phi &amp;=  v_\mathrm{tangent}  \\
 \end{aligned}
 \end{equation}\]</div>
 <p>Combining these to eliminate <span class="math notranslate nohighlight">\(v_\mathrm{wheel}\)</span> we obtain</p>
-<div class="amsmath math notranslate nohighlight" id="equation-bcfc54b3-0e66-4fa6-91af-5cd3fe57d6a1">
-<span class="eqno">(6.23)<a class="headerlink" href="#equation-bcfc54b3-0e66-4fa6-91af-5cd3fe57d6a1" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-62e5312c-189f-4cc3-8d9e-162f66f10797">
+<span class="eqno">(6.23)<a class="headerlink" href="#equation-62e5312c-189f-4cc3-8d9e-162f66f10797" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \frac{v_\mathrm{car}}{\cos \phi} \sin \phi = v_\mathrm{car} \tan \phi = v_\mathrm{tangent}
 \end{equation}\]</div>
 <p>Now, using <span class="math notranslate nohighlight">\(L \dot{\theta} = v_\mathrm{tangent}\)</span> (where <span class="math notranslate nohighlight">\(L\)</span> is the baseline distance between front and rear axles),
 we obtain</p>
-<div class="amsmath math notranslate nohighlight" id="equation-3ac66b42-68db-41b3-b365-5a949eafa46d">
-<span class="eqno">(6.24)<a class="headerlink" href="#equation-3ac66b42-68db-41b3-b365-5a949eafa46d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-a1374fb7-b83f-4f65-8b70-c90ddfc1725b">
+<span class="eqno">(6.24)<a class="headerlink" href="#equation-a1374fb7-b83f-4f65-8b70-c90ddfc1725b" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \dot{\theta} = v_\mathrm{car} \frac{1}{L} \tan \phi = u_1 \frac{1}{L} \tan \phi
 \end{equation}\]</div>
 <figure id="fig:CarRelevantVelocities">
@@ -500,8 +500,8 @@ we obtain</p>
 <figcaption>Relevant velocities for computing the differential kinamatics of the car.</figcaption>
 </figure><p>Collecting these terms together, we can write the differential kinematics
 in matrix form as:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-0ba5ed9f-47f3-4405-9d64-41066cd9d2bc">
-<span class="eqno">(6.25)<a class="headerlink" href="#equation-0ba5ed9f-47f3-4405-9d64-41066cd9d2bc" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-5f7b51f0-6b86-4565-b1c9-5b2fd7b3a983">
+<span class="eqno">(6.25)<a class="headerlink" href="#equation-5f7b51f0-6b86-4565-b1c9-5b2fd7b3a983" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{bmatrix}
 \dot{x}\\
 \dot{y}\\

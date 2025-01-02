@@ -184,7 +184,7 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="S30_vacuum_intro.html">3. A Robot Vacuum Cleaner</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="S31_vacuum_state.html">3.1. Modeling the State of the Vacuum Cleaning Robot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S32_vacuum_actions.html">3.2. Actions over time</a></li>
-<li class="toctree-l2"><a class="reference internal" href="S33_vacuum_sensing.html">3.3. Dynamic Bayes Nets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S33_vacuum_sensing.html">3.3. Dynamic Bayesian Networks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S34_vacuum_perception.html">3.4. Perception with Graphical Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S35_vacuum_decision.html">3.5. Markov Decision Processes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S36_vacuum_RL.html">3.6. Learning to Act Optimally</a></li>
@@ -410,12 +410,11 @@
 of the item of trash on the conveyor belt. Remember that items of trash are presented individually to the robot,
 so there is no clutter, and no circumstance in which multiple pieces of trash are simultaneously in the workspace.
 Therefore, it is natural to define the world state explicitly in terms of the category of the current
-item of trash.</p>
-<p>We consider five possible categories:</p>
+item of trash. We consider five possible categories:</p>
 <ul class="simple">
 <li><p>cardboard</p></li>
 <li><p>paper</p></li>
-<li><p>cans</p></li>
+<li><p>can</p></li>
 <li><p>scrap metal</p></li>
 <li><p>bottle</p></li>
 </ul>
@@ -430,14 +429,14 @@ Instead, we use probability theory to quantify the uncertainty associated to an 
 While a comprehensive coverage of probability theory is beyond the scope of this book,
 we introduce key concepts and methods throughout the text, as needed,
 to deal with various kinds of uncertainty that occur in robotics applications.
-Rigorous introductions can be found in many textbooks, including <a class="reference external" href="https://probability4datascience.com/index.html">Probability for Data Science</a> (which is available online).</p>
+Rigorous introductions can be found in many textbooks, including the book  <a class="reference external" href="https://probability4datascience.com/index.html">“Introduction to Probability for Data Science”</a> <span id="id1">[<a class="reference internal" href="bibliography.html#id7" title="Stanley H. Chan. Introduction to Probability for Data Science. Michigan Publishing Services, 2023. ISBN 978-1-60785-747-1. URL: https://probability4datascience.com/index.html.">Chan, 2023</a>]</span> (which is available online).</p>
 <p id="index-1">The starting point for reasoning with uncertainty is to define the set of outcomes that might occur.
 The set of all possible outcomes is called the <strong>sample space</strong>, often denoted by <span class="math notranslate nohighlight">\(\Omega.\)</span>
 In our example, when an item of trash arrives on the conveyor belt,
 there are five possible outcomes,</p>
-<div class="amsmath math notranslate nohighlight" id="equation-956e524f-8c2e-4ae0-b6cd-a5f46b701443">
-<span class="eqno">(2.1)<a class="headerlink" href="#equation-956e524f-8c2e-4ae0-b6cd-a5f46b701443" title="Permalink to this equation">#</a></span>\[\begin{equation}
-\Omega = \{ \rm{cardboard, paper, cans, scrap \; metal, bottle}\}.
+<div class="amsmath math notranslate nohighlight" id="equation-8cf5b9e9-862e-4aac-9ef5-ad9ffc6f8d04">
+<span class="eqno">(2.1)<a class="headerlink" href="#equation-8cf5b9e9-862e-4aac-9ef5-ad9ffc6f8d04" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\Omega = \{ \rm{cardboard, paper, can, scrap \; metal, bottle}\}.
 \end{equation}\]</div>
 </section>
 <section id="probability-distributions">
@@ -448,8 +447,8 @@ In addition, for disjoint events, <span class="math notranslate nohighlight">\(A
 Using this property, it is a simple matter to compute the probability for any <span class="math notranslate nohighlight">\(A \subseteq \Omega\)</span>
 if we are provided with the probabilities of the individual outcomes.
 Further, since <span class="math notranslate nohighlight">\(P(\Omega)=1\)</span>, it follows immediately that</p>
-<div class="amsmath math notranslate nohighlight" id="equation-5804000d-528f-4ef9-bd57-044f2ce52287">
-<span class="eqno">(2.2)<a class="headerlink" href="#equation-5804000d-528f-4ef9-bd57-044f2ce52287" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-7c1c77a6-5e57-4836-a184-25c9d0c138c7">
+<span class="eqno">(2.2)<a class="headerlink" href="#equation-7c1c77a6-5e57-4836-a184-25c9d0c138c7" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P(\Omega) = \sum_{\omega \in \Omega} P(\{\omega\}) = 1
 \end{equation}\]</div>
 <p>i.e., that the probabilities of the individual outcomes sum to unity.
@@ -461,9 +460,9 @@ In robotics, this can occur when the robot acts in the world, or based on sensor
 How evidence affects the propagation of probability values is a recurring topic in this book.</p>
 </section>
 <section id="prior-probability-distributions">
-<h2><span class="section-number">2.1.3. </span>Prior Probability Distributions<a class="headerlink" href="#prior-probability-distributions" title="Link to this heading">#</a></h2>
+<span id="index-3"></span><h2><span class="section-number">2.1.3. </span>Prior Probability Distributions<a class="headerlink" href="#prior-probability-distributions" title="Link to this heading">#</a></h2>
 <blockquote>
-<div><p>A <em>prior</em> that describes our beliefs before any sensor data is obtained.</p>
+<div><p>A <em>prior</em> describes our beliefs before any sensor data is obtained.</p>
 </div></blockquote>
 <p>Once we have enumerated the set of possible outcomes, we confront a fundamental question: <em>Where do the
 probability values come from?</em> In this section we explicitly consider the notion of prior knowledge that is available in a particular application. High-quality “priors” can make a big difference in performance, especially when measurements are few or unreliable.</p>
@@ -476,18 +475,18 @@ Suppose, for example, that the owner of the trash-sorting facility has told us (
 <ul class="simple">
 <li><p>cardboard: 200</p></li>
 <li><p>paper: 300</p></li>
-<li><p>cans: 250</p></li>
+<li><p>can: 250</p></li>
 <li><p>scrap metal: 200</p></li>
 <li><p>bottle: 50</p></li>
 </ul>
-<p>It is common to assume that outcomes occur in proportion to their probability (there are a number of
+<p>It is common to assume that outcomes occur in proportion to their probability. There are a number of
 technical conditions that underlie this assumption, such as the condition that outcomes are independent,
-but we will not address these here). Thus, from the above observed frequencies, we might estimate that the probability of seeing a piece of cardboard in the work cell is given by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-2c387782-4279-409c-8790-4024c70b65bd">
-<span class="eqno">(2.3)<a class="headerlink" href="#equation-2c387782-4279-409c-8790-4024c70b65bd" title="Permalink to this equation">#</a></span>\[\begin{equation}
+but we will not address these here. Thus, from the above observed frequencies, we might estimate that the probability of seeing a piece of cardboard in the work cell is given by</p>
+<div class="amsmath math notranslate nohighlight" id="equation-b7bce239-db6c-48a6-b369-7a7d3e13add4">
+<span class="eqno">(2.3)<a class="headerlink" href="#equation-b7bce239-db6c-48a6-b369-7a7d3e13add4" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P(\mathrm{cardboard}) \approx 200/1000 = 0.2
 \end{equation}\]</div>
-<p>Using the same logic, we can do the same for all categories, yielding:</p>
+<p>Using the same logic, we can do this for all categories, yielding:</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p><em>Category (C)</em></p></th>
@@ -513,7 +512,7 @@ P(\mathrm{cardboard}) \approx 200/1000 = 0.2
 </tbody>
 </table>
 </div>
-<p id="index-3">We call this type of probabilistic knowledge about the state of the world, in the absence of any other information, a <strong>prior</strong>, because it represents our belief <em>before</em> any evidence (e.g., sensor data) has been acquired.</p>
+<p id="index-4">We call this type of probabilistic knowledge about the state of the world, in the absence of any other information, a <strong>prior</strong>, because it represents our belief <em>before</em> any evidence (e.g., sensor data) has been acquired.</p>
 <!-- Here, a word about notation is in order.  We use upper case letters to denote random quantities. For example, we use $C$ to denote the random outcome of a particular
 category of trash arriving to the sorting station.  When you see an uppercase letter, it indicates that we do not know what value this outcome will take, but
 that we do know a probability distribution for the values that could occur.
@@ -522,11 +521,10 @@ $c_2 =$ paper, etc.  Thus, we might write $P(C = c_1)$ or merely $P(c_1)$ to den
 <section id="probability-distributions-in-python">
 <h2><span class="section-number">2.1.4. </span>Probability Distributions in Python<a class="headerlink" href="#probability-distributions-in-python" title="Link to this heading">#</a></h2>
 <blockquote>
-<div><p>We represent probability distributions using the  <code class="docutils literal notranslate"><span class="pre">DiscreteDistribution</span></code> class in GTSAM.</p>
+<div><p>We represent probability distributions using the <code class="docutils literal notranslate"><span class="pre">DiscreteDistribution</span></code> class in GTSAM.</p>
 </div></blockquote>
-<p>The GTSAM toolbox (GTSAM stands for “Georgia Tech Smoothing and
-Mapping”) toolbox is a BSD-licensed C++ library based on factor graphs,
-first developed at the Georgia Institute of Technology.
+<p id="index-7"><span id="index-6"></span><span id="index-5"></span>The GTSAM library (GTSAM stands for “Georgia Tech Smoothing and
+Mapping”) is a BSD-licensed C++ library based on factor graphs which we make heavy use of in the code examples.
 It provides state of the art solutions to important problems in robotics,
 such as the Simultaneous Localization and Mapping (SLAM) and Structure from Motion (SfM) problems,
 but can also be used to model and solve both
@@ -535,9 +533,9 @@ available at <a class="reference external" href="http://gtsam.org">http://gtsam.
 <p>GTSAM also provides both a MATLAB and a python interface,
 enabling rapid prototype development, visualization, and user interaction.
 The python library can be imported directly into a Google colab via
-“import gtsam”. A large subset of the GTSAM functionality can be
+<code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">gtsam</span></code>. A large subset of the GTSAM functionality can be
 accessed through wrapped classes from within python.
-To not interrupt the flow of the book too much we do not always fully explain the code throughout the text, but rather include a “GTSAM 101” sub-section at the end that elaborates on the types and functions we used.</p>
+To not interrupt the flow of the book too much, we do not always fully explain the code throughout the text, but rather include a “GTSAM 101” subsection at the end that elaborates on the types and functions we used.</p>
 <p>The code below illustrates the use of GTSAM. First we create a <code class="docutils literal notranslate"><span class="pre">Variables</span></code> data structure that will be used to obtain more informative output from other code below:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -548,8 +546,8 @@ To not interrupt the flow of the book too much we do not always fully explain th
 </div>
 </div>
 </div>
-<p>Conceptually, the Variables class keeps track of the names of variables and what values each variable can take on. For example in the above, we need the variable <code class="docutils literal notranslate"><span class="pre">Category</span></code>, and it can take on the values <code class="docutils literal notranslate"><span class="pre">cardboard</span></code>, <code class="docutils literal notranslate"><span class="pre">paper</span></code>, <code class="docutils literal notranslate"><span class="pre">can</span></code>, <code class="docutils literal notranslate"><span class="pre">scrap</span> <span class="pre">metal</span></code>, and <code class="docutils literal notranslate"><span class="pre">bottle</span></code>. We do this so that later when we print, it can show us a nicely rendered outputs.</p>
-<p>We can now create a prior probability <span class="math notranslate nohighlight">\(P(Category)\)</span> on the category using a <code class="docutils literal notranslate"><span class="pre">DiscreteDistribution</span></code> constructor:</p>
+<p>Conceptually, the <code class="docutils literal notranslate"><span class="pre">Variables</span></code> class keeps track of the names of variables and what values each variable can take on. For example in the above, we need the variable <code class="docutils literal notranslate"><span class="pre">Category</span></code>, and it can take on the values <code class="docutils literal notranslate"><span class="pre">cardboard</span></code>, <code class="docutils literal notranslate"><span class="pre">paper</span></code>, <code class="docutils literal notranslate"><span class="pre">can</span></code>, <code class="docutils literal notranslate"><span class="pre">scrap</span> <span class="pre">metal</span></code>, and <code class="docutils literal notranslate"><span class="pre">bottle</span></code>. We do this so that later when we print, it can show us a nicely rendered outputs.</p>
+<p>We can now create a prior probability distribution <span class="math notranslate nohighlight">\(P(Category)\)</span> on the category using a <code class="docutils literal notranslate"><span class="pre">DiscreteDistribution</span></code> constructor:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">category_prior</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">DiscreteDistribution</span><span class="p">(</span><span class="n">Category</span><span class="p">,</span> <span class="s2">&quot;200/300/250/200/50&quot;</span><span class="p">)</span>
@@ -582,7 +580,7 @@ To not interrupt the flow of the book too much we do not always fully explain th
 </table>
 </div></div></div>
 </div>
-<p>We can evaluate the prior for any category value, e.g., “can”, but that function does take integer indices, not srings. Hence, we use the built-in python function <code class="docutils literal notranslate"><span class="pre">index</span></code> to obtain that integer (2 in this case):</p>
+<p>We can evaluate the prior for any category value, e.g., “can”, but that function takes integer indices, not srings. Hence, we use the built-in python function <code class="docutils literal notranslate"><span class="pre">index</span></code> to obtain that integer (2 in this case):</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">index</span> <span class="o">=</span> <span class="n">categories</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;can&#39;</span><span class="p">)</span>  <span class="c1"># we still have to use an integer value</span>
@@ -611,9 +609,9 @@ To not interrupt the flow of the book too much we do not always fully explain th
 </div>
 </div>
 </div>
-<p>Here “pmf” is short for “probability mass function”, which we define more precisely in Section 2.2. Note that the ordering of the array was fixed when we defined <code class="docutils literal notranslate"><span class="pre">categories</span></code> above.  It is your responsibility
+<p id="index-8">Here “pmf” is short for “probability mass function”, which we define more precisely in Section 2.2. Note that the ordering of the array was fixed when we defined <code class="docutils literal notranslate"><span class="pre">categories</span></code> above.  It is the programmer’s responsibility
 to maintain consistency when using arrays to store values associated to a collection of variables.</p>
-<p>We can display probability distributions in various ways, including as a bar graph, as shown below.</p>
+<p>We can display probability distributions in various ways, including as a bar graph, as shown in Figure <a class="reference internal" href="#fig:discrete-distribution"><span class="xref myst">2.1</span></a>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: A discrete probability distribution as a bar graph.</span>
@@ -632,7 +630,7 @@ to maintain consistency when using arrays to store values associated to a collec
 <blockquote>
 <div><p>We can simulate our trash sorting cell by sampling from the prior.</p>
 </div></blockquote>
-<p>Suppose we wish to simulate our trash sorting system such that the behavior of the simulation matches,
+<p id="index-9">Suppose we wish to simulate our trash sorting system such that the behavior of the simulation matches,
 in some statistical sense, the behavior of the actual system.
 In our case, this amounts to generating samples from the probability distribution
 on trash categories.
@@ -641,20 +639,20 @@ In particular, we would like to generate a sequence of categories,
 <span class="math notranslate nohighlight">\(\omega_i = \mathrm{cardboard}\)</span> approximately 25% of the time,
 <span class="math notranslate nohighlight">\(\omega_i = \mathrm{paper}\)</span> approximately 20% of the time, etc.
 How can we write a computer program to do this?</p>
-<p>While most programming libraries do not include functions to generate samples from an arbitrary distribution,
+<p id="index-10">While most programming libraries do not include functions to generate samples from an arbitrary distribution,
 almost all include a random number generator that will generate a random number from the unit interval.
-We denote by <span class="math notranslate nohighlight">\(U(a,b)\)</span> the uniform probability distribution on the interval <span class="math notranslate nohighlight">\([a,b]\)</span>.
-In numpy, the function <em>np.random.rand()</em> generates a sample <span class="math notranslate nohighlight">\(x \sim U(0,1)\)</span>.
-How can we use this result to generate a sample from an arbitrary probability distribution?</p>
+We denote by <span class="math notranslate nohighlight">\(U(a,b)\)</span> the <em>uniform probability distribution</em> on the interval <span class="math notranslate nohighlight">\([a,b]\)</span>.
+In numpy, the function <code class="docutils literal notranslate"><span class="pre">np.random.rand()</span></code> generates a sample <span class="math notranslate nohighlight">\(x \sim U(0,1)\)</span>. We will often use the symbol <span class="math notranslate nohighlight">\(\sim\)</span> to indicate a variable is sampled from a given distribution.
+Below we explain how we can use this to generate a sample from an arbitrary probability distribution.</p>
 <section id="cumulative-distribution-function">
 <h3><span class="section-number">2.1.5.1. </span>Cumulative Distribution Function<a class="headerlink" href="#cumulative-distribution-function" title="Link to this heading">#</a></h3>
-<p>We begin by introducing the Cumulative Distribution Function (CDF) for a random variable <span class="math notranslate nohighlight">\(X\)</span>.
+<p id="index-12"><span id="index-11"></span>We begin by introducing the Cumulative Distribution Function (CDF) for a random variable <span class="math notranslate nohighlight">\(X\)</span>.
 We will more carefully introduce the notion of a discrete random variable in Section 2.2, but for now it
-is sufficient to know that a discrete random variable takes a value from a countable set,
+is sufficient to know that a discrete random variable takes values from a countable set,
 each of which is assigned a probability value.
 For a random variable <span class="math notranslate nohighlight">\(X\)</span>, the CDF for <span class="math notranslate nohighlight">\(X\)</span> is denoted by <span class="math notranslate nohighlight">\(F_X\)</span>, and is defined as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-579ead2f-c4fd-4739-a624-0cb098ff2ccf">
-<span class="eqno">(2.4)<a class="headerlink" href="#equation-579ead2f-c4fd-4739-a624-0cb098ff2ccf" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-4c98b2e0-1b4a-4f81-b739-d0a66e5ab151">
+<span class="eqno">(2.4)<a class="headerlink" href="#equation-4c98b2e0-1b4a-4f81-b739-d0a66e5ab151" title="Permalink to this equation">#</a></span>\[\begin{equation}
 F_X(\alpha) = P(X \leq \alpha)
 \end{equation}\]</div>
 <p>It follows immediately that <span class="math notranslate nohighlight">\(0 \leq F_X(\alpha) \leq 1\)</span>,
@@ -663,12 +661,12 @@ In the case of discrete random variables,
 say <span class="math notranslate nohighlight">\(X \in \{ x_0, \dots x_{n-1}\}\)</span>, we can compute the CDF
 <span class="math notranslate nohighlight">\(F_X(\alpha)\)</span> by summing the probabilities assigned
 to all <span class="math notranslate nohighlight">\(x_i \leq \alpha\)</span></p>
-<div class="amsmath math notranslate nohighlight" id="equation-278c43d2-0c77-417a-93e1-c655222cadd9">
-<span class="eqno">(2.5)<a class="headerlink" href="#equation-278c43d2-0c77-417a-93e1-c655222cadd9" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-54d93d37-1e04-49de-be27-ced30613a3a3">
+<span class="eqno">(2.5)<a class="headerlink" href="#equation-54d93d37-1e04-49de-be27-ced30613a3a3" title="Permalink to this equation">#</a></span>\[\begin{equation}
 F_X(\alpha) = \sum_{x_i \leq \alpha} P(x_i) = \sum_{i=0}^{k-1} P(x_i)
 \end{equation}\]</div>
 <p>in which the rightmost summation follows if we choose <span class="math notranslate nohighlight">\(k\)</span> such that <span class="math notranslate nohighlight">\(x_{k-1} \leq \alpha &lt; x_k\)</span>.
-The terminology <em>Cumulative Distribution Function</em> is due to the fact that <span class="math notranslate nohighlight">\(F_X(\alpha)\)</span>
+The terminology <em>Cumulative Distribution Function</em> stems from the fact that <span class="math notranslate nohighlight">\(F_X(\alpha)\)</span>
 is the accumulated probability assigned to all outcomes less than or equal to <span class="math notranslate nohighlight">\(\alpha\)</span>,
 which is apparent in these summation expressions.</p>
 <p>But what does this have to do with generating samples from our distribution on categories?
@@ -677,13 +675,14 @@ interval <span class="math notranslate nohighlight">\([0,1]\)</span>.  For a dis
 the probability that our sample <span class="math notranslate nohighlight">\(x\)</span> corresponds to category <span class="math notranslate nohighlight">\(k\)</span>
 is exactly equal to <span class="math notranslate nohighlight">\(F_X(x_k) - F_X(x_{k-1})\)</span>, and we define <span class="math notranslate nohighlight">\(F_X(x_k)=0\)</span> for <span class="math notranslate nohighlight">\(k &lt; 0\)</span>.</p>
 <p>To see this, we impose an ordering on our categories,</p>
-<ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(c_0 = \mathrm{cardboard}\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(c_1 = \mathrm{paper}\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(c_2 = \mathrm{can}\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(c_3 = \mathrm{scrap \; metal}\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(c_4 = \mathrm{bottle}\)</span></p></li>
-</ul>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{align*}
+c_0 &amp;= \mathrm{cardboard} \\
+c_1 &amp;= \mathrm{paper} \\
+c_2 &amp;= \mathrm{can} \\
+c_3 &amp;= \mathrm{scrap \; metal} \\
+c_4 &amp;= \mathrm{bottle}
+\end{align*}\]</div>
 <p>and we define the random variable <span class="math notranslate nohighlight">\(X \in \{ 0,1,2,3,4\}\)</span> to be the index of the chosen category.
 The CDF for <span class="math notranslate nohighlight">\(X\)</span> is given by:</p>
 <div class="pst-scrollable-table-container"><table class="table">
@@ -759,7 +758,7 @@ to category 1.</p>
 </div>
 </div>
 <p>If we simulate our system by generating a large number of samples, we expect that the frequencies of each category will approximate their prior probabilities. To see this, the code below generates a histogram for 1000 generated samples. While the histogram values do not exactly match the prior probabilities, we can see that the approximation is quite good.</p>
-<p>Plotting this as a histogram:</p>
+<p id="index-13">We can use the plotly library to plot a set of 1000 samples generated using this method, as a <em>histogram</em>. The result is shown in Figure <a class="reference internal" href="#fig:discrete-samples"><span class="xref myst">2.2</span></a>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: A histogram of samples from the discrete distribution.</span>
@@ -769,10 +768,10 @@ to category 1.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/a91251f2ce44d96a717b6e48047fab2f8b382aeb71bb71e12484e54c8e8fc000.png" src="_images/a91251f2ce44d96a717b6e48047fab2f8b382aeb71bb71e12484e54c8e8fc000.png" />
+<img alt="_images/1a21460c9788a7737205b60b94b4175f6427b1e46ab1e5341844e2473985a778.png" src="_images/1a21460c9788a7737205b60b94b4175f6427b1e46ab1e5341844e2473985a778.png" />
 </div>
 </div>
-<p>Of course, GTSAM has all this machinery built-in:</p>
+<p>Of course, GTSAM has all this machinery built-in, and Figure <a class="reference internal" href="#fig:discrete-samples-gtsam"><span class="xref myst">2.3</span></a> is generated using GTSAM’s <code class="docutils literal notranslate"><span class="pre">DiscreteDistribution.sample</span></code> method. Notice that even for a 1000 samples the histograms can look noticeably different because of the variability in sampling.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: The same histogram produced by GTSAM&#39;s `DiscreteDistribution.sample` method.</span>
@@ -834,7 +833,7 @@ to category 1.</p>
 </table>
 </div></div></div>
 </div>
-<p id="index-4">As you can see, this is a PMF on the variable with id <span class="math notranslate nohighlight">\(42\)</span>, and it indeed has probabilities (that add up to one) for values <code class="docutils literal notranslate"><span class="pre">0..2</span></code>. Internally, GTSAM <em>actually</em> represents a PMF as a small <strong>decision tree</strong>, which you can reveal using <code class="docutils literal notranslate"><span class="pre">show</span></code>:</p>
+<p id="index-14">As you can see, this is a PMF on the variable with id <span class="math notranslate nohighlight">\(42\)</span>, and it indeed has probabilities (that add up to one) for values <code class="docutils literal notranslate"><span class="pre">0..2</span></code>. Internally, GTSAM <em>actually</em> represents a PMF as a small <strong>decision tree</strong>, which you can reveal using <code class="docutils literal notranslate"><span class="pre">show</span></code>, as illustrated in <a class="reference internal" href="#fig:discrete-decision-tree"><span class="xref myst">Figure 2.4</span></a>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: The decision tree representation for a discrete probability distribution.</span>
@@ -844,7 +843,7 @@ to category 1.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/7cf2652dd29913d0a566219b1573f69c3cfdc403300dc1f30fed1f76c3493703.svg" src="_images/7cf2652dd29913d0a566219b1573f69c3cfdc403300dc1f30fed1f76c3493703.svg" />
+<img alt="_images/cf2adf62e5eb991871c47af3753d496362b33c89ffe8b01df52c3f9e00d04f48.svg" src="_images/cf2adf62e5eb991871c47af3753d496362b33c89ffe8b01df52c3f9e00d04f48.svg" />
 </div>
 </div>
 <p>Of course, it would be much nicer if we could print out these PMFs in a more readable format, that shows us a name for each variable as well as a pretty name for each. This is where the <code class="docutils literal notranslate"><span class="pre">Variables</span></code> class comes to the rescue. We actually defined a global variable at the top of this notebook, like so:</p>
@@ -865,7 +864,7 @@ to category 1.</p>
 </div>
 </div>
 </div>
-<p>As you can see, the id for the variable is 1 (Category, defined above, took id 0), and the cardinality was inferred to be three from the length of the list given as second argument.</p>
+<p>As you can see, the id for the variable is 1 (<code class="docutils literal notranslate"><span class="pre">Category</span></code>, defined above, took id 0), and the cardinality was inferred to be three from the length of the list given as second argument.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">Variables</span></code> class can tell us about any discrete variable so defined, using the two methods <code class="docutils literal notranslate"><span class="pre">name</span></code> and <code class="docutils literal notranslate"><span class="pre">domain</span></code>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -879,10 +878,12 @@ to category 1.</p>
 </div>
 </div>
 </div>
-<p>Conceptually, the Variables class keeps track of the names of variables and what values each variable can take on. We do this so that later when we print, it can show us a beautiful outputs. Of course, this only works if we actually use the key returned to use by <code class="docutils literal notranslate"><span class="pre">Variables.discrete</span></code>. Let’s demonstrate this next:</p>
+<p>Conceptually, the <code class="docutils literal notranslate"><span class="pre">Variables</span></code> class keeps track of the names of variables and what values each variable can take on. We do this so that later when we print, it can show us a beautiful outputs. Of course, this only works if we actually use the key returned to use by <code class="docutils literal notranslate"><span class="pre">Variables.discrete</span></code>. We first define a prior using a string “spec” as shown in <a class="reference internal" href="#fig:unnormalized-spec"><span class="xref myst">Figure 2.5</span></a>. This also illustrates once again that the <code class="docutils literal notranslate"><span class="pre">spec</span></code> string does not need to contain normalized probabilities. The constructor will do the normalization for us! Note that the function <code class="docutils literal notranslate"><span class="pre">pretty(*)</span></code> above is just a shortcut for <code class="docutils literal notranslate"><span class="pre">gtbook.discrete.pretty(*,</span> <span class="pre">VARIABLES)</span></code>, and is also defined alongside <code class="docutils literal notranslate"><span class="pre">VARIABLES</span></code>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">prior_on_tres_commas</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">DiscreteDistribution</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="s2">&quot;2/4/2&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Creating a `DiscreteDistribution` using an unnormalized &quot;spec&quot;.</span>
+<span class="c1">#| label: fig:unnormalized-spec</span>
+<span class="n">prior_on_tres_commas</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">DiscreteDistribution</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="s2">&quot;2/4/2&quot;</span><span class="p">)</span>
 <span class="n">pretty</span><span class="p">(</span><span class="n">prior_on_tres_commas</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -903,19 +904,19 @@ to category 1.</p>
 </table>
 </div></div></div>
 </div>
-<p>The above also illustrates once again that the <code class="docutils literal notranslate"><span class="pre">spec</span></code> string does not need to contain normalized probabilities. The constructor will do the normalization for us!</p>
-<p>Note that the function <code class="docutils literal notranslate"><span class="pre">pretty(*)</span></code> above is just a shortcut for <code class="docutils literal notranslate"><span class="pre">gtbook.discrete.pretty(*,</span> <span class="pre">VARIABLES)</span></code>, and is also defined alongside VARIABLES.</p>
 <p>Finally, let us also look at the other <code class="docutils literal notranslate"><span class="pre">DiscreteDistribution</span></code> methods we called above:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">sample(self:</span> <span class="pre">gtsam.DiscreteConditional)</span> <span class="pre">-&gt;</span> <span class="pre">int</span></code>: The <code class="docutils literal notranslate"><span class="pre">sample</span></code> method samples according to the PMF, returning the integer index of the sampled value, in <span class="math notranslate nohighlight">\(0\dots cardinality-1\)</span>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sample(self:</span> <span class="pre">gtsam.DiscreteConditional)</span> <span class="pre">-&gt;</span> <span class="pre">int</span></code>: The <code class="docutils literal notranslate"><span class="pre">sample</span></code> method generates samples according to the PMF, returning the integer index of the sampled value, in <span class="math notranslate nohighlight">\(0\dots cardinality-1\)</span>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">pmf(self:</span> <span class="pre">gtsam.DiscreteDistribution)</span> <span class="pre">-&gt;</span> <span class="pre">List[float]</span></code>: The <code class="docutils literal notranslate"><span class="pre">pmf</span></code> method will simply return all probability values, in order.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">__call__(self:</span> <span class="pre">gtsam.DiscreteDistribution,</span> <span class="pre">arg0:</span> <span class="pre">int)</span> <span class="pre">-&gt;</span> <span class="pre">float</span></code>: The call operator: when given an integer value, will return just the one corresponding probability value.</p></li>
 </ul>
 <p>We have illustrated the use of all of these in the text, already.</p>
-<p>Finally, we can also inspect the <code class="docutils literal notranslate"><span class="pre">VARIABLES</span></code>, as it has an HTML representation:</p>
+<p>Finally, we can also inspect the value of <code class="docutils literal notranslate"><span class="pre">VARIABLES</span></code>, as it has an HTML representation. The table shown in <a class="reference internal" href="#fig:nice-Variables-value"><span class="xref myst">Figure 2.6</span></a> lists that we have defined two variables so far, <code class="docutils literal notranslate"><span class="pre">Category</span></code> and <code class="docutils literal notranslate"><span class="pre">TresCommas</span></code>, with respectively six and three possible values, enumerated in the <code class="docutils literal notranslate"><span class="pre">Domain</span></code> column.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">VARIABLES</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: A value of the `Variables` renders to a nice HTML output.</span>
+<span class="c1">#| label: fig:nice-Variables-value</span>
+<span class="n">VARIABLES</span>
 </pre></div>
 </div>
 </div>
@@ -932,7 +933,6 @@ to category 1.</p>
 </table>
 </div></div></div>
 </div>
-<p>The table shows that we have defined two variables so far, <code class="docutils literal notranslate"><span class="pre">Category</span></code> and <code class="docutils literal notranslate"><span class="pre">TresCommas</span></code>, with respectively six and three possible values, shown in the “Domain” column.</p>
 </section>
 </section>
 

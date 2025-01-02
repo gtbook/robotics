@@ -184,7 +184,7 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="S30_vacuum_intro.html">3. A Robot Vacuum Cleaner</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="S31_vacuum_state.html">3.1. Modeling the State of the Vacuum Cleaning Robot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S32_vacuum_actions.html">3.2. Actions over time</a></li>
-<li class="toctree-l2"><a class="reference internal" href="S33_vacuum_sensing.html">3.3. Dynamic Bayes Nets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S33_vacuum_sensing.html">3.3. Dynamic Bayesian Networks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S34_vacuum_perception.html">3.4. Perception with Graphical Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S35_vacuum_decision.html">3.5. Markov Decision Processes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S36_vacuum_RL.html">3.6. Learning to Act Optimally</a></li>
@@ -400,38 +400,38 @@
 <div><p>Deep Q-learning and policy gradient.</p>
 </div></blockquote>
 <a class="reference internal image-reference" href="_images/S66-Autonomous_Vehicle_with_LIDAR_and_cameras-03.jpg"><img alt="Splash image with steampunk autonomous car" class="align-center" src="_images/S66-Autonomous_Vehicle_with_LIDAR_and_cameras-03.jpg" style="width: 40%;" /></a>
-<p>Deep reinforcement learning (DRL) applies the power of deep learning to bring reinforcement learning to much more complex domains than what we were able to tackle with the Markov Decision Processes and RL concepts introduced in Chapter 3. The use of large, expressive neural networks has allowed researchers and practitioners alike to work with high bandwidth sensors such as video streams and LIDAR, and bring the promise of RL into real-world domains such as autonomous driving. This is still a field of active discovery and research, however, and we can give but a brief introduction here about what is a vast literature and problem space.</p>
+<p id="index-1">Deep reinforcement learning (DRL) applies the power of deep learning to bring reinforcement learning to much more complex domains than what we were able to tackle with the Markov Decision Processes and RL concepts introduced in Chapter 3. The use of large, expressive neural networks has allowed researchers and practitioners alike to work with high bandwidth sensors such as video streams and LIDAR, and bring the promise of RL into real-world domains such as autonomous driving. This is still a field of active discovery and research, however, and we can give but a brief introduction here about what is a vast literature and problem space.</p>
 <section id="rl-and-autonomous-driving">
 <h2><span class="section-number">6.6.1. </span>RL and Autonomous Driving<a class="headerlink" href="#rl-and-autonomous-driving" title="Link to this heading">#</a></h2>
-<p id="index-1">A simple example in the autonomous driving domain is <em>lane switching</em>. Suppose we are driving along at 3-lane highway, and we can see some ways ahead, and -using the rear-view mirror- some ways behind us. We are driving at a speed that is comfortable to us, but other cars have different ideas about their optimal driving speed. Hence, sometimes we would like to change lanes, and we could learn a policy to do this for us. As discussed in Section 6.5, this is <strong>lateral control</strong>. A more sophisticated example would also allow us to adapt our speed to the traffic pattern, but by relying on a smart cruise control system we could safely ignore the <strong>longitudinal control</strong> problem.</p>
+<p id="index-2">A simple example in the autonomous driving domain is <em>lane switching</em>. Suppose we are driving along at 3-lane highway, and we can see some ways ahead, and -using the rear-view mirror- some ways behind us. We are driving at a speed that is comfortable to us, but other cars have different ideas about their optimal driving speed. Hence, sometimes we would like to change lanes, and we could learn a policy to do this for us. As discussed in Section 6.5, this is <strong>lateral control</strong>. A more sophisticated example would also allow us to adapt our speed to the traffic pattern, but by relying on a smart cruise control system we could safely ignore the <strong>longitudinal control</strong> problem.</p>
 <p>To turn this into a reinforcement learning problem, we first need to define a state space <span class="math notranslate nohighlight">\({\cal X}\)</span> and an action space <span class="math notranslate nohighlight">\({\cal A}\)</span>. There are a variety of ways to engineer this aspect of the problem. For example, we could somehow encode the longitudinal distance and lane index for each of the K closest cars, where K is a parameter, say 5 or 10. One problem is that the number of cars that are <em>actually</em> present is variable, which is difficult to deal with. Another approach is to make this into an image processing problem, by creating a finite element representation of the road before and behind us, and marking each cell as occupied or not. The latter is fairly compatible with automotive sensors such as LIDAR.</p>
 <p>In terms of actions, the easiest approach is to have a number of <em>discrete</em> choices to go <code class="docutils literal notranslate"><span class="pre">left</span></code>, <code class="docutils literal notranslate"><span class="pre">right</span></code>, or <code class="docutils literal notranslate"><span class="pre">stay</span></code> in the current lane. We could be more sophisticated about it and have both “aggressive” and “slow” versions of these in addition to a default version, akin to the motion primitives we previously discussed.</p>
 <p>Actually implementing this on an autonomous vehicle, or even sketching an implementation in a notebook with recorded or simulated data, is beyond what we can accomplish in a jupyter notebook. Hence, we will be content below to sketch three popular foundational methods from deep reinforcement learning, without actually implementing them here. At the end of this chapter we provide some references where you can delve into these topics more deeply.</p>
 </section>
 <section id="deep-q-learning">
-<span id="index-2"></span><h2><span class="section-number">6.6.2. </span>Deep Q-Learning<a class="headerlink" href="#deep-q-learning" title="Link to this heading">#</a></h2>
+<span id="index-3"></span><h2><span class="section-number">6.6.2. </span>Deep Q-Learning<a class="headerlink" href="#deep-q-learning" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>DQN is an early deep learning RL method akin to Q-learning.</p>
 </div></blockquote>
 <p>Recall from Section 3.6 that we can define a policy in terms of <strong>Q-values</strong>, sometimes also called state-action values, and that we can define the optimal policy as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-090078c4-a773-433d-a2c2-eb7eb9441886">
-<span class="eqno">(6.67)<a class="headerlink" href="#equation-090078c4-a773-433d-a2c2-eb7eb9441886" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-87ec6998-9e7c-4d71-972a-a12989aada5e">
+<span class="eqno">(6.67)<a class="headerlink" href="#equation-87ec6998-9e7c-4d71-972a-a12989aada5e" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \pi^*(x) = \arg \max_a Q^*(x,a)
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(Q^*(x,a)\)</span> denote the Q-values for the <em>optimal</em> policy. In Q-learning, we start with some random Q-values and then iteratively improve an estimate <span class="math notranslate nohighlight">\(\hat{Q}(x,a)\)</span> for the optimal Q-values by alpha-blending between old and new estimates:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a74aeb75-05f0-4198-a3d7-e66c79c7c8c7">
-<span class="eqno">(6.68)<a class="headerlink" href="#equation-a74aeb75-05f0-4198-a3d7-e66c79c7c8c7" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ecf9c52b-a3bb-45f1-bfc2-7cc2fcd81bee">
+<span class="eqno">(6.68)<a class="headerlink" href="#equation-ecf9c52b-a3bb-45f1-bfc2-7cc2fcd81bee" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \hat{Q}(x,a) \leftarrow (1-\alpha) \hat{Q}(x,a) + \alpha~\text{target}(x,a,x').
 \end{equation}\]</div>
 <p>Above, the “target value”</p>
-<div class="amsmath math notranslate nohighlight" id="equation-e958f2fa-617b-4f1c-ab40-7c42a4386c65">
-<span class="eqno">(6.69)<a class="headerlink" href="#equation-e958f2fa-617b-4f1c-ab40-7c42a4386c65" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-3a84aa50-3a05-4733-aaeb-67a160480cc5">
+<span class="eqno">(6.69)<a class="headerlink" href="#equation-3a84aa50-3a05-4733-aaeb-67a160480cc5" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \text{target}(x,a,x') \doteq R(x,a,x') + \gamma \max_{a'} \hat{Q}(x',a')
 \end{equation}\]</div>
 <p>is a value that we think is an improvement on the previous value <span class="math notranslate nohighlight">\(\hat{Q}(x,a)\)</span>. Indeed: <span class="math notranslate nohighlight">\(\text{target}(x,a,x')\)</span> uses the <em>current</em> estimate of the Q-values for future states, but improves on this by using the <em>known</em> rewards <span class="math notranslate nohighlight">\(R(x,a,x')\)</span> for the current action <span class="math notranslate nohighlight">\(a\)</span> in the current state <span class="math notranslate nohighlight">\(x\)</span>.</p>
-<p id="index-3">In the <strong>deep Q-network</strong> or DQN method we use a <em>supervised learning</em> approach to Q-learning. We train a neural network, parameterized by <span class="math notranslate nohighlight">\(\theta\)</span>, to approximate the optimal Q-values:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-35b59c2d-9298-4092-a2f2-4cf465858c09">
-<span class="eqno">(6.70)<a class="headerlink" href="#equation-35b59c2d-9298-4092-a2f2-4cf465858c09" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<p id="index-4">In the <strong>deep Q-network</strong> or DQN method we use a <em>supervised learning</em> approach to Q-learning. We train a neural network, parameterized by <span class="math notranslate nohighlight">\(\theta\)</span>, to approximate the optimal Q-values:</p>
+<div class="amsmath math notranslate nohighlight" id="equation-1831e71c-2042-4f1c-ab82-d0d6522acd1a">
+<span class="eqno">(6.70)<a class="headerlink" href="#equation-1831e71c-2042-4f1c-ab82-d0d6522acd1a" title="Permalink to this equation">#</a></span>\[\begin{equation}
 Q^*(x,a) \approx \hat{Q}(x,a; \theta)
 \end{equation}\]</div>
 <p>It might be worthwhile at this point to re-visit Section 5.6, where we introduced neural networks and how to train them using stochastic gradient descent (SGD).</p>
@@ -441,60 +441,60 @@ Q^*(x,a) \approx \hat{Q}(x,a; \theta)
 <li><p>during <strong>experience replay</strong>, we <em>randomly sample</em> from these experiences to create mini-batches of data, which are in turn used to perform SGD on the parameters <span class="math notranslate nohighlight">\(\theta\)</span>.</p></li>
 </ul>
 <p>The second idea is to calculate the target values</p>
-<div class="amsmath math notranslate nohighlight" id="equation-05a234aa-1a72-4119-83ef-c1296e9a408d">
-<span class="eqno">(6.71)<a class="headerlink" href="#equation-05a234aa-1a72-4119-83ef-c1296e9a408d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-fae7bc10-941a-4f14-91fd-b4c16c6cce5b">
+<span class="eqno">(6.71)<a class="headerlink" href="#equation-fae7bc10-941a-4f14-91fd-b4c16c6cce5b" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \text{target}(x,a,x') \doteq R(x,a,x') + \gamma \max_{a'} \hat{Q}(x',a'; \theta^{old})
 \end{equation}\]</div>
 <p>with the parameters <span class="math notranslate nohighlight">\(\theta^{old}\)</span> from the previous epoch, to provide a more stable approximation target.
 The mini-batch loss we minimize using SGD is then</p>
-<div class="amsmath math notranslate nohighlight" id="equation-8e0935e9-e4bc-4451-8d65-ce112687533d">
-<span class="eqno">(6.72)<a class="headerlink" href="#equation-8e0935e9-e4bc-4451-8d65-ce112687533d" title="Permalink to this equation">#</a></span>\[\begin{equation}
-\mathcal{L}_{\text{DQN}}(\theta; D) \doteq \sum_{(x,a,r,x')\in D} [R(x,a,x') + \gamma \max_{a'} \hat{Q}(x',a'; \theta^{old}) - Q(x,a; \theta)]^2
+<div class="amsmath math notranslate nohighlight" id="equation-e645ecc0-cfb9-4def-861b-dbd112f7ebfd">
+<span class="eqno">(6.72)<a class="headerlink" href="#equation-e645ecc0-cfb9-4def-861b-dbd112f7ebfd" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\mathcal{L}_{\text{DQN}}(\theta; D) \doteq \sum_{(x,a,r,x')\in D} [\text{target}(x,a,x') - Q(x,a; \theta)]^2
 \end{equation}\]</div>
 <p>With this basic scheme, a team from DeepMind was able to achieve human or super-human performance on about 50 Atari 2600 games in 2015 <span id="id1">[<a class="reference internal" href="bibliography.html#id50" title="Volodymyr Mnih, Koray Kavukcuoglu, David Silver, Andrei A. Rusu, Joel Veness, Marc G. Bellemare, Alex Graves, Martin Riedmiller, Andreas K. Fidjeland, Georg Ostrovski, Stig Petersen, Charles Beattie, Amir Sadik, Ioannis Antonoglou, Helen King, Dharshan Kumaran, Daan Wierstra, Shane Legg, and Demis Hassabis. Human-level control through deep reinforcement learning. Nature, 518(7540):529–533, February 2015. URL: https://doi.org/10.1038/nature14236, doi:10.1038/nature14236.">Mnih <em>et al.</em>, 2015</a>]</span>.
 DQN is a so-called <strong>off-policy</strong> method, in that each execution phase uses the best policy we computed so far, but we can still replay earlier experiences gathered with “lesser” policies. Nothing in the experience replay phase references the policy: every experience leads to a valid Q-value backup and a valid supervised learning signal.</p>
 </section>
 <section id="policy-optimization">
-<span id="index-4"></span><h2><span class="section-number">6.6.3. </span>Policy Optimization<a class="headerlink" href="#policy-optimization" title="Link to this heading">#</a></h2>
+<span id="index-5"></span><h2><span class="section-number">6.6.3. </span>Policy Optimization<a class="headerlink" href="#policy-optimization" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>Policy optimization takes a black box optimization approach to a deep policy.</p>
 </div></blockquote>
 <p>Whereas the above gets at an optimal policy indirectly, via deep Q-learning, a different and very popular idea is to directly parameterize the policy using a neural network, with weights <span class="math notranslate nohighlight">\(\theta\)</span>. It is common to make this a <strong>stochastic policy</strong>,</p>
-<div class="amsmath math notranslate nohighlight" id="equation-9cc1f86b-fb98-4ea3-91d1-1925edd52019">
-<span class="eqno">(6.73)<a class="headerlink" href="#equation-9cc1f86b-fb98-4ea3-91d1-1925edd52019" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ec9f35a9-c0f8-433e-aa9a-7d7192f2144d">
+<span class="eqno">(6.73)<a class="headerlink" href="#equation-ec9f35a9-c0f8-433e-aa9a-7d7192f2144d" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \pi(a|x; \theta)
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(a \in {\cal A}\)</span> is an action, <span class="math notranslate nohighlight">\(x \in {\cal X}\)</span> is a state, and the policy outputs a <em>probability</em> for each action <span class="math notranslate nohighlight">\(a\)</span> based on the state <span class="math notranslate nohighlight">\(x\)</span>. One of the reasons to prefer stochastic policies is that they are differentiable, as they output continuous values rather than discrete actions. This allows us to optimize for them via gradient descent, as we explore in the next section.</p>
 <p>In Chapter 5 we used <em>supervised</em> learning to train neural networks, and we just applied this for learning Q-values in DQN. It is useful to consider how this might work for training a <em>policy</em>. Recall from Section 5.6 that we defined the empirical cross-entropy loss as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-929869df-ede5-44da-9cb4-54f3692bb08e">
-<span class="eqno">(6.74)<a class="headerlink" href="#equation-929869df-ede5-44da-9cb4-54f3692bb08e" title="Permalink to this equation">#</a></span>\[\begin{equation}
-\mathcal{L}_{\text{CE}}(\theta; D) \doteq \sum_c \sum_{(x,y=c)\in D}\log\frac{1}{p_c(x;\theta)}
+<div class="amsmath math notranslate nohighlight" id="equation-b3186151-efd4-4cbb-8f33-b70dbbcec267">
+<span class="eqno">(6.74)<a class="headerlink" href="#equation-b3186151-efd4-4cbb-8f33-b70dbbcec267" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\mathcal{L}_{\text{CE}}(\theta; D) \doteq - \sum_{(x,y=c)\in D} \sum_c \log p_c(x;\theta)
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(D\)</span> is a dataset of supervised learning examples. Above <span class="math notranslate nohighlight">\(y\)</span> takes on a discrete class value <span class="math notranslate nohighlight">\(c\)</span>, but another very common way to write this is via a “one-hot encoding”. Let <span class="math notranslate nohighlight">\(y_c\)</span> be 1 if <span class="math notranslate nohighlight">\(y=c\)</span> and 0 otherwise, then our loss becomes:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-869a9fbd-6d8e-438a-8b00-c4ec7f869bc9">
-<span class="eqno">(6.75)<a class="headerlink" href="#equation-869a9fbd-6d8e-438a-8b00-c4ec7f869bc9" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-f19d8767-e3b1-4185-8251-a3699498893b">
+<span class="eqno">(6.75)<a class="headerlink" href="#equation-f19d8767-e3b1-4185-8251-a3699498893b" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathcal{L}_{\text{CE}}(\theta; D) = -\sum_{(x,y)\in D} \sum_c y_c \log p_c(x;\theta)
 \end{equation}\]</div>
 <p>This formulation is equivalent, but now we are summing over all classes for each data point, with <span class="math notranslate nohighlight">\(y_c\)</span> acting as a <em>weight</em>, either one or zero. When someone is so kind as to give us the optimal action <span class="math notranslate nohighlight">\(y_a\)</span> (as a one-hot encoding) for every state <span class="math notranslate nohighlight">\(x\)</span> in some dataset <span class="math notranslate nohighlight">\(D\)</span>, we can apply this same loss function to a stochastic policy, obtaining</p>
-<div class="amsmath math notranslate nohighlight" id="equation-0bbad7aa-1f17-4026-991d-6ca03714477d">
-<span class="eqno">(6.76)<a class="headerlink" href="#equation-0bbad7aa-1f17-4026-991d-6ca03714477d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-8203b373-38b1-4478-83e4-8fa1de1a7d9e">
+<span class="eqno">(6.76)<a class="headerlink" href="#equation-8203b373-38b1-4478-83e4-8fa1de1a7d9e" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathcal{L}_{\text{CE}}(\theta; D) = -\sum_{(x,y)\in D} \sum_a y_a \log \pi(a| x; \theta)
 \end{equation}\]</div>
-<p>In <strong>policy optimization</strong> we gather data by rolling out a set of trajectories <span class="math notranslate nohighlight">\(\tau_i\)</span>. In supervised learning we have a dataset <span class="math notranslate nohighlight">\(D\)</span> and labels <span class="math notranslate nohighlight">\(y_c\)</span>, but we have to proceed a bit differently in a reinforcement learning setting. In particular, for <em>on-policy</em> RL we gather data by executing our current best guess for the policy for some rollout length or horizon <span class="math notranslate nohighlight">\(H\)</span>, and we do this many different times starting from different initial conditions, each time obtaining a <em>trajectory</em> <span class="math notranslate nohighlight">\(\tau_i\)</span>.
+<p>In <strong>policy optimization</strong> we gather data by rolling out a set of trajectories <span class="math notranslate nohighlight">\(\tau_i\)</span>. In supervised learning we have a dataset <span class="math notranslate nohighlight">\(D\)</span> and labels <span class="math notranslate nohighlight">\(y_c\)</span>, but we have to proceed a bit differently in a reinforcement learning setting. In particular, for <em>on-policy</em> RL we gather data by executing our current best guess for the policy for some rollout length or horizon <span class="math notranslate nohighlight">\(H\)</span>, and we do this many different times, each time obtaining a <em>trajectory</em> <span class="math notranslate nohighlight">\(\tau_i\)</span>.
 That still leaves the training signal: where does that come from?
-The key idea is to estimate how good a particular action is by estimating the state-action values <span class="math notranslate nohighlight">\(Q\)</span> from the roll-out rewards.
+The key idea is to estimate how good a particular action is by estimating the state-action values <span class="math notranslate nohighlight">\(Q\)</span> from the rollout rewards.
 In detail, we estimate the expected discounted reward starting at <span class="math notranslate nohighlight">\(x_{it}\)</span>, and taking action <span class="math notranslate nohighlight">\(a_{it}\)</span>, as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-d4212ffa-27d3-4bdc-8fd9-a00538b42289">
-<span class="eqno">(6.77)<a class="headerlink" href="#equation-d4212ffa-27d3-4bdc-8fd9-a00538b42289" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-c163e35e-119e-43f9-8d50-795c3a35a433">
+<span class="eqno">(6.77)<a class="headerlink" href="#equation-c163e35e-119e-43f9-8d50-795c3a35a433" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \hat{Q}(x_{it},a_{it}) \doteq \sum_{k=t}^H \gamma^{k-t}R(x_{ik},a_{ik},x_{ik}').
 \end{equation}\]</div>
-<p>Note in each rollout we can only sum until <span class="math notranslate nohighlight">\(k=H\)</span>, so Q-values earlier in the rollout will be estimated more accurately. Regardless, we can then use these estimated Q-values as an alternative to the “one or zero” weight above, obtaining</p>
-<div class="amsmath math notranslate nohighlight" id="equation-36cffc65-dd42-4b39-9682-155dafc6eb7e">
-<span class="eqno">(6.78)<a class="headerlink" href="#equation-36cffc65-dd42-4b39-9682-155dafc6eb7e" title="Permalink to this equation">#</a></span>\[\begin{equation}
-\mathcal{L}(\theta) = - \sum_i \sum_{t=1}^H \hat{Q}(x_{it},a_{it}) \log \pi(a_{it}|x_{it}, \theta)
+<p>Note in each rollout we can only sum until <span class="math notranslate nohighlight">\(k=H\)</span>, so Q-values earlier in the rollout will be estimated more accurately. Regardless, we can then use these estimated Q-values as an alternative to the “one or zero” weight above, obtaining the <strong>surrogate loss</strong> <span class="math notranslate nohighlight">\(\mathcal{L}(\theta)\)</span> by averaging over the trajectories <span class="math notranslate nohighlight">\(\tau_i\)</span>:</p>
+<div class="amsmath math notranslate nohighlight" id="equation-9a2dbad0-81c3-457b-affa-c2d9afd1b343">
+<span class="eqno">(6.78)<a class="headerlink" href="#equation-9a2dbad0-81c3-457b-affa-c2d9afd1b343" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\mathcal{L}(\theta) = - \sum_i \sum_{t=1}^H \hat{Q}(x_{it},a_{it}) \log \pi(a_{it}|x_{it} \theta).
 \end{equation}\]</div>
 <p>As you can see, once again estimated Q-values are involved, and they are expected to converge to the optimal Q-values over time.
-This time, however, we parameterize the <em>policy</em> instead. The Q-values act as weights in a surrogate loss function that looks very much like the supervised cross-entropy loss, but now our supervision comes from <em>experience</em>.</p>
+This time, however, we parameterize the <em>policy</em> instead. The Q-values act as weights in the surrogate loss function that looks very much like the supervised cross-entropy loss, but now our supervision comes from <em>experience</em>.</p>
 <p>Putting this all together yields the basic policy optimization algorithm:</p>
 <ul class="simple">
 <li><p>Initialize <span class="math notranslate nohighlight">\(\theta\)</span></p></li>
@@ -514,19 +514,19 @@ This time, however, we parameterize the <em>policy</em> instead. The Q-values ac
 More sophisticated “black-box” approaches such as genetic algorithms or evolution strategies can be applied to this problem instead, but they all share the property that they are “gradient-free”, which seems to be a sub-optimal strategy. Hence, we next look at a gradient descent approach to policy optimization.</p>
 </section>
 <section id="policy-gradient-methods">
-<span id="index-5"></span><h2><span class="section-number">6.6.4. </span>Policy Gradient Methods<a class="headerlink" href="#policy-gradient-methods" title="Link to this heading">#</a></h2>
+<span id="index-6"></span><h2><span class="section-number">6.6.4. </span>Policy Gradient Methods<a class="headerlink" href="#policy-gradient-methods" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>Policy gradient methods are akin to policy iteration, with a neural flavor.</p>
 </div></blockquote>
-<p>In a nutshell, policy gradient methods calculate the gradient of the surrogate loss <span class="math notranslate nohighlight">\(\mathcal{L}(\theta)\)</span> defined above with respect to the policy parameters <span class="math notranslate nohighlight">\(\theta\)</span>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-90b078d4-1b73-4637-9ea1-024f83cdcaf9">
-<span class="eqno">(6.79)<a class="headerlink" href="#equation-90b078d4-1b73-4637-9ea1-024f83cdcaf9" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<p>In a nutshell, policy gradient methods calculate the <em>gradient</em> of the surrogate loss <span class="math notranslate nohighlight">\(\mathcal{L}(\theta)\)</span> defined above with respect to the policy parameters <span class="math notranslate nohighlight">\(\theta\)</span>:</p>
+<div class="amsmath math notranslate nohighlight" id="equation-bb38add7-5816-4259-aee1-c1ba2be2a530">
+<span class="eqno">(6.79)<a class="headerlink" href="#equation-bb38add7-5816-4259-aee1-c1ba2be2a530" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \nabla_\theta \mathcal{L}(\theta) \leftarrow - \sum_i \sum_{t=1}^H \hat{Q}(x_{it},a_{it}) \nabla_\theta \log \pi(a_{it}|x_{it}, \theta),
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\nabla_\theta \log \pi(a_{it}|x_{it}, \theta)\)</span> is the gradient of the logarithm of the stochastic policy. This is easily obtained via back-propagation using any neural network framework of choice. In the case that actions are discrete, as in our example above, a stochastic policy network typically has a “softmax” function at the end. Then <span class="math notranslate nohighlight">\(\nabla_\theta \log \pi(a_{it}|x_{it}, \theta)\)</span> is the derivative of the “logit” layer right before the softmax function.
 We then use gradient descent to update the policy parameters:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-3cd5d213-73e6-4f67-be7e-ad8ee591750c">
-<span class="eqno">(6.80)<a class="headerlink" href="#equation-3cd5d213-73e6-4f67-be7e-ad8ee591750c" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-6c4de369-2d65-41db-bb95-71ca93ac3a3b">
+<span class="eqno">(6.80)<a class="headerlink" href="#equation-6c4de369-2d65-41db-bb95-71ca93ac3a3b" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \theta \leftarrow \theta - \alpha \nabla_\theta \mathcal{L}(\theta)
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\alpha\)</span> is a learning rate.</p>

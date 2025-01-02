@@ -184,7 +184,7 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="S30_vacuum_intro.html">3. A Robot Vacuum Cleaner</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="S31_vacuum_state.html">3.1. Modeling the State of the Vacuum Cleaning Robot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S32_vacuum_actions.html">3.2. Actions over time</a></li>
-<li class="toctree-l2"><a class="reference internal" href="S33_vacuum_sensing.html">3.3. Dynamic Bayes Nets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S33_vacuum_sensing.html">3.3. Dynamic Bayesian Networks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S34_vacuum_perception.html">3.4. Perception with Graphical Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S35_vacuum_decision.html">3.5. Markov Decision Processes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S36_vacuum_RL.html">3.6. Learning to Act Optimally</a></li>
@@ -438,8 +438,8 @@ This provides a quantitative upper bound on how badly things could go.
 Denote by <span class="math notranslate nohighlight">\(\mathrm{cost}(a_i,c)\)</span> the cost of applying action <span class="math notranslate nohighlight">\(a_i\)</span> when the piece of trash
 in the work cell is from category <span class="math notranslate nohighlight">\(c\)</span>.
 We then write our decision rule as a minimization problem</p>
-<div class="amsmath math notranslate nohighlight" id="equation-6e22ca60-0eb9-4714-b007-4423e7e61f50">
-<span class="eqno">(2.39)<a class="headerlink" href="#equation-6e22ca60-0eb9-4714-b007-4423e7e61f50" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-457a3edb-3c99-4b6b-a9d4-a4e4a2f456f8">
+<span class="eqno">(2.39)<a class="headerlink" href="#equation-457a3edb-3c99-4b6b-a9d4-a4e4a2f456f8" title="Permalink to this equation">#</a></span>\[\begin{equation}
 a^* = \arg \min_{a_i} \max_{c \in \Omega} \mathrm{cost}(a_i,c).
 \end{equation}\]</div>
 <p>From the table of costs given in previous sections, we see that this approach leads
@@ -463,8 +463,8 @@ In such cases, the concept of <span class="math notranslate nohighlight">\(expec
 <p>The idea of expected cost is this: what do we expect to be the average cost of performing an action many times.
 The expected value for the cost of applying action <span class="math notranslate nohighlight">\(a\)</span>
 is merely the weighted average of the costs <span class="math notranslate nohighlight">\(cost(a,c)\)</span>, where the weights are exactly the prior probabilities assigned to the categories, <span class="math notranslate nohighlight">\(c\)</span>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c6f2f8b8-2789-49e0-a4c2-1e0261390cdd">
-<span class="eqno">(2.40)<a class="headerlink" href="#equation-c6f2f8b8-2789-49e0-a4c2-1e0261390cdd" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-025f901c-4547-4a6e-abdf-507557afc66a">
+<span class="eqno">(2.40)<a class="headerlink" href="#equation-025f901c-4547-4a6e-abdf-507557afc66a" title="Permalink to this equation">#</a></span>\[\begin{equation}
 E[ cost(a, C) ] = \sum_{c \in \Omega} cost(a,c) P(c) 
 \end{equation}\]</div>
 <p>In the equation above for expectation, the notation <span class="math notranslate nohighlight">\(E [ cost(a, C) ]\)</span> denotes the expected cost for executing the action <span class="math notranslate nohighlight">\(a\)</span> with the expectation being taken with respect to the randomly occurring trash category <span class="math notranslate nohighlight">\(C\)</span>.
@@ -472,8 +472,8 @@ We use upper case <span class="math notranslate nohighlight">\(C\)</span> to ind
 should be computed with respect to the probability distribution on categories
 (i.e., the priors given in the previous section).</p>
 <p>We can now formulate our decision process as the following minimization problem</p>
-<div class="amsmath math notranslate nohighlight" id="equation-61a692bc-5cbd-49eb-97d9-6c6eb6e9a0c6">
-<span class="eqno">(2.41)<a class="headerlink" href="#equation-61a692bc-5cbd-49eb-97d9-6c6eb6e9a0c6" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-a0375d67-6ec0-4b2f-97ad-6b0e6e894580">
+<span class="eqno">(2.41)<a class="headerlink" href="#equation-a0375d67-6ec0-4b2f-97ad-6b0e6e894580" title="Permalink to this equation">#</a></span>\[\begin{equation}
 a^* = \arg \min_{a_i} E[ cost(a_i, C) ]
 \end{equation}\]</div>
 <section id="implementation-in-python">
@@ -611,20 +611,20 @@ We can use this conditional distribution to compute the expectation of the
 cost of an action given that the sensor returned a specific measurement.
 This can be done by modifying the usual equation for expectation so
 that the conditional distribution <span class="math notranslate nohighlight">\(P(C|S)\)</span> is used instead of the prior <span class="math notranslate nohighlight">\(P(C)\)</span>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-7905f5da-4662-4d9b-b511-85df9d1294d3">
-<span class="eqno">(2.42)<a class="headerlink" href="#equation-7905f5da-4662-4d9b-b511-85df9d1294d3" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-063c2f09-8919-4b94-b60e-27fbd1e36da4">
+<span class="eqno">(2.42)<a class="headerlink" href="#equation-063c2f09-8919-4b94-b60e-27fbd1e36da4" title="Permalink to this equation">#</a></span>\[\begin{equation}
 E[ cost(a, C) | S=s ] = \sum_{c \in \Omega} cost(a,c) P(c|S=s) 
 \end{equation}\]</div>
 <p>Our decision process can then be formulated as a minimization of this conditional
 expected cost:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-1367a169-bf06-43f8-bd6c-3922fea1d684">
-<span class="eqno">(2.43)<a class="headerlink" href="#equation-1367a169-bf06-43f8-bd6c-3922fea1d684" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ddf5fdb9-2cbc-4d0b-8d38-9e389a6d43ab">
+<span class="eqno">(2.43)<a class="headerlink" href="#equation-ddf5fdb9-2cbc-4d0b-8d38-9e389a6d43ab" title="Permalink to this equation">#</a></span>\[\begin{equation}
 a^*(S=s) = \arg \min_a E [ cost(a, C) | S=s ]
 \end{equation}\]</div>
 <p>Note that this approach can also be applied when we have multiple sensors by conditioning
 on the collection of sensor readings, say <span class="math notranslate nohighlight">\(s_1, \dots, s_n\)</span>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-96ae8fa4-f28a-4fe8-b45d-b77367f36bcc">
-<span class="eqno">(2.44)<a class="headerlink" href="#equation-96ae8fa4-f28a-4fe8-b45d-b77367f36bcc" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-b559e98d-35c4-4c0b-9815-aa4bb969afa1">
+<span class="eqno">(2.44)<a class="headerlink" href="#equation-b559e98d-35c4-4c0b-9815-aa4bb969afa1" title="Permalink to this equation">#</a></span>\[\begin{equation}
 E[ cost(a, C) | S_1=s_1, \dots, S_n=s_n ] = \sum_{c \in \Omega} cost(a,c) P(c|S_1=s_1, \dots, S_n=s_n ) 
 \end{equation}\]</div>
 <p>In python, we just calculate the expected cost, now using the posterior instead of the prior, and take argmin using <code class="docutils literal notranslate"><span class="pre">np.argmin</span></code>:</p>
