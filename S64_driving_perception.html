@@ -423,8 +423,8 @@ Recall from Section 6.1 that a 2D pose
 <span class="math notranslate nohighlight">\(T\doteq(x,y,\theta)\)</span> is an element of the Special Euclidean group <span class="math notranslate nohighlight">\(SE(2)\)</span>,
 and
 can be represented by a <span class="math notranslate nohighlight">\(3\times3\)</span> matrix of the form</p>
-<div class="amsmath math notranslate nohighlight" id="equation-ad711a20-79d8-47fa-9f60-bb7808ef7d8f">
-<span class="eqno">(6.35)<a class="headerlink" href="#equation-ad711a20-79d8-47fa-9f60-bb7808ef7d8f" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-0cbf66da-70ec-4a60-91d7-7e24eca6a5b7">
+<span class="eqno">(6.35)<a class="headerlink" href="#equation-0cbf66da-70ec-4a60-91d7-7e24eca6a5b7" title="Permalink to this equation">#</a></span>\[\begin{equation}
 T=\left[\begin{array}{cc|c}
 \cos\theta &amp; -\sin\theta &amp; x\\
 \sin\theta &amp; \cos\theta &amp; y\\
@@ -440,8 +440,8 @@ rotation matrix representing the vehicle’s orientation in the plane.</p>
 <p>Below it is important to understand what coordinate frames are involved, and hence we insist on always annotating the transformation matrices with indices indicating the reference frame as superscript and the frame under consideration using subscript. This convention also
 provides a reminder to how points in one frame are transformed into the other.
 As an example, the following illustrates how points in the frame <span class="math notranslate nohighlight">\(b\)</span> are transformed into the reference frame <span class="math notranslate nohighlight">\(a\)</span> by referring to the pose <span class="math notranslate nohighlight">\(T^a_b\)</span> of frame <span class="math notranslate nohighlight">\(b\)</span> in <span class="math notranslate nohighlight">\(a\)</span>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-f98d3526-d146-43db-a8ca-c5d415137a52">
-<span class="eqno">(6.36)<a class="headerlink" href="#equation-f98d3526-d146-43db-a8ca-c5d415137a52" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-3c7c587c-3c02-4b4c-8936-e428c07983d6">
+<span class="eqno">(6.36)<a class="headerlink" href="#equation-3c7c587c-3c02-4b4c-8936-e428c07983d6" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P^a = \left[\begin{array}{cc}
 R^a_b &amp; t^a_b\\
 0 &amp; 1
@@ -468,8 +468,8 @@ but we will not need that until the next chapter.</p>
 <section id="finding-closest-points">
 <span id="index-3"></span><h3><span class="section-number">6.4.2.1. </span>Finding Closest Points<a class="headerlink" href="#finding-closest-points" title="Link to this heading">#</a></h3>
 <p>The first step is the easiest: for each point <span class="math notranslate nohighlight">\(P^a_j\)</span> in the first point cloud, we define <span class="math notranslate nohighlight">\(P^b_j\)</span> to be its closest point in the second point cloud. Stated formally, for each point <span class="math notranslate nohighlight">\(P^a_j\)</span>, we solve the following minimization problem:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a4740c75-2564-4288-9882-f7f72b5d720b">
-<span class="eqno">(6.37)<a class="headerlink" href="#equation-a4740c75-2564-4288-9882-f7f72b5d720b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-e3d2c889-f9d5-410f-8706-82f12b7e6d7c">
+<span class="eqno">(6.37)<a class="headerlink" href="#equation-e3d2c889-f9d5-410f-8706-82f12b7e6d7c" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P^b_j = \arg \min_{P^b_k} \| P^b_k - P^a_j\|^2
 \end{equation}\]</div>
 <p>We prefer using indices <span class="math notranslate nohighlight">\(j\)</span> for points as we use <span class="math notranslate nohighlight">\(i\)</span> for poses below, making it easier to associate notation with geometric concepts. Two things about the above minimization are worth noting:
@@ -484,44 +484,44 @@ for point clouds of size <span class="math notranslate nohighlight">\(N\)</span>
 <span id="index-4"></span><h3><span class="section-number">6.4.2.2. </span>Estimating the Pairwise Transform<a class="headerlink" href="#estimating-the-pairwise-transform" title="Link to this heading">#</a></h3>
 <p>The second step is the more interesting one: given a set of closest point pairs <span class="math notranslate nohighlight">\(\{(P^a_j, P^b_j)\}\)</span>, how can we estimate the relative pose <span class="math notranslate nohighlight">\(\widehat{T^a_b}\)</span> between the two point clouds? This is known as the <strong>pose alignment</strong> problem.</p>
 <p>Let us first assume that the two point clouds only differ by a rotation <span class="math notranslate nohighlight">\(R^a_b\)</span>. When this is the case, and assuming we have corresponding points <span class="math notranslate nohighlight">\(P^a\)</span> and <span class="math notranslate nohighlight">\(P^b\)</span>, then each point <span class="math notranslate nohighlight">\(P^a\)</span> in the first cloud can be expressed as a function of a point <span class="math notranslate nohighlight">\(P^b\)</span> in the second cloud:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-d2d12109-bca2-46eb-93ea-f26fd7ec6c15">
-<span class="eqno">(6.38)<a class="headerlink" href="#equation-d2d12109-bca2-46eb-93ea-f26fd7ec6c15" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-81c4c769-e4c4-4729-a8c2-41251ae6b703">
+<span class="eqno">(6.38)<a class="headerlink" href="#equation-81c4c769-e4c4-4729-a8c2-41251ae6b703" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P^a = R^a_b P^b
 \end{equation}\]</div>
 <p>One might be tempted to think that therefore</p>
-<div class="amsmath math notranslate nohighlight" id="equation-3b236b5c-c1b2-48a2-b881-8962dfc8a99a">
-<span class="eqno">(6.39)<a class="headerlink" href="#equation-3b236b5c-c1b2-48a2-b881-8962dfc8a99a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-099e11f0-f227-487f-abd1-c2ee99859181">
+<span class="eqno">(6.39)<a class="headerlink" href="#equation-099e11f0-f227-487f-abd1-c2ee99859181" title="Permalink to this equation">#</a></span>\[\begin{equation}
 R^a_b = P^a (P^b)^{-1}
 \end{equation}\]</div>
 <p>but, of course, there since <span class="math notranslate nohighlight">\(P^b\)</span> is a vector, it does not have an inverse. So this would not work.
 Interestingly, though, if we form the matrix</p>
-<div class="amsmath math notranslate nohighlight" id="equation-68082717-68d0-40fa-88e0-3d1d8fcd7a4c">
-<span class="eqno">(6.40)<a class="headerlink" href="#equation-68082717-68d0-40fa-88e0-3d1d8fcd7a4c" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-81b4c69d-cdab-4c1a-a886-36b5ec4daabd">
+<span class="eqno">(6.40)<a class="headerlink" href="#equation-81b4c69d-cdab-4c1a-a886-36b5ec4daabd" title="Permalink to this equation">#</a></span>\[\begin{equation}
 H = \sum_j P^a_j (P^b_j)^T
 \end{equation}\]</div>
 <p>by summing over at least 3 point pairs <span class="math notranslate nohighlight">\((P^a_j, P^b_j)\)</span>, it turns out that the rotation matrix <span class="math notranslate nohighlight">\(\widehat{R^a_b}\)</span> closest to <span class="math notranslate nohighlight">\(H\)</span> in the least squares sense <em>is</em> the best possible estimate for the unknown rotation <span class="math notranslate nohighlight">\(R^a_b\)</span>. In addition, using the <em>singular value decomposition</em> from linear algebra, it is <em>very</em> easy to compute.
 The singular value decomposition of the matrix <span class="math notranslate nohighlight">\(H\)</span> is defined by <span class="math notranslate nohighlight">\(H=U\Lambda V^T\)</span>, in which <span class="math notranslate nohighlight">\(\Lambda\)</span> is a diagonal
 matrix of singular values, and both <span class="math notranslate nohighlight">\(U\)</span> and <span class="math notranslate nohighlight">\(V\)</span> are orthogonal matrices.
 The optimal estimate for the rotation matrix is given by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a44d7374-1dba-499d-bc76-8a9991dd9b17">
-<span class="eqno">(6.41)<a class="headerlink" href="#equation-a44d7374-1dba-499d-bc76-8a9991dd9b17" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-6fd8cb9f-847a-4b5d-97d9-e5966e9b13df">
+<span class="eqno">(6.41)<a class="headerlink" href="#equation-6fd8cb9f-847a-4b5d-97d9-e5966e9b13df" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \widehat{R^a_b} = U V^T
 \end{equation}\]</div>
 <p>Interesting aside: this problem is known as the <em>orthogonal Procrustes problem</em> and its solution via SVD has been known since 1966, from a 1966 paper by Peter Schönemann <span id="id1">[<a class="reference internal" href="bibliography.html#id25" title="Peter Schoenemann. A generalized solution of the orthogonal procrustes problem. Psychometrika, 31(1):1-10, March 1966. doi:10.1007/BF02289451.">Schoenemann, 1966</a>]</span>. Procrustes was a mythological greek villain who either stretched or cut his victims to size to fit their bed, analogous to how we make the rotation matrix above fit the data.</p>
 <p>The above solves the problem when there is only rotation, but we must also consider relative translation between the two point clouds.
 Fortunately, it turns out that the best possible translation estimate will always align the <em>centroids</em> of the two point clouds. Hence, when there is translation present, we simply compute the matrix <span class="math notranslate nohighlight">\(H\)</span> from the <em>centered</em> points,</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b83c260a-cf06-44a6-8ecd-d310edb83a23">
-<span class="eqno">(6.42)<a class="headerlink" href="#equation-b83c260a-cf06-44a6-8ecd-d310edb83a23" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-2863780e-d09b-4012-ac38-37db6a7ede3b">
+<span class="eqno">(6.42)<a class="headerlink" href="#equation-2863780e-d09b-4012-ac38-37db6a7ede3b" title="Permalink to this equation">#</a></span>\[\begin{equation}
 H = \sum_j (P^a_j-C^a) (P^b_j-C^b)^T
 \end{equation}\]</div>
 <p>where the point cloud centroids <span class="math notranslate nohighlight">\(C^a\)</span> and <span class="math notranslate nohighlight">\(C^b\)</span> are computed as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b5a6388b-40b0-48a1-b3e6-fc8abc650ee8">
-<span class="eqno">(6.43)<a class="headerlink" href="#equation-b5a6388b-40b0-48a1-b3e6-fc8abc650ee8" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ab2d830d-ad4a-4e06-8369-5d3704ef6765">
+<span class="eqno">(6.43)<a class="headerlink" href="#equation-ab2d830d-ad4a-4e06-8369-5d3704ef6765" title="Permalink to this equation">#</a></span>\[\begin{equation}
 C^a = \frac{1}{N} \sum_j P^a_j\text{    and    }C^b = \frac{1}{N} \sum_j P^b_j.
 \end{equation}\]</div>
 <p>Given the estimated rotation <span class="math notranslate nohighlight">\(\widehat{R^a_b}\)</span>, the translation estimate <span class="math notranslate nohighlight">\(\widehat{t^a_b}\)</span> can then be estimated from</p>
-<div class="amsmath math notranslate nohighlight" id="equation-6c726bd6-276a-411d-bd64-a67236131f8b">
-<span class="eqno">(6.44)<a class="headerlink" href="#equation-6c726bd6-276a-411d-bd64-a67236131f8b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-8ec1196c-f1c4-445f-9531-edd5f337eb81">
+<span class="eqno">(6.44)<a class="headerlink" href="#equation-8ec1196c-f1c4-445f-9531-edd5f337eb81" title="Permalink to this equation">#</a></span>\[\begin{equation}
 C^a = \widehat{R^a_b} C^b + \widehat{t^a_b},
 \end{equation}\]</div>
 <p>and the final relative pose estimate is given by <span class="math notranslate nohighlight">\(\widehat{T^a_b} =(\widehat{R^a_b}, \widehat{t^a_b})\)</span>. By the way, all of the above math is identical for both the 2D and 3D case.</p>
@@ -571,8 +571,8 @@ optimized poses <span class="math notranslate nohighlight">\(T_{i}^{*}\)</span>.
 represented as a factor. As before, the factor graph represent the
 posterior distribution over the unknown pose variables
 <span class="math notranslate nohighlight">\(\mathcal{T}=\{X_{1}\dots X_{5}\}\)</span> given the known measurements:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-24123c76-6258-4175-aa96-2bfff8859943">
-<span class="eqno">(6.45)<a class="headerlink" href="#equation-24123c76-6258-4175-aa96-2bfff8859943" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-039cd60a-1fee-43fa-9020-a08d8b9b0fcc">
+<span class="eqno">(6.45)<a class="headerlink" href="#equation-039cd60a-1fee-43fa-9020-a08d8b9b0fcc" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \phi(\mathcal{T})=\prod_{i}\phi_{i}(\mathcal{T}_{i}),
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\mathcal{T}_{i}\)</span> is the set of poses involved with factor <span class="math notranslate nohighlight">\(\phi_i\)</span>.
@@ -612,31 +612,31 @@ continuous variables, but we have never put the two together.</p>
 recover the MAP solution by minimizing a sum of squared differences.
 Recall that a univariate Gaussian density with <strong>mean</strong> <span class="math notranslate nohighlight">\(\mu\)</span> and <strong>variance</strong> <span class="math notranslate nohighlight">\(\sigma^{2}\)</span> is
 given by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-783dd19e-a3a0-4c73-a49f-31ba47b56e41">
-<span class="eqno">(6.46)<a class="headerlink" href="#equation-783dd19e-a3a0-4c73-a49f-31ba47b56e41" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-e57989aa-1255-4b9a-ad9f-a035ca49fa39">
+<span class="eqno">(6.46)<a class="headerlink" href="#equation-e57989aa-1255-4b9a-ad9f-a035ca49fa39" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathcal{N} (x; \mu, \sigma^2) =\frac{1}{\sqrt{2\pi\sigma^{2}}}\exp\left\{ -\frac{1}{2}\left(\frac{x-\mu}{\sigma}\right)^{2}\right\} .
 \end{equation}\]</div>
 <p>An example can help explain this more clearly.
 In particular, if we focus our attention in PoseSLAM on <em>just the x coordinates</em>, then we
 predict relative measurements <span class="math notranslate nohighlight">\(\tilde{x}_{ij}\)</span> by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c4903338-dc92-40d9-88ee-a9c4d3740107">
-<span class="eqno">(6.47)<a class="headerlink" href="#equation-c4903338-dc92-40d9-88ee-a9c4d3740107" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-99311c16-293d-40fe-b983-ce698c8fbb55">
+<span class="eqno">(6.47)<a class="headerlink" href="#equation-99311c16-293d-40fe-b983-ce698c8fbb55" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \tilde{x}_{ij}\approx h(x_{i,}x_{j})=x_{j}-x_{i}
 \end{equation}\]</div>
 <p>and, taking <span class="math notranslate nohighlight">\(\sigma=1\)</span> for now, each factor in
 Figure
 <a href="#fig:PoseSLAMFG" data-reference-type="ref" data-reference="fig:PoseSLAMFG">1</a>
 could be written as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-37482f39-8520-4b0b-a02a-79353f29f1cc">
-<span class="eqno">(6.48)<a class="headerlink" href="#equation-37482f39-8520-4b0b-a02a-79353f29f1cc" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-3d5619f5-eac9-47c8-8ff0-15d5f888632a">
+<span class="eqno">(6.48)<a class="headerlink" href="#equation-3d5619f5-eac9-47c8-8ff0-15d5f888632a" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \phi(x_{i},x_{j})=\frac{1}{\sqrt{2\pi}}\exp\left\{ -\frac{1}{2}\left(x_{j}-x_{i}-\tilde{x}_{ij}\right)^{2}\right\} ,
 \end{equation}\]</div>
 <p>By taking the negative log,
 maximizing the posterior corresponds to minimizing the following sum of
 squares, where them sum ranges over all <span class="math notranslate nohighlight">\((i,j)\)</span> pairs for which we have a
 pairwise measurement:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-90a1af63-4a82-4c45-814f-679263ff5fe6">
-<span class="eqno">(6.49)<a class="headerlink" href="#equation-90a1af63-4a82-4c45-814f-679263ff5fe6" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-6f31e2cb-7063-4a34-9493-8bd50ef47297">
+<span class="eqno">(6.49)<a class="headerlink" href="#equation-6f31e2cb-7063-4a34-9493-8bd50ef47297" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathcal{X}^{*}=\arg\min_{\mathcal{X}}\sum_{k}\frac{1}{2}\left(h(x_{i},x_{j})-\tilde{x}_{ij}\right)^{2}=\arg\min_{\mathcal{X}}\sum_{k}\frac{1}{2}\left(x_{j}-x_{i}-\tilde{x}_{ij}\right)^{2}.
 \end{equation}\]</div>
 <p>Linear least squares problems like these are easily solved by numerical
@@ -653,14 +653,14 @@ simply linear functions of the poses. Indeed, in PoseSLAM both the
 prediction <span class="math notranslate nohighlight">\(h(T_{i},T_{j})\)</span> and the measurement <span class="math notranslate nohighlight">\(\tilde{T}_{ij}\)</span>
 are relative poses. The measurement prediction function <span class="math notranslate nohighlight">\(h(\cdot)\)</span> is given
 by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-d6efa0f9-f9e7-45c2-8942-4918cd30c691">
-<span class="eqno">(6.50)<a class="headerlink" href="#equation-d6efa0f9-f9e7-45c2-8942-4918cd30c691" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-f8c508ec-6933-4f7e-8edb-f9c8e1900c30">
+<span class="eqno">(6.50)<a class="headerlink" href="#equation-f8c508ec-6933-4f7e-8edb-f9c8e1900c30" title="Permalink to this equation">#</a></span>\[\begin{equation}
 h(T_{i},T_{j})=T_{i}^{-1}T_{j}
 \end{equation}\]</div>
 <p>and the
 measurement error to be minimized is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-6610fae9-4513-4e1a-99fc-e22dd1652fe2">
-<span class="eqno">(6.51)<a class="headerlink" href="#equation-6610fae9-4513-4e1a-99fc-e22dd1652fe2" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d5662494-469b-4d4e-a0d5-eb9b39312aad">
+<span class="eqno">(6.51)<a class="headerlink" href="#equation-d5662494-469b-4d4e-a0d5-eb9b39312aad" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \frac{1}{2}\left\Vert \log\left(\tilde{T}_{ij}^{-1}T_{i}^{-1}T_{j}\right)\right\Vert ^{2}
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\log:SE(2)\rightarrow\mathbb{R}^3\)</span> is a variation of the logarithm function
@@ -696,15 +696,15 @@ this approach does not ensure that the upper right submatrix is a valid rotation
 the corresponding linear problem using least-squares, and iterate this
 until convergence. We do this by, at each iteration, parameterizing a
 pose <span class="math notranslate nohighlight">\(T\)</span> by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-72402c0b-8299-4836-b1ec-8b37d53af182">
-<span class="eqno">(6.52)<a class="headerlink" href="#equation-72402c0b-8299-4836-b1ec-8b37d53af182" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-18b0e175-8ff5-4d3c-81bb-c630f780cce7">
+<span class="eqno">(6.52)<a class="headerlink" href="#equation-18b0e175-8ff5-4d3c-81bb-c630f780cce7" title="Permalink to this equation">#</a></span>\[\begin{equation}
 T\approx\bar{T}\Delta(\xi)
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\xi\)</span> are local coordinates
 <span class="math notranslate nohighlight">\(\xi\doteq(\delta x,\delta y,\delta\theta)\)</span> and the incremental pose
 <span class="math notranslate nohighlight">\(\Delta(\xi)\in SE(2)\)</span> is defined as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-60b6ed20-f564-4013-a45d-c133ba7b6de0">
-<span class="eqno">(6.53)<a class="headerlink" href="#equation-60b6ed20-f564-4013-a45d-c133ba7b6de0" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-fc3edfe1-5921-451f-93fb-4641cb56a8e8">
+<span class="eqno">(6.53)<a class="headerlink" href="#equation-fc3edfe1-5921-451f-93fb-4641cb56a8e8" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \Delta(\xi)=\left[\begin{array}{cc|c}
 1 &amp; -\delta\theta &amp; \delta x\\
 \delta\theta &amp; 1 &amp; \delta y\\
@@ -715,8 +715,8 @@ T\approx\bar{T}\Delta(\xi)
 approximation of the <span class="math notranslate nohighlight">\(SE(2)\)</span> matrix.
 In 3D the local coordinates <span class="math notranslate nohighlight">\(\xi\)</span> are 6-dimensional, and the small angle
 approximation is defined as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-3def6769-f0b7-40d5-9e82-61e36bf4a5bc">
-<span class="eqno">(6.54)<a class="headerlink" href="#equation-3def6769-f0b7-40d5-9e82-61e36bf4a5bc" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-9ebdb9ed-d170-45e2-9454-4c6d3fad2d76">
+<span class="eqno">(6.54)<a class="headerlink" href="#equation-9ebdb9ed-d170-45e2-9454-4c6d3fad2d76" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \Delta(\xi)=\left[\begin{array}{ccc|c}
 1 &amp; -\delta\theta_{z} &amp; \delta\theta_{y} &amp; \delta x\\
 \delta\theta_{z} &amp; 1 &amp; -\delta\theta_{x} &amp; \delta y\\
@@ -726,8 +726,8 @@ approximation is defined as</p>
 \end{equation}\]</div>
 <p>With this new notation, we can approximate the
 nonlinear error by a linear approximation:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-e1ef1b26-a026-4440-9c42-ca70f8e072ca">
-<span class="eqno">(6.55)<a class="headerlink" href="#equation-e1ef1b26-a026-4440-9c42-ca70f8e072ca" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ba1edbb4-28f2-42cc-9dd9-f8e3bfc68c94">
+<span class="eqno">(6.55)<a class="headerlink" href="#equation-ba1edbb4-28f2-42cc-9dd9-f8e3bfc68c94" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \frac{1}{2}\left\Vert \log\left(\tilde{T}_{ij}^{-1}T_{i}^{-1}T_{j}\right)\right\Vert ^{2}\approx\frac{1}{2}\left\Vert A_{i}\xi_{i}+A_{j}\xi_{j}-b\right\Vert ^{2}.
 \end{equation}\]</div>
 <p>For <span class="math notranslate nohighlight">\(SE(2)\)</span> the matrices <span class="math notranslate nohighlight">\(A_{i}\)</span> and <span class="math notranslate nohighlight">\(A_{j}\)</span> are the <span class="math notranslate nohighlight">\(3\times3\)</span> <strong>or
@@ -742,8 +742,8 @@ expensive to compute. In three dimensions, the Jacobian matrices are
 coordinates of all poses by summing over all pose constraints. If we
 index those constraints by <span class="math notranslate nohighlight">\(k\)</span>, we have the following least squares
 problem:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-150c10c8-37f1-448d-b387-4c1c8f38a151">
-<span class="eqno">(6.56)<a class="headerlink" href="#equation-150c10c8-37f1-448d-b387-4c1c8f38a151" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-579845be-9520-45ab-b5cb-0d1fd605c056">
+<span class="eqno">(6.56)<a class="headerlink" href="#equation-579845be-9520-45ab-b5cb-0d1fd605c056" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \Xi^{*}=\arg\min_{\Xi}\sum_{k}\frac{1}{2}\Vert A_{ki}\xi_{i}+A_{kj}\xi_{j}-b_{k}\Vert ^{2}
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\Xi\doteq \{  \xi_{i}\}\)</span>, the set
@@ -1084,7 +1084,7 @@ bearing-range measurements as well.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/66c164c65413c802c6b28a0e92ba8e40569000af0dda238526f190bd35785d33.png" src="_images/66c164c65413c802c6b28a0e92ba8e40569000af0dda238526f190bd35785d33.png" />
+<img alt="_images/a6230bd7cafe568889a842fb5ddad1bc6cfe89b12edf6fa6c509920d831edebb.png" src="_images/a6230bd7cafe568889a842fb5ddad1bc6cfe89b12edf6fa6c509920d831edebb.png" />
 </div>
 </div>
 </section>
