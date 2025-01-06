@@ -1,3 +1,5 @@
+<!-- no-tex -->
 # Index
-```{show-index} Index
+<!-- /no-tex -->
+```{show-index}
 ```
