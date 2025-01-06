@@ -514,8 +514,8 @@ and the second line shows the “edge” image.
 Every value in the edge image is computed from three values in the original image.
 For example, the first pixel in the edge image has the value 2, which is calculated from the values
 <span class="math notranslate nohighlight">\(\begin{bmatrix}3 &amp; 3 &amp; 5\end{bmatrix}\)</span>, as highlighted below:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-3747624b-716d-4a4f-8e6f-d16e88b11cd1">
-<span class="eqno">(5.29)<a class="headerlink" href="#equation-3747624b-716d-4a4f-8e6f-d16e88b11cd1" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-1a438cd6-0e0b-4097-a983-b66bf2043ec5">
+<span class="eqno">(5.29)<a class="headerlink" href="#equation-1a438cd6-0e0b-4097-a983-b66bf2043ec5" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{align}
 \begin{bmatrix}
 3 &amp; \textbf{3} &amp; \textbf{3} &amp; \textbf{5} &amp; 5 &amp; 5 &amp; 5 &amp; 2 &amp; 2 &amp; 2 \\
@@ -525,20 +525,20 @@ For example, the first pixel in the edge image has the value 2, which is calcula
 \end{equation}\]</div>
 <p>The “recipe” to calculate the edge value is just taking a weighted sum,
 where the weights are defined by our filter:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-6aa17288-40ba-4b4f-9ec1-74fdfeb7c5df">
-<span class="eqno">(5.30)<a class="headerlink" href="#equation-6aa17288-40ba-4b4f-9ec1-74fdfeb7c5df" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-2da0958e-f4bd-4407-a168-4afe8ab79272">
+<span class="eqno">(5.30)<a class="headerlink" href="#equation-2da0958e-f4bd-4407-a168-4afe8ab79272" title="Permalink to this equation">#</a></span>\[\begin{equation}
 3 \times -1 + 3 \times 0 + 5 \times 1 = 2 = \begin{bmatrix}3 &amp; 3 &amp; 5\end{bmatrix} \begin{bmatrix}-1 &amp; 0 &amp; 1\end{bmatrix}^T
 \end{equation}\]</div>
 <p>The value <span class="math notranslate nohighlight">\(2\)</span> indicates a <em>positive</em> edge where the input values go from <span class="math notranslate nohighlight">\(3\)</span> to <span class="math notranslate nohighlight">\(5\)</span>. This operation is then repeated for every output pixel. In other words, every output pixel is computed as the dot product of the filter <span class="math notranslate nohighlight">\(\begin{bmatrix}-1 &amp; 0 &amp; 1\end{bmatrix}\)</span> with the <em>window</em> of pixels in the input image, centered around the location of the output pixel.</p>
 <p>For the simple 1D example above, we could write this with the simple formula</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a7ca8fa6-cb18-4fa4-b7a5-01a763879ee5">
-<span class="eqno">(5.31)<a class="headerlink" href="#equation-a7ca8fa6-cb18-4fa4-b7a5-01a763879ee5" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-5af2a789-348e-4cb6-827d-adc84d05bc36">
+<span class="eqno">(5.31)<a class="headerlink" href="#equation-5af2a789-348e-4cb6-827d-adc84d05bc36" title="Permalink to this equation">#</a></span>\[\begin{equation}
 h[i] = \sum_{k=-1}^1 g[k] f[i+k]
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(f\)</span> is the 1D input image, <span class="math notranslate nohighlight">\(g\)</span> is the 1D filter or <em>kernel</em>, and <span class="math notranslate nohighlight">\(h\)</span> is the output edge image. Note that we index into the kernel <span class="math notranslate nohighlight">\(g\)</span> with coordinates <span class="math notranslate nohighlight">\(k\in[-1,0,1]\)</span>. By adding <span class="math notranslate nohighlight">\(k\)</span> to the output coordinate <span class="math notranslate nohighlight">\(i\)</span>, we automatically take the weighted sum of pixels in the input image <span class="math notranslate nohighlight">\(f\)</span> centered around <span class="math notranslate nohighlight">\(i\)</span>.</p>
 <p id="index-2">Let us examine the input and output again:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-9e921954-8c6a-42c5-af06-f9b9df5a97cf">
-<span class="eqno">(5.32)<a class="headerlink" href="#equation-9e921954-8c6a-42c5-af06-f9b9df5a97cf" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-16270f53-96af-499a-abc6-fc79d23b34a5">
+<span class="eqno">(5.32)<a class="headerlink" href="#equation-16270f53-96af-499a-abc6-fc79d23b34a5" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{align}
 \begin{bmatrix}
 3 &amp; 3 &amp; 3 &amp; 5 &amp; 5 &amp; 5 &amp; 5 &amp; 2 &amp; 2 &amp; 2 \\
@@ -550,8 +550,8 @@ h[i] = \sum_{k=-1}^1 g[k] f[i+k]
 <p>We can now look at the remaining values. It is easy to verify that the <span class="math notranslate nohighlight">\(-3\)</span> values result from the negative edge transition from <span class="math notranslate nohighlight">\(5\)</span> to <span class="math notranslate nohighlight">\(2\)</span> in the image. Also, where the input image is <em>constant</em>, the edge output image has a zero, which is great!</p>
 <p>However, we need to make a decision about the output array size and padding. Indeed, what is less obvious are the <span class="math notranslate nohighlight">\(3\)</span> and <span class="math notranslate nohighlight">\(-2\)</span> values at the beginning and end of the output array. The answer is that here we used <em>zero-padding</em>: note that the calculation of the output <span class="math notranslate nohighlight">\(h[0]\)</span> requires access to input values <span class="math notranslate nohighlight">\(f[-1]\)</span>, <span class="math notranslate nohighlight">\(f[0]\)</span>, and <span class="math notranslate nohighlight">\(f[1]\)</span>. This is problematic, because <span class="math notranslate nohighlight">\(f[-1]\)</span> is <em>out of bounds</em>. Zero-padding is the convention to use a zero for every value that is out of bounds for the input. Another way to deal with this issue is to calculate a smaller output image that will only require access to valid input values. Many other strategies can be employed but “zero padding” and “valid” output image size are the two most common ones.</p>
 <p><strong>Correlation vs. Convolution</strong>: we use the term convolution above, but the formula above is really <em>correlation</em>. The correct formula for <em>convolution</em>, a term from the signal processing literature, is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-42abb224-7652-4102-ace4-33ba57ad2f5e">
-<span class="eqno">(5.33)<a class="headerlink" href="#equation-42abb224-7652-4102-ace4-33ba57ad2f5e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-5f230101-d5e6-492b-83b2-1c0c6e020437">
+<span class="eqno">(5.33)<a class="headerlink" href="#equation-5f230101-d5e6-492b-83b2-1c0c6e020437" title="Permalink to this equation">#</a></span>\[\begin{equation}
 h[i] = \sum_{k=-1}^1 g[k] f[i-k]
 \end{equation}\]</div>
 <p>with the only difference being the minus sign. With the advent of convolutional neural networks (CNNs),
@@ -563,8 +563,8 @@ which we will see below, everyone is now using the term <em>convolution</em> eve
 <div><p>Extending the concept of convolution to 2D.</p>
 </div></blockquote>
 <p>The 1D definition of convolution above can be easily extended to 2D images and 2D filters:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-aeab3950-e481-48ec-a06f-079a8080a15c">
-<span class="eqno">(5.34)<a class="headerlink" href="#equation-aeab3950-e481-48ec-a06f-079a8080a15c" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-2bcc1d4d-916d-45c6-bff4-8ec3fdd27973">
+<span class="eqno">(5.34)<a class="headerlink" href="#equation-2bcc1d4d-916d-45c6-bff4-8ec3fdd27973" title="Permalink to this equation">#</a></span>\[\begin{equation}
 h[i,j] = \sum_{k, l} g[k,l] f[i+k, j+l]
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(k\)</span> and <span class="math notranslate nohighlight">\(l\)</span> range over the two kernel dimensions.
@@ -572,23 +572,23 @@ For example, if we applied our 1D filter above to a 2D image,
 we would have <span class="math notranslate nohighlight">\(k \in \{ 0 \}\)</span> and <span class="math notranslate nohighlight">\(l \in \{ -1, 0 1 \}\)</span>,
 which would apply the filter along individual rows of the image.</p>
 <p>Armed with this formula, we can now understand the edge detection above. For each output pixel <span class="math notranslate nohighlight">\(h[i,j]\)</span>, we do a pointwise multiplication of the <span class="math notranslate nohighlight">\(1 \times 3\)</span> filter</p>
-<div class="amsmath math notranslate nohighlight" id="equation-4dae87b8-2cbb-4f23-8b3d-aeb35bcafd51">
-<span class="eqno">(5.35)<a class="headerlink" href="#equation-4dae87b8-2cbb-4f23-8b3d-aeb35bcafd51" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-59f4007a-3bf0-4fff-af41-8c1df1111ee3">
+<span class="eqno">(5.35)<a class="headerlink" href="#equation-59f4007a-3bf0-4fff-af41-8c1df1111ee3" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{align}
 \begin{pmatrix}g[0,-1] &amp; g[0,0] &amp; g[0,1]\end{pmatrix} = \begin{pmatrix}-1 &amp; 0 &amp; 1\end{pmatrix}
 \end{align}
 \end{equation}\]</div>
 <p>with the <span class="math notranslate nohighlight">\(1 \times 3\)</span> window</p>
-<div class="amsmath math notranslate nohighlight" id="equation-63a2c004-449b-4de8-9ea4-3423b86a72d5">
-<span class="eqno">(5.36)<a class="headerlink" href="#equation-63a2c004-449b-4de8-9ea4-3423b86a72d5" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-78f6b7f7-d43a-40c4-985a-a6c804af342c">
+<span class="eqno">(5.36)<a class="headerlink" href="#equation-78f6b7f7-d43a-40c4-985a-a6c804af342c" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{align}
 \begin{pmatrix}f[i,j-1] &amp; f[i,j+0] &amp; f[i,j+1]\end{pmatrix}
 \end{align}
 \end{equation}\]</div>
 <p>in the input image <span class="math notranslate nohighlight">\(f\)</span>.</p>
 <p>We can use a different filter to detect horizontal edges. Indeed, the <strong>Horizontal Sobel edge detector</strong> is simply the <span class="math notranslate nohighlight">\(3 \times 1\)</span> equivalent, with</p>
-<div class="amsmath math notranslate nohighlight" id="equation-9a04c9fc-161c-4564-b121-fac5f66cb3dc">
-<span class="eqno">(5.37)<a class="headerlink" href="#equation-9a04c9fc-161c-4564-b121-fac5f66cb3dc" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-1d5667a3-310c-45b9-8915-3e4feb100a68">
+<span class="eqno">(5.37)<a class="headerlink" href="#equation-1d5667a3-310c-45b9-8915-3e4feb100a68" title="Permalink to this equation">#</a></span>\[\begin{equation}
 g = \begin{pmatrix}-1 \\ 0 \\ 1\end{pmatrix}
 \end{equation}\]</div>
 <p>The code below applies the horizontal Sobel edge detector to our original image from above.</p>
@@ -658,26 +658,26 @@ Could we use our Sobel gradient operators to construct an edge detector?</p>
 </div></blockquote>
 <p>Above we looked at edge detection as a classification problem. Our solution was to calculate the output of two different filters (both Sobel operators), combine these with a non-linear operation (the norm), and then apply a threshold at some hand-tuned level. It is only natural to ask whether this idea of taking a linear combination of pixels and feeding it into some “decision maker” could solve other tasks, including the a main goal of computer vision, detecting and recognizing objects, a capability which seems effortless to people yet which eluded computer vision researchers for a long time.</p>
 <p>Inspired by the way neurons in the brain appear to be connected, <strong>neural networks</strong> were first proposed by <a class="reference external" href="https://en.wikipedia.org/wiki/Frank_Rosenblatt">Frank Rosenblatt</a> in the 50s, who with his collaborators proposed the <strong>Perceptron</strong>. The mathematical equation for a perceptron is simple:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a1990fce-c23f-4fdb-b66f-c5f40928737e">
-<span class="eqno">(5.38)<a class="headerlink" href="#equation-a1990fce-c23f-4fdb-b66f-c5f40928737e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ac4ef090-5a7e-43f6-b2df-3bfe4a192901">
+<span class="eqno">(5.38)<a class="headerlink" href="#equation-ac4ef090-5a7e-43f6-b2df-3bfe4a192901" title="Permalink to this equation">#</a></span>\[\begin{equation}
 f(x) = \theta \begin{pmatrix}\sum_k w[k] x[k] + b\end{pmatrix} = \theta(w \cdot x + b)
 \end{equation}\]</div>
 <p>Here, <span class="math notranslate nohighlight">\(w \in \mathbb{R}^n\)</span> is the 1D vector of weights and <span class="math notranslate nohighlight">\(x \in \mathbb{R}^n\)</span> is the 1D input signal.
 The output <span class="math notranslate nohighlight">\(f(x) \in \mathbb{R} \)</span> of the network is obtained by pointwise multiplying the input signal <span class="math notranslate nohighlight">\(x\)</span> and the weights <span class="math notranslate nohighlight">\(w\)</span>, and thresholding.
 Here, <span class="math notranslate nohighlight">\(\theta :\mathbb{R} \rightarrow \{0,1\} \)</span> denotes the thresholding operation:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-d21b70e2-d740-4d63-98d1-64831ad5ef18">
-<span class="eqno">(5.39)<a class="headerlink" href="#equation-d21b70e2-d740-4d63-98d1-64831ad5ef18" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-64d7d726-774a-4a5a-9a65-7d10c1fa431b">
+<span class="eqno">(5.39)<a class="headerlink" href="#equation-64d7d726-774a-4a5a-9a65-7d10c1fa431b" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \theta(x) \doteq 1 \text{  if  } (x&gt;0) \text{  else  } 0
 \end{equation}\]</div>
 <p>The scalar quantity <span class="math notranslate nohighlight">\(b\)</span> is known as the bias, and can be seen as shifting the decision boundary to values different from <span class="math notranslate nohighlight">\(0\)</span>.</p>
 <p id="index-5">While a perceptron computes a single output <span class="math notranslate nohighlight">\(f(x)\)</span> from the input signal <span class="math notranslate nohighlight">\(x\)</span>, there are two ways to extend the concept: going <em>wide</em> and going <em>deep</em>. First, we can extend the concept of the perceptron to be multi-output, yielding <span class="math notranslate nohighlight">\(n_o\)</span> <strong>output features</strong>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-638e3062-8bef-4717-bacb-82958d9bbfda">
-<span class="eqno">(5.40)<a class="headerlink" href="#equation-638e3062-8bef-4717-bacb-82958d9bbfda" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-1cbb65ae-e031-4b96-ad00-5f7f8f2672fd">
+<span class="eqno">(5.40)<a class="headerlink" href="#equation-1cbb65ae-e031-4b96-ad00-5f7f8f2672fd" title="Permalink to this equation">#</a></span>\[\begin{equation}
 f_o(x) = \theta \begin{pmatrix}\sum_k W[o,k] x[k] + b[o]\end{pmatrix} 
 \end{equation}\]</div>
 <p>We can stack the <span class="math notranslate nohighlight">\(n_o\)</span> equations to build a single matrix equation for the multi-output case:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-94835011-3550-49b6-b2c8-0342887fc7b4">
-<span class="eqno">(5.41)<a class="headerlink" href="#equation-94835011-3550-49b6-b2c8-0342887fc7b4" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-2284a9ef-1a8f-4363-b28a-9ad84c313af5">
+<span class="eqno">(5.41)<a class="headerlink" href="#equation-2284a9ef-1a8f-4363-b28a-9ad84c313af5" title="Permalink to this equation">#</a></span>\[\begin{equation}
 f(x) =
 \begin{bmatrix}
 f_1(x) \\ \vdots \\ f_{n_o}(x)
@@ -723,8 +723,8 @@ Suppose we apply kernel <span class="math notranslate nohighlight">\(g\)</span> 
 Translation invariance implies that if we shift the input by <span class="math notranslate nohighlight">\(t\)</span>, the resulting output
 will merely be the original <span class="math notranslate nohighlight">\(f\)</span> also shifted by <span class="math notranslate nohighlight">\(t\)</span>.
 Formally, in 1D we write this condition as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-34433255-868b-4c0a-837c-094cbd29496a">
-<span class="eqno">(5.42)<a class="headerlink" href="#equation-34433255-868b-4c0a-837c-094cbd29496a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-20f42707-8f0e-47e0-af4e-35d9ddf155ae">
+<span class="eqno">(5.42)<a class="headerlink" href="#equation-20f42707-8f0e-47e0-af4e-35d9ddf155ae" title="Permalink to this equation">#</a></span>\[\begin{equation}
 f[i+t] = \sum_{k=-1}^1 g[k] x[i+t+k],
 \end{equation}\]</div>
 <p>i.e., if we <em>translate</em> the input signal <span class="math notranslate nohighlight">\(x\)</span> by <span class="math notranslate nohighlight">\(t\)</span>, the output signal <span class="math notranslate nohighlight">\(f\)</span> is identical but translated by the same amount. A similar definition holds for 2D translation in the case of 2D convolution.</p>
@@ -735,8 +735,8 @@ For <strong>convolutional layer</strong> <span class="math notranslate nohighlig
 of output channels by <span class="math notranslate nohighlight">\(n_{l,o}\)</span>.
 The <span class="math notranslate nohighlight">\(o^{th}\)</span> output of layer <span class="math notranslate nohighlight">\(l\)</span> is obtained by convolution of its input with the
 kernel for output <span class="math notranslate nohighlight">\(o\)</span> of layer <span class="math notranslate nohighlight">\(l\)</span>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-9ba77226-dfc8-4b4b-b338-232475722cfb">
-<span class="eqno">(5.43)<a class="headerlink" href="#equation-9ba77226-dfc8-4b4b-b338-232475722cfb" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-70881f36-fde4-4b85-bacc-1acb343f9fa7">
+<span class="eqno">(5.43)<a class="headerlink" href="#equation-70881f36-fde4-4b85-bacc-1acb343f9fa7" title="Permalink to this equation">#</a></span>\[\begin{equation}
 f_{l,o}(x) = \sum_{ k} g[l, o, k] x[l, k] + b[l, o]
 \end{equation}\]</div>
 <p>In CNNs, each layer also has one bias value <span class="math notranslate nohighlight">\(b[o]\)</span> per output channel, as indicated above.</p>
@@ -747,13 +747,13 @@ f_{l,o}(x) = \sum_{ k} g[l, o, k] x[l, k] + b[l, o]
 This activation function plays the role of <span class="math notranslate nohighlight">\(\theta\)</span> in our fully connected networks above.
 Indeed, <em>without</em> an activation function, it makes little sense to have two successive linear layers with weights <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(B\)</span>: one could just as easily replace them with a <em>single</em> linear layer with weights <span class="math notranslate nohighlight">\(W = A B\)</span>. In addition, from the multi-layer perceptron work we know that the <em>threshold</em> operation is a crucial step in <em>activating</em> a feature, i.e., deciding when a feature is really present or whether the generated signal is just due to noise. Think back to our primitive edge detector above as well: both the thresholding and the threshold value (which in a perceptron is encoded in a bias <span class="math notranslate nohighlight">\(b\)</span>) are important for the final result.</p>
 <p>The most important activation functions are the sigmoid and “ReLU”. We have already encountered the threshold function <span class="math notranslate nohighlight">\(\theta\)</span>, but historically a “soft threshold” function called the <strong>sigmoid function</strong> was, and still is, very popular:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-bd6c2a11-52de-437c-929c-de18aadb12e8">
-<span class="eqno">(5.44)<a class="headerlink" href="#equation-bd6c2a11-52de-437c-929c-de18aadb12e8" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-344b8a16-5e98-41e4-adcb-6a37f12542dd">
+<span class="eqno">(5.44)<a class="headerlink" href="#equation-344b8a16-5e98-41e4-adcb-6a37f12542dd" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \sigma(x) \doteq \frac{1}{1+\exp(-x)}.
 \end{equation}\]</div>
 <p>Many other activation functions have been proposed since, but it is now widely accepted that the exact shape of the function matters less than the simple fact of having <em>some</em> non-linearity. One of the simplest and most popular activation functions just zeroes out any negative values, but otherwise leaves the input signal untouched. This is called the <strong>rectified linear unit</strong>, abbreviated ReLU, and is given by this simple formula:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a0bf2ef2-00da-4a9f-9005-fb724aeb1620">
-<span class="eqno">(5.45)<a class="headerlink" href="#equation-a0bf2ef2-00da-4a9f-9005-fb724aeb1620" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-68bd7eb8-2344-4d29-84c7-2ab070d56a18">
+<span class="eqno">(5.45)<a class="headerlink" href="#equation-68bd7eb8-2344-4d29-84c7-2ab070d56a18" title="Permalink to this equation">#</a></span>\[\begin{equation}
 ReLU(x) \doteq \max(0,x).
 \end{equation}\]</div>
 </section>
@@ -761,13 +761,13 @@ ReLU(x) \doteq \max(0,x).
 <span id="index-11"></span><h3><span class="section-number">5.4.6.3. </span>Pooling Layers<a class="headerlink" href="#pooling-layers" title="Link to this heading">#</a></h3>
 <p>Finally, CNNs also frequently have <strong>pooling layers</strong>. A downside of a convolutional layer is that each output layer is as large as the previous one: the convolution, even when in <code class="docutils literal notranslate"><span class="pre">valid</span></code> mode, only slightly reduces the image size, and not at all when using <code class="docutils literal notranslate"><span class="pre">same</span></code> mode with zero-padding. So called <em>pooling</em> layers were again inspired by the human visual system, where an experimentalists observed that while early processing layers where “retinotopic”, i.e., had a one-to-one mapping to locations on the imaging surface, successive layers gradually became coarser <em>and</em> activated by wider “receptive fields”, defined as the area on the retina that were able to influence the activation of a neuron at a given processing stage. There are also computational reasons to wanting to “downscale” the resolution in deeper layers, as many neural net architectures increase the number of features with depth, and hence reducing the resolution correspondingly yielded in approximately the same amount of computation per layer.</p>
 <p>Formally, a pooling layer is most often an averaging or maximization operation over an input window of a given size. For example, a “max-pooling” layer in 2D implements the following equation,</p>
-<div class="amsmath math notranslate nohighlight" id="equation-05ae5f35-9768-4812-b4aa-0363f686d8a4">
-<span class="eqno">(5.46)<a class="headerlink" href="#equation-05ae5f35-9768-4812-b4aa-0363f686d8a4" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-b1d01c84-d24c-487b-8991-ed09612afd7b">
+<span class="eqno">(5.46)<a class="headerlink" href="#equation-b1d01c84-d24c-487b-8991-ed09612afd7b" title="Permalink to this equation">#</a></span>\[\begin{equation}
 h[c, i, j] = \max_{k, l} f[c, i+k, j+l],
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(c\in[n_c]\)</span> ranges over the <span class="math notranslate nohighlight">\(n_c\)</span> channels, and once again <span class="math notranslate nohighlight">\(k \in [H_k]\)</span> and <span class="math notranslate nohighlight">\(l \in [W_k]\)</span>. The max operation actually <em>does</em> not reduce the resolution by itself: that is done by only computing the pooling output at a certain <em>stride</em> <span class="math notranslate nohighlight">\(s\)</span>, where often the stride is equal to the size of the window. Formally, we have</p>
-<div class="amsmath math notranslate nohighlight" id="equation-2763681f-468c-4958-aeb7-b762be9891f3">
-<span class="eqno">(5.47)<a class="headerlink" href="#equation-2763681f-468c-4958-aeb7-b762be9891f3" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-f9e0c61c-d2b6-4ad5-b40e-7aaff6541cc5">
+<span class="eqno">(5.47)<a class="headerlink" href="#equation-f9e0c61c-d2b6-4ad5-b40e-7aaff6541cc5" title="Permalink to this equation">#</a></span>\[\begin{equation}
 h[c, i, j] = \max_{k, l} f[c, i s_i + k, j s_j + l],
 \end{equation}\]</div>
 <p>where the strides <span class="math notranslate nohighlight">\(s_i\)</span> and <span class="math notranslate nohighlight">\(s_j\)</span> for the row and column indexing can be different. More often than not, however, practitioners choose <span class="math notranslate nohighlight">\(s_i=s_j=W_k=H_k\)</span>, i.e., square pooling windows with the same stride, e.g., max pooling over <span class="math notranslate nohighlight">\(2\times 2\)</span> windows with a stride of <span class="math notranslate nohighlight">\(2\)</span>. Average and sum-pooling are similarly defined, and are equivalent up to a constant scaling factor.</p>

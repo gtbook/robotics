@@ -411,18 +411,18 @@
 <section id="lidar">
 <span id="index-1"></span><h2><span class="section-number">6.3.1. </span>LIDAR<a class="headerlink" href="#lidar" title="Link to this heading">#</a></h2>
 <p>LIDAR (LIght raDAR) is a technology that measures distance to an object by using laser light and the <strong>Time of Flight</strong> or <strong>ToF</strong> principle. There are several variants in use, and the simplest to explain is the <strong>direct ToF</strong> sensor, which sends out a short pulse and measures the elapsed time <span class="math notranslate nohighlight">\(\Delta t\)</span> for the light to bounce off an object and return to a detector collocated with the laser pulse emitter. If the object is situated at a distance <span class="math notranslate nohighlight">\(d\)</span> from the emitter-detector pair, we have</p>
-<div class="amsmath math notranslate nohighlight" id="equation-48dc413e-ecf6-4bd1-983d-2cefb9189d0b">
-<span class="eqno">(6.26)<a class="headerlink" href="#equation-48dc413e-ecf6-4bd1-983d-2cefb9189d0b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-cb51150f-3e12-45e4-a51c-05415e70896d">
+<span class="eqno">(6.26)<a class="headerlink" href="#equation-cb51150f-3e12-45e4-a51c-05415e70896d" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \Delta t = \frac{2 d}{c} 
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(c\approx300,000km/s\)</span> is the speed of light. For example, for an object at 15m, we have</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b555b6df-5ffb-49b3-8bcd-e2090f196f4c">
-<span class="eqno">(6.27)<a class="headerlink" href="#equation-b555b6df-5ffb-49b3-8bcd-e2090f196f4c" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-8768ab7b-4ae8-4396-886a-98a52ef3d005">
+<span class="eqno">(6.27)<a class="headerlink" href="#equation-8768ab7b-4ae8-4396-886a-98a52ef3d005" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \Delta t \approx \frac{2 \times 0.015}{300,000} = 0.1\mu s
 \end{equation}\]</div>
 <p>Assuming we can measure <span class="math notranslate nohighlight">\(\Delta t\)</span> accurately, we can then easily compute the distance:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-94bdf9ef-8116-4d58-8f1a-2dea7710a1da">
-<span class="eqno">(6.28)<a class="headerlink" href="#equation-94bdf9ef-8116-4d58-8f1a-2dea7710a1da" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-3e0e05e2-3cc0-48cf-97a0-1e7def522f38">
+<span class="eqno">(6.28)<a class="headerlink" href="#equation-3e0e05e2-3cc0-48cf-97a0-1e7def522f38" title="Permalink to this equation">#</a></span>\[\begin{equation}
 d= c\frac{\Delta t}{2}
 \end{equation}\]</div>
 <p>In a <em>scanning LIDAR</em>, there is typically one detector, whereas in a <em>flash LIDAR</em> a single pulse is emitted in a wide field of view, and an <em>array</em> of detectors, akin to a CCD sensor, is used to detect the returning light pulses in multiple directions at once.</p>
@@ -437,18 +437,18 @@ d= c\frac{\Delta t}{2}
 </div></blockquote>
 <p>To perform inference about the environment with LIDAR, we have to model how LIDAR beams interact with it, which in the case of polygonal objects comes down to line-line or line-plane intersections.</p>
 <p>We examine the 2D line-line intersection case first. Assume we have a line in 2D with equation <span class="math notranslate nohighlight">\(\hat{n} \cdot p = d\)</span>, where <span class="math notranslate nohighlight">\(\hat{n}\)</span> is a normal vector and <span class="math notranslate nohighlight">\(d&gt;0\)</span> is the distance of the line to the origin. The hat notation signifies that the normal vector <span class="math notranslate nohighlight">\(\hat{n}\)</span> is normalized to length 1. Then if we have a ray of points <span class="math notranslate nohighlight">\(p = \hat{r} s\)</span> where <span class="math notranslate nohighlight">\(\hat{r}\)</span> is the <strong>ray direction</strong> and <span class="math notranslate nohighlight">\(s&gt;0\)</span> is a scalar, we can find the intersection by plugging the ray equation into the line equation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c11b199a-bdfb-40ac-a8fd-37b765e864f6">
-<span class="eqno">(6.29)<a class="headerlink" href="#equation-c11b199a-bdfb-40ac-a8fd-37b765e864f6" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-b73f249b-0ab4-46fb-92dc-616178c032ff">
+<span class="eqno">(6.29)<a class="headerlink" href="#equation-b73f249b-0ab4-46fb-92dc-616178c032ff" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \hat{n} \cdot (\hat{r} s) = d,
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(a \cdot b \doteq a^T b = b^T a\)</span> is the standard vector dot product. We find the range <span class="math notranslate nohighlight">\(s\)</span> to the object as:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a48211d1-9f05-4bbb-b137-1150853af152">
-<span class="eqno">(6.30)<a class="headerlink" href="#equation-a48211d1-9f05-4bbb-b137-1150853af152" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-57d95b8c-1d8e-4a10-9e71-b776c5780f34">
+<span class="eqno">(6.30)<a class="headerlink" href="#equation-57d95b8c-1d8e-4a10-9e71-b776c5780f34" title="Permalink to this equation">#</a></span>\[\begin{equation}
 s = \frac{d}{\hat{n} \cdot \hat{r}}.
 \end{equation}\]</div>
 <p>We can ensure that <span class="math notranslate nohighlight">\(s&gt;0\)</span> and avoid a division by zero by checking the dot product before doing the division:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-d0cffa76-9d1f-4367-9570-2e3c67497e71">
-<span class="eqno">(6.31)<a class="headerlink" href="#equation-d0cffa76-9d1f-4367-9570-2e3c67497e71" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-96483145-f55f-481f-85c9-45b8d7a34fa3">
+<span class="eqno">(6.31)<a class="headerlink" href="#equation-96483145-f55f-481f-85c9-45b8d7a34fa3" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \hat{n} \cdot \hat{r} &gt; 0
 \end{equation}\]</div>
 <p>The following code implements this:</p>
@@ -538,8 +538,8 @@ In this case, the equation <span class="math notranslate nohighlight">\(\hat{n} 
 <section id="geometry-of-a-moving-lidar">
 <h2><span class="section-number">6.3.4. </span>Geometry of a Moving LIDAR<a class="headerlink" href="#geometry-of-a-moving-lidar" title="Link to this heading">#</a></h2>
 <p>Above we assumed that the ray is situated at the <em>world</em> origin, but we can also generalize to the case where the rays are defined in a <em>body coordinate frame</em> <span class="math notranslate nohighlight">\((R^w_b,t^w_b)\)</span>. In this case, it is convenient to transform the plane to the body frame. We can do this by expressing a point <span class="math notranslate nohighlight">\(p^w\)</span> in world coordinates as a function of a point in body coordinates: <span class="math notranslate nohighlight">\(p^w = R^w_b p^b + t^w_b\)</span> and plugging that into the plane equation:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-e61675ea-4ceb-4886-bc7d-e57e463a8990">
-<span class="eqno">(6.32)<a class="headerlink" href="#equation-e61675ea-4ceb-4886-bc7d-e57e463a8990" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-9d594312-26da-4951-aad6-46b357b9d17c">
+<span class="eqno">(6.32)<a class="headerlink" href="#equation-9d594312-26da-4951-aad6-46b357b9d17c" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{aligned}
 \hat{n}^w \cdot p^w &amp;= d^w \\
 \hat{n}^w \cdot \{ R^w_b p^b + t^w_b \} &amp;= d^w \\
@@ -547,8 +547,8 @@ In this case, the equation <span class="math notranslate nohighlight">\(\hat{n} 
 \end{aligned}
 \end{equation}\]</div>
 <p>Hence, we obtain a new plane equation in the body frame as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-47ce4761-8e44-42dd-bd9f-670b78d94204">
-<span class="eqno">(6.33)<a class="headerlink" href="#equation-47ce4761-8e44-42dd-bd9f-670b78d94204" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-c77643b6-6b5f-4c24-8e66-d37466be62ed">
+<span class="eqno">(6.33)<a class="headerlink" href="#equation-c77643b6-6b5f-4c24-8e66-d37466be62ed" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \hat{n}^b \cdot p^b = d^b
 \end{equation}\]</div>
 <p>with transformed plane parameters <span class="math notranslate nohighlight">\(\hat{n}^b \doteq (R^w_b)^T \hat{n}^w\)</span> and <span class="math notranslate nohighlight">\(d^b \doteq d^w - \hat{n}^w \cdot t^w_b\)</span>.</p>
@@ -662,7 +662,7 @@ The scans are slightly rotated and translated from each other, and this will be 
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/1d0062bdace9e7e543e6a1a317ca0fb6ad013fe5d9c0bd392df3f192b8586656.png" src="_images/1d0062bdace9e7e543e6a1a317ca0fb6ad013fe5d9c0bd392df3f192b8586656.png" />
+<img alt="_images/8d822bf4f0ef38711929bffbb5f84222b5e5d88a00db95822549b4c0de0e5b5a.png" src="_images/8d822bf4f0ef38711929bffbb5f84222b5e5d88a00db95822549b4c0de0e5b5a.png" />
 </div>
 </div>
 <p>Finally, let us look at scans that are taken a bit further apart, in this case there are 8 scans that we skipped:</p>
@@ -676,7 +676,7 @@ The scans are slightly rotated and translated from each other, and this will be 
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/db1748e9c62d4464aceb74b5e6ad651872fa3c925cbd198ec4b02641b95b08c8.png" src="_images/db1748e9c62d4464aceb74b5e6ad651872fa3c925cbd198ec4b02641b95b08c8.png" />
+<img alt="_images/ddf424441bacdb4d93d956d8be13770781ef4772940bbcd43c43ca44e9cc47ac.png" src="_images/ddf424441bacdb4d93d956d8be13770781ef4772940bbcd43c43ca44e9cc47ac.png" />
 </div>
 </div>
 <p>By inspecting (you can do this interactively using the <a class="reference external" href="https://gtbook.github.io/gtbook/driving.html">gtbook website</a>) you can see that the car is <em>still</em> turning, but as the two scans are further apart the “mis-alginment” is more pronounced.</p>
@@ -687,8 +687,8 @@ The scans are slightly rotated and translated from each other, and this will be 
 <div><p>Point clouds can be used to represent the 3D world.</p>
 </div></blockquote>
 <p>If we know the exact pose at which a LIDAR scan was taken, we can transform the points in the scan into absolute coordinates, and create an extended <strong>point cloud map</strong> of the environment. In math, suppose we <em>know</em> that a scan was taken at <span class="math notranslate nohighlight">\(T^w_b\)</span>, then we can transform all LIDAR points <span class="math notranslate nohighlight">\(P^b\)</span>, which are given in body coordinates, to world coordinates:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-e02241f7-989f-4078-b116-dc86f3342c9b">
-<span class="eqno">(6.34)<a class="headerlink" href="#equation-e02241f7-989f-4078-b116-dc86f3342c9b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-a1aaf7f3-a0b8-4407-8f47-d9a6f8700374">
+<span class="eqno">(6.34)<a class="headerlink" href="#equation-a1aaf7f3-a0b8-4407-8f47-d9a6f8700374" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P^w = \phi(T^w_b, P^b)
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\phi\)</span> the the action of <span class="math notranslate nohighlight">\(SE(3)\)</span> on points in <span class="math notranslate nohighlight">\(\mathbb{R}^3\)</span>. Earlier in this chapter we saw this can be done by matrix multiplication, but GTSAM actually implements <span class="math notranslate nohighlight">\(\phi\)</span> directly as <code class="docutils literal notranslate"><span class="pre">Pose3::transformFrom</span></code>. This method can be applied to a single <code class="docutils literal notranslate"><span class="pre">Point3</span></code> (just a <span class="math notranslate nohighlight">\(3\times 1\)</span> vector, really) or on many points simultaneously, by passing in a <span class="math notranslate nohighlight">\(3\times N\)</span> matrix:</p>
