@@ -30,7 +30,7 @@
   <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -428,8 +428,8 @@ briefly discuss the implications of estimating the state using sensor data.</p>
 </div></blockquote>
 <p>Recall that value iteration starts with an initial guess, <span class="math notranslate nohighlight">\(V^0\)</span>, and at each iteration we update
 our approximation of the value function by the update rule:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-034a5012-8417-4f26-b3ed-13ef66d67772">
-<span class="eqno">(4.50)<a class="headerlink" href="#equation-034a5012-8417-4f26-b3ed-13ef66d67772" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d4ca0dde-7358-4218-856d-a082f960f9c3">
+<span class="eqno">(4.50)<a class="headerlink" href="#equation-d4ca0dde-7358-4218-856d-a082f960f9c3" title="Permalink to this equation">#</a></span>\[\begin{equation}
 V^{k+1}(x) \leftarrow \max_a \left\{ \bar{R}(x,a) + \gamma \sum_{x'} P(x'|x, a) V^k(x')   \right\}
 = \max_a Q(x, a; V^k)
 \end{equation}\]</div>
@@ -440,7 +440,7 @@ V^{k+1}(x) \leftarrow \max_a \left\{ \bar{R}(x,a) + \gamma \sum_{x'} P(x'|x, a) 
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">goal</span> <span class="o">=</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">50</span>
 <span class="n">proximity</span> <span class="o">=</span> <span class="n">logistics</span><span class="o">.</span><span class="n">base_map</span> <span class="o">+</span> <span class="n">logistics</span><span class="o">.</span><span class="n">proximity_map_on</span>
 
-<span class="k">def</span> <span class="nf">Q_value</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">Q_value</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Given a state x=(i,j) action a, and value image, calculate Q value.&quot;&quot;&quot;</span>
     <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="n">x</span>
     <span class="k">if</span> <span class="n">x</span><span class="o">==</span><span class="n">goal</span><span class="p">:</span> <span class="k">return</span> <span class="mi">0</span> <span class="c1"># only reward when *first* arriving at goal</span>
@@ -455,7 +455,7 @@ V^{k+1}(x) \leftarrow \max_a \left\{ \bar{R}(x,a) + \gamma \sum_{x'} P(x'|x, a) 
     <span class="k">if</span> <span class="n">logistics</span><span class="o">.</span><span class="n">proximity_map_on</span><span class="p">[</span><span class="n">r</span><span class="p">,</span><span class="n">c</span><span class="p">]:</span> <span class="n">reward</span> <span class="o">-=</span> <span class="mi">50</span> <span class="c1"># as is going in proximity.</span>
     <span class="k">return</span> <span class="n">reward</span> <span class="o">+</span> <span class="mf">0.975</span> <span class="o">*</span> <span class="n">V</span><span class="p">[</span><span class="n">r</span><span class="p">,</span><span class="n">c</span><span class="p">]</span>
 
-<span class="k">def</span> <span class="nf">update_V</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">update_V</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Given a state x=(i,j) and value image, calculate updated value.&quot;&quot;&quot;</span>
     <span class="n">Q_x</span> <span class="o">=</span> <span class="p">[</span><span class="n">Q_value</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)]</span>
     <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">Q_x</span><span class="p">)</span>

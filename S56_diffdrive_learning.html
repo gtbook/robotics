@@ -30,7 +30,7 @@
   <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -439,18 +439,18 @@ We will often refer to the <em>training dataset</em> as <span class="math notran
 <p>In our case, we will focus on interpolating the grid values defined at the cell boundaries. The <code class="docutils literal notranslate"><span class="pre">forward</span></code> method of the <code class="docutils literal notranslate"><span class="pre">LineGrid</span></code> module performs the interpolation for any value inside the grid.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">interpolate</span><span class="p">(</span><span class="n">v0</span><span class="p">,</span> <span class="n">v1</span><span class="p">,</span> <span class="n">alpha</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">interpolate</span><span class="p">(</span><span class="n">v0</span><span class="p">,</span> <span class="n">v1</span><span class="p">,</span> <span class="n">alpha</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Interpolate between v0 and v1 using alpha, using unsqueeze to properly handle batches.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">v0</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">alpha</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="o">+</span> <span class="n">v1</span> <span class="o">*</span> <span class="n">alpha</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 
-<span class="k">class</span> <span class="nc">LineGrid</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LineGrid</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A 1D grid with learnable values at the boundaries on n cells.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>  <span class="c1"># Calling the superclass&#39;s __init__ method</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">grid</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">normal_</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">d</span><span class="p">)))</span>
 
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="n">X</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">long</span><span class="p">()</span>
         <span class="n">a</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">X</span>  <span class="c1"># blending weights (same size as x)</span>
         <span class="k">return</span> <span class="n">interpolate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">[</span><span class="n">X</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">[</span><span class="n">X</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">a</span><span class="p">)</span>
@@ -469,9 +469,9 @@ We will often refer to the <em>training dataset</em> as <span class="math notran
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Interpolated Output: tensor([[ 1.5338, -0.1644],
-        [ 0.6032, -0.5719],
-        [-0.9920,  0.0148]], grad_fn=&lt;AddBackward0&gt;)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Interpolated Output: tensor([[-1.4053,  0.2057],
+        [-0.2183, -0.1702],
+        [ 0.3008,  0.5124]], grad_fn=&lt;AddBackward0&gt;)
 </pre></div>
 </div>
 </div>
@@ -489,8 +489,8 @@ We will often refer to the <em>training dataset</em> as <span class="math notran
 <div><p>A loss function for every occasion.</p>
 </div></blockquote>
 <p>Different tasks require different loss functions, and a lot of creativity and research goes into crafting loss functions for complex tasks. For “vanilla” regression tasks, we typically use a <strong>mean squared error</strong> loss function as we already encountered before:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-0af7c619-f00f-4eb8-8829-7e9752cd862b">
-<span class="eqno">(5.55)<a class="headerlink" href="#equation-0af7c619-f00f-4eb8-8829-7e9752cd862b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-620a29c8-d3cf-452a-9752-30032ec560b3">
+<span class="eqno">(5.55)<a class="headerlink" href="#equation-620a29c8-d3cf-452a-9752-30032ec560b3" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathcal{L}_{\text{MSE}}(\theta; D) \doteq \frac{1}{|D|} \sum_{(x,y)\in D}|f(x;\theta)-y|^2
 \end{equation}\]</div>
 <p>Above <span class="math notranslate nohighlight">\(f(x;\theta)\)</span> is the continuous prediction function implemented by, say, a neural network, where <span class="math notranslate nohighlight">\(\theta\)</span> represents the weights in all layers. Note that the formula above can be easily generalized to vector-valued labels <span class="math notranslate nohighlight">\(y\)</span>. In fact, our 1D interpolation example above yielded a 2-dimensional output, so let us illustrate the MSE loss in that case:</p>
@@ -502,7 +502,7 @@ We will often refer to the <em>training dataset</em> as <span class="math notran
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Our MSE Loss: 17.223848342895508
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Our MSE Loss: 14.824944496154785
 </pre></div>
 </div>
 </div>
@@ -517,20 +517,20 @@ We will often refer to the <em>training dataset</em> as <span class="math notran
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Pytorch MSE Loss: 17.223848342895508
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Pytorch MSE Loss: 14.824944496154785
 </pre></div>
 </div>
 </div>
 </div>
 <p id="index-3">For classification, the <strong>cross entropy</strong> loss function is very popular: it measures the average disagreement of the predicted labels with the ground truth labels:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-894e1b46-f8de-43bd-bbc6-e680f097a150">
-<span class="eqno">(5.56)<a class="headerlink" href="#equation-894e1b46-f8de-43bd-bbc6-e680f097a150" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-76d1092e-d5bf-4f37-90a2-c8e9458bb8af">
+<span class="eqno">(5.56)<a class="headerlink" href="#equation-76d1092e-d5bf-4f37-90a2-c8e9458bb8af" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathcal{L}_{\text{CE}}(\theta; D) \doteq \sum_c \sum_{(x,y=c)\in D}\log\frac{1}{p_c(x;\theta)}
 \end{equation}\]</div>
 <p>This formula seems perhaps unintuitive and rather complicated. However, it is actually quite intuitive once you understand a few concepts.
 In particular, in the multi-class classification problem we assume that the model outputs a probability <span class="math notranslate nohighlight">\(p_c(x;\theta)\)</span> for every class <span class="math notranslate nohighlight">\(c\in[N]\)</span>, where <span class="math notranslate nohighlight">\(N\)</span> is the number of classes. The quantity</p>
-<div class="amsmath math notranslate nohighlight" id="equation-051a32d6-72e2-4b7a-bda3-68b6a4bfbde9">
-<span class="eqno">(5.57)<a class="headerlink" href="#equation-051a32d6-72e2-4b7a-bda3-68b6a4bfbde9" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-6ccb6471-3696-46f4-80dc-4c3741047fe9">
+<span class="eqno">(5.57)<a class="headerlink" href="#equation-6ccb6471-3696-46f4-80dc-4c3741047fe9" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \log\frac{1}{p_c(x;\theta)}
 \end{equation}\]</div>
 <p>is called the <em>surprise</em> that we should experience when seeing a label <span class="math notranslate nohighlight">\(y=c\)</span>.
@@ -569,12 +569,12 @@ The lower the probability, the higher the surprise. Hence, the cross-entropy abo
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>dataset[12]: (tensor(3.7301), tensor([0.8679, 0.4283]))
-dataset[10:15]: (tensor([18.6434,  1.9751,  3.7301, 15.4471, 16.8421]), tensor([[-0.3695,  0.8442],
-        [ 0.4239,  0.9554],
-        [ 0.8679,  0.4283],
-        [-1.1004,  0.2015],
-        [-0.7730,  0.5487]]))
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>dataset[12]: (tensor(18.3104), tensor([-0.5009,  0.9017]))
+dataset[10:15]: (tensor([ 2.1655,  9.0629, 18.3104, 18.6637, 11.5764]), tensor([[ 0.6478,  0.8132],
+        [ 0.2480, -1.0343],
+        [-0.5009,  0.9017],
+        [-0.5018,  0.8852],
+        [-0.5387, -1.0277]]))
 </pre></div>
 </div>
 </div>
@@ -583,7 +583,7 @@ dataset[10:15]: (tensor([18.6434,  1.9751,  3.7301, 15.4471, 16.8421]), tensor([
 <p>Inside the training loop below, you’ll find the typical sequence of operations: zeroing gradients, performing a forward pass to get predictions, computing the loss, and doing a backward pass to update the model’s parameters. Try to understand the code, as this same training loop is at the core of most deep learning architectures. Now, let’s take a closer look at the code itself, which is extensively documented for clarity:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">train_gd</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">loss_fn</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">num_iterations</span><span class="o">=</span><span class="mi">301</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">train_gd</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">loss_fn</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">num_iterations</span><span class="o">=</span><span class="mi">301</span><span class="p">):</span>
     <span class="c1"># Initialize optimizer</span>
     <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">learning_rate</span><span class="p">)</span>
     
@@ -623,7 +623,7 @@ dataset[10:15]: (tensor([18.6434,  1.9751,  3.7301, 15.4471, 16.8421]), tensor([
 
 <span class="c1"># Create a callback that saves loss to a dataframe</span>
 <span class="n">loss_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Iteration&#39;</span><span class="p">,</span> <span class="s1">&#39;Loss&#39;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">record_loss</span><span class="p">(</span><span class="n">iteration</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">record_loss</span><span class="p">(</span><span class="n">iteration</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
     <span class="n">loss_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">loss_data</span><span class="p">)]</span> <span class="o">=</span> <span class="p">[</span><span class="n">iteration</span><span class="p">,</span> <span class="n">mse</span><span class="p">(</span><span class="n">model</span><span class="p">(</span><span class="n">x_samples</span><span class="p">),</span> <span class="n">y_samples</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()]</span>
             
 <span class="c1"># Run the training loop</span>
@@ -641,7 +641,7 @@ dataset[10:15]: (tensor([18.6434,  1.9751,  3.7301, 15.4471, 16.8421]), tensor([
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/aba0a2a0295bfb04c97ae9106b3e4a42a61c31aa12351e6597ce9774f783b660.png" src="_images/aba0a2a0295bfb04c97ae9106b3e4a42a61c31aa12351e6597ce9774f783b660.png" />
+<img alt="_images/a062a2b9cbb4ac48a98a6812ff1f1f5b16001ddf7d3aa293d8e23b4682878323.png" src="_images/a062a2b9cbb4ac48a98a6812ff1f1f5b16001ddf7d3aa293d8e23b4682878323.png" />
 </div>
 </div>
 <p>Note that gradient descent converges rather slow. You could try experimenting with the learning rate to speed this up.</p>
@@ -668,7 +668,7 @@ dataset[10:15]: (tensor([18.6434,  1.9751,  3.7301, 15.4471, 16.8421]), tensor([
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/ad8c15df917b960ecc26ed5481941d057d62d629d657a61e57f74cb62fd2b280.png" src="_images/ad8c15df917b960ecc26ed5481941d057d62d629d657a61e57f74cb62fd2b280.png" />
+<img alt="_images/39a88e9fd15672864e90a29301d55fcf2f59c4c998f15c7efa24272ffed4c101.png" src="_images/39a88e9fd15672864e90a29301d55fcf2f59c4c998f15c7efa24272ffed4c101.png" />
 </div>
 </div>
 </section>
@@ -678,7 +678,7 @@ dataset[10:15]: (tensor([18.6434,  1.9751,  3.7301, 15.4471, 16.8421]), tensor([
 <p>The <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> class in PyTorch makes implementing SGD very easy: it can wrap any <code class="docutils literal notranslate"><span class="pre">Dataset</span></code> instance, and then retrieves training samples one “mini-batch” at a time. The code below uses a mini-batch size of 25, but feel free to experiment with different values for both this parameter and the learning rate to get a feel for what happens. Note that by convention we refer to one execution of the inner loop below, over a mini-batch, as an “iteration”. One full cycle through the dataset by randomly selecting mini-batches is referred to as an “epoch”.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">train_sgd</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">loss_fn</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">num_epochs</span><span class="o">=</span><span class="mi">31</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">25</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">train_sgd</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">loss_fn</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">num_epochs</span><span class="o">=</span><span class="mi">31</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">25</span><span class="p">):</span>
     <span class="c1"># Initialize optimizer</span>
     <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">learning_rate</span><span class="p">)</span>
 
@@ -710,7 +710,7 @@ dataset[10:15]: (tensor([18.6434,  1.9751,  3.7301, 15.4471, 16.8421]), tensor([
 
 <span class="c1"># Create a callback that saves loss to a dataframe</span>
 <span class="n">loss_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Epoch&#39;</span><span class="p">,</span> <span class="s1">&#39;Loss&#39;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">record_loss</span><span class="p">(</span><span class="n">epoch</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">record_loss</span><span class="p">(</span><span class="n">epoch</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
     <span class="n">loss_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">loss_data</span><span class="p">)]</span> <span class="o">=</span> <span class="p">[</span><span class="n">epoch</span><span class="p">,</span> <span class="n">mse</span><span class="p">(</span><span class="n">model</span><span class="p">(</span><span class="n">x_samples</span><span class="p">),</span> <span class="n">y_samples</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()]</span>
             
 <span class="c1"># Run the training loop</span>
@@ -728,7 +728,7 @@ dataset[10:15]: (tensor([18.6434,  1.9751,  3.7301, 15.4471, 16.8421]), tensor([
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/3180b3a7179ce5fa9f80e4ac28c71e947466159533167cc0ee6ea494aa0379d7.png" src="_images/3180b3a7179ce5fa9f80e4ac28c71e947466159533167cc0ee6ea494aa0379d7.png" />
+<img alt="_images/5f6e0443d2629559818f6b9565ee1f528d3aaaa03b0c265e1eb68fb776100e8c.png" src="_images/5f6e0443d2629559818f6b9565ee1f528d3aaaa03b0c265e1eb68fb776100e8c.png" />
 </div>
 </div>
 <p>Note that we converged <em>much</em> faster in this case: in just 30 iterations we reached the same low loss as with 300 iterations before. The answer is because with 250 training samples and mini-batches of size 25, each epoch adjusts the model’s parameters 10 times. This effectively boosts the learning rate by a factor of 10. However, note that because each mini-batch looks at only one 10th of the dataset, each mini-batch’s adjustment could <em>adversely</em> affect the performance on the other training samples.</p>

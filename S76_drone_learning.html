@@ -30,7 +30,7 @@
   <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -448,8 +448,8 @@ In particular, below we extend the 1D interpolation example from Chapter 5, exte
 <section id="sampling-from-rays">
 <h3><span class="section-number">7.6.2.1. </span>Sampling from Rays<a class="headerlink" href="#sampling-from-rays" title="Link to this heading">#</a></h3>
 <p>The first part of a volume renderer is to evenly sample points on rays, emanating from the optical center of a camera. When we are given the <code class="docutils literal notranslate"><span class="pre">origin</span></code> and the <code class="docutils literal notranslate"><span class="pre">direction</span></code> of a ray (as a unit-vector) sampling is simple enough: a point <span class="math notranslate nohighlight">\(P\)</span> on the ray at a distance <span class="math notranslate nohighlight">\(t\)</span> from the origin <span class="math notranslate nohighlight">\(O\)</span>, in the direction <span class="math notranslate nohighlight">\(D\)</span> is given as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-6546c115-e4d4-42b8-ab82-bebeca7b8a7d">
-<span class="eqno">(7.67)<a class="headerlink" href="#equation-6546c115-e4d4-42b8-ab82-bebeca7b8a7d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-346b7af5-4f8a-4858-b924-0f04cc9b0f74">
+<span class="eqno">(7.67)<a class="headerlink" href="#equation-346b7af5-4f8a-4858-b924-0f04cc9b0f74" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P(t,O,D) = O + t  D
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(t\)</span> is a random depth along the ray. Hence, we only need to sample many <span class="math notranslate nohighlight">\(t\)</span> values evenly and we are done.</p>
@@ -457,7 +457,7 @@ P(t,O,D) = O + t  D
 As a case in point, our first function <code class="docutils literal notranslate"><span class="pre">sample_along_ray</span></code> below takes a set of t_values and produces the corresponding sampled points <span class="math notranslate nohighlight">\(P\)</span>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">sample_along_ray</span><span class="p">(</span><span class="n">t_values</span><span class="p">,</span> <span class="n">origins</span><span class="p">,</span> <span class="n">directions</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">sample_along_ray</span><span class="p">(</span><span class="n">t_values</span><span class="p">,</span> <span class="n">origins</span><span class="p">,</span> <span class="n">directions</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Sample points along rays defined by origins and (unit-norm) directions.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">origins</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+</span> <span class="n">t_values</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">directions</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>
 </pre></div>
@@ -498,13 +498,13 @@ As a case in point, our first function <code class="docutils literal notranslate
 <section id="integration-along-rays">
 <span id="index-3"></span><h3><span class="section-number">7.6.2.2. </span>Integration along Rays<a class="headerlink" href="#integration-along-rays" title="Link to this heading">#</a></h3>
 <p>The second part of the volume rendering story is where the magic happens. Let us assume that we are given the densities <span class="math notranslate nohighlight">\(\sigma_i\)</span> and colors <span class="math notranslate nohighlight">\(c_i\)</span> at <span class="math notranslate nohighlight">\(N\)</span> sampled points <span class="math notranslate nohighlight">\(P_i\)</span> on a ray corresponding to a given pixel. We can then calculate the color <span class="math notranslate nohighlight">\(C\)</span> for the pixel using the equation below,</p>
-<div class="amsmath math notranslate nohighlight" id="equation-d0dab1a3-9847-4f63-a25a-d059a4091b4d">
-<span class="eqno">(7.68)<a class="headerlink" href="#equation-d0dab1a3-9847-4f63-a25a-d059a4091b4d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-f116f835-41c5-4eb6-a7ad-71946a84a276">
+<span class="eqno">(7.68)<a class="headerlink" href="#equation-f116f835-41c5-4eb6-a7ad-71946a84a276" title="Permalink to this equation">#</a></span>\[\begin{equation}
 C = \sum_{i=1}^N \alpha_i T_i c_i
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\alpha_i\)</span> is the <strong>opacity</strong> and <span class="math notranslate nohighlight">\(T_i\)</span> is the <strong>transmittance</strong> at <span class="math notranslate nohighlight">\(P_i\)</span>, both defined below:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-db661d44-99f0-49e3-ad4c-28fc9e386e9f">
-<span class="eqno">(7.69)<a class="headerlink" href="#equation-db661d44-99f0-49e3-ad4c-28fc9e386e9f" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ec2ee042-891a-4131-ba65-6aebe937e961">
+<span class="eqno">(7.69)<a class="headerlink" href="#equation-ec2ee042-891a-4131-ba65-6aebe937e961" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{align}
 \alpha_i &amp;\doteq 1 - \exp(-\sigma_i) \\
 T_i &amp;\doteq \exp ( - \sum_{j=1}^{i-1} \sigma_j).
@@ -515,7 +515,7 @@ T_i &amp;\doteq \exp ( - \sum_{j=1}^{i-1} \sigma_j).
 <p>The function <code class="docutils literal notranslate"><span class="pre">render_along_ray</span></code> below implements this equation, again taking care that arbitrary batch dimensions are correctly handled. It also allows for specifying a background color that is composited with the rendered color in case the ray does not hit anything in the scene. We defined the default color <code class="docutils literal notranslate"><span class="pre">WHITE</span></code> in the preamble.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">render_along_ray</span><span class="p">(</span><span class="n">density</span><span class="p">,</span> <span class="n">rgb</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="n">WHITE</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">render_along_ray</span><span class="p">(</span><span class="n">density</span><span class="p">,</span> <span class="n">rgb</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="n">WHITE</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the final rendered color given the density and RGB values.&quot;&quot;&quot;</span>
     <span class="n">alpha</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">density</span><span class="p">)</span>
     <span class="n">cumulative_density</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">density</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
@@ -543,8 +543,8 @@ T_i &amp;\doteq \exp ( - \sum_{j=1}^{i-1} \sigma_j).
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[0.49646217 0.6115525  0.5537044 ]
- [0.4546436  0.8648711  0.47320837]]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[0.3155443  0.5759586  0.51179856]
+ [0.40660143 0.6459031  0.4098453 ]]
 </pre></div>
 </div>
 </div>
@@ -558,8 +558,8 @@ T_i &amp;\doteq \exp ( - \sum_{j=1}^{i-1} \sigma_j).
 <div><p>A voxel grid of density or color.</p>
 </div></blockquote>
 <p>A key decision in the NeRF architecture is how to represent the function <span class="math notranslate nohighlight">\(F_\Theta\)</span> so it can be queried for a density and a color at every point. In short, we need:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-80b2e68e-8839-4538-afa7-6a2e5d755947">
-<span class="eqno">(7.70)<a class="headerlink" href="#equation-80b2e68e-8839-4538-afa7-6a2e5d755947" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-a30d0201-d098-4afb-95c8-b7f08f3f7bdd">
+<span class="eqno">(7.70)<a class="headerlink" href="#equation-a30d0201-d098-4afb-95c8-b7f08f3f7bdd" title="Permalink to this equation">#</a></span>\[\begin{equation}
 (\sigma, c) = F_\Theta(P)
 \end{equation}\]</div>
 <p>with <span class="math notranslate nohighlight">\(P\in R^3\)</span>, <span class="math notranslate nohighlight">\(\sigma\in R\)</span>, and <span class="math notranslate nohighlight">\(c\in[0...255]^3\)</span>. Note that in computer vision, neural networks typically take high-dimensional inputs, e.g., entire images, so having such a low-dimensional input (3) is highly unusual. This “coordinate-based” approach is one of the breakthroughs of NeRF-style representations.</p>
@@ -568,7 +568,7 @@ T_i &amp;\doteq \exp ( - \sum_{j=1}^{i-1} \sigma_j).
 The code below implements trilinear interpolation: the values on the <em>eight</em> corners of each voxel are combined using three blending weights, which depend on where the queried point lies within the voxel:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">bracket</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">bracket</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the indices of the nearest grid points to x, as well as weights.&quot;&quot;&quot;</span>
     <span class="c1"># Check device of x and n:</span>
     <span class="n">x0</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">long</span><span class="p">()</span>
@@ -576,12 +576,12 @@ The code below implements trilinear interpolation: the values on the <em>eight</
     <span class="n">X1</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">x0</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">X0</span><span class="p">,</span> <span class="n">X1</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">x0</span><span class="o">.</span><span class="n">float</span><span class="p">(),</span> <span class="nb">min</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">interpolate</span><span class="p">(</span><span class="n">v0</span><span class="p">,</span> <span class="n">v1</span><span class="p">,</span> <span class="n">alpha</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">interpolate</span><span class="p">(</span><span class="n">v0</span><span class="p">,</span> <span class="n">v1</span><span class="p">,</span> <span class="n">alpha</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Interpolate between v0 and v1 using alpha, using unsqueeze to properly handle batches.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">v0</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">alpha</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="o">+</span> <span class="n">v1</span> <span class="o">*</span> <span class="n">alpha</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 
-<span class="k">class</span> <span class="nc">VoxelGrid</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VoxelGrid</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;A 3D voxel grid with given `shape` with learnable values at the middle of the voxels.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">VoxelGrid</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="c1"># Note that we store *corner* values, so we need one more point in each dimension:</span>
@@ -591,7 +591,7 @@ The code below implements trilinear interpolation: the values on the <em>eight</
         <span class="k">else</span><span class="p">:</span>
            <span class="bp">self</span><span class="o">.</span><span class="n">grid</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="o">*</span><span class="n">storage_shape</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> <span class="o">*</span> <span class="nb">max</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">P</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">P</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Implement trilinear interpolation at the points P.&quot;&quot;&quot;</span>
         <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">P</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">P</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">P</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
 
@@ -627,7 +627,7 @@ The code below implements trilinear interpolation: the values on the <em>eight</
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Interpolated Output: 0.50425
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Interpolated Output: 0.36904
 </pre></div>
 </div>
 </div>
@@ -672,7 +672,7 @@ Interpolated Output:
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Config</span><span class="p">:</span>
     <span class="n">near</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.5</span>
     <span class="n">far</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">3.5</span>
     <span class="n">num_samples</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">64</span>
@@ -693,7 +693,7 @@ Interpolated Output:
 <p>The latter two steps are a differentiable way to ensure the output samples remain within their expected ranges. Note also that training a NeRF can take a long time, so we are careful to use <code class="docutils literal notranslate"><span class="pre">float32</span></code> everywhere.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">sample_rays</span><span class="p">(</span><span class="n">t_values</span><span class="p">,</span> <span class="n">rays</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">sample_rays</span><span class="p">(</span><span class="n">t_values</span><span class="p">,</span> <span class="n">rays</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Sample points along the rays, using the t_values defined in the constructor.</span>
 <span class="sd">        During training, add a small random scalar to t_values to prevent overfitting to the</span>
 <span class="sd">        discrete sampling locations.</span>
@@ -719,8 +719,8 @@ Interpolated Output:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">SimpleDVGO</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">SimpleDVGO</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize voxel grids and bounding box corners.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>  <span class="c1"># Calling the superclass&#39;s __init__ method</span>
 
@@ -743,7 +743,7 @@ Interpolated Output:
         <span class="c1"># Finally, record background color for rendering:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;background&#39;</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">background</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rays</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rays</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform volume rendering using the provided ray information.&quot;&quot;&quot;</span>
         <span class="n">samples</span> <span class="o">=</span> <span class="n">sample_rays</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t_values</span><span class="p">,</span> <span class="n">rays</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="n">training</span><span class="p">)</span>
 
@@ -760,7 +760,7 @@ Interpolated Output:
         <span class="c1"># Render</span>
         <span class="k">return</span> <span class="n">render_along_ray</span><span class="p">(</span><span class="n">density</span><span class="p">,</span> <span class="n">rgb</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">background</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">alpha</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">alpha</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;return the alpha for the density voxel grid&quot;&quot;&quot;</span>
         <span class="n">density</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">density_voxel_grid</span><span class="o">.</span><span class="n">grid</span><span class="p">)</span>
         <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">density</span><span class="p">)</span>
@@ -825,28 +825,28 @@ Interpolated Output:
 </ul>
 <p>Acquiring all this information for an arbitrary image sequence taken with some unknown, uncalibrated camera can be complicated. Cameras come in a variety of sizes and with very different lenses, and effects like radial distortion make the modeling process non-trivial. In addition, recovering the actual position and attitude of the camera in a scene is typically done through structure from motion, which can be time-consuming and tricky.</p>
 <p id="index-6">In the following, we will assume that all this hard work has been done for us, and/or the images have been simulated with exactly known camera parameters, both intrinsic and extrinsic. One popular way to accomplish this is by providing undistorted images accompanied by a <span class="math notranslate nohighlight">\(3 \times 4\)</span> <strong>camera matrix</strong> <span class="math notranslate nohighlight">\(M\)</span>. Recall that a 3D point <span class="math notranslate nohighlight">\(P\)</span> can be projected into an image via</p>
-<div class="amsmath math notranslate nohighlight" id="equation-e4f64cfc-d292-4e13-a596-cdcd7763a8e8">
-<span class="eqno">(7.71)<a class="headerlink" href="#equation-e4f64cfc-d292-4e13-a596-cdcd7763a8e8" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-6e138f0f-6456-444a-8c60-cd59842ade1f">
+<span class="eqno">(7.71)<a class="headerlink" href="#equation-6e138f0f-6456-444a-8c60-cd59842ade1f" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \tilde{p} = K R^T (P - t)
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\tilde{p}\)</span> are <em>homogeneous</em> 2D image coordinates. We can re-write this as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-452fe9ff-427c-4581-8327-3549e0d1fe42">
-<span class="eqno">(7.72)<a class="headerlink" href="#equation-452fe9ff-427c-4581-8327-3549e0d1fe42" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-7cfd855e-60b7-4cf7-a31b-b92a7838189a">
+<span class="eqno">(7.72)<a class="headerlink" href="#equation-7cfd855e-60b7-4cf7-a31b-b92a7838189a" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \tilde{p} = M\tilde{P}
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\tilde{P} = \begin{bmatrix}P \\1 \end{bmatrix}\)</span> and the camera matrix <span class="math notranslate nohighlight">\(M\)</span> is given by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c6faec77-de77-41e3-a07e-fa4ab8ba4184">
-<span class="eqno">(7.73)<a class="headerlink" href="#equation-c6faec77-de77-41e3-a07e-fa4ab8ba4184" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d270854b-424d-4199-95c2-5453bf5ae140">
+<span class="eqno">(7.73)<a class="headerlink" href="#equation-d270854b-424d-4199-95c2-5453bf5ae140" title="Permalink to this equation">#</a></span>\[\begin{equation}
 M = [A|a] = [K R^T | - K R^T t]
 \end{equation}\]</div>
 <p>That means that if we are <em>given</em> the camera matrix <span class="math notranslate nohighlight">\(M\)</span> we can always recover the ray origins as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-29142ca2-8330-450d-9de0-18088ae7cc62">
-<span class="eqno">(7.74)<a class="headerlink" href="#equation-29142ca2-8330-450d-9de0-18088ae7cc62" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ae100a4e-e462-4b1f-a7d5-2c789859c8ed">
+<span class="eqno">(7.74)<a class="headerlink" href="#equation-ae100a4e-e462-4b1f-a7d5-2c789859c8ed" title="Permalink to this equation">#</a></span>\[\begin{equation}
 t = -A^{-1} a
 \end{equation}\]</div>
 <p>and a random 3D point <span class="math notranslate nohighlight">\(P\)</span> on the ray corresponding to <span class="math notranslate nohighlight">\(\tilde{p}\)</span> as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-40f71913-e717-490d-98f3-e253a3798059">
-<span class="eqno">(7.75)<a class="headerlink" href="#equation-40f71913-e717-490d-98f3-e253a3798059" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-93a68bc9-55c4-490b-881e-602136cac298">
+<span class="eqno">(7.75)<a class="headerlink" href="#equation-93a68bc9-55c4-490b-881e-602136cac298" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P = A^{-1}(\tilde{p} - a)
 \end{equation}\]</div>
 <p>since <span class="math notranslate nohighlight">\(\tilde{p} = AP + a\)</span>. We will illustrate this below with the Stonehenge dataset.</p>
@@ -985,13 +985,13 @@ P = A^{-1}(\tilde{p} - a)
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/efcb7e5b386baeebadc806eea90bf7f6c208c3fb7561c0eaee9f8da7501bbfbd.png" src="_images/efcb7e5b386baeebadc806eea90bf7f6c208c3fb7561c0eaee9f8da7501bbfbd.png" />
+<img alt="_images/1784444922499e158705bdeffa129768b1cf3722bfa20bd1ea83ca493a28d7ea.png" src="_images/1784444922499e158705bdeffa129768b1cf3722bfa20bd1ea83ca493a28d7ea.png" />
 </div>
 </div>
 <p>Let us recall the training code from Chapter 5. We previously used this code to train for the parameters of a 1D interpolation grid, minimizing a Mean-Squared Error (MSE) loss function, i.e., the squared difference between the predicted values and the training data values. This is the standard loss function for continuous <em>regression</em> problems.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">train_sgd</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">num_epochs</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">4096</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">train_sgd</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">num_epochs</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">4096</span><span class="p">):</span>
     <span class="c1"># Initialize optimizer</span>
     <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">learning_rate</span><span class="p">)</span>
 
@@ -1049,7 +1049,7 @@ P = A^{-1}(\tilde{p} - a)
 <span class="k">else</span><span class="p">:</span>
     <span class="c1"># Create a callback that saves loss to a dataframe</span>
     <span class="n">loss_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Iteration&#39;</span><span class="p">,</span> <span class="s1">&#39;Loss&#39;</span><span class="p">])</span>
-    <span class="k">def</span> <span class="nf">record_loss</span><span class="p">(</span><span class="n">epoch</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">iteration</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">loss</span><span class="p">:</span><span class="nb">float</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">record_loss</span><span class="p">(</span><span class="n">epoch</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">iteration</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">loss</span><span class="p">:</span><span class="nb">float</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">iteration</span> <span class="o">%</span> <span class="mi">100</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Epoch: </span><span class="si">{</span><span class="n">epoch</span><span class="si">}</span><span class="s2">, iteration </span><span class="si">{</span><span class="n">iteration</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">loss</span><span class="si">:</span><span class="s2">.5f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
