@@ -398,15 +398,15 @@
   <section class="tex2jax_ignore mathjax_ignore" id="actions-for-sorting-trash">
 <h1><span class="section-number">2.2. </span>Actions for Sorting Trash<a class="headerlink" href="#actions-for-sorting-trash" title="Link to this heading">#</a></h1>
 <p><a href="https://colab.research.google.com/github/gtbook/robotics/blob/main/S22_sorter_actions.ipynb" target="_parent"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg" /></a></p>
-<blockquote id="index-0">
-<div><p>Robots change the world through their actions. Action models capture their salient aspects.</p>
+<blockquote id="index-1">
+<span id="index-0"></span><div><p>Robots change the world through their actions. Action models capture their salient aspects.</p>
 </div></blockquote>
 <a class="reference internal image-reference" href="_images/S22-Trash_sorting_robot_with_gripper-10.jpg"><img alt="Splash image with rusty robot ferrying a mountain of trash" class="align-center" src="_images/S22-Trash_sorting_robot_with_gripper-10.jpg" style="width: 40%;" /></a>
-<p>Robots decide how to act in the world by reasoning about how their actions can be used to achieve their goals, given the current state of the world.
+<p id="index-2">Robots decide how to act in the world by reasoning about how their actions can be used to achieve their goals, given the current state of the world.
 At a high level, actions can be represented by symbolic descriptions of their effects (changes that will occur in the world state when the action is executed)
 and by their preconditions (things that must be true in the current state in order to execute the action).
 The robot’s goals can be encoded as a symbolic description of the desired world state, or, as we will do now,
-by assigning a cost executing an action in a particular world state.
+by associating a cost with executing an action in a particular world state.
 Note that assigning a cost to an action is equivalent to assigning a reward (merely multiply the cost by -1 to obtain a reward).
 If we use a cost-based approach, we generally frame the planning problem as a decision problem: choose the action that minimizes cost.
 If we are interested in long time horizons, we would choose the sequence of actions that minimize cost over the chosen time period.
@@ -423,10 +423,10 @@ current context) later in the chapter.</p>
 <div><p>For a trash sorting robot, the destination bin is the most important aspect of an action.</p>
 </div></blockquote>
 <p>For our trash sorting robot, we will define four actions, each of which can be executed when
-there is an item of trash in the work space (i.e., there are no preconditions for the actions).
+there is an item of trash in the work space, i.e., there are no other preconditions for the actions.
 The first three actions use the robot manipulator to move an item of trash
 to one of three bins: glass, metal, or mixed paper.
-The fourth action is a nop,
+The fourth action is a <em>nop</em>,
 which corresponds to the robot simply allowing the item to
 pass through the work space, to be processed, for example, by a human worker
 (note that “nop” is a shorthand used in many programming languages
@@ -444,16 +444,15 @@ exactly the category of the item in the work space), choosing an action would be
 place paper and scrap cardboard in the paper bin; place cans and scrap metal in the metal bin;
 place bottles in the glass bin. The nop action would never be used.
 But what if the robot’s knowledge of the world state is uncertain?
-Suppose, for example, that it sometimes mistakes scrap metal for cardboard.
+Suppose, for example, that the robot sometimes mistakes scrap metal for cardboard.
 Placing scrap metal in the paper bin could lead to significant damage to
-trash processing equipment, possibly requiring the facility to shut down completely
-while repairs are made.
+trash processing equipment, possibly requiring the facility to shut down completely while repairs are made.
 In contrast, if the robot places paper into the metal bin, serious damage is unlikely, and the cost of this wrong decision would likely be much smaller.</p>
 <p>In order to make informed decisions about which action to take,
 the robot needs to have some quantitative way to evaluate the cost of
 executing the wrong actions.
 This begins by assigning a cost to each action, depending on the world
-state when the action is executed.</p>
+state in which the action is executed.</p>
 <p>For this example, we will assign zero cost when the robot executes the correct action,
 and positive value costs when wrong actions are executed, depending on the severity
 of the consequence.  We can encode these costs into a table using the following code.</p>
@@ -532,7 +531,7 @@ of the consequence.  We can encode these costs into a table using the following 
 </table>
 </div></div></div>
 </div>
-<p>Note that the cost of making the correct decision (e.g., placing cardboard into the paper bin) is zero, and the cost of wrong decisions is a positive number that reflects the damage done to processing machinery for the specific cases. Furthermore, we have assigned a unit cost to executing the nop action (i.e., letting the trash item pass, unsorted). This latter cost assignment depends, of course, of what happens at the downstream sorting stages, but we ignore such effects here.</p>
+<p>Note that the cost of making the correct decision (e.g., placing cardboard into the paper bin) is zero, and the cost of wrong decisions is a positive number that reflects the damage done to processing machinery for the specific cases. Furthermore, we have assigned a unit cost to executing the nop action (i.e., letting the trash item pass, unsorted). This latter cost assignment depends, of course, on what happens at the downstream sorting stages, but we ignore such effects here.</p>
 <p>If the robot knew the state of the world with certainty, planning would amount to merely choosing at each
 moment the action that minimizes the cost. For our trash sorting problem, this approach would uniquely
 define which action to take as a function of the world state.
@@ -563,7 +562,7 @@ Similarly, since the probability of a can is 0.25, the probability is 0.25 that 
 the probability that the cost will be 10 is 0.2; and the probability that the cost will be 3
 is 0.05.  And voilà, we have determined the complete probability distribution on cost, given
 that the robot always places items in the paper bin!</p>
-<p id="index-1">In probability theory, a <strong>random variable</strong> is defined as a mapping from the sample space
+<p id="index-3">In probability theory, a <strong>random variable</strong> is defined as a mapping from the sample space
 to real numbers, <span class="math notranslate nohighlight">\(X : \Omega \rightarrow \mathbb{R}\)</span>.
 We typically use upper case letters to denote random variables, and we typically
 write <span class="math notranslate nohighlight">\(X\)</span> instead of <span class="math notranslate nohighlight">\(X(\omega)\)</span>.
@@ -571,17 +570,17 @@ In this way, we deal directly with <span class="math notranslate nohighlight">\(
 whose probability distribution is induced by the probability distribution on <span class="math notranslate nohighlight">\(\Omega\)</span>.
 This is exactly what we did above, when we used the probability distribution on
 categories to infer the distribution on costs.</p>
-<p id="index-3"><span id="index-2"></span>A <strong>discrete random variable</strong> is defined as a random variable that takes values
+<p id="index-5"><span id="index-4"></span>A <strong>discrete random variable</strong> is defined as a random variable that takes values
 from a finite (or even countably infinite) set. The probability distribution
 for a discrete random variable is called a <strong>probability mass function</strong> or <strong>PMF</strong>.
-The pmf for random variable <span class="math notranslate nohighlight">\(X\)</span> is typically denoted by <span class="math notranslate nohighlight">\(p_X\)</span> or simply by <span class="math notranslate nohighlight">\(p\)</span>
+The PMF for random variable <span class="math notranslate nohighlight">\(X\)</span> is typically denoted by <span class="math notranslate nohighlight">\(p_X\)</span> or simply by <span class="math notranslate nohighlight">\(p\)</span>
 when the context makes clear the random variable under consideration. Discrete random variables
-and pmf’s are key concepts in the development of probability theory,
+and PMFs are key concepts in the development of probability theory,
 and they will be key in our treatment of uncertainty for robotics applications.</p>
 <p>Let us denote by <span class="math notranslate nohighlight">\(X\)</span> the cost of moving an item of trash to the paper bin.
 We use lower case letters to denote values that can be taken by random variables;
 in this case <span class="math notranslate nohighlight">\(x\)</span> denotes a value taken by the random variable <span class="math notranslate nohighlight">\(X\)</span>.
-The pmf <span class="math notranslate nohighlight">\(p_X\)</span> can be represented in tabular form as follows:</p>
+The PMF <span class="math notranslate nohighlight">\(p_X\)</span> can be represented in tabular form as follows:</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p><span class="math notranslate nohighlight">\(x\)</span></p></th>
@@ -609,7 +608,7 @@ PMFs to make decisions about which actions to apply. We will discuss such an app
 to planning a bit later in this chapter.</p>
 </section>
 <section id="expectation">
-<span id="index-4"></span><h2><span class="section-number">2.2.3. </span>Expectation<a class="headerlink" href="#expectation" title="Link to this heading">#</a></h2>
+<span id="index-6"></span><h2><span class="section-number">2.2.3. </span>Expectation<a class="headerlink" href="#expectation" title="Link to this heading">#</a></h2>
 <p>For many robotics applications, we hope that the robot will operate for a long period of time.
 We might hope for our trash sorting robot to operate for weeks, months, or longer, placing many pieces
 of trash into bins over the course of its operation.
@@ -622,13 +621,13 @@ This is the concept of <strong>expectation</strong> in probability theory.</p>
 <span class="math notranslate nohighlight">\(X \in \{ x_1, \dots , x_n \}\)</span>.
 The <strong>expected value</strong> of <span class="math notranslate nohighlight">\(X\)</span>, which we denote by <span class="math notranslate nohighlight">\(E[X]\)</span> is defined
 by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-636442ac-ce9d-469e-bcb6-4c6a676a1565">
-<span class="eqno">(2.6)<a class="headerlink" href="#equation-636442ac-ce9d-469e-bcb6-4c6a676a1565" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-8e355dc7-0134-40c7-8c76-088f8e540a19">
+<span class="eqno">(2.6)<a class="headerlink" href="#equation-8e355dc7-0134-40c7-8c76-088f8e540a19" title="Permalink to this equation">#</a></span>\[\begin{equation}
 E[X] = \sum_{i=1}^n x_i p_X(x_i)
 \end{equation}\]</div>
 <p>For the example above, the expected value of cost, <span class="math notranslate nohighlight">\(E[X]\)</span>, is given by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-ec3c1319-8205-41d4-85bb-e9a9dd9c7575">
-<span class="eqno">(2.7)<a class="headerlink" href="#equation-ec3c1319-8205-41d4-85bb-e9a9dd9c7575" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-72896778-1867-4f2d-8029-e8426d1332d1">
+<span class="eqno">(2.7)<a class="headerlink" href="#equation-72896778-1867-4f2d-8029-e8426d1332d1" title="Permalink to this equation">#</a></span>\[\begin{equation}
 E[X] = (0 \times 0.2) + (0 \times 0.3)  + (5 \times 0.25) + (10 \times 0.2)  + (3 \times 0.05)  = 3.4
 \end{equation}\]</div>
 <p>Note that we never really <em>expect</em> to see the cost <span class="math notranslate nohighlight">\(3.4\)</span>. The term <em>expected value</em> is a technical term,
@@ -679,39 +678,36 @@ We will discuss this in more detail below.</p>
 </div>
 <p>The result is an array in which each entry corresponds to the expected cost for a specific action.
 Thus, this array encapsulates everything we know about the expected costs of applying the four possible
-actions. We will use this later in the chapter to form a basis for simple planning.</p>
+actions. We will use this later in this chapter to form a basis for simple planning.</p>
 <p>If it is not clear to you why this works, write out the expression for the matrix multiplication
 described above, and compare to the equations for the expected cost of each action.</p>
 </section>
 <section id="simulation-by-sampling">
 <h2><span class="section-number">2.2.4. </span>Simulation by Sampling<a class="headerlink" href="#simulation-by-sampling" title="Link to this heading">#</a></h2>
-<blockquote>
+<blockquote id="index-7">
 <div><p>It is easy to demonstrate the relationship between expectation and the average
 over many trials - simply sample and average!</p>
 </div></blockquote>
 <p>The code below computes the average cost over <span class="math notranslate nohighlight">\(N\)</span> samples for a specified action.
-Try various values for <span class="math notranslate nohighlight">\(N\)</span>, and notice that as <span class="math notranslate nohighlight">\(N\)</span> increases, the average tends
+Try various values for <span class="math notranslate nohighlight">\(N\)</span>, and you should notice that as <span class="math notranslate nohighlight">\(N\)</span> increases, the average tends
 to be an increasingly better approximation of the expected cost.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Sample N times, and evaluate the cost of executing the given action:</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: The cost of executing each action given the category distribution</span>
+<span class="c1">#| label: fig:action-cost</span>
+<span class="c1"># Sample N times, and evaluate the cost of executing the given action:</span>
 <span class="n">total_cost</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="n">N</span> <span class="o">=</span> <span class="mi">100</span>
 <span class="n">action</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
     <span class="n">category</span> <span class="o">=</span> <span class="n">category_prior</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
     <span class="n">total_cost</span> <span class="o">+=</span> <span class="n">cost</span><span class="p">[</span><span class="n">action</span><span class="p">,</span> <span class="n">category</span><span class="p">]</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">total_cost</span><span class="o">/</span><span class="n">N</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>3.36
+<span class="n">cost_estimate</span> <span class="o">=</span> <span class="n">total_cost</span><span class="o">/</span><span class="n">N</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>For example, one experiment with <span class="math notranslate nohighlight">\(100\)</span> samples yielded:</p>
+<p>However, if the number of samples is low, there can be considerable variability in the estimate. For example, four different runs, each with <span class="math notranslate nohighlight">\(100\)</span> samples yielded 4 rather different values:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cost_estimate</span> <span class="o">=</span> <span class="p">[</span><span class="mf">3.14</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">4.01</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span>
@@ -721,7 +717,7 @@ to be an increasingly better approximation of the expected cost.</p>
 </div>
 </section>
 <section id="probability-theory-vs-statistics">
-<span id="index-5"></span><h2><span class="section-number">2.2.5. </span>Probability Theory vs. Statistics<a class="headerlink" href="#probability-theory-vs-statistics" title="Link to this heading">#</a></h2>
+<span id="index-8"></span><h2><span class="section-number">2.2.5. </span>Probability Theory vs. Statistics<a class="headerlink" href="#probability-theory-vs-statistics" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>Probability theory is the study of certain mathematical functions, while statistics are functions of data. The two are related, but different.</p>
 </div></blockquote>
@@ -741,30 +737,30 @@ Probability theorists take this as a given, along with the axioms.</p>
 For a discrete random variable <span class="math notranslate nohighlight">\(X\)</span> with <span class="math notranslate nohighlight">\(\Omega = \{ x_1 \dots x_n\}\)</span>,
 <span class="math notranslate nohighlight">\(E[X]\)</span> (also called the mean, and often denoted by <span class="math notranslate nohighlight">\(\mu\)</span>)
 can be computed as above</p>
-<div class="amsmath math notranslate nohighlight" id="equation-295016eb-f8a7-4c69-a6d7-419b34909933">
-<span class="eqno">(2.8)<a class="headerlink" href="#equation-295016eb-f8a7-4c69-a6d7-419b34909933" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-8f397707-ea12-49bf-b72c-2853fca0ec60">
+<span class="eqno">(2.8)<a class="headerlink" href="#equation-8f397707-ea12-49bf-b72c-2853fca0ec60" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mu = E[X] = \sum_{i=1}^n x_i p_X(x_i)
 \end{equation}\]</div>
 <p>The variance of a <em>random variable</em>,
 typically denoted by <span class="math notranslate nohighlight">\(\sigma^2\)</span>, is merely the expected value of the squared difference between
 the random variable <span class="math notranslate nohighlight">\(X\)</span> and the mean. The variance is also a property of probability distributions, and it can
 be computed as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-7583d66e-d53a-4443-a4c0-f9f5a1283ce7">
-<span class="eqno">(2.9)<a class="headerlink" href="#equation-7583d66e-d53a-4443-a4c0-f9f5a1283ce7" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-0537acce-81de-40a5-a6ea-b53540b21266">
+<span class="eqno">(2.9)<a class="headerlink" href="#equation-0537acce-81de-40a5-a6ea-b53540b21266" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \sigma^2 = E[(X-\mu)^2] = \sum_{i=1}^n p_X(x_i) (x_i - \mu)^2
 \end{equation}\]</div>
 <p>Note that the expressions for <span class="math notranslate nohighlight">\(\mu\)</span> and <span class="math notranslate nohighlight">\(\sigma^2\)</span> depend only on the probability distribution (in this case,
-the pmf <span class="math notranslate nohighlight">\(p_X\)</span>) and the values taken by the random variable <span class="math notranslate nohighlight">\(X\)</span>.</p>
-<p id="index-6">A <strong>statistic</strong> is any function of data (including the identity function).
+the PMF <span class="math notranslate nohighlight">\(p_X\)</span>) and the values taken by the random variable <span class="math notranslate nohighlight">\(X\)</span>.</p>
+<p id="index-9">A <strong>statistic</strong> is any function of data (including the identity function).
 Consider a set of measurements <span class="math notranslate nohighlight">\(\{ z_1, \dots z_N \}\)</span>.
 The average of these values, often denoted by <span class="math notranslate nohighlight">\(\bar{z}\)</span>, is a statistic, and it can be computed as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-adb8665c-d1e7-4e5a-b5d7-7b331693f5f3">
-<span class="eqno">(2.10)<a class="headerlink" href="#equation-adb8665c-d1e7-4e5a-b5d7-7b331693f5f3" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d9d01d09-dda2-46f0-a905-150045930637">
+<span class="eqno">(2.10)<a class="headerlink" href="#equation-d9d01d09-dda2-46f0-a905-150045930637" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \bar{z} = \frac{1}{N} \sum_{i=1}^{N} z_i
 \end{equation}\]</div>
 <p>Likewise, the variance of the <em>data</em>, often denoted by <span class="math notranslate nohighlight">\(\hat{\sigma}^2\)</span> can be computed as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-2fb545e6-762d-417c-8ce3-02a9b92aabb3">
-<span class="eqno">(2.11)<a class="headerlink" href="#equation-2fb545e6-762d-417c-8ce3-02a9b92aabb3" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-e773f49c-3d90-42a8-a856-8b1a14871f9d">
+<span class="eqno">(2.11)<a class="headerlink" href="#equation-e773f49c-3d90-42a8-a856-8b1a14871f9d" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \hat{\sigma}^2 = \frac{1}{N-1} \sum_{i=1}^{N} (z_i- \bar{z})^2
 \end{equation}\]</div>
 <p>Note that the definitions of <span class="math notranslate nohighlight">\(\bar{z}\)</span> and <span class="math notranslate nohighlight">\(\hat{\sigma}^2\)</span> depend <em>only</em> on the data itself.</p>
@@ -778,25 +774,22 @@ then the average of the data will tend toward the expected value of <span class=
 This property can be written formally as the <strong>weak law of large numbers</strong>, which
 states that for any <span class="math notranslate nohighlight">\(\epsilon &gt; 0\)</span>, if <span class="math notranslate nohighlight">\(\bar{z}_N\)</span> denotes the average of a data set of size <span class="math notranslate nohighlight">\(N\)</span>,
 then</p>
-<div class="amsmath math notranslate nohighlight" id="equation-8623deac-56d0-4478-afd1-ebbe03bb34f2">
-<span class="eqno">(2.12)<a class="headerlink" href="#equation-8623deac-56d0-4478-afd1-ebbe03bb34f2" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-a7d6a262-0799-47a4-bc8d-25521e342d1d">
+<span class="eqno">(2.12)<a class="headerlink" href="#equation-a7d6a262-0799-47a4-bc8d-25521e342d1d" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \lim_{N \rightarrow \infty} P( \mid \bar{z}_N - \mu \mid &lt; \epsilon ) = 1
 \end{equation}\]</div>
 <p>i.e., the average of <span class="math notranslate nohighlight">\(N\)</span> data points will become arbitrarily close to <span class="math notranslate nohighlight">\(\mu\)</span> as <span class="math notranslate nohighlight">\(N\)</span> becomes
 large. This occurs with probability one, a nuance that we will not discuss here.
 This is one explanation for why simulation by sampling works, and why the results tend
 to improve with an increasing number of samples.</p>
-<p>The weak law of large numbers is only the first of many theorems that formalize the connections
-between probability theory and statistics, but most all of these theorems express variations
-on a simple concept: <em>as the size of a data set becomes large, the statistics of that data
-set will become increasingly good approximations for various properties of
-the underlying probability distribution from which the data set was generated.</em>
-Therefore, using probability theory to reason about distributions can serve as a basis
+<p>The weak law of large numbers is only the first of many theorems that formalize the connections between probability theory and statistics, but most all of these theorems express variations
+on a simple concept: <em>as the size of a data set becomes large, the statistics of that data set will become increasingly good approximations for various properties of the underlying probability distribution from which the data set was generated.</em>
+Because of this, using probability theory to reason about distributions can serve as a basis
 for inferential reasoning about the real world.</p>
 </section>
 <section id="summary">
 <h2><span class="section-number">2.2.6. </span>Summary<a class="headerlink" href="#summary" title="Link to this heading">#</a></h2>
-<p>In ths section we considered the foundational concept of robot <em>actions</em>, focusing on how robot systems can use actions to intervene in the physical world. For our very abstracted world state, we considered discrete, symbolic actions, and introduced probability theory to model the uncertain outcomes associated with each action. We introduced the notion of <em>expectation</em> to think about the average outcome of actions over time. And, we ended by contrasting probability theory with statistics, and how the weak law of large numbers bridges the gap between these two formalisms.</p>
+<p>In ths section we considered the foundational concept of robot <em>actions</em>, focusing on how robot systems can use actions to intervene in the physical world. For our very abstracted world state, we considered discrete, symbolic actions, and introduced probability theory to model the uncertain outcomes associated with each action. We introduced the notion of <em>expectation</em> and drew connections to the average of data over many trials. And, we ended by contrasting probability theory with statistics, showing how the weak law of large numbers bridges the gap between these two formalisms.</p>
 </section>
 </section>
 

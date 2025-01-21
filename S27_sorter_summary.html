@@ -397,15 +397,15 @@
 <a class="reference internal image-reference" href="_images/S20-Trash_sorting_robot_with_gripper-03.jpg"><img alt="Splash image with heroic trash-sorting robot in sunset light" class="align-center" src="_images/S20-Trash_sorting_robot_with_gripper-03.jpg" style="width: 60%;" /></a>
 <p>In this chapter, we used the example of a trash sorting robot to introduce key concepts from probability theory, decision theory, and even machine learning, and showed how these concepts can be used to begin building robotic systems that operate in real world settings, where significant uncertainty may exist.</p>
 <section id="models">
-<h2><span class="section-number">2.7.1. </span>Models<a class="headerlink" href="#models" title="Link to this heading">#</a></h2>
+<span id="index-0"></span><h2><span class="section-number">2.7.1. </span>Models<a class="headerlink" href="#models" title="Link to this heading">#</a></h2>
 <p>Probability theory provides the mathematical foundation for dealing with uncertainties that confront
 robotic systems.
 In this chapter, we used probability to reason about the uncertain category of an object in the robot’s work space.
 We began by introducing <em>probability distributions</em>, which assign probability values to <em>events</em> (i.e., to subsets of the set of all possible outcomes). In the case of discrete outcomes, such as our five categories
 of trash, these probability distributions are called <em>probability mass functions</em> or <em>PMFs</em>, and they assign finite probability to each possible category.
 When the set of outcomes is continuous, such as the scale we used to measure an object’s weight,
-these probability distributions are called <em>probability density functions</em> or <em>pdf’s</em>, and they assign probability values to subsets of real numbers, for example, to intervals of the form <span class="math notranslate nohighlight">\([a,b]\)</span>,
-and this probabilty value can be computed by integrating the pdf over the interval.
+these probability distributions are called <em>probability density functions</em> or <em>PDFs</em>, and they assign probability values to subsets of real numbers, for example, to intervals of the form <span class="math notranslate nohighlight">\([a,b]\)</span>,
+and this probabilty value can be computed by integrating the PDF over the interval.
 Interestingly, for the continuous case, zero probability is assigned to any individual outcome,
 since this would correspond to an interval of the form <span class="math notranslate nohighlight">\([a,a]\)</span>, and for any continuous
 function <span class="math notranslate nohighlight">\(f\)</span>, we have <span class="math notranslate nohighlight">\(\int_a^a f(u)du = 0\)</span>.</p>
@@ -413,8 +413,8 @@ function <span class="math notranslate nohighlight">\(f\)</span>, we have <span 
 in robotics we are often interested in average behavior over long periods of time. For the example of our trash sorting robot, we might like to characterize the average performance of the system over days, or even weeks.
 <em>Expectation</em> is a property of probability distributions that gives insight into average behavior over many trials.
 The expected value of a discrete random variable is given by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-144cf1c0-5104-4c31-a32a-e03f038139e1">
-<span class="eqno">(2.50)<a class="headerlink" href="#equation-144cf1c0-5104-4c31-a32a-e03f038139e1" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-a0a31306-ba70-440a-851e-5a632d7f7ab7">
+<span class="eqno">(2.50)<a class="headerlink" href="#equation-a0a31306-ba70-440a-851e-5a632d7f7ab7" title="Permalink to this equation">#</a></span>\[\begin{equation}
 E[X] = \sum_{i=1}^n x_i p_X(x_i)
 \end{equation}\]</div>
 <p>This expression bears strong resemblance to the equation for the weighted average of
@@ -461,8 +461,8 @@ In particular, we developed an algorithm that uses the cumulative distribution f
 it is not immediately obvious how they could be used to make inferences about the world,
 or as a basis for decision-making in an uncertain world.
 The key idea that enables this kind of reasoning is captured in Bayes’ Theorem:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-f652088f-97f1-483f-9a01-796ea1278a36">
-<span class="eqno">(2.51)<a class="headerlink" href="#equation-f652088f-97f1-483f-9a01-796ea1278a36" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-cbf9b1ff-83b1-4ee8-93ee-8487f0811852">
+<span class="eqno">(2.51)<a class="headerlink" href="#equation-cbf9b1ff-83b1-4ee8-93ee-8487f0811852" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P(X|Z=z)=\frac{P(Z=z|X)P(X)}{P(Z=z)}
 \end{equation} \]</div>
 <p>Note that the forward model, <span class="math notranslate nohighlight">\(P(Z=z|X)\)</span> appears on the right hand side, and is used to compute the <em>inverse model</em>
@@ -470,15 +470,15 @@ P(X|Z=z)=\frac{P(Z=z|X)P(X)}{P(Z=z)}
 be used to compute the probability associated to the state <span class="math notranslate nohighlight">\(X\)</span>.
 For this reason, Bayes’ Theorem is sometimes referred to as an inversion theorem.</p>
 <p>We can use Bayes Theorem to compute the <em>maximum a posteriori</em> estimate (or <em>MAP</em> estimate) for the value of <span class="math notranslate nohighlight">\(X\)</span> given sensor reading <span class="math notranslate nohighlight">\(Z =z\)</span> by solving the optimization problem:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a1c1a5a9-30e3-435e-945f-92cbb4b4c011">
-<span class="eqno">(2.52)<a class="headerlink" href="#equation-a1c1a5a9-30e3-435e-945f-92cbb4b4c011" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-b8732aab-4722-4755-945f-b75bcb2867a4">
+<span class="eqno">(2.52)<a class="headerlink" href="#equation-b8732aab-4722-4755-945f-b75bcb2867a4" title="Permalink to this equation">#</a></span>\[\begin{equation}
 x^*_{MAP} = \arg \max_x P(x|z)
 \end{equation}\]</div>
 <p>Note that this computation requires that we have access to the prior probability distribution <span class="math notranslate nohighlight">\(P(X)\)</span>.
 In cases where this is not available, we may instead choose to compute the <em>maximum likelihood</em> estimate (or <em>MLE</em>),
 which is given by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c32d29f2-9875-43f2-a6ef-65652f949090">
-<span class="eqno">(2.53)<a class="headerlink" href="#equation-c32d29f2-9875-43f2-a6ef-65652f949090" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-5005ad9d-f6de-4322-964e-e86df7d1bb6f">
+<span class="eqno">(2.53)<a class="headerlink" href="#equation-5005ad9d-f6de-4322-964e-e86df7d1bb6f" title="Permalink to this equation">#</a></span>\[\begin{equation}
 x^*_{MLE} =  \arg \max_x L(x;z) =  \arg \max_x P(Z=z|X) 
 \end{equation}\]</div>
 <p>in which <span class="math notranslate nohighlight">\(L(x;z) = P(Z=z|X)\)</span> is called the likelihood.
@@ -498,14 +498,14 @@ OR DOES THIS GO IN THE MODELING SECTION?** --></section>
 </ol>
 <p>Equipped with these three axioms and a background in <em>real analysis</em>, one can derive most all of the important results that comprise modern probability theory.
 The Renaissance mathematicians were interested in understanding random phenomena. Kolmogorov, a Russian mathematician, was interested in establishing a rigorous theoretical foundation for probability theory.</p>
-<p>One of the best recent books we have found useful is the book <a class="reference external" href="https://probability4datascience.com/index.html">“Introduction to Probability for Data Science”</a> <span id="id1">[<a class="reference internal" href="bibliography.html#id7" title="Stanley H. Chan. Introduction to Probability for Data Science. Michigan Publishing Services, 2023. ISBN 978-1-60785-747-1. URL: https://probability4datascience.com/index.html.">Chan, 2023</a>]</span>.
+<p>One of the best recent books we have found useful is the book <a class="reference external" href="https://probability4datascience.com/index.html">“Introduction to Probability for Data Science”</a> <span id="id1">[<a class="reference internal" href="bibliography.html#id6" title="Stanley H. Chan. Introduction to Probability for Data Science. Michigan Publishing Services, 2023. ISBN 978-1-60785-747-1. URL: https://probability4datascience.com/index.html.">Chan, 2023</a>]</span>.
 The classic reference for statistical reasoning, including
 maximum likelihood estimation and Bayesian decision theory
-is <span id="id2">[<a class="reference internal" href="bibliography.html#id36" title="R.O. Duda, P.E. Hart, and D.G. Stork. Pattern Classification. Wiley, 2012. ISBN 9781118586006. URL: https://books.google.co.uk/books?id=Br33IRC3PkQC.">Duda <em>et al.</em>, 2012</a>]</span>.
+is <span id="id2">[<a class="reference internal" href="bibliography.html#id37" title="R.O. Duda, P.E. Hart, and D.G. Stork. Pattern Classification. Wiley, 2012. ISBN 9781118586006. URL: https://books.google.co.uk/books?id=Br33IRC3PkQC.">Duda <em>et al.</em>, 2012</a>]</span>.
 Anders Hald has written two volumes on the history of probability theory,
 one that covers the period from Bernoulli, De Moivre and Laplace to the mid-twentieth century,
-with particular attention to estimation problems <span id="id3">[<a class="reference internal" href="bibliography.html#id32" title="Anders Hald. A history of mathematical statistics from 1750 to 1930. Wiley, 1998.">Hald, 1998</a>]</span>,
-and one that covers developments prior to 1750 <span id="id4">[<a class="reference internal" href="bibliography.html#id33" title="Anders Hald. A History of Probability and Statistics and Their Applications before 1750. Wiley, 2003.">Hald, 2003</a>]</span>.</p>
+with particular attention to estimation problems <span id="id3">[<a class="reference internal" href="bibliography.html#id33" title="Anders Hald. A history of mathematical statistics from 1750 to 1930. Wiley, 1998.">Hald, 1998</a>]</span>,
+and one that covers developments prior to 1750 <span id="id4">[<a class="reference internal" href="bibliography.html#id34" title="Anders Hald. A History of Probability and Statistics and Their Applications before 1750. Wiley, 2003.">Hald, 2003</a>]</span>.</p>
 </section>
 </section>
 

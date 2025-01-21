@@ -382,7 +382,7 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise">3.3.1.1. Exercise</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dynamic-bayes-nets">3.3.2. Dynamic Bayes Nets</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introducing-dynamic-bayes-nets">3.3.2. Introducing Dynamic Bayes Nets</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ancestral-sampling">3.3.3. Ancestral Sampling</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simulation-of-a-robot">3.3.4. Simulation of a Robot</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">3.3.4.1. Exercises</a></li>
@@ -411,19 +411,29 @@
 <div><p>Dynamic Bayes nets replicate a Bayes net fragment over time.</p>
 </div></blockquote>
 <a class="reference internal image-reference" href="_images/S33-iRobot_vacuuming_robot-01.jpg"><img alt="Splash image with balancing steampunk robot sporting big eyes" class="align-center" src="_images/S33-iRobot_vacuuming_robot-01.jpg" style="width: 40%;" /></a>
-<p id="index-1">The concepts we discussed in the previous section can be generalized to include sensing, and introduces a much more general framework that we will use over and over in this book. In particular, the controlled Markov chain over successive states <span class="math notranslate nohighlight">\(X_t\)</span> is an example of a <strong>dynamic Bayes net</strong> or <strong>DBN</strong>: a Bayes net in which  <em>Bayes net slices</em> are replicated through time, to model the evolution of states over time. Below we add observations/measurements into the mix, and show how we can simulate the complete system using a more general technique called <em>ancestral sampling</em>.</p>
-<p>While most of the sensor modeling here is mostly a reprise of Section 2.3, the concept of dynamic Bayes net is an incredible modeling tool that we will use over and over in this book. The notion of ancestral sampling is also very powerful and underlies simulation for much more general robot systems, not just the discrete-state model we consider here.</p>
+<p id="index-1">The concepts we discussed in the previous section can be generalized to include sensing, and here we introduce a much more general framework that we will use over and over in this book.
+In particular, the controlled Markov chain over successive states <span class="math notranslate nohighlight">\(X_t\)</span> is an instance of a <strong>dynamic Bayes net</strong> or <strong>DBN</strong>:
+a Bayes net in which <em>Bayes net slices</em> are replicated through time to model the evolution of states over time.
+Below, we add observations/measurements into the mix and show how we can simulate the complete system using a more general technique called <em>ancestral sampling</em>.</p>
+<p id="index-2">While most of the sensor modeling here is largely a reprise of Section 2.3, the concept of a dynamic Bayes net is an incredible modeling tool that we will use repeatedly throughout this book.
+The notion of ancestral sampling is also very powerful and underlies simulation for much more general robot systems, not just the discrete-state model we consider here.</p>
 <section id="a-sensor-model">
 <h2><span class="section-number">3.3.1. </span>A Sensor Model<a class="headerlink" href="#a-sensor-model" title="Link to this heading">#</a></h2>
 <blockquote>
-<div><p>A simple light sensor</p>
+<div><p>A simple light sensor.</p>
 </div></blockquote>
-<p>This chapter is primarily focused on action, and hence the sensing we will consider is fairly straightforward. Let us conceive of a simple light sensor that we can use as a clue as to which room we are in.
-Specifically, let us assume for illustration’s sake that the living room and kitchen are on the south side, and hence have a lot of light on a typical day. The office in the dining room or on the north side, and the light sensor will typically respond with medium light levels. The hallway, on the other hand, is very dark as it has few windows. We can capture these semantics with a conditional probability distribution <span class="math notranslate nohighlight">\(P(Z_t|X_t)\)</span>, where <span class="math notranslate nohighlight">\(X_t\)</span> is the state at time <span class="math notranslate nohighlight">\(t\)</span> as before, and <span class="math notranslate nohighlight">\(Z_t\in\{\text{dark}, \text{medium}, \text{light}\}\)</span> is the measured light level.</p>
-<p>A small code snippet can create a reasonable sensor model:</p>
+<p>This chapter is primarily focused on action, and hence the sensing we will consider is fairly straightforward.
+Let us conceive of a simple light sensor that we can use as a clue about which room the robot is in.
+Specifically, let us assume for illustration’s sake that the living room and kitchen are on the south side, and hence have a lot of light on a typical day.
+The office and the dining room are on the north side, and the light sensor will typically respond with medium light levels.
+The hallway, on the other hand, is very dark as it has few windows.
+We can capture these semantics with a conditional probability distribution <span class="math notranslate nohighlight">\(P(Z_t|X_t)\)</span>, where <span class="math notranslate nohighlight">\(X_t\)</span> is the state at time <span class="math notranslate nohighlight">\(t\)</span> as before, and <span class="math notranslate nohighlight">\(Z_t \in \{\text{dark}, \text{medium}, \text{light}\}\)</span> is the measured light level.</p>
+<p>The small code snippet in Figure <a class="reference internal" href="#fig:vacuum-sensor-spec"><span class="xref myst">1</span></a> is one way to create a reasonable sensor model.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># vacuum.light_levels = [&quot;dark&quot;, &quot;medium&quot;, &quot;light&quot;]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Creating a sensor model $P(Z_t|X_t)$ using a string-based specification.</span>
+<span class="c1">#| label: vacuum-sensor-spec</span>
+<span class="c1"># vacuum.light_levels = [&quot;dark&quot;, &quot;medium&quot;, &quot;light&quot;]</span>
 <span class="n">Z</span> <span class="o">=</span> <span class="n">VARIABLES</span><span class="o">.</span><span class="n">discrete_series</span><span class="p">(</span><span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">light_levels</span><span class="p">)</span> <span class="c1"># define variables</span>
 <span class="c1"># vacuum.sensor_spec = &quot;1/1/8 1/1/8 2/7/1 8/1/1 1/8/1&quot;</span>
 <span class="n">pretty</span><span class="p">(</span><span class="n">gtsam</span><span class="o">.</span><span class="n">DiscreteConditional</span><span class="p">(</span><span class="n">Z</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">sensor_spec</span><span class="p">))</span> <span class="c1"># CPT on Z1 at time t=1</span>
@@ -447,24 +457,24 @@ Specifically, let us assume for illustration’s sake that the living room and k
 </table>
 </div></div></div>
 </div>
-<p>Several things to notice:</p>
+<p>There are several things to notice.</p>
 <ul class="simple">
-<li><p>this is again a <em>discrete</em> sensor; we have encountered these before in Chapter 2;</p></li>
-<li><p>it is an imperfect sensor, and hence each room has a most likely outcome, but all outcomes are possible in all rooms;</p></li>
-<li><p>the CPT (conditional probability table) above also captures modeling issues, such as varying light levels throughout the day.</p></li>
+<li><p>This is again a <em>discrete</em> sensor; we have encountered these before in Chapter 2.</p></li>
+<li><p>It is an imperfect sensor, and hence each room has a most likely outcome, but all outcomes are possible in all rooms.</p></li>
+<li><p>The CPT (conditional probability table) above also captures modeling issues, such as varying light levels throughout the day.</p></li>
 </ul>
 <section id="exercise">
 <h3><span class="section-number">3.3.1.1. </span>Exercise<a class="headerlink" href="#exercise" title="Link to this heading">#</a></h3>
 <p>Change the values in the CPT and see how those changes affect the rest of the code in this section. Specifically, try some CPT versions where some outcomes have zero probability.</p>
 </section>
 </section>
-<section id="dynamic-bayes-nets">
-<h2><span class="section-number">3.3.2. </span>Dynamic Bayes Nets<a class="headerlink" href="#dynamic-bayes-nets" title="Link to this heading">#</a></h2>
+<section id="introducing-dynamic-bayes-nets">
+<h2><span class="section-number">3.3.2. </span>Introducing Dynamic Bayes Nets<a class="headerlink" href="#introducing-dynamic-bayes-nets" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>AXZ slices for the win!</p>
 </div></blockquote>
-<p>Single time step reasoning will fall short for our vacuuming robot, which operates in time. In perception, the game is to estimate which state we are in given what we measured, but the ideas we discussed before will not apply directly. For example, recall the maximum likelihood method from the previous chapter, which we could try to apply here. In our case, given a sensor reading of, say, <span class="math notranslate nohighlight">\(Z_1\)</span>=<code class="docutils literal notranslate"><span class="pre">medium</span></code>, the maximum likelihood estimate (MLE) for the state <span class="math notranslate nohighlight">\(X_1\)</span> of the robot is <code class="docutils literal notranslate"><span class="pre">dining</span> <span class="pre">room</span></code>: it corresponds to the highest value in the <code class="docutils literal notranslate"><span class="pre">medium</span></code> column. But that takes only <em>one</em> measurement into account, even if we take many steps in the environment.</p>
-<p id="index-2">We use a <strong>dynamic Bayes net</strong>, a special type of Bayes net, to reason about multiple measurements.
+<p>Single time step reasoning will fall short for our vacuuming robot, which operates in time. In perception, the game is to estimate the state given what was measured, but the ideas we discussed before will not apply directly. For example, recall the maximum likelihood method from the previous chapter, which we could try to apply here. In our case, given a sensor reading of, say, <span class="math notranslate nohighlight">\(Z_1\)</span>=<code class="docutils literal notranslate"><span class="pre">medium</span></code>, the maximum likelihood estimate (MLE) for the state <span class="math notranslate nohighlight">\(X_1\)</span> of the robot is <code class="docutils literal notranslate"><span class="pre">dining</span> <span class="pre">room</span></code>: it corresponds to the highest value in the <code class="docutils literal notranslate"><span class="pre">medium</span></code> column. But that takes only <em>one</em> measurement into account, even if we take many steps in the environment.</p>
+<p id="index-3">We use a <strong>dynamic Bayes net</strong>, a special type of Bayes net, to reason about multiple measurements.
 Intuitively, we should be able to use the robot’s history to obtain a better estimate of its location. For example, if the robot were just in the living room, there is no way that it could have gotten to the dining room in a single step. In this section we will see how we can reason probabilistically about such things.</p>
 <p>The key lies in unrolling time in a graph.
 Recall that directed cycles are not allowed in a Bayes net, i.e., the
@@ -473,23 +483,18 @@ robot is all about the sense-think-act cycle, would we not expect a
 cycle in the graph when describing robots? The answer is to <em>unroll</em> time, as we show below.
 When a Bayes net is used to unroll the evolution of a system or agent
 over time, we call it a dynamic Bayes net or <strong>DBN</strong>.</p>
-<p>To illustrate this we will once again resort to code. The following piece of code builds the entire vacuuming robot dynamic Bayes net. Note that we take care to add CPTs of variables <em>before</em> we add the CPT on any of their parents (hence the <code class="docutils literal notranslate"><span class="pre">reversed</span></code> below) for reasons that will soon become clear:</p>
+<p>To illustrate this we will once again resort to code. The piece of code in Figure <a class="reference internal" href="#fig:dbn_5"><span class="xref myst">2</span></a> builds the entire vacuuming robot dynamic Bayes net. Note that we take care to add CPTs of variables <em>before</em> we add the CPT on any of their parents (hence the <code class="docutils literal notranslate"><span class="pre">reversed</span></code> below) for reasons that will soon become clear.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dbn</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">DiscreteBayesNet</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: A dynamic Bayes net modeling both actions and sensing.</span>
+<span class="c1">#| label: fig:dbn_5</span>
+<span class="n">dbn</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">DiscreteBayesNet</span><span class="p">()</span>
 <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
     <span class="n">dbn</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Z</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="p">]],</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">sensor_spec</span><span class="p">)</span> <span class="c1"># Add measurement CPTs</span>
 <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">N</span><span class="p">)):</span>
     <span class="n">dbn</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="n">k</span><span class="p">]],</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">action_spec</span><span class="p">)</span> <span class="c1"># Add transition CPTs</span>
 <span class="n">dbn</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;0/0/1/0/0&quot;</span><span class="p">)</span> <span class="c1"># Add initial state CPT</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: A dynamic Bayes net modeling both actions and sensing.</span>
-<span class="c1">#| label: fig:dbn_5</span>
+
 <span class="n">show</span><span class="p">(</span><span class="n">dbn</span><span class="p">,</span> <span class="n">hints</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;A&quot;</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;X&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Z&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">},</span> <span class="n">boxes</span><span class="o">=</span><span class="p">{</span><span class="n">A</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">N</span><span class="p">)})</span>
 </pre></div>
 </div>
@@ -500,8 +505,8 @@ over time, we call it a dynamic Bayes net or <strong>DBN</strong>.</p>
 </div>
 <p>Observe that after the first time step, the Bayes net is repeating the same “AXZ” pattern (or <em>slice</em>!) over and over again. Formally, the joint distribution <span class="math notranslate nohighlight">\(P(Z_{1:n},X_{1:n}|A_{1:n})\)</span> over states <span class="math notranslate nohighlight">\(X_{1:n} \doteq (X_1 \dots, X_n)\)</span> and measurements <span class="math notranslate nohighlight">\(Z_{1:n} \doteq (Z_1, \dots , Z_n)\)</span>, <em>given</em>
 the action sequence <span class="math notranslate nohighlight">\(A_{1:n} \doteq (A_1, \dots , A_n)\)</span> can be computed, given the DBN factorization, as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-ff49c635-5d9c-4524-a6c9-4dca99614302">
-<span class="eqno">(3.15)<a class="headerlink" href="#equation-ff49c635-5d9c-4524-a6c9-4dca99614302" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-0921112b-920d-49bf-9466-b5a1b9d09340">
+<span class="eqno">(3.15)<a class="headerlink" href="#equation-0921112b-920d-49bf-9466-b5a1b9d09340" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P(Z_{1:n},X_{1:n}|A_{1:n})= P(Z_1| X_1) P(X_1) \prod_{k=2}^{n} P(Z_k| X_k) P(X_k|A_{k-1},X_{k-1}).
 \end{equation}\]</div>
 <p>The AXZ slice at time <span class="math notranslate nohighlight">\(k\)</span> is given by <span class="math notranslate nohighlight">\(P(Z_k| X_k) P(X_k|A_{k-1},X_{k-1})\)</span>, whereas the chain is “jump-started” using the initial state distribution <span class="math notranslate nohighlight">\(P(X_1)\)</span> and the corresponding measurement model <span class="math notranslate nohighlight">\(P(Z_1|X_1)\)</span>.</p>
@@ -509,38 +514,23 @@ P(Z_{1:n},X_{1:n}|A_{1:n})= P(Z_1| X_1) P(X_1) \prod_{k=2}^{n} P(Z_k| X_k) P(X_k
 <section id="ancestral-sampling">
 <h2><span class="section-number">3.3.3. </span>Ancestral Sampling<a class="headerlink" href="#ancestral-sampling" title="Link to this heading">#</a></h2>
 <blockquote>
-<div><p>Ancestry matters!</p>
+<div><p>FOR DBNs, ancestry matters!</p>
 </div></blockquote>
-<p>How do we sample over such a complex Bayes net? Recall the example Bayes net example above with the four variables W,X,Y,Z, and joint distribution</p>
-<div class="amsmath math notranslate nohighlight" id="equation-e6fb06f1-9e1e-4093-9013-82c35429459c">
-<span class="eqno">(3.16)<a class="headerlink" href="#equation-e6fb06f1-9e1e-4093-9013-82c35429459c" title="Permalink to this equation">#</a></span>\[\begin{equation}
-P(W,X,Y,Z)=P(W|X,Z)P(X|Y,Z)P(Y|Z)P(Z):
-\end{equation} \]</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: The Bayes net for the four-variable problem we considered before.</span>
-<span class="c1">#| label: fig:bayes_net_4</span>
-<span class="n">show</span><span class="p">(</span><span class="n">wxyz</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="_images/8f7a674fb7ce540e5b27d4191dc9a17bb8fb1e7df4cd7dc3e1c56259657eb3a6.svg" src="_images/8f7a674fb7ce540e5b27d4191dc9a17bb8fb1e7df4cd7dc3e1c56259657eb3a6.svg" />
-</div>
-</div>
-<p id="index-3">Sampling from the joint distribution given in Bayes net form can be done
+<p>How do we sample over such a complex Bayes net? To explain, recall the Bayes net example from Figure <a class="reference internal" href="#fig:general_bayes_net"><span class="xref myst">11</span></a> in the previous section. It has four variables W,X,Y,Z, and the joint distribution</p>
+<div class="amsmath math notranslate nohighlight" id="equation-6ba638b2-c1c3-4ffc-afef-ae887c49b1e1">
+<span class="eqno">(3.16)<a class="headerlink" href="#equation-6ba638b2-c1c3-4ffc-afef-ae887c49b1e1" title="Permalink to this equation">#</a></span>\[\begin{equation}
+P(W,X,Y,Z)=P(W|X,Z)P(X|Y,Z)P(Y|Z)P(Z).
+\end{equation}\]</div>
+<p id="index-4">Sampling from the joint distribution given in Bayes net form can be done
 by sampling each variable in turn, but making sure that we always sample
-a node’s parents first. This can be done through the notion of a
+a node’s parents first. This can be done using the notion of a
 <strong>topological sort</strong> of the DAG. A topological sort of a DAG is an ordering
 of the vertices <span class="math notranslate nohighlight">\(\{v_1, \dots , v_n\}\)</span> such that <span class="math notranslate nohighlight">\(v_i\)</span> precedes <span class="math notranslate nohighlight">\(v_j\)</span> in the sort when there
 is a directed edge from <span class="math notranslate nohighlight">\(v_i\)</span> to <span class="math notranslate nohighlight">\(v_j\)</span> in the DAG.</p>
-<p>An easy algorithm to obtain a topological sort is <strong>Kahn’s algorithm</strong>,
-which iteratively removes nodes from the graph that either have no
-parents, or whose parents have all been removed already. The order in
-which nodes are removed constitutes a (non-unique) topological sort
-order.</p>
-<p>Sampling is then done by sampling from each variable
-separately, in topological sort order, as doing so will ensure its parents’ values are already available.
+<p id="index-5">An easy algorithm to obtain a topological sort is <strong>Kahn’s algorithm</strong>,
+which iteratively removes nodes from the graph that either have no parents, or whose parents have all been removed already.
+The order in which nodes are removed constitutes a (non-unique) topological sort order.</p>
+<p>Sampling is then done by sampling from each variable separately, in topological sort order, as doing so will ensure each variable’s parent values are already available.
 The example graph above happens to be laid out already in topological sort order, if read from top to bottom.
 Hence, in this example we sample first <span class="math notranslate nohighlight">\(Z\)</span>, then <span class="math notranslate nohighlight">\(Y\)</span>, then <span class="math notranslate nohighlight">\(X\)</span>, and then <span class="math notranslate nohighlight">\(W\)</span>.
 Note that in this case the topological sort happens to be unique, but that is an exception rather than the rule: for arbitrary Bayes nets, more than one topological sort can exist.</p>
@@ -582,14 +572,15 @@ x_{k+1} \sim P(X_{k+1}|X_{k}=s_{k},A_{k}=a_{k}).
 <section id="ancestral-sampling-with-gtsam">
 <h2><span class="section-number">3.3.5. </span>Ancestral Sampling with GTSAM<a class="headerlink" href="#ancestral-sampling-with-gtsam" title="Link to this heading">#</a></h2>
 <blockquote>
-<div><p>Simulation in code</p>
+<div><p>Simulation in code.</p>
 </div></blockquote>
 <p>Of course, GTSAM has a method built in to do ancestral sampling, <em>but</em> it only works for a <em>reverse</em> topologically sorted Bayes net. This matches the way we write down joint distributions, with parents towards the right, and it is also why above we used the built-in <code class="docutils literal notranslate"><span class="pre">reversed</span></code> on the range: this was to make sure that later states get sampled last. Because in our code above we only specified
 <span class="math notranslate nohighlight">\(P(Z_{1:n},X_{1:n}|A_{1:n})\)</span>, and specifically did not provide a distribution over actions, we need to give an action sequence <span class="math notranslate nohighlight">\(a_{1:n}\)</span> as an argument.</p>
-<p>As an example, below we examine what happens when we try the action <code class="docutils literal notranslate"><span class="pre">Right</span></code> 4 times in a row:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">actions</span> <span class="o">=</span> <span class="n">VARIABLES</span><span class="o">.</span><span class="n">assignment</span><span class="p">({</span><span class="n">A</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span> <span class="s2">&quot;R&quot;</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">N</span><span class="p">)})</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Sampling from the DBN.</span>
+<span class="c1">#| label: fig:dbn-sample</span>
+<span class="n">actions</span> <span class="o">=</span> <span class="n">VARIABLES</span><span class="o">.</span><span class="n">assignment</span><span class="p">({</span><span class="n">A</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span> <span class="s2">&quot;R&quot;</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">N</span><span class="p">)})</span>
 <span class="n">pretty</span><span class="p">(</span><span class="n">dbn</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">actions</span><span class="p">))</span>
 </pre></div>
 </div>
@@ -619,8 +610,9 @@ x_{k+1} \sim P(X_{k+1}|X_{k}=s_{k},A_{k}=a_{k}).
 </table>
 </div></div></div>
 </div>
-<p>The actions are included in the resulting <code class="docutils literal notranslate"><span class="pre">DiscreteValues</span></code> instance, so we have a complete picture of one sampled “world state” over time. Note that the result now also includes the sampled measurements <span class="math notranslate nohighlight">\(Z_k\)</span> at each time step, in addition to the states <span class="math notranslate nohighlight">\(X_k\)</span>.
-Not surprisingly, we quickly transition from the dark hallway to the slight brighter dining room, and get stuck there, as there is no room to the right of the dining room!</p>
+<p>As an example, in Figure <a class="reference internal" href="#fig:dbn-sample"><span class="xref myst">3</span></a> we examine what happens when we try the action <code class="docutils literal notranslate"><span class="pre">Right</span></code> 4 times in a row. The actions are included in the resulting <code class="docutils literal notranslate"><span class="pre">DiscreteValues</span></code> instance, so we have a complete picture of one sampled “world state” over time.
+Note that the result now also includes the sampled measurements <span class="math notranslate nohighlight">\(Z_k\)</span> at each time step, in addition to the states <span class="math notranslate nohighlight">\(X_k\)</span>.
+Not surprisingly, we quickly transition from the dark hallway to the slightly brighter dining room and get stuck there, as there is no room to the right of the dining room!</p>
 <section id="id1">
 <h3><span class="section-number">3.3.5.1. </span>Exercises<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
 <ul class="simple">
@@ -715,7 +707,7 @@ We used this functionality to pass the given action sequence above.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise">3.3.1.1. Exercise</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dynamic-bayes-nets">3.3.2. Dynamic Bayes Nets</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introducing-dynamic-bayes-nets">3.3.2. Introducing Dynamic Bayes Nets</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ancestral-sampling">3.3.3. Ancestral Sampling</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simulation-of-a-robot">3.3.4. Simulation of a Robot</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">3.3.4.1. Exercises</a></li>

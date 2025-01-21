@@ -400,39 +400,43 @@
 <div><p>We introduce discrete states as an abstraction of navigating through continuous spaces.</p>
 </div></blockquote>
 <a class="reference internal image-reference" href="_images/S31-iRobot_vacuuming_robot-04.jpg"><img alt="Splash image with 6 panels of a robot in different states" class="align-center" src="_images/S31-iRobot_vacuuming_robot-04.jpg" style="width: 40%;" /></a>
-<p>In this section, we describe the state space for our vacuum cleaning robot.
-Like the trash sorting robot, the vacuum cleaning robot has a discrete state space. However, unlike the trash sorting robot, the state at the current time depends on the state at the previous time. To model this, we introduce the notion of a <strong>discrete-time system</strong>, which we will use extensively throughout this book. In the next section we will then see how we can use actions to (more or less) control the state of the robot over time.</p>
-<p>To make our vacuum-cleaning robot example a bit more realistic, we will also make it clear that transitions between arbitrary states are not possible: teleportation for mobile robots has unfortunately not been invented yet! We will use a <em>graph</em> to encode this aspect of the the state space for the vacuum cleaning robot, which establishes a deep connection with the notion of graph search in classical AI. In Section 3.5 we will not use graph search but a probabilistic version of it to plan in such state spaces.</p>
+<p id="index-1">In this section, we describe the state space for our vacuum cleaning robot.
+Like the trash-sorting robot, the vacuum cleaning robot has a discrete state space.
+However, unlike the trash-sorting robot, the state at the current time depends on the state at the previous time.
+To model this, we introduce the notion of a <strong>discrete-time system</strong>, which we will use extensively throughout this book.
+In the next section, we will then see how we can use actions to (more or less) control the state of the robot over time.</p>
+<p>To make our vacuum cleaning robot example a bit more realistic, we will also clarify that transitions between arbitrary states are not possible: teleportation for mobile robots has unfortunately not been invented yet!
+To encode this constraint, we will use a <em>graph</em> where nodes represent discrete states and edges represent allowable transitions between states.
+This approach establishes a deep connection with the notion of graph search in classical AI.
+However, rather than using graph search algorithms, in Section 3.5 we will introduce Markov Decision Processes (MDPs) as a probabilistic framework for planning in such state spaces.</p>
 <section id="defining-the-robot-s-state">
 <h2><span class="section-number">3.1.1. </span>Defining the Robot’s State<a class="headerlink" href="#defining-the-robot-s-state" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>Just rooms, states are…</p>
 </div></blockquote>
-<p>The representation of a robot’s state should include all information that is necessary for the robot to act effectively in its environment to achieve its goals.  For a vacuum cleaning robot, this might include the exact location of the robot (e.g., x-y coordinates in a map of the house),
+<p>The representation of a robot’s state should include all information that is necessary for the robot to act effectively in its environment to achieve its goals.
+For a vacuum cleaning robot, this might include the exact location of the robot (e.g., x-y coordinates in a map of the house),
 the heading direction of the robot,
 whether the floor is carpeted,
 or the location of any pets or children that might be moving throughout the house.</p>
-<p>In this chapter, we will abstract away many of these details by making the following
-assumptions:</p>
+<p id="index-2">In this chapter, we will abstract away many of these details by making the following assumptions:</p>
 <ul class="simple">
 <li><p>The robot can move in any direction, which means that its heading angle is not important.</p></li>
 <li><p>The robot is equipped with low-level navigation software that will allow it to move from one room to another, through doorways, etc. (though not with 100% reliability).</p></li>
-<li><p>The robot is equipped with path planning software to clean the floor in a particular room (e.g., execute random
-motions, or follow a boustrophedon path).</p></li>
+<li><p>The robot is equipped with path planning software to clean the floor in a particular room (e.g., execute random motions, or follow a boustrophedon path<a class="footnote-reference brackets" href="#id2" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>).</p></li>
 <li><p>The robot is equipped with collision-avoidance software, so that it need not worry about the presence of obstacles (e.g., furniture, small dogs, or children).</p></li>
 </ul>
 <p>Taken together, these assumptions allow us to abstract away all of the geometry of the vacuum cleaning problem,
 and to <em>define the state of the robot as the room</em> of the house in which it is located.</p>
 <p>As a running example, we will consider a simple house floor plan that
 includes five rooms: the living room, a kitchen, an office, a hallway, and the dining room.
-The floor plan is illustrated
-below, in Figure <a href="#fig:House" data-reference-type="ref" data-reference="fig:House">3.1</a>.</p>
+The floor plan is illustrated below, in Figure <a class="reference internal" href="#fig:House"><span class="xref myst">1</span></a>.</p>
 <figure id="fig:House">
 <img src="https://github.com/gtbook/robotics/blob/main/Figures3/S31-House.png?raw=1" alt="" />
 <figcaption>The floor plan of a house in which our hypothetical vacuum cleaning robot will operate.</figcaption>
 </figure>
 <p>As we did for the trash sorting robot, we define the state to be a discrete random variable with a prior probability distribution.</p>
-<p id="index-1">In this chapter, we will consider the case of <strong>discrete time systems</strong>.
+<p id="index-3">In this chapter, we will consider the case of <strong>discrete time systems</strong>.
 In particular, rather than considering the time as a continuous variable, we will consider the system evolution
 at a set of discrete moments in time, <span class="math notranslate nohighlight">\(t \in \{ t_1, t_2 \dots \}\)</span>.
 Hence, we can refer to time using the index <span class="math notranslate nohighlight">\(k \in \{ 1, 2 \dots \}\)</span>, knowing that each <span class="math notranslate nohighlight">\(k\)</span> corresponds to a known time stamp <span class="math notranslate nohighlight">\(t_k\)</span>, and we denote the random state at time <span class="math notranslate nohighlight">\(t_k\)</span> by <span class="math notranslate nohighlight">\(X_k\)</span>.
@@ -442,14 +446,15 @@ rather than evolving continuously as time passes (e.g., the position of a robot 
 While the physical vacuum cleaning robot rolls along the floor to reach its destination,
 our representation of state includes only the room in which the robot is currently located.
 Therefore, the only interesting moments in time are when the robot traverses from one room to the next, or, as we will see later in this chapter, when the robot executes an action or takes a sensor measurement.</p>
-<!-- The concept of state is an abstraction, allowing robots to reason about what is happening to them and their environment as they act. This does not necessarily mean that we, as robot programmers, have no deeper knowledge of what is going on: we do know that a vacuum cleaning robot operates in a two dimensional space, typically a single floor in a domestic residence. However, we might have programmed in "actions" that abstract to the notion of moving from room to room, and hence may only be interested in knowing which room the robot is in for the purposes of triggering those actions. Other actions that are useful but will not discuss further in this section might involve vacuum cleaning the current room, terminating when it is done or when the robot is stuck. Rather, we will concentrate below on navigation actions, moving from room to room, knowing that it might be only a small part of the repertoire that a true vacuum cleaning robot needs to be useful. --><p id="index-2">Since the robot will execute a sequence of actions over time, our prior distribution <span class="math notranslate nohighlight">\(P(X_1)\)</span> will only encode knowledge about the <strong>initial state</strong> <span class="math notranslate nohighlight">\(X_1\)</span> of the robot, and the probability distribution for future states must be determined using
+<p id="index-4">Since the robot will execute a sequence of actions over time, our prior distribution <span class="math notranslate nohighlight">\(P(X_1)\)</span> will only encode knowledge about the <strong>initial state</strong> <span class="math notranslate nohighlight">\(X_1\)</span> of the robot, and the probability distribution for future states must be determined using
 probabilistic inference.
 In this chapter, we assume that the robot <em>always</em> starts out in the office, where its charging station is located,
 i.e., <span class="math notranslate nohighlight">\(P(X_1 = \text{Office}) = 1.\)</span></p>
-<p>The following code defines a variable and encodes this prior probability distribution, which we can then pretty-print:</p>
+<p>The code in Figure <a class="reference internal" href="#code:discrete_prior"><span class="xref myst">2</span></a> defines a variable and encodes this prior probability distribution, which we then pretty-print. We use this discrete distribution to convey our knowledge that the robot <em>always</em> starts out in the office.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># vacuum.rooms = [&quot;Living Room&quot;, &quot;Kitchen&quot;, &quot;Office&quot;, &quot;Hallway&quot;, &quot;Dining Room&quot;]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Prior probability distribution over the ordered set of rooms $\bigl\{\text{Living Room}, \text{Kitchen}, \text{Office}, \text{Hallway}, \text{Dining Room}\bigr\}$.</span>
+<span class="c1">#| label : code:discrete_prior</span>
 <span class="n">X</span> <span class="o">=</span> <span class="n">VARIABLES</span><span class="o">.</span><span class="n">discrete_series</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="p">)</span>
 <span class="n">prior</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">DiscreteDistribution</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;0/0/1/0/0&quot;</span><span class="p">)</span>
 <span class="n">pretty</span><span class="p">(</span><span class="n">prior</span><span class="p">)</span>
@@ -474,74 +479,66 @@ i.e., <span class="math notranslate nohighlight">\(P(X_1 = \text{Office}) = 1.\)
 </table>
 </div></div></div>
 </div>
-<p>We use this discrete distribution to convey our knowledge that the robot <em>always</em> starts out in the office.</p>
 </section>
 <section id="the-state-space-for-our-vacuum-cleaning-robot">
-<span id="index-3"></span><h2><span class="section-number">3.1.2. </span>The State Space for our Vacuum Cleaning Robot<a class="headerlink" href="#the-state-space-for-our-vacuum-cleaning-robot" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">3.1.2. </span>The State Space for our Vacuum Cleaning Robot<a class="headerlink" href="#the-state-space-for-our-vacuum-cleaning-robot" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>Connected rooms, un-directionally.</p>
 </div></blockquote>
-<p>For the trash sorting robot, the state was defined as the category of the current item in the work space.
+<p>For the trash-sorting robot, the state was defined as the category of the current item in the workspace.
 This category had no dependence on the category of the previous piece of trash, nor did it have any effect on the category
 of the subsequent piece of trash. There were no constraints on the transition from the state at time <span class="math notranslate nohighlight">\(t_k\)</span>
 to the state at time <span class="math notranslate nohighlight">\(t_{k+1}\)</span>.
-Therefore, it was sufficient to merely enumerate the set of possible states; there
-were no important relationships between states that required representation.</p>
+In that case, it was sufficient to merely enumerate the set of possible states; there were no important relationships
+between states that required representation.</p>
 <figure id="fig:House-ss">
 <img src="https://github.com/gtbook/robotics/blob/main/Figures3/S31-house-state-space.png?raw=1" alt="" />
-<figcaption>The state space corresponding
-to the house above.</figcaption>
+<figcaption>The state space corresponding to the house above.</figcaption>
 </figure>
 <p>This is not the case for our vacuum cleaning robot.
-For example, as can be seen from
-Figure <a href="#fig:House" data-reference-type="ref" data-reference="fig:House">3.1</a>,
+For example, as can be seen from Figure <a class="reference internal" href="#fig:House"><span class="xref myst">1</span></a>,
 if the robot is currently in the office, it cannot transition directly to the living room;
 it must first transition to the hallway before it can transition to the living room.
 For the vacuum cleaning robot, room adjacency is an important relationship, and therefore
-it should be encoded into our representation.
-This can be accomplished using a connectivity graph.
+it should be encoded into our representation.</p>
+<p>This can be accomplished using a connectivity graph.
 Each vertex of this graph represents a state (i.e., a specific room in the house), and two
-vertices, <span class="math notranslate nohighlight">\(x_i, x_j\)</span> are connected by an edge if and only if it the transition between
-these two states is possible.  Since our robot can move in any direction, if it
+vertices, <span class="math notranslate nohighlight">\(x_i, x_j\)</span>, are connected by an edge if and only if the transition between
+these two states is possible. Since our robot can move in any direction, if it
 can transition from <span class="math notranslate nohighlight">\(x_i\)</span> to <span class="math notranslate nohighlight">\(x_j\)</span>, then it can also transition from <span class="math notranslate nohighlight">\(x_j\)</span> to <span class="math notranslate nohighlight">\(x_i\)</span>
-(as is the case, e.g., for <span class="math notranslate nohighlight">\(x_i = \text{Hallway}\)</span> and <span class="math notranslate nohighlight">\(x_j = \text{Dining Room}\)</span>).
-Therefore, we represent the state space by an <em>undirected</em> graph.
+(as is the case, e.g., for <span class="math notranslate nohighlight">\(x_i = \text{Hallway}\)</span> and <span class="math notranslate nohighlight">\(x_j = \text{Dining Room}\)</span>).</p>
+<p id="index-5">Therefore, we represent the state space by an <em>undirected</em> graph.
 Taken together, the collection of states along with connectivity information is referred to as the <strong>state space</strong>,
-which in this can be represented by the connectivity graph shown in
-Figure <a href="#fig:House-ss" data-reference-type="ref" data-reference="fig:House-ss">3.2</a>.</p>
+which in this case can be represented by the connectivity graph shown in Figure <a class="reference internal" href="#fig:House-ss"><span class="xref myst">4</span></a>.</p>
 </section>
 <section id="bayesian-vs-frequentist-interpretations-or-probability">
-<span id="index-4"></span><h2><span class="section-number">3.1.3. </span>Bayesian vs. Frequentist Interpretations or Probability<a class="headerlink" href="#bayesian-vs-frequentist-interpretations-or-probability" title="Link to this heading">#</a></h2>
+<span id="index-6"></span><h2><span class="section-number">3.1.3. </span>Bayesian vs. Frequentist Interpretations or Probability<a class="headerlink" href="#bayesian-vs-frequentist-interpretations-or-probability" title="Link to this heading">#</a></h2>
 <blockquote>
-<div><p>Believing with probabilities.</p>
+<div><p>Believing with Probabilities.</p>
 </div></blockquote>
 <figure id="fig:Bayesian">
 <img src="https://github.com/gtbook/robotics/blob/main/Figures3/N3-Bayes.png?raw=1" style="width:14cm" alt="" />
 <figcaption>The Reverend Thomas Bayes gave his name to associating probabilities with the strength of beliefs rather than a frequency of events.</figcaption>
 </figure>
 <p>In this book, we take a <strong>Bayesian view</strong> of probability, rather than a frequentist one.
-This means that we view probabilities as describing our <em>knowledge</em> about
-events, rather than tallying up the frequencies by which they occur.
+This means that we view probabilities as describing our <em>knowledge</em> about events, rather than tallying up the frequencies by which they occur.
 For example, think of the weather forecaster talking about the probability of rain tomorrow: this represents a belief about a future state, rather than statistics about previous rainy days.
-Probabilities viewed this way can be used to describe knowledge about
-the state of the world, and how actions affect the state of an agent and
-the world.</p>
+Probabilities viewed this way can be used to describe knowledge about the state of the world, and how actions affect the state of an agent and the world.
+This view is named after the Reverend Thomas Bayes, shown in Figure <a class="reference internal" href="#fig:Bayesian"><span class="xref myst">4</span></a>, who (among others) laid the mathematical groundwork for updating beliefs in light of new evidence.</p>
 <figure id="fig:Frequentist">
-<img src="https://github.com/gtbook/robotics/blob/main/Figures3/N3-Frequentist.png?raw=1"  style="width:9cm" alt="" />
+<img src="https://github.com/gtbook/robotics/blob/main/Figures3/N3-Frequentist.png?raw=1" style="width:9cm" alt="" />
 <figcaption>The caricature of the frequentist view involves counting many heads and tails.</figcaption>
 </figure>
-<p>This is to be contrasted with a <strong>frequentist view</strong>, where probabilities
-are used to describe the frequencies of events in a series of repeated
-trials. A Bayesian, instead, might qualify knowledge about an
-event that has not even happened yet, let alone multiple times. Of
-course, in most cases this belief is based on experience, i.e., lots of
-repeated events in the past, and so it can be seen that perhaps these
-views are not so different after all.</p>
-<p>In this chapter we will get comfortable with the Bayesian view, and learn how to calculate with them. This will allow use to fuse knowledge from different sources, e.g., how uncertain actions and noisy measurements can nevertheless yield enough information about our current state to make reasonable decisions.</p>
+<p>This is to be contrasted with a <strong>frequentist view</strong>, where probabilities are based on the frequencies of events in a series of repeated trials.
+Figure <a class="reference internal" href="#fig:Frequentist"><span class="xref myst">5</span></a> highlights this perspective, where probabilities emerge as ratios derived from repeated experiments.
+A Bayesian, instead, might qualify knowledge about an event that has not even happened yet, let alone multiple times.
+Of course, in most cases this belief is based on experience, i.e., lots of repeated events in the past, and so it can be seen that perhaps these views are not so different after all.</p>
+<p>In this chapter, we will get comfortable with the Bayesian view and learn how to calculate with it.
+This will allow us to fuse knowledge from different sources, e.g., how uncertain actions and noisy measurements can nevertheless yield enough information about our current state to make reasonable decisions.</p>
 </section>
 <section id="gtsam-101">
 <h2><span class="section-number">3.1.4. </span>GTSAM 101<a class="headerlink" href="#gtsam-101" title="Link to this heading">#</a></h2>
-<p>The code above should feel familiar, but we used a new <code class="docutils literal notranslate"><span class="pre">Variables</span></code> method called <code class="docutils literal notranslate"><span class="pre">discrete_series</span></code> to define a <em>time series</em> of state variables. The signature of this method is</p>
+<p id="index-7">The code above should feel familiar, but we used a new <code class="docutils literal notranslate"><span class="pre">Variables</span></code> method called <code class="docutils literal notranslate"><span class="pre">discrete_series</span></code> to define a <em>time series</em> of state variables. The signature of this method is</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">discrete_series</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">character</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">indices</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
                     <span class="n">domain</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">DiscreteKey</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create several discrete variables with Symbol names.</span>
@@ -576,7 +573,7 @@ views are not so different after all.</p>
 </div>
 </div>
 </div>
-<p>When we print the results, we see that we now get a dictionary of DiscreteKeys, i.e., integer tuples of the form <em>(Key, cardinality)</em>. However, the “Keys” now seem to be very large integers. This is because for series of variables we use the <code class="docutils literal notranslate"><span class="pre">gtsam.Symbol</span></code> type, composed of a single character and an integer index:</p>
+<p>When we print the results, we see that we now get a dictionary of <code class="docutils literal notranslate"><span class="pre">DiscreteKeys</span></code>, i.e., integer tuples of the form <em>(<code class="docutils literal notranslate"><span class="pre">Key</span></code>, cardinality)</em>. However, the “keys” now seem to be very large integers. This is because for series of variables we use the <code class="docutils literal notranslate"><span class="pre">gtsam.Symbol</span></code> type, composed of a single character and an integer index:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">symbol</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Symbol</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
@@ -604,6 +601,13 @@ views are not so different after all.</p>
 </div>
 </div>
 <p>You can see that this corresponds to the first state above. However, as before, pretty printing translates these into a nicer looking strings wherever it matters.</p>
+<hr class="footnotes docutils" />
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id2" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>A boustrophedon path is a systematic pattern resembling the way a farmer plows a field, moving back and forth in parallel lines.</p>
+</aside>
+</aside>
 </section>
 </section>
 

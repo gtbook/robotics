@@ -448,8 +448,8 @@ In particular, below we extend the 1D interpolation example from Chapter 5, exte
 <section id="sampling-from-rays">
 <h3><span class="section-number">7.6.2.1. </span>Sampling from Rays<a class="headerlink" href="#sampling-from-rays" title="Link to this heading">#</a></h3>
 <p>The first part of a volume renderer is to evenly sample points on rays, emanating from the optical center of a camera. When we are given the <code class="docutils literal notranslate"><span class="pre">origin</span></code> and the <code class="docutils literal notranslate"><span class="pre">direction</span></code> of a ray (as a unit-vector) sampling is simple enough: a point <span class="math notranslate nohighlight">\(P\)</span> on the ray at a distance <span class="math notranslate nohighlight">\(t\)</span> from the origin <span class="math notranslate nohighlight">\(O\)</span>, in the direction <span class="math notranslate nohighlight">\(D\)</span> is given as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-346b7af5-4f8a-4858-b924-0f04cc9b0f74">
-<span class="eqno">(7.67)<a class="headerlink" href="#equation-346b7af5-4f8a-4858-b924-0f04cc9b0f74" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-127c7381-73b9-4588-a140-3c946d392b7d">
+<span class="eqno">(7.67)<a class="headerlink" href="#equation-127c7381-73b9-4588-a140-3c946d392b7d" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P(t,O,D) = O + t  D
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(t\)</span> is a random depth along the ray. Hence, we only need to sample many <span class="math notranslate nohighlight">\(t\)</span> values evenly and we are done.</p>
@@ -498,13 +498,13 @@ As a case in point, our first function <code class="docutils literal notranslate
 <section id="integration-along-rays">
 <span id="index-3"></span><h3><span class="section-number">7.6.2.2. </span>Integration along Rays<a class="headerlink" href="#integration-along-rays" title="Link to this heading">#</a></h3>
 <p>The second part of the volume rendering story is where the magic happens. Let us assume that we are given the densities <span class="math notranslate nohighlight">\(\sigma_i\)</span> and colors <span class="math notranslate nohighlight">\(c_i\)</span> at <span class="math notranslate nohighlight">\(N\)</span> sampled points <span class="math notranslate nohighlight">\(P_i\)</span> on a ray corresponding to a given pixel. We can then calculate the color <span class="math notranslate nohighlight">\(C\)</span> for the pixel using the equation below,</p>
-<div class="amsmath math notranslate nohighlight" id="equation-f116f835-41c5-4eb6-a7ad-71946a84a276">
-<span class="eqno">(7.68)<a class="headerlink" href="#equation-f116f835-41c5-4eb6-a7ad-71946a84a276" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-67dff1db-4fc0-4b02-a66e-e704d96abb42">
+<span class="eqno">(7.68)<a class="headerlink" href="#equation-67dff1db-4fc0-4b02-a66e-e704d96abb42" title="Permalink to this equation">#</a></span>\[\begin{equation}
 C = \sum_{i=1}^N \alpha_i T_i c_i
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\alpha_i\)</span> is the <strong>opacity</strong> and <span class="math notranslate nohighlight">\(T_i\)</span> is the <strong>transmittance</strong> at <span class="math notranslate nohighlight">\(P_i\)</span>, both defined below:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-ec2ee042-891a-4131-ba65-6aebe937e961">
-<span class="eqno">(7.69)<a class="headerlink" href="#equation-ec2ee042-891a-4131-ba65-6aebe937e961" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-2d085476-2477-4b85-8b10-16bfd1ae74d9">
+<span class="eqno">(7.69)<a class="headerlink" href="#equation-2d085476-2477-4b85-8b10-16bfd1ae74d9" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{align}
 \alpha_i &amp;\doteq 1 - \exp(-\sigma_i) \\
 T_i &amp;\doteq \exp ( - \sum_{j=1}^{i-1} \sigma_j).
@@ -543,8 +543,8 @@ T_i &amp;\doteq \exp ( - \sum_{j=1}^{i-1} \sigma_j).
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[0.3155443  0.5759586  0.51179856]
- [0.40660143 0.6459031  0.4098453 ]]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[0.63890904 0.3410704  0.5836652 ]
+ [0.55190235 0.5006033  0.5046302 ]]
 </pre></div>
 </div>
 </div>
@@ -558,8 +558,8 @@ T_i &amp;\doteq \exp ( - \sum_{j=1}^{i-1} \sigma_j).
 <div><p>A voxel grid of density or color.</p>
 </div></blockquote>
 <p>A key decision in the NeRF architecture is how to represent the function <span class="math notranslate nohighlight">\(F_\Theta\)</span> so it can be queried for a density and a color at every point. In short, we need:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a30d0201-d098-4afb-95c8-b7f08f3f7bdd">
-<span class="eqno">(7.70)<a class="headerlink" href="#equation-a30d0201-d098-4afb-95c8-b7f08f3f7bdd" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-0e34ed24-ddc0-4021-a961-cf87e4c6e28a">
+<span class="eqno">(7.70)<a class="headerlink" href="#equation-0e34ed24-ddc0-4021-a961-cf87e4c6e28a" title="Permalink to this equation">#</a></span>\[\begin{equation}
 (\sigma, c) = F_\Theta(P)
 \end{equation}\]</div>
 <p>with <span class="math notranslate nohighlight">\(P\in R^3\)</span>, <span class="math notranslate nohighlight">\(\sigma\in R\)</span>, and <span class="math notranslate nohighlight">\(c\in[0...255]^3\)</span>. Note that in computer vision, neural networks typically take high-dimensional inputs, e.g., entire images, so having such a low-dimensional input (3) is highly unusual. This “coordinate-based” approach is one of the breakthroughs of NeRF-style representations.</p>
@@ -627,7 +627,7 @@ The code below implements trilinear interpolation: the values on the <em>eight</
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Interpolated Output: 0.36904
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Interpolated Output: 0.59859
 </pre></div>
 </div>
 </div>
@@ -661,7 +661,7 @@ Interpolated Output:
 </section>
 <section id="dvgo">
 <h2><span class="section-number">7.6.4. </span>DVGO<a class="headerlink" href="#dvgo" title="Link to this heading">#</a></h2>
-<p>We can now define a simple DVGO (Direct Voxel Grid Optimization by <span id="id2">Sun <em>et al.</em> [<a class="reference internal" href="bibliography.html#id27" title="Cheng Sun, Min Sun, and Hwann-Tzong Chen. Direct voxel grid optimization: super-fast convergence for radiance fields reconstruction. In 2022 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR), 5449-5459. 2022. doi:10.1109/CVPR52688.2022.00538.">2022</a>]</span>) class that combines:</p>
+<p>We can now define a simple DVGO (Direct Voxel Grid Optimization by <span id="id2">Sun <em>et al.</em> [<a class="reference internal" href="bibliography.html#id28" title="Cheng Sun, Min Sun, and Hwann-Tzong Chen. Direct voxel grid optimization: super-fast convergence for radiance fields reconstruction. In 2022 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR), 5449-5459. 2022. doi:10.1109/CVPR52688.2022.00538.">2022</a>]</span>) class that combines:</p>
 <ul class="simple">
 <li><p>sampling points <span class="math notranslate nohighlight">\(P\)</span> along each ray;</p></li>
 <li><p>converting from scene coordinates into grid coordinates;</p></li>
@@ -825,28 +825,28 @@ Interpolated Output:
 </ul>
 <p>Acquiring all this information for an arbitrary image sequence taken with some unknown, uncalibrated camera can be complicated. Cameras come in a variety of sizes and with very different lenses, and effects like radial distortion make the modeling process non-trivial. In addition, recovering the actual position and attitude of the camera in a scene is typically done through structure from motion, which can be time-consuming and tricky.</p>
 <p id="index-6">In the following, we will assume that all this hard work has been done for us, and/or the images have been simulated with exactly known camera parameters, both intrinsic and extrinsic. One popular way to accomplish this is by providing undistorted images accompanied by a <span class="math notranslate nohighlight">\(3 \times 4\)</span> <strong>camera matrix</strong> <span class="math notranslate nohighlight">\(M\)</span>. Recall that a 3D point <span class="math notranslate nohighlight">\(P\)</span> can be projected into an image via</p>
-<div class="amsmath math notranslate nohighlight" id="equation-6e138f0f-6456-444a-8c60-cd59842ade1f">
-<span class="eqno">(7.71)<a class="headerlink" href="#equation-6e138f0f-6456-444a-8c60-cd59842ade1f" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-6ce828df-81c9-4df2-892f-7f1cfb41594f">
+<span class="eqno">(7.71)<a class="headerlink" href="#equation-6ce828df-81c9-4df2-892f-7f1cfb41594f" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \tilde{p} = K R^T (P - t)
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\tilde{p}\)</span> are <em>homogeneous</em> 2D image coordinates. We can re-write this as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-7cfd855e-60b7-4cf7-a31b-b92a7838189a">
-<span class="eqno">(7.72)<a class="headerlink" href="#equation-7cfd855e-60b7-4cf7-a31b-b92a7838189a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-2be3d94f-f779-497f-9c01-e3b4a545f2b6">
+<span class="eqno">(7.72)<a class="headerlink" href="#equation-2be3d94f-f779-497f-9c01-e3b4a545f2b6" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \tilde{p} = M\tilde{P}
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\tilde{P} = \begin{bmatrix}P \\1 \end{bmatrix}\)</span> and the camera matrix <span class="math notranslate nohighlight">\(M\)</span> is given by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-d270854b-424d-4199-95c2-5453bf5ae140">
-<span class="eqno">(7.73)<a class="headerlink" href="#equation-d270854b-424d-4199-95c2-5453bf5ae140" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d235a344-f266-4bcc-9733-e155948f695e">
+<span class="eqno">(7.73)<a class="headerlink" href="#equation-d235a344-f266-4bcc-9733-e155948f695e" title="Permalink to this equation">#</a></span>\[\begin{equation}
 M = [A|a] = [K R^T | - K R^T t]
 \end{equation}\]</div>
 <p>That means that if we are <em>given</em> the camera matrix <span class="math notranslate nohighlight">\(M\)</span> we can always recover the ray origins as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-ae100a4e-e462-4b1f-a7d5-2c789859c8ed">
-<span class="eqno">(7.74)<a class="headerlink" href="#equation-ae100a4e-e462-4b1f-a7d5-2c789859c8ed" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-9e0a0ad2-db4b-4e69-a601-9c4029fc5398">
+<span class="eqno">(7.74)<a class="headerlink" href="#equation-9e0a0ad2-db4b-4e69-a601-9c4029fc5398" title="Permalink to this equation">#</a></span>\[\begin{equation}
 t = -A^{-1} a
 \end{equation}\]</div>
 <p>and a random 3D point <span class="math notranslate nohighlight">\(P\)</span> on the ray corresponding to <span class="math notranslate nohighlight">\(\tilde{p}\)</span> as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-93a68bc9-55c4-490b-881e-602136cac298">
-<span class="eqno">(7.75)<a class="headerlink" href="#equation-93a68bc9-55c4-490b-881e-602136cac298" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-c5b4b40d-ef21-4bd1-afbb-5cec716d0528">
+<span class="eqno">(7.75)<a class="headerlink" href="#equation-c5b4b40d-ef21-4bd1-afbb-5cec716d0528" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P = A^{-1}(\tilde{p} - a)
 \end{equation}\]</div>
 <p>since <span class="math notranslate nohighlight">\(\tilde{p} = AP + a\)</span>. We will illustrate this below with the Stonehenge dataset.</p>
@@ -985,7 +985,7 @@ P = A^{-1}(\tilde{p} - a)
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/1784444922499e158705bdeffa129768b1cf3722bfa20bd1ea83ca493a28d7ea.png" src="_images/1784444922499e158705bdeffa129768b1cf3722bfa20bd1ea83ca493a28d7ea.png" />
+<img alt="_images/e0558e03f6c99d5b7f2cdd77010dee4c3fd5f9b1a21d90fd4e172edbaedb7dce.png" src="_images/e0558e03f6c99d5b7f2cdd77010dee4c3fd5f9b1a21d90fd4e172edbaedb7dce.png" />
 </div>
 </div>
 <p>Let us recall the training code from Chapter 5. We previously used this code to train for the parameters of a 1D interpolation grid, minimizing a Mean-Squared Error (MSE) loss function, i.e., the squared difference between the predicted values and the training data values. This is the standard loss function for continuous <em>regression</em> problems.</p>
@@ -1037,7 +1037,7 @@ P = A^{-1}(\tilde{p} - a)
 </div>
 </div>
 </div>
-<p>Now we could train, with the code shown below. However, training takes a bit of time, so if you execute this code in colab it could mean waiting quite a bit, depending on the compute you have available. To avoid this, we pre-trained a model for you on colab for 5 epochs, which took around 18 minutes with the compute available at the time. The checkpoint is uploaded to Zenodo <span id="id3">[<a class="reference internal" href="bibliography.html#id51" title="Frank Dellaert. DVGO checkpoint after 5 epochs. 2023. URL: https://zenodo.org/records/10767234/files/simple_dvgo-5-epochs.pt.">Dellaert, 2023</a>]</span>, and is loaded into memory below. If you want to train with your own parameters or simply re-do the training, you can open this file in colab and set <code class="docutils literal notranslate"><span class="pre">use_pretrained</span></code> to False below.</p>
+<p>Now we could train, with the code shown below. However, training takes a bit of time, so if you execute this code in colab it could mean waiting quite a bit, depending on the compute you have available. To avoid this, we pre-trained a model for you on colab for 5 epochs, which took around 18 minutes with the compute available at the time. The checkpoint is uploaded to Zenodo <span id="id3">[<a class="reference internal" href="bibliography.html#id52" title="Frank Dellaert. DVGO checkpoint after 5 epochs. 2023. URL: https://zenodo.org/records/10767234/files/simple_dvgo-5-epochs.pt.">Dellaert, 2023</a>]</span>, and is loaded into memory below. If you want to train with your own parameters or simply re-do the training, you can open this file in colab and set <code class="docutils literal notranslate"><span class="pre">use_pretrained</span></code> to False below.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># if True, use the pre-trained model, else train a new model</span>
@@ -1115,7 +1115,7 @@ P = A^{-1}(\tilde{p} - a)
 <blockquote>
 <div><p>We can take this one step further…</p>
 </div></blockquote>
-<p>The above shows how neural radiance fields represent a radical new way to learn scene representations, using a <em>differentiable</em> volume rendering scheme. One can take this one step further and use the underlying density fields, combined with the motion planning techniques from the previous section, to enable unmanned aerial vehicles to navigate autonomously in new environments. If you want to see how this is done, you can read the 2022 Stanford paper by <span id="id4">Adamkiewicz <em>et al.</em> [<a class="reference internal" href="bibliography.html#id3" title="Michal Adamkiewicz, Timothy Chen, Adam Caccavale, Rachel Gardner, Preston Culbertson, Jeannette Bohg, and Mac Schwager. Vision-only robot navigation in a neural radiance world. IEEE Robotics and Automation Letters, 7(2):4606-4613, 2022. doi:10.1109/LRA.2022.3150497.">2022</a>]</span> that inspired this section. And to see it in action, you can visit their <a class="reference external" href="https://mikh3x4.github.io/nerf-navigation/">project page</a> with videos and simulations.</p>
+<p>The above shows how neural radiance fields represent a radical new way to learn scene representations, using a <em>differentiable</em> volume rendering scheme. One can take this one step further and use the underlying density fields, combined with the motion planning techniques from the previous section, to enable unmanned aerial vehicles to navigate autonomously in new environments. If you want to see how this is done, you can read the 2022 Stanford paper by <span id="id4">Adamkiewicz <em>et al.</em> [<a class="reference internal" href="bibliography.html#id2" title="Michal Adamkiewicz, Timothy Chen, Adam Caccavale, Rachel Gardner, Preston Culbertson, Jeannette Bohg, and Mac Schwager. Vision-only robot navigation in a neural radiance world. IEEE Robotics and Automation Letters, 7(2):4606-4613, 2022. doi:10.1109/LRA.2022.3150497.">2022</a>]</span> that inspired this section. And to see it in action, you can visit their <a class="reference external" href="https://mikh3x4.github.io/nerf-navigation/">project page</a> with videos and simulations.</p>
 </section>
 </section>
 
