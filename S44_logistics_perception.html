@@ -530,8 +530,8 @@ of the robot, <span class="math notranslate nohighlight">\(P(X_1)\)</span>,
 we can initialize the Bayes filter for time <span class="math notranslate nohighlight">\(k=1\)</span> by using
 the sensor observation <span class="math notranslate nohighlight">\(z_1\)</span>. Note that no action has yet been applied.
 Thus, we have</p>
-<div class="amsmath math notranslate nohighlight" id="equation-26130a90-8d3b-4129-953f-62d514d2b531">
-<span class="eqno">(4.40)<a class="headerlink" href="#equation-26130a90-8d3b-4129-953f-62d514d2b531" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-56061e82-98e0-461f-93e6-17aed42dc9ee">
+<span class="eqno">(4.40)<a class="headerlink" href="#equation-56061e82-98e0-461f-93e6-17aed42dc9ee" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P(X_1|\mathcal{Z}^1=\{z_1\}, \mathcal{U}^1=\{\}) \propto L(X_1;z_1)P(X_1)
 \end{equation}\]</div>
 <p>Given this, recursively assuming that we have a probability distribution
@@ -546,7 +546,7 @@ the previous state <span class="math notranslate nohighlight">\(X_{k-1}\)</span>
 P(X_{k}|\mathcal{Z}^{k-1},\mathcal{U}^{k})=\sum_{x_{k-1}}P(X_{k}|x_{k-1},u_{k-1})P(x_{k-1}|\mathcal{Z}^{k-1},\mathcal{U}^{k-1}).
 \end{equation}</p></li>
 <li><p>In the <strong>measurement phase</strong> we upgrade this predictive density to the <strong>filtering distribution</strong> <span class="math notranslate nohighlight">\(P(X_{k}|\mathcal{Z}^{k},\mathcal{U}^{k})\)</span>
-via Bayes’ rule, given the measurement <span class="math notranslate nohighlight">\(z_{k}\)</span>:
+via Bayes’ theorem, given the measurement <span class="math notranslate nohighlight">\(z_{k}\)</span>:
 \begin{equation}
 P(X_{k}| \mathcal{Z}^{k},\mathcal{U}^{k})
 \propto L(X_{k};z_{k})P(X_{k}|\mathcal{Z}^{k-1},\mathcal{U}^{k}).
@@ -621,8 +621,8 @@ over <span class="math notranslate nohighlight">\(X\)</span>.</p>
 </div>
 <p>With respect to implementation, the hardest and most computationally demanding part of the Markov localization algorithm is the prediction step.
 Recall the formula:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-31153c29-8d5b-4c07-ba60-9e098a8c8b6e">
-<span class="eqno">(4.41)<a class="headerlink" href="#equation-31153c29-8d5b-4c07-ba60-9e098a8c8b6e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-7076236b-3cee-4b85-b393-d6da720f3bdf">
+<span class="eqno">(4.41)<a class="headerlink" href="#equation-7076236b-3cee-4b85-b393-d6da720f3bdf" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P(X_{k}|\mathcal{Z}^{k-1},\mathcal{U}^{k})=\sum_{x_{k-1}}P(X_{k}|x_{k-1},u_{k-1})P(x_{k-1}|\mathcal{Z}^{k-1},\mathcal{U}^{k-1}).
 \end{equation}\]</div>
 <p>Hence, for <em>every cell</em> in the predictive distribution grid, we need to sum over <em>all</em> cells in the previous image. Not only that, but for every one of these <span class="math notranslate nohighlight">\(5000^2\)</span>, i.e., <em>25 million</em> cell combinations <span class="math notranslate nohighlight">\((X_k,x_{k-1})\)</span> we need to evaluate the Gaussian motion model <span class="math notranslate nohighlight">\(P(X_{k}|x_{k-1},u_{k-1})\)</span>. With python for-loops, this will be rather expensive, so in the code below we build in two speed-ups:</p>
@@ -676,8 +676,8 @@ P(X_{k}|\mathcal{Z}^{k-1},\mathcal{U}^{k})=\sum_{x_{k-1}}P(X_{k}|x_{k-1},u_{k-1}
 <p>The figure above shows the result of purely predictive reasoning using a finite element discretization. As you can see, the density grows without bound, and also goes <em>inside</em> the shelves. Without any measurements, if we do not explicitly incorporate knowledge about the world (e.g., a map of obstacles),
 the robot cannot rule out such situations.</p>
 <p>The measurement update step takes the predictive density <span class="math notranslate nohighlight">\(P(X_{k}|\mathcal{Z}^{k-1},\mathcal{U}^{k})\)</span> and <em>upgrades</em> it to the posterior density:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-ae30adf1-8f97-412d-bec7-4c316c6ed815">
-<span class="eqno">(4.42)<a class="headerlink" href="#equation-ae30adf1-8f97-412d-bec7-4c316c6ed815" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-a4ef5310-10d6-4dc5-a6c8-52815dd0cbd5">
+<span class="eqno">(4.42)<a class="headerlink" href="#equation-a4ef5310-10d6-4dc5-a6c8-52815dd0cbd5" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P(X_{k}|\mathcal{Z}^{k},\mathcal{U}^{k}) \propto L(X_{k};z_{k})P(X_{k}|\mathcal{Z}^{k-1},\mathcal{U}^{k}).
 \end{equation}\]</div>
 <p>Note that this is so much simpler! We just have to code a pointwise multiplication and we are done. Because the ground truth trajectory never comes near any of the shelves, the proximity sensor is always <code class="docutils literal notranslate"><span class="pre">OFF</span></code>, and hence we multiply the predictive density with the corresponding <code class="docutils literal notranslate"><span class="pre">proximity_map_off</span></code> likelihood image:</p>
@@ -726,8 +726,8 @@ The sampling-based implementation of a Bayes filter is known as a <strong>partic
 Below we discuss it in a 2D context, but it is in fact rather general.
 When used for robot localization, this technique is known as <a class="reference external" href="https://www.ri.cmu.edu/publications/monte-carlo-localization-for-mobile-robots/">“Monte Carlo Localization” or MCL</a> <span id="id1">[<a class="reference internal" href="bibliography.html#id8" title="Frank Dellaert, Dieter Fox, Wolfram Burgard, and Sebastian Thrun. Monte carlo localization for mobile robots. In Proceedings 1999 IEEE International Conference on Robotics and Automation, volume 2, 1322-1328 vol.2. 1999. doi:10.1109/ROBOT.1999.772544.">Dellaert <em>et al.</em>, 1999</a>]</span>.</p>
 <p>A particle filter approximates the Bayes filter by (a) replacing an explicit probability distribution by a set of samples, and (b) approximating the prediction step in the Bayes filter with a Monte Carlo approximation. We recursively assume that we have access to a sampling based approximation of the filtering density over the previous state <span class="math notranslate nohighlight">\(x_{k-1}\)</span>, as a set of <span class="math notranslate nohighlight">\(S\)</span> <em>weighted</em> samples:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-e3c30b54-5c78-4df9-bf86-e3c89212a9a5">
-<span class="eqno">(4.43)<a class="headerlink" href="#equation-e3c30b54-5c78-4df9-bf86-e3c89212a9a5" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-781c144b-424f-45ac-874b-eeb7ceca94cd">
+<span class="eqno">(4.43)<a class="headerlink" href="#equation-781c144b-424f-45ac-874b-eeb7ceca94cd" title="Permalink to this equation">#</a></span>\[\begin{equation}
 p(X_{k-1}|\mathcal{Z}^{k-1},\mathcal{U}^{k-1}) \approx \{(x_{k-1}^{(s)}, w_{k-1}^{(s)})\}_{s =1 \dots S}
 \end{equation}\]</div>
 <p>in which <span class="math notranslate nohighlight">\(x_{k-1}^{(s)}\)</span> is the <span class="math notranslate nohighlight">\(s^{th}\)</span> sample, and <span class="math notranslate nohighlight">\(w_{k-1}^{(s)}\)</span> is its weight.</p>
@@ -795,7 +795,7 @@ A mixture density is simply a weighted sum of <em>component densities</em>, in t
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/70d167cb57862328689891786d7729be5a7c892ba2ad8b5952fd7d6a00e596ff.png" src="_images/70d167cb57862328689891786d7729be5a7c892ba2ad8b5952fd7d6a00e596ff.png" />
+<img alt="_images/9ace4f12e55d49ae3f5f44d8d5e01fe62e773db0f6c29fd1902e1c63bb753ea2.png" src="_images/9ace4f12e55d49ae3f5f44d8d5e01fe62e773db0f6c29fd1902e1c63bb753ea2.png" />
 </div>
 </div>
 <p>As you can see the first component is chosen much more often, which is exactly what we expect.</p>
@@ -844,7 +844,7 @@ A mixture density is simply a weighted sum of <em>component densities</em>, in t
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/6d150b004737468d83898d393bf06476f1a1a29ea6137637187acd20c8ff0ca1.png" src="_images/6d150b004737468d83898d393bf06476f1a1a29ea6137637187acd20c8ff0ca1.png" />
+<img alt="_images/13090f812a6219b5bf5f894aad993e9acca6ba01811c3db75becc80d82f3acb8.png" src="_images/13090f812a6219b5bf5f894aad993e9acca6ba01811c3db75becc80d82f3acb8.png" />
 </div>
 </div>
 <p>Compare this sampling-based representation with the Markov localization representation of the prior above, and note they represent the <em>same</em> density, but using vastly different representations. In fact, they also use vastly different resources: for Markov localization we used 5000 cells, and here we use 500 samples, each represented as a two-dimensional vector. In higher-dimensional state spaces this difference is even greater: what would happen if we wanted to represent orientation as well?</p>
@@ -862,7 +862,7 @@ A mixture density is simply a weighted sum of <em>component densities</em>, in t
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/89e15f8adfa5f86e9d42cb428d00b7bc8ce4cae098e8cc775c9f8466f7c679c8.png" src="_images/89e15f8adfa5f86e9d42cb428d00b7bc8ce4cae098e8cc775c9f8466f7c679c8.png" />
+<img alt="_images/0e66b010386f18f230705eba1407a5d2bddbc616937916eb2a75c1d52d9c6d0b.png" src="_images/0e66b010386f18f230705eba1407a5d2bddbc616937916eb2a75c1d52d9c6d0b.png" />
 </div>
 </div>
 <p>Note that all samples close to the wall and/or the shelves have disappeared, as they have zero weight. All remaining samples have the same weight.</p>
@@ -938,7 +938,7 @@ Because our knowledge is now so diffuse, we use 2000 samples instead of 500 to b
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/2ebac4ccc12c34e87a4eeaf340dc1449e52b325046b6f4767e4b0e9fb7ab6024.png" src="_images/2ebac4ccc12c34e87a4eeaf340dc1449e52b325046b6f4767e4b0e9fb7ab6024.png" />
+<img alt="_images/c2673771f9db6d632cbbd78e718605455dc6f7983b091fdd55d32d36692b562c.png" src="_images/c2673771f9db6d632cbbd78e718605455dc6f7983b091fdd55d32d36692b562c.png" />
 </div>
 </div>
 <p>The first range measurement happens to be out of range, and we can see the effect on our estimate for the posterior <span class="math notranslate nohighlight">\(p(x_1|z_1)\)</span> quite clearly:</p>
@@ -955,7 +955,7 @@ Because our knowledge is now so diffuse, we use 2000 samples instead of 500 to b
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/8d5e8cf6cb76c43c9bbc067a81edd3ee59465cdd79b00cfb915963ab3609786f.png" src="_images/8d5e8cf6cb76c43c9bbc067a81edd3ee59465cdd79b00cfb915963ab3609786f.png" />
+<img alt="_images/9eaae8e6be0fac57f8e750d721cfffc33c2093217788db4f040cba4667e34ebe.png" src="_images/9eaae8e6be0fac57f8e750d721cfffc33c2093217788db4f040cba4667e34ebe.png" />
 </div>
 </div>
 <p>As expected, the likelihood has “punched holes” around the beacons, because we <em>know</em> we cannot have been near them. When we combine this with the proximity OFF measurement, we improve our posterior even more:</p>
@@ -970,7 +970,7 @@ Because our knowledge is now so diffuse, we use 2000 samples instead of 500 to b
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/e029a90c7b4dac2e4b66a0f7ca96c6896dd961f5c2b9481866bc785a57640229.png" src="_images/e029a90c7b4dac2e4b66a0f7ca96c6896dd961f5c2b9481866bc785a57640229.png" />
+<img alt="_images/84b672f52b2cf60ebe85af51d3fe6a1a05150fbcc6da800425f2313c9e0ce4f7.png" src="_images/84b672f52b2cf60ebe85af51d3fe6a1a05150fbcc6da800425f2313c9e0ce4f7.png" />
 </div>
 </div>
 <p>We are now ready to bring it all together by multiplying <em>two</em> likelihoods in every measurement update phase:</p>
@@ -1027,14 +1027,14 @@ which had extremely limited computational hardware.</p>
 <p><strong>Kalman smoothing</strong> is the equivalent of the Viterbi algorithm for hidden Markov model, but for continuous state spaces.</p>
 <p>In the continuous case, we build the factors directly from given control inputs and measurements.
 A factor graph now encodes the negative log-posterior</p>
-<div class="amsmath math notranslate nohighlight" id="equation-958e5890-4bf0-4e25-97fb-68660ecccaef">
-<span class="eqno">(4.44)<a class="headerlink" href="#equation-958e5890-4bf0-4e25-97fb-68660ecccaef" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-2f508c7e-edd5-4b3f-a60f-19ba274e23b3">
+<span class="eqno">(4.44)<a class="headerlink" href="#equation-2f508c7e-edd5-4b3f-a60f-19ba274e23b3" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \Phi(X)=\sum_i \phi(X_i) = \frac{1}{2} \sum_i \|A_i X_i-b_i\|^2.
 \end{equation}\]</div>
 <p>In the continuous case we use <em>minimization</em> of the log-likelihood rather than maximization over the probabilities. The main reason is because then inference becomes a linear least squares problem.</p>
 <p>A least-squares problem is convex and can be solved in closed form. The linear terms within the square norm above are <em>sparse</em>, in the sense that <span class="math notranslate nohighlight">\(X_i\)</span> is only a <em>subset</em> of the continuous variables <span class="math notranslate nohighlight">\(X\)</span>. For example, a simple sensor fusion problem on two scalar variables <span class="math notranslate nohighlight">\(x_1\)</span> and <span class="math notranslate nohighlight">\(x_2\)</span> would be one where both have a simple prior on them, resp. with <span class="math notranslate nohighlight">\(\mu_1=3\)</span> and <span class="math notranslate nohighlight">\(\mu_2=7\)</span>, and we know that the difference between them is equal to <span class="math notranslate nohighlight">\(5\)</span>. This yields three factors that have to be minimized over <span class="math notranslate nohighlight">\(x_1\)</span> and <span class="math notranslate nohighlight">\(x_2\)</span>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a230dd9e-cead-4a5f-97f1-b1943b078e81">
-<span class="eqno">(4.45)<a class="headerlink" href="#equation-a230dd9e-cead-4a5f-97f1-b1943b078e81" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-c0fcbc97-af38-44e3-ad13-327ed065d9a7">
+<span class="eqno">(4.45)<a class="headerlink" href="#equation-c0fcbc97-af38-44e3-ad13-327ed065d9a7" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \Phi(X)= \frac{1}{2} \|x_1-3\|^2 + \frac{1}{2} \|(x_2-x_1)-5\|^2 + \frac{1}{2} \|x_2-7\|^2.
 \end{equation}\]</div>
 <p>This corresponds to the following</p>
@@ -1062,13 +1062,13 @@ A factor graph now encodes the negative log-posterior</p>
 </table>
 </div>
 <p>We can collect all three matrices <span class="math notranslate nohighlight">\(A_1\)</span>, <span class="math notranslate nohighlight">\(A_2\)</span>, and <span class="math notranslate nohighlight">\(A_3\)</span> into one sparse matrix <span class="math notranslate nohighlight">\(A\)</span> and corresponding right-hand-side <span class="math notranslate nohighlight">\(b\)</span>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-ecc6879c-540f-4d35-b27f-42fc99f07574">
-<span class="eqno">(4.46)<a class="headerlink" href="#equation-ecc6879c-540f-4d35-b27f-42fc99f07574" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-4be6fb04-c15e-4849-8952-80177ec6d745">
+<span class="eqno">(4.46)<a class="headerlink" href="#equation-4be6fb04-c15e-4849-8952-80177ec6d745" title="Permalink to this equation">#</a></span>\[\begin{equation}
 A=\begin{pmatrix} 1 &amp; 0 \\ -1 &amp; 1 \\ 0 &amp; 1 \end{pmatrix}~~\text{and}~~B=\begin{pmatrix} 3 \\ 5 \\ 7 \end{pmatrix}.
 \end{equation}\]</div>
 <p>You can convince yourself that the minimization problem can then be written as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-23173fd6-3731-4f33-806f-7ff0f0e064c5">
-<span class="eqno">(4.47)<a class="headerlink" href="#equation-23173fd6-3731-4f33-806f-7ff0f0e064c5" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-6898c821-b948-4064-a9e2-1c634e59ea24">
+<span class="eqno">(4.47)<a class="headerlink" href="#equation-6898c821-b948-4064-a9e2-1c634e59ea24" title="Permalink to this equation">#</a></span>\[\begin{equation}
 X^* = \arg \min_X \Phi(X) = \arg \min_X \frac{1}{2} \|A X-b\|^2
 \end{equation}\]</div>
 <p>which is now a <em>sparse</em> linear least-squares problem.</p>
@@ -1119,8 +1119,8 @@ X^* &amp;= (A^T A)^{-1} A^T b
 <section id="sparse-least-squares">
 <h3><span class="section-number">4.4.5.4. </span>Sparse Least-Squares<a class="headerlink" href="#sparse-least-squares" title="Link to this heading">#</a></h3>
 <p>In practice we use <em>sparse factorization methods</em> to solve for <span class="math notranslate nohighlight">\(X^*\)</span>. In particular, <em>sparse Cholesky</em> factorization can efficiently decompose the sparse Hessian <span class="math notranslate nohighlight">\(Q\)</span> into its matrix square root <span class="math notranslate nohighlight">\(R\)</span></p>
-<div class="amsmath math notranslate nohighlight" id="equation-39404351-cbab-4926-95f1-e3f2fedde139">
-<span class="eqno">(4.48)<a class="headerlink" href="#equation-39404351-cbab-4926-95f1-e3f2fedde139" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-65adb128-6e1d-49a6-ad07-3c06d89f0ef8">
+<span class="eqno">(4.48)<a class="headerlink" href="#equation-65adb128-6e1d-49a6-ad07-3c06d89f0ef8" title="Permalink to this equation">#</a></span>\[\begin{equation}
 A^T A=R^T R
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(R\)</span> is <em>upper-triangular</em> and sparse as well. There is one wrinkle: the sparsity of <span class="math notranslate nohighlight">\(R\)</span> depends (dramatically) on the column ordering chosen for <span class="math notranslate nohighlight">\(A\)</span>, and the optimal ordering is hard to find (NP-complete, in fact). Hence, many heuristic ordering methods exist that are applied in practice.</p>
@@ -1131,8 +1131,8 @@ R^T (R X^*) &amp;= A^T b \
 R^T y &amp;= A^T b
 \end{aligned}</p>
 <p>In the last line, <span class="math notranslate nohighlight">\(R^T\)</span> is lower-triangular, and hence <span class="math notranslate nohighlight">\(y\)</span> can be easily solved for proceeding from <span class="math notranslate nohighlight">\(y_1\)</span> to <span class="math notranslate nohighlight">\(y_n\)</span>, via <em>forward-substitution</em>. We then turn around use the computed value of <span class="math notranslate nohighlight">\(y\)</span> to solve for <span class="math notranslate nohighlight">\(X^*\)</span> by <em>back-substitution</em>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-48ab1333-14dc-43f6-b9c4-8c1c124344b5">
-<span class="eqno">(4.49)<a class="headerlink" href="#equation-48ab1333-14dc-43f6-b9c4-8c1c124344b5" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-f4823b6e-c667-478b-ae09-a5d1e0d27c03">
+<span class="eqno">(4.49)<a class="headerlink" href="#equation-f4823b6e-c667-478b-ae09-a5d1e0d27c03" title="Permalink to this equation">#</a></span>\[\begin{equation}
 R X^*=y.
 \end{equation}\]</div>
 <p>Both of these steps are <span class="math notranslate nohighlight">\(O(n^2)\)</span> for dense matrices, but typically closer to <span class="math notranslate nohighlight">\(O(n)\)</span> for sparse matrices.</p>
@@ -1215,7 +1215,7 @@ Below we illustrate this with an example in code for the GPS-like measurements, 
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/6dfe3752f8ea7600c96316b5134fb477e0a7e202cd920293aec03ee147af453f.svg" src="_images/6dfe3752f8ea7600c96316b5134fb477e0a7e202cd920293aec03ee147af453f.svg" />
+<img alt="_images/3aad83b347c19b14cc48e8e8f458cdb047cedb998c01324d111663eb98a4274c.svg" src="_images/3aad83b347c19b14cc48e8e8f458cdb047cedb998c01324d111663eb98a4274c.svg" />
 </div>
 </div>
 <p>Now we can find the optimal solution, using the <code class="docutils literal notranslate"><span class="pre">optimize</span></code> method. In the Gaussian factor graph case, this solves a linear least-squares problem with a continuous variant of the max-product algorithm from Section 3.4:</p>
@@ -1257,7 +1257,7 @@ Below we illustrate this with an example in code for the GPS-like measurements, 
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/6dfe3752f8ea7600c96316b5134fb477e0a7e202cd920293aec03ee147af453f.svg" src="_images/6dfe3752f8ea7600c96316b5134fb477e0a7e202cd920293aec03ee147af453f.svg" />
+<img alt="_images/3aad83b347c19b14cc48e8e8f458cdb047cedb998c01324d111663eb98a4274c.svg" src="_images/3aad83b347c19b14cc48e8e8f458cdb047cedb998c01324d111663eb98a4274c.svg" />
 </div>
 </div>
 <p id="index-9">We can also visualize the sparse <span class="math notranslate nohighlight">\(A\)</span> matrix, which is called the <strong>sparse Jacobian</strong> of the system:</p>
@@ -1295,7 +1295,7 @@ Below we illustrate this with an example in code for the GPS-like measurements, 
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/0f68026498276e8e6e95b22f926be3bdb5b0b3abd5175051c9fbe5a399126dca.svg" src="_images/0f68026498276e8e6e95b22f926be3bdb5b0b3abd5175051c9fbe5a399126dca.svg" />
+<img alt="_images/fafa5512ff31bf69fb89b019d4684659ff02e218b9635320d1b47a85b8d54fb1.svg" src="_images/fafa5512ff31bf69fb89b019d4684659ff02e218b9635320d1b47a85b8d54fb1.svg" />
 </div>
 </div>
 <p>This Bayes net <em>is</em> the upper-triangular (DAG!) Cholesky factor <span class="math notranslate nohighlight">\(R\)</span> we discussed above:</p>

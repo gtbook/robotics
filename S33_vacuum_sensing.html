@@ -432,7 +432,7 @@ We can capture these semantics with a conditional probability distribution <span
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Creating a sensor model $P(Z_t|X_t)$ using a string-based specification.</span>
-<span class="c1">#| label: vacuum-sensor-spec</span>
+<span class="c1">#| label: fig:vacuum-sensor-spec</span>
 <span class="c1"># vacuum.light_levels = [&quot;dark&quot;, &quot;medium&quot;, &quot;light&quot;]</span>
 <span class="n">Z</span> <span class="o">=</span> <span class="n">VARIABLES</span><span class="o">.</span><span class="n">discrete_series</span><span class="p">(</span><span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">light_levels</span><span class="p">)</span> <span class="c1"># define variables</span>
 <span class="c1"># vacuum.sensor_spec = &quot;1/1/8 1/1/8 2/7/1 8/1/1 1/8/1&quot;</span>
@@ -500,13 +500,13 @@ over time, we call it a dynamic Bayes net or <strong>DBN</strong>.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/c3045f7df7982fa8697302ceb44f95cc93e4d61501e98ab40e9d97420ecad85f.svg" src="_images/c3045f7df7982fa8697302ceb44f95cc93e4d61501e98ab40e9d97420ecad85f.svg" />
+<img alt="_images/b4f8ecda8d2a896467a1d4e07764e2717ff31f642b0ec8e5c7fc16d9f083e23d.svg" src="_images/b4f8ecda8d2a896467a1d4e07764e2717ff31f642b0ec8e5c7fc16d9f083e23d.svg" />
 </div>
 </div>
 <p>Observe that after the first time step, the Bayes net is repeating the same “AXZ” pattern (or <em>slice</em>!) over and over again. Formally, the joint distribution <span class="math notranslate nohighlight">\(P(Z_{1:n},X_{1:n}|A_{1:n})\)</span> over states <span class="math notranslate nohighlight">\(X_{1:n} \doteq (X_1 \dots, X_n)\)</span> and measurements <span class="math notranslate nohighlight">\(Z_{1:n} \doteq (Z_1, \dots , Z_n)\)</span>, <em>given</em>
 the action sequence <span class="math notranslate nohighlight">\(A_{1:n} \doteq (A_1, \dots , A_n)\)</span> can be computed, given the DBN factorization, as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-0921112b-920d-49bf-9466-b5a1b9d09340">
-<span class="eqno">(3.15)<a class="headerlink" href="#equation-0921112b-920d-49bf-9466-b5a1b9d09340" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-a84fb987-d241-4f2f-8f98-b05287c1162b">
+<span class="eqno">(3.15)<a class="headerlink" href="#equation-a84fb987-d241-4f2f-8f98-b05287c1162b" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P(Z_{1:n},X_{1:n}|A_{1:n})= P(Z_1| X_1) P(X_1) \prod_{k=2}^{n} P(Z_k| X_k) P(X_k|A_{k-1},X_{k-1}).
 \end{equation}\]</div>
 <p>The AXZ slice at time <span class="math notranslate nohighlight">\(k\)</span> is given by <span class="math notranslate nohighlight">\(P(Z_k| X_k) P(X_k|A_{k-1},X_{k-1})\)</span>, whereas the chain is “jump-started” using the initial state distribution <span class="math notranslate nohighlight">\(P(X_1)\)</span> and the corresponding measurement model <span class="math notranslate nohighlight">\(P(Z_1|X_1)\)</span>.</p>
@@ -517,8 +517,8 @@ P(Z_{1:n},X_{1:n}|A_{1:n})= P(Z_1| X_1) P(X_1) \prod_{k=2}^{n} P(Z_k| X_k) P(X_k
 <div><p>FOR DBNs, ancestry matters!</p>
 </div></blockquote>
 <p>How do we sample over such a complex Bayes net? To explain, recall the Bayes net example from Figure <a class="reference internal" href="#fig:general_bayes_net"><span class="xref myst">11</span></a> in the previous section. It has four variables W,X,Y,Z, and the joint distribution</p>
-<div class="amsmath math notranslate nohighlight" id="equation-6ba638b2-c1c3-4ffc-afef-ae887c49b1e1">
-<span class="eqno">(3.16)<a class="headerlink" href="#equation-6ba638b2-c1c3-4ffc-afef-ae887c49b1e1" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-85cce38e-6771-45e5-a1ce-d435d8fe02a4">
+<span class="eqno">(3.16)<a class="headerlink" href="#equation-85cce38e-6771-45e5-a1ce-d435d8fe02a4" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P(W,X,Y,Z)=P(W|X,Z)P(X|Y,Z)P(Y|Z)P(Z).
 \end{equation}\]</div>
 <p id="index-4">Sampling from the joint distribution given in Bayes net form can be done
@@ -547,17 +547,17 @@ rather obvious, and so is a simulation algorithm to sample from
 <span class="math notranslate nohighlight">\(P(X_{1:n},Z_{1:n}|A_{1:n})\)</span>:</p>
 <ol class="arabic simple">
 <li><p>First, assign <span class="math notranslate nohighlight">\(k\leftarrow1\)</span>, and sample the initial state <span class="math notranslate nohighlight">\(x_1\)</span> from <span class="math notranslate nohighlight">\(P(X_1)\)</span>, a prior over the state. We write
-\begin{equation}
+$<span class="math notranslate nohighlight">\(
 x_1 \sim P(X_1)
-\end{equation}</p></li>
+\)</span>$</p></li>
 <li><p>Next, simulate the sensor reading by sampling from the sensor model
-\begin{equation}
+$<span class="math notranslate nohighlight">\(
 z_{k} \sim P(Z_{k}|X_{k}=x_{k})
-\end{equation}</p></li>
+\)</span>$</p></li>
 <li><p>Lastly, simulate the effect of the (given) action <span class="math notranslate nohighlight">\(a_k\)</span> by sampling the next state <span class="math notranslate nohighlight">\(x_{k+1}\)</span>:
-\begin{equation}
+$<span class="math notranslate nohighlight">\(
 x_{k+1} \sim P(X_{k+1}|X_{k}=s_{k},A_{k}=a_{k}).
-\end{equation}</p></li>
+\)</span>$</p></li>
 <li><p>Increase <span class="math notranslate nohighlight">\(k\leftarrow k+1\)</span> and return to step <span class="math notranslate nohighlight">\(2\)</span>.</p></li>
 </ol>
 <p>Note that this algorithm is generic for all robot models with this action/sensing structure.</p>
