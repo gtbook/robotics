@@ -448,8 +448,8 @@ In particular, below we extend the 1D interpolation example from Chapter 5, exte
 <section id="sampling-from-rays">
 <h3><span class="section-number">7.6.2.1. </span>Sampling from Rays<a class="headerlink" href="#sampling-from-rays" title="Link to this heading">#</a></h3>
 <p>The first part of a volume renderer is to evenly sample points on rays, emanating from the optical center of a camera. When we are given the <code class="docutils literal notranslate"><span class="pre">origin</span></code> and the <code class="docutils literal notranslate"><span class="pre">direction</span></code> of a ray (as a unit-vector) sampling is simple enough: a point <span class="math notranslate nohighlight">\(P\)</span> on the ray at a distance <span class="math notranslate nohighlight">\(t\)</span> from the origin <span class="math notranslate nohighlight">\(O\)</span>, in the direction <span class="math notranslate nohighlight">\(D\)</span> is given as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-10f0140f-15f4-4a15-a863-13c48e0f57f3">
-<span class="eqno">(7.67)<a class="headerlink" href="#equation-10f0140f-15f4-4a15-a863-13c48e0f57f3" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-b05d26be-cc4d-4a59-85d9-5766c8233dca">
+<span class="eqno">(7.67)<a class="headerlink" href="#equation-b05d26be-cc4d-4a59-85d9-5766c8233dca" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P(t,O,D) = O + t  D
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(t\)</span> is a random depth along the ray. Hence, we only need to sample many <span class="math notranslate nohighlight">\(t\)</span> values evenly and we are done.</p>
@@ -498,13 +498,13 @@ As a case in point, our first function <code class="docutils literal notranslate
 <section id="integration-along-rays">
 <span id="index-3"></span><h3><span class="section-number">7.6.2.2. </span>Integration along Rays<a class="headerlink" href="#integration-along-rays" title="Link to this heading">#</a></h3>
 <p>The second part of the volume rendering story is where the magic happens. Let us assume that we are given the densities <span class="math notranslate nohighlight">\(\sigma_i\)</span> and colors <span class="math notranslate nohighlight">\(c_i\)</span> at <span class="math notranslate nohighlight">\(N\)</span> sampled points <span class="math notranslate nohighlight">\(P_i\)</span> on a ray corresponding to a given pixel. We can then calculate the color <span class="math notranslate nohighlight">\(C\)</span> for the pixel using the equation below,</p>
-<div class="amsmath math notranslate nohighlight" id="equation-0375a70d-231f-47bc-b25a-b9ee6b43166e">
-<span class="eqno">(7.68)<a class="headerlink" href="#equation-0375a70d-231f-47bc-b25a-b9ee6b43166e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-51db4ec6-f2d4-4d02-829d-fa0d0f576a84">
+<span class="eqno">(7.68)<a class="headerlink" href="#equation-51db4ec6-f2d4-4d02-829d-fa0d0f576a84" title="Permalink to this equation">#</a></span>\[\begin{equation}
 C = \sum_{i=1}^N \alpha_i T_i c_i
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\alpha_i\)</span> is the <strong>opacity</strong> and <span class="math notranslate nohighlight">\(T_i\)</span> is the <strong>transmittance</strong> at <span class="math notranslate nohighlight">\(P_i\)</span>, both defined below:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-0ee3ece8-595a-481b-aced-291539686140">
-<span class="eqno">(7.69)<a class="headerlink" href="#equation-0ee3ece8-595a-481b-aced-291539686140" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-8db64d0d-24ec-4c1c-904b-88d9b6be51a7">
+<span class="eqno">(7.69)<a class="headerlink" href="#equation-8db64d0d-24ec-4c1c-904b-88d9b6be51a7" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{align}
 \alpha_i &amp;\doteq 1 - \exp(-\sigma_i) \\
 T_i &amp;\doteq \exp ( - \sum_{j=1}^{i-1} \sigma_j).
@@ -543,8 +543,8 @@ T_i &amp;\doteq \exp ( - \sum_{j=1}^{i-1} \sigma_j).
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[0.51726645 0.636882   0.43140092]
- [0.46386528 0.3795336  0.26824492]]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[0.5175011  0.55809736 0.5798568 ]
+ [0.26478475 0.17345643 0.2085599 ]]
 </pre></div>
 </div>
 </div>
@@ -558,8 +558,8 @@ T_i &amp;\doteq \exp ( - \sum_{j=1}^{i-1} \sigma_j).
 <div><p>A voxel grid of density or color.</p>
 </div></blockquote>
 <p>A key decision in the NeRF architecture is how to represent the function <span class="math notranslate nohighlight">\(F_\Theta\)</span> so it can be queried for a density and a color at every point. In short, we need:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-9cc62b0c-f0d8-44b2-9a44-a58a0e968606">
-<span class="eqno">(7.70)<a class="headerlink" href="#equation-9cc62b0c-f0d8-44b2-9a44-a58a0e968606" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-b4934f43-f970-486c-8e29-1323d28c4a83">
+<span class="eqno">(7.70)<a class="headerlink" href="#equation-b4934f43-f970-486c-8e29-1323d28c4a83" title="Permalink to this equation">#</a></span>\[\begin{equation}
 (\sigma, c) = F_\Theta(P)
 \end{equation}\]</div>
 <p>with <span class="math notranslate nohighlight">\(P\in R^3\)</span>, <span class="math notranslate nohighlight">\(\sigma\in R\)</span>, and <span class="math notranslate nohighlight">\(c\in[0...255]^3\)</span>. Note that in computer vision, neural networks typically take high-dimensional inputs, e.g., entire images, so having such a low-dimensional input (3) is highly unusual. This “coordinate-based” approach is one of the breakthroughs of NeRF-style representations.</p>
@@ -627,7 +627,7 @@ The code below implements trilinear interpolation: the values on the <em>eight</
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Interpolated Output: 0.34533
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Interpolated Output: 0.59286
 </pre></div>
 </div>
 </div>
@@ -825,28 +825,28 @@ Interpolated Output:
 </ul>
 <p>Acquiring all this information for an arbitrary image sequence taken with some unknown, uncalibrated camera can be complicated. Cameras come in a variety of sizes and with very different lenses, and effects like radial distortion make the modeling process non-trivial. In addition, recovering the actual position and attitude of the camera in a scene is typically done through structure from motion, which can be time-consuming and tricky.</p>
 <p id="index-6">In the following, we will assume that all this hard work has been done for us, and/or the images have been simulated with exactly known camera parameters, both intrinsic and extrinsic. One popular way to accomplish this is by providing undistorted images accompanied by a <span class="math notranslate nohighlight">\(3 \times 4\)</span> <strong>camera matrix</strong> <span class="math notranslate nohighlight">\(M\)</span>. Recall that a 3D point <span class="math notranslate nohighlight">\(P\)</span> can be projected into an image via</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c2f8d740-5342-4e80-9504-6ce9958f2d56">
-<span class="eqno">(7.71)<a class="headerlink" href="#equation-c2f8d740-5342-4e80-9504-6ce9958f2d56" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-540b15e5-57c4-4b07-87d2-3b61084488a8">
+<span class="eqno">(7.71)<a class="headerlink" href="#equation-540b15e5-57c4-4b07-87d2-3b61084488a8" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \tilde{p} = K R^T (P - t)
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\tilde{p}\)</span> are <em>homogeneous</em> 2D image coordinates. We can re-write this as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-83516c6c-1175-4e65-864a-e8bbdc69727f">
-<span class="eqno">(7.72)<a class="headerlink" href="#equation-83516c6c-1175-4e65-864a-e8bbdc69727f" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-e5c4e2f8-13e6-4b6c-96a9-9312904ec354">
+<span class="eqno">(7.72)<a class="headerlink" href="#equation-e5c4e2f8-13e6-4b6c-96a9-9312904ec354" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \tilde{p} = M\tilde{P}
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\tilde{P} = \begin{bmatrix}P \\1 \end{bmatrix}\)</span> and the camera matrix <span class="math notranslate nohighlight">\(M\)</span> is given by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a69e6bc8-2da3-4970-8154-86269a4aa9e4">
-<span class="eqno">(7.73)<a class="headerlink" href="#equation-a69e6bc8-2da3-4970-8154-86269a4aa9e4" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ac55326f-4b13-44c6-9aa3-f3a54a67a28f">
+<span class="eqno">(7.73)<a class="headerlink" href="#equation-ac55326f-4b13-44c6-9aa3-f3a54a67a28f" title="Permalink to this equation">#</a></span>\[\begin{equation}
 M = [A|a] = [K R^T | - K R^T t]
 \end{equation}\]</div>
 <p>That means that if we are <em>given</em> the camera matrix <span class="math notranslate nohighlight">\(M\)</span> we can always recover the ray origins as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-aa330ed4-f49f-4531-a011-5edbcbe9989a">
-<span class="eqno">(7.74)<a class="headerlink" href="#equation-aa330ed4-f49f-4531-a011-5edbcbe9989a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-04ce4f5c-0956-49d8-ae65-09bea35b65f8">
+<span class="eqno">(7.74)<a class="headerlink" href="#equation-04ce4f5c-0956-49d8-ae65-09bea35b65f8" title="Permalink to this equation">#</a></span>\[\begin{equation}
 t = -A^{-1} a
 \end{equation}\]</div>
 <p>and a random 3D point <span class="math notranslate nohighlight">\(P\)</span> on the ray corresponding to <span class="math notranslate nohighlight">\(\tilde{p}\)</span> as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-d0875851-4dbf-4634-9613-1a7e5e98267f">
-<span class="eqno">(7.75)<a class="headerlink" href="#equation-d0875851-4dbf-4634-9613-1a7e5e98267f" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-cc6b0fed-5bce-4309-9f7a-b5594fc90ef0">
+<span class="eqno">(7.75)<a class="headerlink" href="#equation-cc6b0fed-5bce-4309-9f7a-b5594fc90ef0" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P = A^{-1}(\tilde{p} - a)
 \end{equation}\]</div>
 <p>since <span class="math notranslate nohighlight">\(\tilde{p} = AP + a\)</span>. We will illustrate this below with the Stonehenge dataset.</p>
@@ -985,7 +985,7 @@ P = A^{-1}(\tilde{p} - a)
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/3df51c7deff3d92d83615639f1ef01ccb97a2d24bc34e6f9062ab46a526f391e.png" src="_images/3df51c7deff3d92d83615639f1ef01ccb97a2d24bc34e6f9062ab46a526f391e.png" />
+<img alt="_images/699e045496e15fc16ed3c792f30403810491e71ecbf2c35a3699d4080adf4f88.png" src="_images/699e045496e15fc16ed3c792f30403810491e71ecbf2c35a3699d4080adf4f88.png" />
 </div>
 </div>
 <p>Let us recall the training code from Chapter 5. We previously used this code to train for the parameters of a 1D interpolation grid, minimizing a Mean-Squared Error (MSE) loss function, i.e., the squared difference between the predicted values and the training data values. This is the standard loss function for continuous <em>regression</em> problems.</p>

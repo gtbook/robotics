@@ -416,8 +416,8 @@ Furthermore, because these robots typically move at relatively low speeds, we ne
 <p>For this special case of robots that translate in the plane, and whose instantaneous
 velocity is the command input, the state space is merely the location of the robot
 in the world with respect to some global coordinate frame:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c94cc0be-5a58-4b8d-b909-7f7664518d0f">
-<span class="eqno">(4.1)<a class="headerlink" href="#equation-c94cc0be-5a58-4b8d-b909-7f7664518d0f" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-06c4aba6-39d7-4f45-90c0-4e27b6b0eda2">
+<span class="eqno">(4.1)<a class="headerlink" href="#equation-06c4aba6-39d7-4f45-90c0-4e27b6b0eda2" title="Permalink to this equation">#</a></span>\[\begin{equation}
 x\in {\cal D} \subset \mathbb{R}^2
 \end{equation}\]</div>
 <p>In the remainder of this chapter, we will consider a rectangular warehouse
@@ -435,17 +435,17 @@ and the extension to the 2D case is not so difficult.
 In the of approximate representations of probability distributions,
 we will introduce two complementary methods: a finite element method, and a sampling-based method.
 In the former, we approximate the state space by a two-diminsional grid, and keep track of the
-probability mass in each individual grid cell. This is
+probability mass in each individual grid cell.
 In the latter, we represent a PDF by a weighted collection of samples.
 This representation is particularly amenable to propagating uncertainties that arise during
 robot motion.</p>
 <section id="gaussian-densities">
-<span id="index-1"></span><h2><span class="section-number">4.1.1. </span>Gaussian Densities<a class="headerlink" href="#gaussian-densities" title="Link to this heading">#</a></h2>
-<p>As we have seen with the trash sorting robot, a one-dimensional Gaussian density can be used
+<h2><span class="section-number">4.1.1. </span>Gaussian Densities<a class="headerlink" href="#gaussian-densities" title="Link to this heading">#</a></h2>
+<p id="index-3"><span id="index-2"></span><span id="index-1"></span>As we have seen with the trash sorting robot, a one-dimensional Gaussian density can be used
 to represent continuous random variables.
 The Gaussian probability density function (PDF) is defined by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-dafbe0d2-71da-4fb0-8ad1-b61c9398ad02">
-<span class="eqno">(4.2)<a class="headerlink" href="#equation-dafbe0d2-71da-4fb0-8ad1-b61c9398ad02" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-537a1682-a7ed-4e67-8ef4-69e7e5b73928">
+<span class="eqno">(4.2)<a class="headerlink" href="#equation-537a1682-a7ed-4e67-8ef4-69e7e5b73928" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathcal{N}(x;\mu,\sigma^2) \doteq \frac{1}{k} \exp\{ - \frac{1}{2} \frac{(x-\mu)^2}{\sigma^2} \}
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\mu\)</span> is the mean, <span class="math notranslate nohighlight">\(\sigma^2\)</span> is the variance, and <span class="math notranslate nohighlight">\(k=\sqrt{2\pi}\sigma\)</span> is a normalization constant.
@@ -456,36 +456,36 @@ It is instructive to consider the term in the exponent.</p>
 <li><p>The term <span class="math notranslate nohighlight">\(\sigma^{-2}(x-\mu)^2\)</span> is a weighted squared-distance to the mean.</p></li>
 </ol>
 <p>Thus, we can interpret the negative log of a 1D Gaussian as a simple quadratic error or “energy” function. This fact is worth emphasizing: <em>a Gaussian density is the probability density associated with a quadratic error function with zero error at the mean <span class="math notranslate nohighlight">\(\mu\)</span> and variance <span class="math notranslate nohighlight">\(\sigma^2\)</span>.</em> We suggestively write this quadratic below as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-bf9811e7-f607-4d46-9a4c-54046adce607">
-<span class="eqno">(4.3)<a class="headerlink" href="#equation-bf9811e7-f607-4d46-9a4c-54046adce607" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-078267ad-96ce-4aff-b903-989f8048654c">
+<span class="eqno">(4.3)<a class="headerlink" href="#equation-078267ad-96ce-4aff-b903-989f8048654c" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathcal{E}(x;\mu,\sigma^2) \doteq \frac{1}{2} (x-\mu)\sigma^{-2}(x-\mu)
 \end{equation}\]</div>
-<p id="index-2">The energy analogy can be extended to the multivariate case.
+<p id="index-5"><span id="index-4"></span>The energy analogy can be extended to the multivariate case.
 In the 1D case, the mean and variance are scalars.
 For the <span class="math notranslate nohighlight">\(n\)</span>-dimensional case when <span class="math notranslate nohighlight">\(x\in\mathbb{R}^n\)</span>, the mean is a vector,  <span class="math notranslate nohighlight">\(\mu\in\mathbb{R}^n\)</span>,
 and the concept of variance is extended to define a
 <strong>covariance matrix</strong> <span class="math notranslate nohighlight">\(\Sigma\in\mathbb{R}^{n\times n}\)</span>,
 a symmetric, positive definite matrix that characterizes the “spread” of a quadratic in multiple dimensions.
 This allows us to generalize the 1D error function above to the <span class="math notranslate nohighlight">\(n\)</span>-dimensional case as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-28bb36e9-f20f-4e0d-a0b8-5e74715cdd45">
-<span class="eqno">(4.4)<a class="headerlink" href="#equation-28bb36e9-f20f-4e0d-a0b8-5e74715cdd45" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-cb76b7d6-ffe0-4cac-bf81-7d0db5a7c769">
+<span class="eqno">(4.4)<a class="headerlink" href="#equation-cb76b7d6-ffe0-4cac-bf81-7d0db5a7c769" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathcal{E}(x;\mu,\Sigma) \doteq \frac{1}{2} (x-\mu)^T\Sigma^{-1}(x-\mu)
 \end{equation}\]</div>
 <p>We define a <strong>multivariate Gaussian density</strong> using the error function <span class="math notranslate nohighlight">\(\mathcal{E}(x;\mu,\Sigma)\)</span>
 as follows</p>
-<div class="amsmath math notranslate nohighlight" id="equation-7fe29f6b-1737-4047-bbc2-2283ae3db49e">
-<span class="eqno">(4.5)<a class="headerlink" href="#equation-7fe29f6b-1737-4047-bbc2-2283ae3db49e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-bee062d9-a738-4450-9648-666eba070ea9">
+<span class="eqno">(4.5)<a class="headerlink" href="#equation-bee062d9-a738-4450-9648-666eba070ea9" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathcal{N}(x;\mu,\Sigma) \doteq \frac{1}{k} \exp\{ - \frac{1}{2} (x-\mu)^T\Sigma^{-1}(x-\mu) \}
 \end{equation}\]</div>
 <p>The (non-obvious) normalization constant k can be written very elegantly in terms of the determinant of <span class="math notranslate nohighlight">\(2\pi\Sigma\)</span>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-cffa530c-00b7-404b-8114-cb26358dc3db">
-<span class="eqno">(4.6)<a class="headerlink" href="#equation-cffa530c-00b7-404b-8114-cb26358dc3db" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ecd236c9-b3d1-4d66-85a9-8f021da2e0ea">
+<span class="eqno">(4.6)<a class="headerlink" href="#equation-ecd236c9-b3d1-4d66-85a9-8f021da2e0ea" title="Permalink to this equation">#</a></span>\[\begin{equation}
 k=\sqrt{(2\pi)^{n}|\Sigma|}=\sqrt{|2\pi\Sigma|}.
 \end{equation}\]</div>
 <p>Another name for multivariate Gaussian probability density is the multivariate normal distribution. We prefer to use <em>density</em> to denote its continuous nature, and Gaussian instead of “normal”, but it is good to be aware of both nomenclatures.</p>
 <p>To better understand the multivariate Gaussian PDF, consider a simple two-dimensional example,</p>
-<div class="amsmath math notranslate nohighlight" id="equation-6e84a5e0-52b3-46b6-9f01-b29b446a2786">
-<span class="eqno">(4.7)<a class="headerlink" href="#equation-6e84a5e0-52b3-46b6-9f01-b29b446a2786" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-9b121b9a-670c-4c09-aa67-0f8e894a4420">
+<span class="eqno">(4.7)<a class="headerlink" href="#equation-9b121b9a-670c-4c09-aa67-0f8e894a4420" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{aligned}
 \mu &amp;= \begin{bmatrix} 4 \\ 10 \end{bmatrix} \\
 \\
@@ -496,8 +496,8 @@ k=\sqrt{(2\pi)^{n}|\Sigma|}=\sqrt{|2\pi\Sigma|}.
 \end{aligned}
 \end{equation}\]</div>
 <p>If we evaluate <span class="math notranslate nohighlight">\(\mathcal{E}(x;\mu,\Sigma)\)</span> for this case, we obtain</p>
-<div class="amsmath math notranslate nohighlight" id="equation-f467f1c2-30dd-407f-a960-7226fe2d5a16">
-<span class="eqno">(4.8)<a class="headerlink" href="#equation-f467f1c2-30dd-407f-a960-7226fe2d5a16" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-a82b6edd-7c0a-4551-b6b5-dbff7bebc6d0">
+<span class="eqno">(4.8)<a class="headerlink" href="#equation-a82b6edd-7c0a-4551-b6b5-dbff7bebc6d0" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathcal{E}(x;\mu,\Sigma) = \frac{1}{\sigma^2_{xx}}(x - 4)^2 + \frac{1}{\sigma^2_{yy}}(y - 10)^2
 \end{equation}\]</div>
 <p>which is the familiar equation of an axis-aligned ellipse in the plane with center at <span class="math notranslate nohighlight">\((4, 10)\)</span>.
@@ -523,7 +523,7 @@ which is why there are so many ellipses in the figures below.</p>
 </div>
 </div>
 </div>
-<p>The simple code above has limitations: it <em>only</em> works for dimensionality <span class="math notranslate nohighlight">\(n\geq2\)</span>.  In this chapter we will be working in 2D, so below we show the effect of mean and covariance as density contour plots:</p>
+<p>The simple code above has limitations: it <em>only</em> works for dimensionality <span class="math notranslate nohighlight">\(n\geq2\)</span>.  In this chapter we will be working in 2D, so below we show the effect of mean and covariance as density contour plots in Figure <a class="reference internal" href="#fig:example_gaussians"><span class="xref myst">1</span></a>. The first two Gaussians in the figure are <em>axis-parallel</em>, and the covariance matrices simply contain the squared standard deviations of the <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> dimensions on their diagonals. The third Gaussian shows the case where <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> are positively correlated, around a mean of <span class="math notranslate nohighlight">\((50,15)\)</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Some example Gaussian densities in 2D.</span>
@@ -542,8 +542,7 @@ which is why there are so many ellipses in the figures below.</p>
 <img alt="_images/60662b30b580cf95514acd1ec33e1135051052e643456db1392f5ed9e58b290f.png" src="_images/60662b30b580cf95514acd1ec33e1135051052e643456db1392f5ed9e58b290f.png" />
 </div>
 </div>
-<p>The first two Gaussians above are <em>axis-parallel</em>, and the covariance matrices simply contain the squared standard deviations of the <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> dimensions on their diagonals. The third Gaussian shows off the case where <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> are positively correlated, around a mean of <span class="math notranslate nohighlight">\((50,15)\)</span>.</p>
-<p>One advantage of the Gaussian as a probability density is that it is easy to specify and to compute with. A disadvantage is that it provides a very restricted class of densities: in particular, it is a <em>unimodal</em> density, meaning that it only has a single maximum. Hence, we will never be able to represent two equally probable locations in space, for example. One way to get around this limitation is to use a <em>mixture</em> of Gaussian densities. This is a well known technique, and has its merits, but is outside the scope of this book.</p>
+<p id="index-6">One advantage of the Gaussian as a probability density is that it is easy to specify and to compute with. A disadvantage is that it provides a fairly restricted class of densities: in particular, it is a <em>unimodal</em> density, meaning that it only has a single maximum. Hence, we will never be able to represent two equally probable locations in space, for example. One way to get around this limitation is to use a <em>mixture</em> of Gaussian densities. This is a well known technique, and has its merits, but is outside the scope of this book.</p>
 </section>
 <section id="the-finite-element-method">
 <h2><span class="section-number">4.1.2. </span>The Finite Element Method<a class="headerlink" href="#the-finite-element-method" title="Link to this heading">#</a></h2>
@@ -566,16 +565,16 @@ values (as we’ll see in the section on perception).
 Because this approximation does not rely on a parameterization of the PDF (e.g., it is
 not specified by a mean and covariance matrix), it can be used to approximate any PDF,
 with accuracy that depends on the number of cells in the grid.</p>
-<p>Grid-based representations embody the classical trade-off between accuracy and complexity.
+<p id="index-7">Grid-based representations embody the classical trade-off between accuracy and complexity.
 The accuracy of the representation depends on the resolution along the grid coordinate
 axes, but the number of cells in the grid grows exponentially (with the dimension of the space)
 as a function of this resolution.
 Choosing the <em>resolution</em> for our discretization scheme is therefore a key design decision.
 For example, if we pick 1x1 meter cells, we are looking at <span class="math notranslate nohighlight">\(100\times50=5000\)</span> cells. But <span class="math notranslate nohighlight">\(1m^2\)</span> seems a bit coarse for navigating with a robot. Could we get away with <span class="math notranslate nohighlight">\(10cm\)</span> resolution?
-Here we immediately see difficulty that arises due to the exponential complexity associated to grids. In our case, increasing the resolution by 10, from 1 meter to 10cm, increases the number of cells needed by <span class="math notranslate nohighlight">\(10^2=100\)</span>, from 5000 to <span class="math notranslate nohighlight">\(1000\times500=500k\)</span>.
+Here we immediately see difficulty that arises due to the exponential complexity associated to grids. In our case, increasing the resolution by 10, from 1 meter to 10cm, increases the number of cells needed by a factor of <span class="math notranslate nohighlight">\(10^2=100\)</span>, from 5000 to <span class="math notranslate nohighlight">\(1000\times500=500k\)</span>.
 This difficulty, while significant in the 2D case, rapidly becomes untenable as the dimensionality of the problem
 increases.</p>
-<p>Below we show what the 1x1 meter discretization looks like for our warehouse example, using the same three Gaussian densities from above to illustrate a multimodal density:</p>
+<p>In Figure <a class="reference internal" href="#fig:example_gaussians_finite"><span class="xref myst">2</span></a> we show what the 1x1 meter discretization looks like for our warehouse example, using the same three Gaussian densities from above to illustrate a multimodal density.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: A finite element representation of the example Gaussian densities.</span>
@@ -594,7 +593,7 @@ increases.</p>
 </section>
 <section id="a-sampling-based-representation">
 <h2><span class="section-number">4.1.3. </span>A Sampling-based representation.<a class="headerlink" href="#a-sampling-based-representation" title="Link to this heading">#</a></h2>
-<p>Sampling-based methods offer a simple, efficient alternative.
+<p id="index-8">Sampling-based methods offer a simple, efficient alternative.
 Grid-based representations can be remarkably inefficient:
 regardless of how the probability mass is distributed over the state space, the number of cells
 remains fixed, and each cell must be considered when propagating uncertainty.
@@ -602,7 +601,7 @@ Instead of discretizing the space and keeping track of the probability mass assi
 we can discretize the probability mass, and keep track of how that probability mass moves through
 the state space as uncertainty is propagated forward in time.
 Sampling-based approaches do exactly this.</p>
-<p>In sampling-based methods the density <span class="math notranslate nohighlight">\(p(x)\)</span> is represented by a set of N random <em>samples</em> or,
+<p id="index-9">In sampling-based methods the density <span class="math notranslate nohighlight">\(p(x)\)</span> is represented by a set of N random <em>samples</em> or,
 often called <em>particles,</em> <span class="math notranslate nohighlight">\(S=\{s^{(i)};i\in1..N\}\)</span> drawn from <span class="math notranslate nohighlight">\(p(x)\)</span>.
 We are able to do this because of the essential duality between the samples and the density from which they are generated: from the samples we can always approximately reconstruct the density, e.g. using a histogram.</p>
 <p>Sampling-based approaches can be significantly more efficient than grid-based approaches.
@@ -611,12 +610,13 @@ Second, because we (attempt to) keep only samples that represent significant con
 mass, the number of samples will be small in areas that are unlikely.
 Finally, sampling-based approaches lend themselves to computationally efficient simulation schemes,
 and these can form the basis for perception algorithms used in localization (as we shall see shortly).</p>
-<p>Below, we use a numpy random number generator (<code class="docutils literal notranslate"><span class="pre">rng</span></code>, defined in preamble) to sample from the three Gaussians we defined above, and display the resulting sets of samples.</p>
+<p>In Figure <a class="reference internal" href="#fig:example_gaussians_samples"><span class="xref myst">3</span></a>, we use a <code class="docutils literal notranslate"><span class="pre">numpy</span></code> random number generator to sample from the three Gaussians we defined above, and display the resulting sets of samples.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: A sampling-based representation of the example Gaussian densities.</span>
 <span class="c1">#| label: fig:example_gaussians_samples</span>
 <span class="n">N</span><span class="o">=</span><span class="mi">500</span>
+<span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">()</span>
 <span class="n">samples</span> <span class="o">=</span> <span class="p">[</span><span class="n">rng</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">cov</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">N</span><span class="p">)</span>
            <span class="k">for</span> <span class="n">mean</span><span class="p">,</span><span class="n">cov</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">means</span><span class="p">,</span><span class="n">covariances</span><span class="p">)]</span>
 <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">sample</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span><span class="n">y</span><span class="o">=</span><span class="n">sample</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;markers&quot;</span><span class="p">,</span>
@@ -626,7 +626,7 @@ and these can form the basis for perception algorithms used in localization (as 
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/9489ec0021883f2d242c83e640fd04928d7bd45eca6aa71d0a3aa55c96b231b3.png" src="_images/9489ec0021883f2d242c83e640fd04928d7bd45eca6aa71d0a3aa55c96b231b3.png" />
+<img alt="_images/f6eafb796e462646b06fcdcdba4ce135dfcd4697dbe9b1e997ec865b4ba3668b.png" src="_images/f6eafb796e462646b06fcdcdba4ce135dfcd4697dbe9b1e997ec865b4ba3668b.png" />
 </div>
 </div>
 </section>
@@ -635,8 +635,8 @@ and these can form the basis for perception algorithms used in localization (as 
 <p>In general, for continuous random variables, probability mass is computed by integrating probability density
 over a domain.
 In the 2D case,  we can find the probability of the state <span class="math notranslate nohighlight">\(x\)</span> being contained in any finite region <span class="math notranslate nohighlight">\({\cal R}\)</span> by integrating the PDF over <span class="math notranslate nohighlight">\({\cal R}\)</span>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-8b78ec9e-83bc-4e5c-9b19-b7e09496f07c">
-<span class="eqno">(4.9)<a class="headerlink" href="#equation-8b78ec9e-83bc-4e5c-9b19-b7e09496f07c" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-24690289-e456-439b-93fc-9431e9065df9">
+<span class="eqno">(4.9)<a class="headerlink" href="#equation-24690289-e456-439b-93fc-9431e9065df9" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P(x\in {\cal R}) = \int_{x\in {\cal R}} p(x) dx
 \end{equation}\]</div>
 <p>In the case of Gaussian PDFs, it is not possible to compute this integral in closed form, but
@@ -664,7 +664,8 @@ histogram-style representation of the probability distribution.</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">logistics.map_coords</span></code>: a numpy array of shape (50, 100, 2) with x and y coordinates for every cell in the map, at 1m resolution.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">logistics.show_map</span></code>: takes a probability image and plots it using plotly’s <code class="docutils literal notranslate"><span class="pre">imshow</span></code> function</p></li>
 </ul>
-<p>As always, you can get help on functions by calling <code class="docutils literal notranslate"><span class="pre">help</span></code>:</p>
+<p>
+As always, you can get help on functions by calling <code class="docutils literal notranslate"><span class="pre">help</span></code>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="n">logistics</span><span class="o">.</span><span class="n">show_map</span><span class="p">)</span>

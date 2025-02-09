@@ -379,17 +379,16 @@
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#omni-wheels">4.2.1. Omni Wheels</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example">4.2.2. Example</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#kinematics-of-omni-wheels">4.2.3. Kinematics of Omni Wheels</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-jacobian-matrix">4.2.4. The Jacobian Matrix</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#omni-directional-movement-in-practice">4.2.5. Omni-directional Movement in Practice</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-gaussian-dynamic-bayes-net">4.2.6. A Gaussian Dynamic Bayes Net</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gaussian-dbns-in-code">4.2.7. Gaussian DBNs in Code</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise">4.2.7.1. Exercise</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#kinematics-of-omni-wheels">4.2.2. Kinematics of Omni Wheels</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-jacobian-matrix">4.2.3. The Jacobian Matrix</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#omni-directional-movement-in-practice">4.2.4. Omni-directional Movement in Practice</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-gaussian-dynamic-bayes-net">4.2.5. A Gaussian Dynamic Bayes Net</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gaussian-dbns-in-code">4.2.6. Gaussian DBNs in Code</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise">4.2.6.1. Exercise</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simulating-a-continuous-trajectory">4.2.8. Simulating a Continuous Trajectory</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gtsam-101">4.2.9. GTSAM 101</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simulating-a-continuous-trajectory">4.2.7. Simulating a Continuous Trajectory</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gtsam-101">4.2.8. GTSAM 101</a></li>
 </ul>
             </nav>
         </div>
@@ -413,18 +412,19 @@
 <blockquote>
 <div><p>Omni wheels make omnidirectional movement possible.</p>
 </div></blockquote>
-<p>An <a class="reference external" href="https://en.wikipedia.org/wiki/Omni_wheel">omni wheel</a> is a wheel that, instead of a tire, has small rollers along its rim. The axes for these rollers are perpendicular to the wheel’s own axis. Because of this, unlike a conventional wheel, movement perpendicular to the wheel is <em>not</em> resisted, i.e., the wheel can slide effortlessly from left to right. The image below (from Wikipedia) shows an example:</p>
-<p><a title="Rotacaster, CC BY 1.0 &lt;https://creativecommons.org/licenses/by/1.0&gt;, via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:Triple_Rotacaster_commercial_industrial_omni_wheel.jpg"><a class="reference internal" href="https://upload.wikimedia.org/wikipedia/commons/e/e3/Triple_Rotacaster_commercial_industrial_omni_wheel.jpg"><img alt="Triple Rotacaster commercial industrial omni wheel" src="https://upload.wikimedia.org/wikipedia/commons/e/e3/Triple_Rotacaster_commercial_industrial_omni_wheel.jpg" style="width: 256px;" /></a></a></p>
+<p>An <a class="reference external" href="https://en.wikipedia.org/wiki/Omni_wheel">omni wheel</a> is a wheel that, instead of a tire, has small rollers along its rim. The axes for these rollers are perpendicular to the wheel’s own axis. Because of this, unlike a conventional wheel, movement perpendicular to the wheel is <em>not</em> resisted, i.e., the wheel can slide effortlessly from left to right. Figure <a class="reference internal" href="#fig:rotacaster"><span class="xref myst">1</span></a> (from Wikipedia) shows an example.</p>
+<figure id="fig:rotacaster">
+<img src="https://upload.wikimedia.org/wikipedia/commons/e/e3/Triple_Rotacaster_commercial_industrial_omni_wheel.jpg" style="width:12cm" alt="">
+<figcaption>Triple Rotacaster commercial industrial omni wheel.
+        <small>
+            <a href="https://creativecommons.org/licenses/by/1.0" target="_blank">CC BY 1.0</a> via 
+            <a href="https://commons.wikimedia.org/wiki/File:Triple_Rotacaster_commercial_industrial_omni_wheel.jpg" target="_blank">Wikimedia Commons</a>.
+        </small>
+</figcaption>
 <p>Apart from being potentially amazing for parallel parking, in robotics omni wheels are very popular because they enable omni-directional movement of robot platforms.</p>
-</section>
-<section id="example">
-<h2><span class="section-number">4.2.2. </span>Example<a class="headerlink" href="#example" title="Link to this heading">#</a></h2>
-<blockquote>
-<div><p>A mobile robot with three omni wheels can move in any direction.</p>
-</div></blockquote>
 <p>As an example, let us imagine that our warehouse robot is circular and has three omni wheels mounted on its rim. The coordinates of each wheel, in body coordinates, are</p>
-<div class="amsmath math notranslate nohighlight" id="equation-964aefd3-c16d-4f12-83b3-fc927f6655ca">
-<span class="eqno">(4.10)<a class="headerlink" href="#equation-964aefd3-c16d-4f12-83b3-fc927f6655ca" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-87ba5c5e-c8b0-4187-9407-c6f63267f0cf">
+<span class="eqno">(4.10)<a class="headerlink" href="#equation-87ba5c5e-c8b0-4187-9407-c6f63267f0cf" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{aligned}
 p^i_x &amp;= R \cos(\theta^i) \\
 p^i_y &amp;= R \sin(\theta^i) \\
@@ -449,7 +449,7 @@ As we will see below, this configuration of wheels allows the robot to move inst
 </div>
 </div>
 </div>
-<p>This yields the configuration below:</p>
+<p>This yields the configuration in Figure <a class="reference internal" href="#fig:omni_wheel"><span class="xref myst">2</span></a>.</p>
 <div class="cell tag_hide-input docutils container">
 <details class="hide above-input">
 <summary aria-label="Toggle hidden content">
@@ -483,15 +483,15 @@ As we will see below, this configuration of wheels allows the robot to move inst
 </div>
 </section>
 <section id="kinematics-of-omni-wheels">
-<h2><span class="section-number">4.2.3. </span>Kinematics of Omni Wheels<a class="headerlink" href="#kinematics-of-omni-wheels" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">4.2.2. </span>Kinematics of Omni Wheels<a class="headerlink" href="#kinematics-of-omni-wheels" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>Relating the robot velocity to the wheel velocities.</p>
 </div></blockquote>
 <p>Kinematics is the study of motion, without regard for the forces required to cause the motion.
-In particular, for our omni-directional robot kinematics addresses the question “What should the individual wheel velocities be given that we want the robot to move with a certain velocity?”</p>
+In particular, for our omni-directional robot, kinematics addresses the question “What should the individual wheel velocities be, given that we want the robot to move with a certain velocity?”</p>
 <p>The key property of omni-wheels is that they roll without slipping in the steering direction,
 but roll freely in the perpendicular direction (sometimes called the slipping direction).
-In the figure below, these directions correspond to the unit vectors <span class="math notranslate nohighlight">\(u_\|\)</span> (steering direction)
+In Figure <a class="reference internal" href="#fig:omni-wheel-frame"><span class="xref myst">3</span></a>, these directions correspond to the unit vectors <span class="math notranslate nohighlight">\(u_\|\)</span> (steering direction)
 and <span class="math notranslate nohighlight">\(u_\perp\)</span> (slipping direction).
 These vectors define an orthogonal decomposition of the robot’s motion.
 The wheel actuators directly produce motion in the direction <span class="math notranslate nohighlight">\(u_\|\)</span>,
@@ -505,8 +505,8 @@ are defined in the local coordinate frame of the robot, but since our robot
 does not rotate, we can define them directly in the world coordinate frame.
 Let <span class="math notranslate nohighlight">\(\theta\)</span> denote the angle from the world <span class="math notranslate nohighlight">\(x\)</span>-axis to the axle axis of the wheel.
 The vectors <span class="math notranslate nohighlight">\(u_\|\)</span> and <span class="math notranslate nohighlight">\(u_\perp\)</span> are given by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-9c7fdce7-8758-4d9e-85aa-e8e82f22c6fc">
-<span class="eqno">(4.11)<a class="headerlink" href="#equation-9c7fdce7-8758-4d9e-85aa-e8e82f22c6fc" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-7bbecf2f-e60b-466d-970c-43b3d01fe895">
+<span class="eqno">(4.11)<a class="headerlink" href="#equation-7bbecf2f-e60b-466d-970c-43b3d01fe895" title="Permalink to this equation">#</a></span>\[\begin{equation}
 u_\| =\left[ \begin{array}{c} -\sin \theta \\ \cos \theta \end{array}\right]
 \;\;\;\;\;\;\; \rm{and} \;\;\;\;\;\;\;
 u_\perp =\left[ \begin{array}{c} \cos \theta \\ \sin \theta \end{array}\right]
@@ -514,16 +514,15 @@ u_\perp =\left[ \begin{array}{c} \cos \theta \\ \sin \theta \end{array}\right]
 <p id="index-1">When an object moves with a purely translational motion (i.e., there is no rotation), every point
 on the object moves with the same velocity.
 Suppose that the robot, and therefore this specific wheel,
-moves with  the <strong>translational velocity</strong> <span class="math notranslate nohighlight">\(v=(v_x, v_y)\)</span>, as shown in the figure below.
+moves with  the <strong>translational velocity</strong> <span class="math notranslate nohighlight">\(v=(v_x, v_y)\)</span>, as shown in Figure <a class="reference internal" href="#fig:wheel-velocity"><span class="xref myst">4</span></a>.
 We can decompose the velocity <span class="math notranslate nohighlight">\(v\)</span> into components that are parallel and perpendicular to the
 steering direction by projecting <span class="math notranslate nohighlight">\(v\)</span> onto the vectors <span class="math notranslate nohighlight">\(u_\|\)</span> and <span class="math notranslate nohighlight">\(u_\perp\)</span>.</p>
 <figure id="fig:wheel-velocity">
 <img src="https://github.com/gtbook/robotics/blob/main/Figures4/wheel-velocity.png?raw=1" style="width:14cm" alt="">
 <figcaption>Wheel velocity v.</figcaption>
-</figure>
-<p>In particular, we can write</p>
-<div class="amsmath math notranslate nohighlight" id="equation-8d22edb7-a272-4b72-bbf8-b3d6a4928ada">
-<span class="eqno">(4.12)<a class="headerlink" href="#equation-8d22edb7-a272-4b72-bbf8-b3d6a4928ada" title="Permalink to this equation">#</a></span>\[\begin{equation}
+</figure><p>In particular, we can write</p>
+<div class="amsmath math notranslate nohighlight" id="equation-78d826a0-d746-4276-9ccd-07d597f047fc">
+<span class="eqno">(4.12)<a class="headerlink" href="#equation-78d826a0-d746-4276-9ccd-07d597f047fc" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{aligned}
 v &amp;= (v \cdot u_\| )u_\| + (v \cdot u_\perp) u_\perp \\
 &amp;=
@@ -534,8 +533,8 @@ v &amp;= (v \cdot u_\| )u_\| + (v \cdot u_\perp) u_\perp \\
 \end{aligned}
 \end{equation}\]</div>
 <p>which gives</p>
-<div class="amsmath math notranslate nohighlight" id="equation-edc3f08a-271a-4d6e-b629-100ef4337bf3">
-<span class="eqno">(4.13)<a class="headerlink" href="#equation-edc3f08a-271a-4d6e-b629-100ef4337bf3" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-4c5528f7-19ec-4546-9841-eb69023f7d23">
+<span class="eqno">(4.13)<a class="headerlink" href="#equation-4c5528f7-19ec-4546-9841-eb69023f7d23" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{aligned}
 v^i_{\parallel} &amp;= - v_x \sin \theta^i + v_y \cos \theta^i \\
 v^i_{\perp} &amp;= v_x \cos \theta^i + v_y \sin \theta^i
@@ -558,7 +557,7 @@ of the unit vectors <span class="math notranslate nohighlight">\(u_\|\)</span> a
 </div>
 </div>
 </div>
-<p>Below we use this to show how the desired velocity (in blue) translates graphically to parallel (purple) and perpendicular (green) velocity components at the wheel sites:</p>
+<p>In Figure <a class="reference internal" href="#fig:omni_wheel_velocity"><span class="xref myst">5</span></a> we use this to show how the desired velocity (in blue) translates graphically to parallel (purple) and perpendicular (green) velocity components at the wheel sites.</p>
 <div class="cell tag_hide-input docutils container">
 <details class="hide above-input">
 <summary aria-label="Toggle hidden content">
@@ -603,29 +602,30 @@ of the unit vectors <span class="math notranslate nohighlight">\(u_\|\)</span> a
 </div>
 </section>
 <section id="the-jacobian-matrix">
-<span id="index-2"></span><h2><span class="section-number">4.2.4. </span>The Jacobian Matrix<a class="headerlink" href="#the-jacobian-matrix" title="Link to this heading">#</a></h2>
-<p>As mentioned above, the motion <em>perpendicular</em> to the wheel is not resisted by the rollers: they will roll freely
+<h2><span class="section-number">4.2.3. </span>The Jacobian Matrix<a class="headerlink" href="#the-jacobian-matrix" title="Link to this heading">#</a></h2>
+<p id="index-2">As mentioned above, the motion <em>perpendicular</em> to the wheel is not resisted by the rollers: they will roll freely
 at exactly the right speed to accommodate any movement in this direction. Because this allows the wheel to “slide”, we also call this the <strong>sliding direction</strong>.</p>
-<p>On the other hand, the contact of each wheel must move exactly opposite to the parallel or <strong>driving direction</strong> of the velocity, because it cannot slide in that direction. As a consequence, if the radius of each wheel is <span class="math notranslate nohighlight">\(r\)</span>, the wheel’s angular velocity <span class="math notranslate nohighlight">\(\omega^i\)</span> (i.e., the angular rate at which the wheel spins about its axle)
+<p>On the other hand, the contact of each wheel must move exactly opposite to the parallel or <strong>driving direction</strong> of the velocity.
+As a consequence, if the radius of each wheel is <span class="math notranslate nohighlight">\(r\)</span>, the wheel’s angular velocity <span class="math notranslate nohighlight">\(\omega^i\)</span> (i.e., the angular rate at which the wheel spins about its axle)
 must satisfy</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a8a30e9b-445c-461e-8b82-5b0650092be7">
-<span class="eqno">(4.14)<a class="headerlink" href="#equation-a8a30e9b-445c-461e-8b82-5b0650092be7" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-92498989-2366-4a0e-b464-7e5ae3f9462c">
+<span class="eqno">(4.14)<a class="headerlink" href="#equation-92498989-2366-4a0e-b464-7e5ae3f9462c" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \omega^i = \frac{v^i_\parallel}{r} = 
 \frac{1}{r} (-\sin \theta^i, \cos \theta^i) \begin{pmatrix}v_x \\ v_y \end{pmatrix}
 \end{equation}\]</div>
 <p>Because we have three wheels, we can stack three instances of the above equation
 to obtain a matrix equation
 that maps a desired robot velocity <span class="math notranslate nohighlight">\(v=(v_x,v_y)\)</span> to the appropriate commanded wheel velocities:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-7e9c5156-7a4d-4f40-acfd-e7ddca61c67c">
-<span class="eqno">(4.15)<a class="headerlink" href="#equation-7e9c5156-7a4d-4f40-acfd-e7ddca61c67c" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-b711ad4d-392f-4e27-9059-7c22841efd77">
+<span class="eqno">(4.15)<a class="headerlink" href="#equation-b711ad4d-392f-4e27-9059-7c22841efd77" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{pmatrix}\omega^1 \\ \omega^2 \\ \omega^3 \end{pmatrix} 
 = \frac{1}{r} \begin{pmatrix}- \sin\theta^1 &amp; \cos\theta^1 \\ - \sin\theta^2 &amp; \cos\theta^2 \\ - \sin\theta^3 &amp; \cos\theta^3 \end{pmatrix}
 \begin{pmatrix}v_x \\ v_y \end{pmatrix}
 \end{equation}\]</div>
 <p>in which the <span class="math notranslate nohighlight">\(3\times2\)</span> matrix is called the <strong>Jacobian matrix</strong>.</p>
 <p>For the three regularly arranged omni wheels with <span class="math notranslate nohighlight">\(\theta^1=0\)</span>, <span class="math notranslate nohighlight">\(\theta^2=2\pi/3\)</span>, and <span class="math notranslate nohighlight">\(\theta^3=4\pi/3\)</span> this becomes</p>
-<div class="amsmath math notranslate nohighlight" id="equation-ef1d6047-5259-42c6-9db5-c4611f0b1002">
-<span class="eqno">(4.16)<a class="headerlink" href="#equation-ef1d6047-5259-42c6-9db5-c4611f0b1002" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-b2cf7317-068a-4ccc-8c0c-2ce8d756ded5">
+<span class="eqno">(4.16)<a class="headerlink" href="#equation-b2cf7317-068a-4ccc-8c0c-2ce8d756ded5" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{pmatrix}\omega^1 \\ \omega^2 \\ \omega^3 \end{pmatrix} 
 = \frac{1}{r} \begin{pmatrix}0 &amp; 1 \\ -0.866 &amp; -0.5 \\ 0.866 &amp; -0.5  \end{pmatrix}
 \begin{pmatrix}v_x \\ v_y \end{pmatrix}.
@@ -668,7 +668,7 @@ Using matrix method:
 </div>
 </section>
 <section id="omni-directional-movement-in-practice">
-<h2><span class="section-number">4.2.5. </span>Omni-directional Movement in Practice<a class="headerlink" href="#omni-directional-movement-in-practice" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">4.2.4. </span>Omni-directional Movement in Practice<a class="headerlink" href="#omni-directional-movement-in-practice" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>Expressing motion relative to a reference coordinate frame.</p>
 </div></blockquote>
@@ -684,12 +684,12 @@ However, if we were to include the robot’s orientation in the state representa
 <p>Finally, there is a more general type of wheel, the “mecanum wheel”, for which the rollers are <em>not</em> aligned with the wheel rim, but are rotated by some (constant) amount. That complicates the math a little bit, but in the end we will again obtain a Jacobian matrix that maps robot velocity to wheel angular velocities. We will not discuss this further.</p>
 </section>
 <section id="a-gaussian-dynamic-bayes-net">
-<h2><span class="section-number">4.2.6. </span>A Gaussian Dynamic Bayes Net<a class="headerlink" href="#a-gaussian-dynamic-bayes-net" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">4.2.5. </span>A Gaussian Dynamic Bayes Net<a class="headerlink" href="#a-gaussian-dynamic-bayes-net" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>Modeling stochastic action in continuous spaces can again be done using DBNs.</p>
 </div></blockquote>
-<p>Modeling with continuous densities can be done with <em>continuous</em> dynamic Bayes nets (DBNs).
-Omni wheels are notoriously flaky in the execution, especially on uneven ground or carpet.
+<p id="index-3">Modeling with continuous densities can be done with <em>continuous</em> dynamic Bayes nets (DBNs).
+Omni-wheels are notoriously flaky in the execution, especially on uneven ground or carpet.
 Hence, it is important to model the uncertainty associated with commanded movements.
 If we are model our robot as a discrete-time system,
 <span class="math notranslate nohighlight">\(u_k = v \Delta T\)</span> is the displacement that occurs when the robot
@@ -697,28 +697,28 @@ moves with constant velocity <span class="math notranslate nohighlight">\(v\)</s
 Since the velocity can be in any direction, we have <span class="math notranslate nohighlight">\(u_k\in\mathbb{R}^2\)</span>.
 In the absence of uncertainty, our motion model would simply
 be <span class="math notranslate nohighlight">\(x_{k+1} = x_k + u_k\)</span>.</p>
-<p id="index-3">Given the uncertainty inherent to the use of omni-wheels, we will instead develop a probabilistic
+<p id="index-4">Given the uncertainty inherent to the use of omni-wheels, we will instead develop a probabilistic
 motion model.
 Recall that we created a DBN with discrete actions, states, and measurements in the previous chapter. Here we do the same, except with <em>continuous</em> densities, specifying a DBN that encodes the joint density <span class="math notranslate nohighlight">\(p(X|U)\)</span> on the continuous states <span class="math notranslate nohighlight">\(X\doteq\{x_k\}_{k=1}^N\)</span>,</p>
-<div class="amsmath math notranslate nohighlight" id="equation-04da5862-96f8-40f7-a577-4da9fe2d5ad6">
-<span class="eqno">(4.17)<a class="headerlink" href="#equation-04da5862-96f8-40f7-a577-4da9fe2d5ad6" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-dc6c20b6-a5a7-4ae1-873d-70702e5594d9">
+<span class="eqno">(4.17)<a class="headerlink" href="#equation-dc6c20b6-a5a7-4ae1-873d-70702e5594d9" title="Permalink to this equation">#</a></span>\[\begin{equation}
 p(X|U) = p(x_1) \prod_{k=2}^{N} p(x_{k}|x_{k-1}, u_{k-1})
 \end{equation}\]</div>
 <p>where we assume that the <strong>control variables</strong> <span class="math notranslate nohighlight">\(U\doteq\{u_k\}_{k=1}^{N-1}\)</span> are <em>given</em> to us.</p>
 <p>Let us assume we <em>know</em> that the robot starts out in the warehouse at coordinates <span class="math notranslate nohighlight">\(\mu_1 =(20,10)^T\)</span>, with some noise/error in position of magnitude on the order of plus or minus half a meter. We can encode this knowledge into a continuous Gaussian prior as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-79e1ff24-78f4-4339-bd1d-09ff243a4577">
-<span class="eqno">(4.18)<a class="headerlink" href="#equation-79e1ff24-78f4-4339-bd1d-09ff243a4577" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-e222b7ec-92ad-4ce8-99c5-34e00a7aa9c4">
+<span class="eqno">(4.18)<a class="headerlink" href="#equation-e222b7ec-92ad-4ce8-99c5-34e00a7aa9c4" title="Permalink to this equation">#</a></span>\[\begin{equation}
 p(x_1) = \mathcal{N}(x_1;\mu=\mu_1,\Sigma=P) \propto \exp\{ - \frac{1}{2} (x_1-\mu_1)^TP^{-1}(x_1-\mu_1) \}
 \end{equation}\]</div>
 <p>with the covariance matrix <span class="math notranslate nohighlight">\(P=\text{diag}(0.5^2,0.5^2)\)</span>.</p>
-<p id="index-4">A Gaussian <em>motion model</em> is a bit trickier.
+<p id="index-5">A Gaussian <em>motion model</em> is a bit trickier.
 Here we need a <em>conditional</em> Gaussian density that depends on the current state
 and the commanded motion.
 The usual way to incorporate uncertainty into a motion model is to assume that
 a random disturbance is added to the nominal motion of the robot.
 We can model this as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-59e6e188-e9b6-4d32-a1ab-7492767dff50">
-<span class="eqno">(4.19)<a class="headerlink" href="#equation-59e6e188-e9b6-4d32-a1ab-7492767dff50" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-042dd7ac-caee-4422-a40d-988eee4e1fa0">
+<span class="eqno">(4.19)<a class="headerlink" href="#equation-042dd7ac-caee-4422-a40d-988eee4e1fa0" title="Permalink to this equation">#</a></span>\[\begin{equation}
 x_{k+1} = x_k + u_k + w_k
 \end{equation}\]</div>
 <p>in which <span class="math notranslate nohighlight">\(w_k\)</span> is a random vector whose probability distribution is typically based on empirical
@@ -726,42 +726,43 @@ observations of the system. In our case, we will assume that this disturbance
 is Gaussian, <span class="math notranslate nohighlight">\(w_k \sim N(\mu,\Sigma)\)</span>.
 In this case, it can be shown that the conditional distribution of <span class="math notranslate nohighlight">\(x_{k+1}\)</span>
 given <span class="math notranslate nohighlight">\(x_k\)</span> and <span class="math notranslate nohighlight">\(u_k\)</span> is given by a <strong>conditional Gaussian density</strong> of the form</p>
-<div class="amsmath math notranslate nohighlight" id="equation-72e533d2-1c77-4627-92ed-f5c56cd20706">
-<span class="eqno">(4.20)<a class="headerlink" href="#equation-72e533d2-1c77-4627-92ed-f5c56cd20706" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-db3bb086-95f1-450d-94d9-8e16fa5fe8dd">
+<span class="eqno">(4.20)<a class="headerlink" href="#equation-db3bb086-95f1-450d-94d9-8e16fa5fe8dd" title="Permalink to this equation">#</a></span>\[\begin{equation}
 p(x_{k+1}|x_{k}, u_k) = \mathcal{N}(x_{k_1}; x_{k} +  u_k, \Sigma)
 \end{equation}\]</div>
 <p>i.e., the conditional distribution for the next state is a Gaussian, with mean equal to the
 nominal (i.e., noise-free) next state <span class="math notranslate nohighlight">\(x_k + u_k\)</span>, and variance equal to the variance of the uncertainty
 in the motion model.</p>
 <p>It is easy to generalize this motion model to linear systems of the form</p>
-<div class="amsmath math notranslate nohighlight" id="equation-cdba765f-e071-4e6f-8407-72506e8f47f2">
-<span class="eqno">(4.21)<a class="headerlink" href="#equation-cdba765f-e071-4e6f-8407-72506e8f47f2" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-0c734c1e-3255-4d43-8738-258aa6312cf6">
+<span class="eqno">(4.21)<a class="headerlink" href="#equation-0c734c1e-3255-4d43-8738-258aa6312cf6" title="Permalink to this equation">#</a></span>\[\begin{equation}
 x_{k+1} = A x_k + B u_k + w_k
 \end{equation}\]</div>
 <p>which is the general form for a linear time-invariant (LTI) system with additive noise.
 The matrix <span class="math notranslate nohighlight">\(A \in \mathbb{R}^{n \times n}\)</span> is called the system matrix,
 and the matrix <span class="math notranslate nohighlight">\(B\)</span> maps control input <span class="math notranslate nohighlight">\(u_k\)</span> to a vector in the state space.
 The motion model for this general LTI system is given by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-0ee22032-e29f-4b4c-a4f3-c66b8a7021d5">
-<span class="eqno">(4.22)<a class="headerlink" href="#equation-0ee22032-e29f-4b4c-a4f3-c66b8a7021d5" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d8fda243-f56c-44fc-ac7e-a517c7c4396d">
+<span class="eqno">(4.22)<a class="headerlink" href="#equation-d8fda243-f56c-44fc-ac7e-a517c7c4396d" title="Permalink to this equation">#</a></span>\[\begin{equation}
 p(x_{k+1}|x_{k}, u_k) = \mathcal{N}(x_{k+1};\mu=A x_{k} + B u_k, \Sigma=Q)
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(Q\)</span> is the traditional symbol used for motion model covariance. If we assume the robot executes action <span class="math notranslate nohighlight">\(u_k\)</span> with a standard deviation of 0.2m, then we will have <span class="math notranslate nohighlight">\(Q=\text{diag}(0.2^2,0.2^2)\)</span>.</p>
 </section>
 <section id="gaussian-dbns-in-code">
-<h2><span class="section-number">4.2.7. </span>Gaussian DBNs in Code<a class="headerlink" href="#gaussian-dbns-in-code" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">4.2.6. </span>Gaussian DBNs in Code<a class="headerlink" href="#gaussian-dbns-in-code" title="Link to this heading">#</a></h2>
 <p>In GTSAM, a Gaussian density is specified using the class <code class="docutils literal notranslate"><span class="pre">GaussianDensity</span></code>, which corresponds to a negative log-probability given by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-2f0489b0-1828-407c-829c-e3efd50e015f">
-<span class="eqno">(4.23)<a class="headerlink" href="#equation-2f0489b0-1828-407c-829c-e3efd50e015f" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-f6a49aee-a327-46c2-b91c-1ab62962026a">
+<span class="eqno">(4.23)<a class="headerlink" href="#equation-f6a49aee-a327-46c2-b91c-1ab62962026a" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \frac{1}{2 \sigma^2} \|x - \mu\|^2.
 \end{equation}\]</div>
-<p>with a named constructor <code class="docutils literal notranslate"><span class="pre">FromMeanAndStddev</span></code> that takes <span class="math notranslate nohighlight">\(\mu\)</span> and <span class="math notranslate nohighlight">\(\sigma\)</span>. For their part, Gaussian <em>conditional</em> densities are specified using the class <code class="docutils literal notranslate"><span class="pre">GaussianConditional</span></code>, which correspond to a negative log-probability given by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-0e142c64-3c80-4629-9a56-a9cab61878d3">
-<span class="eqno">(4.24)<a class="headerlink" href="#equation-0e142c64-3c80-4629-9a56-a9cab61878d3" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<p>with a named constructor <code class="docutils literal notranslate"><span class="pre">FromMeanAndStddev</span></code> that takes <span class="math notranslate nohighlight">\(\mu\)</span> and <span class="math notranslate nohighlight">\(\sigma\)</span> as arguments.
+For their part, Gaussian <em>conditional</em> densities are specified using the class <code class="docutils literal notranslate"><span class="pre">GaussianConditional</span></code>, which correspond to a negative log-probability given by</p>
+<div class="amsmath math notranslate nohighlight" id="equation-8f7e1a93-0483-4ea1-9a15-332f97f62401">
+<span class="eqno">(4.24)<a class="headerlink" href="#equation-8f7e1a93-0483-4ea1-9a15-332f97f62401" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \frac{1}{2 \sigma^2} \|x - (A_1 p_1 + A_2 p_2 + b)\|^2.
 \end{equation}\]</div>
 <p>i.e., the mean on <span class="math notranslate nohighlight">\(x\)</span> is a linear function of the conditioning variables <span class="math notranslate nohighlight">\(p_1\)</span> and <span class="math notranslate nohighlight">\(p_2\)</span>. Again, a named constructor <code class="docutils literal notranslate"><span class="pre">FromMeanAndStddev</span></code> is there to assist us. Details are given in the GTSAM 101 section at the end of this section, as always.</p>
-<p>All of the above is used in the following piece of code, which builds the dynamic Bayes net:</p>
+<p>All of the above is used in the following piece of code, which builds the dynamic Bayes net in Figure <a class="reference internal" href="#fig:gaussian_bayes_net"><span class="xref myst">6</span></a>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gaussianBayesNet</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">GaussianBayesNet</span><span class="p">()</span>
@@ -790,16 +791,16 @@ p(x_{k+1}|x_{k}, u_k) = \mathcal{N}(x_{k+1};\mu=A x_{k} + B u_k, \Sigma=Q)
 </div>
 </div>
 <section id="exercise">
-<h3><span class="section-number">4.2.7.1. </span>Exercise<a class="headerlink" href="#exercise" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">4.2.6.1. </span>Exercise<a class="headerlink" href="#exercise" title="Link to this heading">#</a></h3>
 <p>Note that we used a constant motion model noise here, which is perhaps unrealistic: if a robot is commanded to go further, it could be expected to do a worse job at going exactly the distance it was supposed to go. How could you modify the above code to account for that?</p>
 </section>
 </section>
 <section id="simulating-a-continuous-trajectory">
-<h2><span class="section-number">4.2.8. </span>Simulating a Continuous Trajectory<a class="headerlink" href="#simulating-a-continuous-trajectory" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">4.2.7. </span>Simulating a Continuous Trajectory<a class="headerlink" href="#simulating-a-continuous-trajectory" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>Bayes nets are great for simulation.</p>
 </div></blockquote>
-<p>Let us now create a simulated trajectory in our example warehouse, by specifying a “control tape” and using the dynamic Bayes net created above to do the heavy lifting for us:</p>
+<p id="index-6">Let us now create a simulated trajectory in our example warehouse, by specifying a “control tape” and using the dynamic Bayes net created above to do the heavy lifting for us:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">control_tape</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">VectorValues</span><span class="p">()</span>
@@ -852,7 +853,7 @@ p(x_{k+1}|x_{k}, u_k) = \mathcal{N}(x_{k+1};\mu=A x_{k} + B u_k, \Sigma=Q)
 </div>
 </section>
 <section id="gtsam-101">
-<h2><span class="section-number">4.2.9. </span>GTSAM 101<a class="headerlink" href="#gtsam-101" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">4.2.8. </span>GTSAM 101<a class="headerlink" href="#gtsam-101" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>The GTSAM concepts used in this section, explained.</p>
 </div></blockquote>
@@ -860,7 +861,8 @@ p(x_{k+1}|x_{k}, u_k) = \mathcal{N}(x_{k+1};\mu=A x_{k} + B u_k, \Sigma=Q)
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">FromMeanAndStddev</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Key</span><span class="p">,</span> <span class="n">mean</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">sigma</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">GaussianDensity</span>
 </pre></div>
 </div>
-<p>and a two similar named constructors exists for <code class="docutils literal notranslate"><span class="pre">gtsam.GaussianConditional</span></code>:</p>
+<p>
+and two similar named constructors exists for <code class="docutils literal notranslate"><span class="pre">gtsam.GaussianConditional</span></code>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">-</span> <span class="n">FromMeanAndStddev</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Key</span><span class="p">,</span> <span class="n">A</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Key</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">[</span><span class="n">m</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span> <span class="n">sigma</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">GaussianConditional</span>
       
 <span class="o">-</span> <span class="n">FromMeanAndStddev</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Key</span><span class="p">,</span> <span class="n">A1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">parent1</span><span class="p">:</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Key</span><span class="p">,</span> <span class="n">A2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">parent2</span><span class="p">:</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Key</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">sigma</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">GaussianConditional</span>
@@ -972,17 +974,16 @@ error 0.5 w&#39;*w = 10.0
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#omni-wheels">4.2.1. Omni Wheels</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example">4.2.2. Example</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#kinematics-of-omni-wheels">4.2.3. Kinematics of Omni Wheels</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-jacobian-matrix">4.2.4. The Jacobian Matrix</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#omni-directional-movement-in-practice">4.2.5. Omni-directional Movement in Practice</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-gaussian-dynamic-bayes-net">4.2.6. A Gaussian Dynamic Bayes Net</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gaussian-dbns-in-code">4.2.7. Gaussian DBNs in Code</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise">4.2.7.1. Exercise</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#kinematics-of-omni-wheels">4.2.2. Kinematics of Omni Wheels</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-jacobian-matrix">4.2.3. The Jacobian Matrix</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#omni-directional-movement-in-practice">4.2.4. Omni-directional Movement in Practice</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-gaussian-dynamic-bayes-net">4.2.5. A Gaussian Dynamic Bayes Net</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gaussian-dbns-in-code">4.2.6. Gaussian DBNs in Code</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise">4.2.6.1. Exercise</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simulating-a-continuous-trajectory">4.2.8. Simulating a Continuous Trajectory</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gtsam-101">4.2.9. GTSAM 101</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simulating-a-continuous-trajectory">4.2.7. Simulating a Continuous Trajectory</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gtsam-101">4.2.8. GTSAM 101</a></li>
 </ul>
   </nav></div>
 

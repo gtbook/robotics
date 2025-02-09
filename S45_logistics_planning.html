@@ -422,22 +422,30 @@ This representation has significantly more states than for the vacuuming robot.
 In this section, we show how to perform value iteration on such a grid, and
 briefly discuss the implications of estimating the state using sensor data.</p>
 <section id="value-iteration-in-2d">
-<span id="index-0"></span><h2><span class="section-number">4.5.1. </span>Value Iteration in 2D<a class="headerlink" href="#value-iteration-in-2d" title="Link to this heading">#</a></h2>
-<blockquote>
+<h2><span class="section-number">4.5.1. </span>Value Iteration in 2D<a class="headerlink" href="#value-iteration-in-2d" title="Link to this heading">#</a></h2>
+<blockquote id="index-0">
 <div><p>It works, but can be slow.</p>
 </div></blockquote>
-<p>Recall that value iteration starts with an initial guess, <span class="math notranslate nohighlight">\(V^0\)</span>, and at each iteration we update
+<p id="index-1">Recall from <a class="reference internal" href="S36_vacuum_RL.html#sec-value-iteration"><span class="std std-ref">Section 3.4</span></a> that <em>value iteration</em> approximates the optimal value function <span class="math notranslate nohighlight">\(V^*\)</span> by constructing a sequence of estimates. The algorithm starts with an initial guess, <span class="math notranslate nohighlight">\(V^0\)</span>, and at each iteration we update
 our approximation of the value function by the update rule:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-8234caf2-ad46-461a-9dfd-45956780e953">
-<span class="eqno">(4.50)<a class="headerlink" href="#equation-8234caf2-ad46-461a-9dfd-45956780e953" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-282811d7-dda9-496c-a41c-7b9048a96619">
+<span class="eqno">(4.50)<a class="headerlink" href="#equation-282811d7-dda9-496c-a41c-7b9048a96619" title="Permalink to this equation">#</a></span>\[\begin{equation}
 V^{k+1}(x) \leftarrow \max_a \left\{ \bar{R}(x,a) + \gamma \sum_{x'} P(x'|x, a) V^k(x')   \right\}
 = \max_a Q(x, a; V^k)
 \end{equation}\]</div>
-<p>This can be <em>very</em> expensive if applied naively, when the number of states is large. Indeed, if we use the 5000-state finite element discretization of the warehouse, the conditional probability table (CPT) above contains <span class="math notranslate nohighlight">\(5k \times 4 \times 5k = 100M\)</span> entries.</p>
-<p>There are ways to deal with this, computationally. Indeed, most transitions have zero probability, and hence we could store the CPT in a <em>sparse</em> multi-dimensional array instead. Alternatively, we can implement the Q value calculation as a <em>function</em>. This is what we will do below, and we will also immediately switch to using the 2D coordinates <span class="math notranslate nohighlight">\((i,j)\)</span> for the discretized cells:</p>
+<p>This can be <em>very</em> expensive if applied naively when the number of states is large. Consider an example where</p>
+<ul class="simple">
+<li><p>we use the 5000-state finite element discretization of the warehouse,</p></li>
+<li><p>we discretize the action space to just moving in the 4 principal directions.</p></li>
+</ul>
+<p>
+In this case, the conditional probability table (CPT) above contains <span class="math notranslate nohighlight">\(5k \times 4 \times 5k = 100M\)</span> entries.</p>
+<p>There are ways to deal with this computationally. Indeed, most transitions have zero probability, and hence we could store the CPT in a <em>sparse</em> multi-dimensional array instead. Alternatively, we can implement the Q value calculation as a <em>function</em>, which is the approach we adopt here. The code in Figure <a class="reference internal" href="#fig:warehouse-value-iteration"><span class="xref myst">1</span></a> uses the 2D coordinates <span class="math notranslate nohighlight">\((i,j)\)</span> for the discretized cells, and implements the function <span class="math notranslate nohighlight">\(Q(x, a; V^k)\)</span> from above in  the <code class="docutils literal notranslate"><span class="pre">Q_value</span></code> function: it <em>deterministically</em> calculates the <code class="docutils literal notranslate"><span class="pre">next</span></code> state and the reward <span class="math notranslate nohighlight">\(\bar{R}(x,a)\)</span>, and combines the reward with the discounted value <span class="math notranslate nohighlight">\(\gamma V^k(x')\)</span> of the next state.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">goal</span> <span class="o">=</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">50</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Value iteration for the warehouse example.</span>
+<span class="c1">#| label: fig:warehouse-value-iteration</span>
+<span class="n">goal</span> <span class="o">=</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">50</span>
 <span class="n">proximity</span> <span class="o">=</span> <span class="n">logistics</span><span class="o">.</span><span class="n">base_map</span> <span class="o">+</span> <span class="n">logistics</span><span class="o">.</span><span class="n">proximity_map_on</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">Q_value</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
@@ -445,9 +453,9 @@ V^{k+1}(x) \leftarrow \max_a \left\{ \bar{R}(x,a) + \gamma \sum_{x'} P(x'|x, a) 
     <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="n">x</span>
     <span class="k">if</span> <span class="n">x</span><span class="o">==</span><span class="n">goal</span><span class="p">:</span> <span class="k">return</span> <span class="mi">0</span> <span class="c1"># only reward when *first* arriving at goal</span>
     <span class="k">if</span> <span class="n">logistics</span><span class="o">.</span><span class="n">base_map</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]:</span> <span class="k">return</span> <span class="mi">0</span> <span class="c1"># invalid state</span>
-    <span class="k">if</span> <span class="n">a</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="nb">next</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">j</span><span class="o">&gt;</span><span class="mi">0</span> <span class="k">else</span> <span class="n">x</span> <span class="c1"># LEFT</span>
+    <span class="k">if</span> <span class="n">a</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="nb">next</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">j</span><span class="o">&gt;</span><span class="mi">0</span>  <span class="k">else</span> <span class="n">x</span> <span class="c1"># LEFT</span>
     <span class="k">if</span> <span class="n">a</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="nb">next</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">j</span><span class="o">&lt;</span><span class="mi">99</span> <span class="k">else</span> <span class="n">x</span> <span class="c1"># RIGHT</span>
-    <span class="k">if</span> <span class="n">a</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span> <span class="nb">next</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">j</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span><span class="o">&gt;</span><span class="mi">0</span> <span class="k">else</span> <span class="n">x</span> <span class="c1"># UP</span>
+    <span class="k">if</span> <span class="n">a</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span> <span class="nb">next</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">j</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span><span class="o">&gt;</span><span class="mi">0</span>  <span class="k">else</span> <span class="n">x</span> <span class="c1"># UP</span>
     <span class="k">if</span> <span class="n">a</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span> <span class="nb">next</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">j</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span><span class="o">&lt;</span><span class="mi">49</span> <span class="k">else</span> <span class="n">x</span> <span class="c1"># DOWN</span>
     <span class="n">reward</span> <span class="o">=</span> <span class="mi">100</span> <span class="k">if</span> <span class="nb">next</span><span class="o">==</span><span class="n">goal</span> <span class="k">else</span> <span class="mi">0</span>
     <span class="n">r</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="nb">next</span>
@@ -463,10 +471,12 @@ V^{k+1}(x) \leftarrow \max_a \left\{ \bar{R}(x,a) + \gamma \sum_{x'} P(x'|x, a) 
 </div>
 </div>
 </div>
-<p>Note above we assumed actions were <em>deterministic</em>, but the function can be easily adapted to non-deterministic actions. We awarded 100 points upon reaching the goal, but make sure that happens only once, or otherwise the value of that state will be infinite. In addition, when the state is near an obstacle (we use the <code class="docutils literal notranslate"><span class="pre">proximity_map_on</span></code> likelihood image from Section 4.3), the agent gets punished by 100 points. Below, we do value iteration using a brute force loop, which is still remarkably fast:</p>
+<p>Note that here we assumed actions were deterministic, the function can be easily adapted to non-deterministic actions. We awarded 100 points upon reaching the goal, but make sure that happens only once. In addition, when the state is near an obstacle (we use the <code class="docutils literal notranslate"><span class="pre">proximity_map_on</span></code> likelihood image from Section 4.3), the agent gets punished by 100 points.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">I</span><span class="p">,</span> <span class="n">J</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">50</span><span class="p">),</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span> <span class="n">indexing</span><span class="o">=</span><span class="s1">&#39;ij&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: The converged value function.</span>
+<span class="c1">#| label: fig:converged-value-function</span>
+<span class="n">I</span><span class="p">,</span> <span class="n">J</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">50</span><span class="p">),</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span> <span class="n">indexing</span><span class="o">=</span><span class="s1">&#39;ij&#39;</span><span class="p">)</span>
 <span class="n">states</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dstack</span><span class="p">((</span><span class="n">I</span><span class="p">,</span> <span class="n">J</span><span class="p">))</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">5000</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="n">V_k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="mi">50</span><span class="p">,</span><span class="mi">100</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">)</span>
@@ -479,6 +489,7 @@ V^{k+1}(x) \leftarrow \max_a \left\{ \bar{R}(x,a) + \gamma \sum_{x'} P(x'|x, a) 
     <span class="n">V_k</span> <span class="o">=</span> <span class="n">V_plus</span>
     <span class="n">k</span> <span class="o">+=</span> <span class="mi">1</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;after </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> iterations, error = </span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">px</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">V_k</span><span class="p">,</span> <span class="n">color_continuous_scale</span><span class="o">=</span><span class="s1">&#39;Turbo&#39;</span><span class="p">,</span><span class="n">origin</span><span class="o">=</span><span class="s2">&quot;upper&quot;</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="s1">&#39;equal&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -486,21 +497,11 @@ V^{k+1}(x) \leftarrow \max_a \left\{ \bar{R}(x,a) + \gamma \sum_{x'} P(x'|x, a) 
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>after 86 iterations, error = 0.0
 </pre></div>
 </div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: The converged value function.</span>
-<span class="c1">#| label: fig:converged-value-function</span>
-<span class="n">px</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">V_k</span><span class="p">,</span> <span class="n">color_continuous_scale</span><span class="o">=</span><span class="s1">&#39;Turbo&#39;</span><span class="p">,</span><span class="n">origin</span><span class="o">=</span><span class="s2">&quot;upper&quot;</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="s1">&#39;equal&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
 <img alt="_images/c50305367555580c1936b35d3b60fc9967f742e57e84f8b241c26add88d62b65.png" src="_images/c50305367555580c1936b35d3b60fc9967f742e57e84f8b241c26add88d62b65.png" />
 </div>
 </div>
-<p>Notice that the <em>gradient</em> of the value function determines the optimal policy: at any cell, we can just look around in all 4 directions and move to the cell with the largest value.</p>
+<p>In Figure <a class="reference internal" href="#fig:converged-value-function"><span class="xref myst">2</span></a>, we do value iteration using a brute force loop, which is still remarkably fast.
+The “gradient” of the value function determines the optimal policy: at any cell, we can just look around in all 4 directions and move to the cell with the largest value. Caveat: there is really no continuous gradient because we discretized the actions: the figure only <em>looks</em> smooth because we used a fine resolution.</p>
 <section id="thought-exercise">
 <h3><span class="section-number">4.5.1.1. </span>Thought Exercise<a class="headerlink" href="#thought-exercise" title="Link to this heading">#</a></h3>
 <p>Why might the algorithm terminate after 86 iterations?</p>
@@ -511,13 +512,16 @@ V^{k+1}(x) \leftarrow \max_a \left\{ \bar{R}(x,a) + \gamma \sum_{x'} P(x'|x, a) 
 <blockquote>
 <div><p>Costs and rewards propagate.</p>
 </div></blockquote>
-<p>It is instructive to look at an animation for how the value function evolves in successive iterations of the value iteration algorithm:</p>
-<figure id="fig:value">
+<figure id="fig:value-animation">
 <img src="https://github.com/gtbook/robotics/blob/main/Figures4/value.gif?raw=1" style="width:14cm" alt="">
 <figcaption>The <b>value iteration</b> algorithm, animated.</figcaption>
-</figure><p>The most prominent phenomenon that one can make out in the animation above is that the reward from reaching the goal state, in the middle of the warehouse, gradually propagates towards every location. It gradually decreases in value because of the discount factor. It also does not penetrate the obstacles in the map, because those states simply have a value of zero.</p>
+</figure>
+<p>It is instructive to look at an animation, shown in Figure <a class="reference internal" href="#fig:value-animation"><span class="xref myst">3</span></a>, of how the value function evolves in successive iterations of the value iteration algorithm.
+The most prominent phenomenon that one can see in the animation is that the goal reward (in the middle of the warehouse), gradually propagates towards every location. The reward gradually decreases in value because of the discount factor. It also does not penetrate the obstacles in the map, because those states simply have a value of zero.</p>
+<p>In every iteration of value iteration each state re-evaluates its own value. The state next to the goal state “know” from the start that they are high value, but this will only be known to <em>their</em> neighbors in the next iteration.
+Hence, it takes time for this information, modified by the discount factor, to reach all corners of the state space.</p>
 <p>There is a deep connection between value iteration and the all-source-shortest-path algorithm that you might have seen in an algorithms class.
-Deterministic actions set up a graph, and while in this case we have no penalty to moving in the the graph, the discount factor plays the same role in practice.
+Deterministic actions set up a graph, and while in this case we have no penalty for moving in the the graph, the discount factor plays the same role in practice.
 In fact, if we set the discount factor to zero and give actions a cost, both algorithms will return identical results.</p>
 </section>
 <section id="closing-the-loop">
@@ -525,22 +529,22 @@ In fact, if we set the discount factor to zero and give actions a cost, both alg
 <blockquote>
 <div><p>Adding a state estimator closes the sense-think-act loop.</p>
 </div></blockquote>
-<p>When the robot acts in the world, it senses, estimates its state, and executes a policy. We can take any of the algorithms from the last section and use them to estimate the robot’s current state. The value function gives us a policy, which the robot can then execute. After that, repeat.</p>
+<p>When the robot acts in the world, it senses, estimates its state, and executes a policy. We can take any of the perception algorithms from the last section and use them to estimate the robot’s current state. The value function gives us a policy, which the robot can then execute. After that, repeat.</p>
 <p>To calculate the policy, we should take into account the uncertainty in actions. The policy we calculated above for the warehouse may not be optimal, because we assumed deterministic actions in the calculation of the Q values. In Section 3.5 we saw how to account for uncertain, Gaussian actions.
 We could do the same here to potentially obtain a better policy.
 In particular, the robot will be more cautious and stay even further away from obstacles,
 since the robot does not always perfectly execute commands.</p>
 <section id="id1">
 <h3><span class="section-number">4.5.3.1. </span>Thought Exercise<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
-<p>Estimating a single location for the robot is not always possible: posterior densities can be <em>multi-modal</em>, and so do not know any better than that we are in one of a number of possible locations. What should we do in that case?</p>
+<p>Estimating a single location for the robot is not always possible: posterior densities can be <em>multi-modal</em>, and so the robot may not know any better than that it is in one of a number of possible locations. What should we do in that case?</p>
 </section>
 </section>
 <section id="partially-observable-mdps">
-<span id="index-1"></span><h2><span class="section-number">4.5.4. </span>Partially Observable MDPs<a class="headerlink" href="#partially-observable-mdps" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">4.5.4. </span>Partially Observable MDPs<a class="headerlink" href="#partially-observable-mdps" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>POMDPs facilitate planning to sense.</p>
 </div></blockquote>
-<p>To <em>really</em> calculate the optimal policy, we would need to know how future actions
+<p id="index-2">To <em>really</em> calculate the optimal policy, we would need to know how future actions
 will affect sensing. Even when we take into account the uncertainty in the actions, there is something we have not taken into account: uncertain <em>sensing</em>. Indeed, when calculating the optimal policy we have assumed that we have perfect knowledge of the state. The probabilistic model that takes into account uncertain sensing is called a <strong>partially observable Markov decision process</strong>, or <strong>POMDP</strong>.</p>
 <p>While out of scope for this book, it is important to be aware of this limitation of the MDP framework. A POMDP policy could improve on this by planning to sense: for example, the robot could deliberately move closer to an RFID beacon on purpose, to re-localize the robot when it is not very certain about its location.</p>
 <p>POMDPs are computationally incredibly expensive, because the state is no longer simply <em>where</em> we are, but also <em>what we believe</em> the state is. Hence, POMDPs are about planning in the <em>belief space</em>, which is a very high-dimensional concept.</p>
