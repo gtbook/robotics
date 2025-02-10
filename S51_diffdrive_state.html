@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>5.1. State Space for a Differential Drive Robot &#8212; Introduction to Robotics and Perception</title>
+    <title>5.1. State Space for a differential-drive robot &#8212; Introduction to Robotics and Perception</title>
   
   
   
@@ -202,9 +202,9 @@
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="S50_diffdrive_intro.html">5. A Mobile Robot With Simple Kinematics</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">5.1. State Space for a Differential Drive Robot</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">5.1. State Space for a differential-drive robot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S52_diffdrive_actions.html">5.2. Motion Model for the Differential Drive Robot</a></li>
-<li class="toctree-l2"><a class="reference internal" href="S53_diffdrive_sensing.html">5.3. Robot Vision</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S53_diffdrive_sensing.html">5.3. Cameras for Robot Vision</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S54_diffdrive_perception.html">5.4. Computer Vision 101</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S55_diffdrive_planning.html">5.5. Path Planning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S56_diffdrive_learning.html">5.6. Deep Learning</a></li>
@@ -368,7 +368,7 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>State Space for a Differential Drive Robot</h1>
+    <h1>State Space for a differential-drive robot</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -392,49 +392,55 @@
                 <article class="bd-article">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="state-space-for-a-differential-drive-robot">
-<h1><span class="section-number">5.1. </span>State Space for a Differential Drive Robot<a class="headerlink" href="#state-space-for-a-differential-drive-robot" title="Link to this heading">#</a></h1>
+<h1><span class="section-number">5.1. </span>State Space for a differential-drive robot<a class="headerlink" href="#state-space-for-a-differential-drive-robot" title="Link to this heading">#</a></h1>
 <p><a href="https://colab.research.google.com/github/gtbook/robotics/blob/main/S51_diffdrive_state.ipynb" target="_parent"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg" /></a></p>
 <blockquote id="index-0">
-<div><p>Unlike robots with omni-directional wheels, the orientation of a differential drive robot matters.</p>
+<div><p>Unlike robots with omni-directional wheels, the orientation of a differential-drive robot matters.</p>
 </div></blockquote>
-<a class="reference internal image-reference" href="_images/S51-Two-wheeled_Toy_Robot-03.jpg"><img alt="Splash image with differential drive robots in different states" class="align-center" src="_images/S51-Two-wheeled_Toy_Robot-03.jpg" style="width: 40%;" /></a>
+<a class="reference internal image-reference" href="_images/S51-Two-wheeled_Toy_Robot-03.jpg"><img alt="Splash image with differential-drive robots in different states" class="align-center" src="_images/S51-Two-wheeled_Toy_Robot-03.jpg" style="width: 40%;" /></a>
+<figure id="fig:duckiebot">
+<img src="https://github.com/gtbook/robotics/blob/main/Figures5/duckiebot.png?raw=1" style="width:14cm" alt="">
+<figcaption>Two views of the Duckiebot platform. Note the two actuated wheels in the front of the robot, and the castor wheel in the back.</figcaption>
+</figure>
 <p>So far we have seen two kinds of state space: discrete state spaces (the categories of trash, the rooms in a house)
 and continuous state spaces that were equivalent to <span class="math notranslate nohighlight">\(\mathbb{R}^2\)</span> (the position of a logistics robot in a warehouse).
 In this chapter, we consider a robot whose state space includes the orientation of the robot as well as its position.
-In particular, we consider differential drive robots (DDRs), such as the Duckiebot shown below.
+In particular, we consider differential-drive robots (DDRs), such as the Duckiebot shown in Figure <a class="reference internal" href="#fig:duckiebot"><span class="xref myst">1</span></a>.
 DDRs have two actuated wheels that share a common axis of rotation, and typically have a castor wheel in the back
 to stabilize the robot (without this castor wheel, the DDR would essentially be equivalent to a Segway two-wheeled scooter).
 Unlike robots with omni-directional wheels, DDRs cannot move in the direction parallel to the wheel axis – they can only move
 in the steering direction. Because of this, it is necessary to include the orientation of the robot in its state description.</p>
-<figure id="fig:duckiebot">
-<img src="https://github.com/gtbook/robotics/blob/main/Figures5/duckiebot.png?raw=1" style="width:14cm" alt="">
-<figcaption>Two views of the Duckiebot platform. Note the two actuated wheels in the front of the robot, and the castor wheel in the back.</figcaption>
-</figure><p>Representing the state of the logistics robot was straightforward, we merely used the x- and y-coordinates of the robot’s center of mass
-(in the case of a robot with circular shape, the center of this circle).
-Representing orientation is slightly more complex, and cannot be accomplished by merely encoding properties of a single point on the robot.
-Instead, we rigidly attach a coordinate frame to the robot, and define the robot state by the position of the origin of this
-frame and the orientation of the frame with repsect to the world frame.
-We refer to the robot’s frame as the body-attached frame, or merely the robot frame.
-For DDR robots, it is typical to place the origin of the body-attached frame at the midpoint between the two wheels, and to align its
-x-axis with the forward steering direction. The y-axis is coincident with the axis of wheel rotation.
-This frame is illustrated in the figure below.</p>
 <figure id="fig:DDR-coordinate-frame">
 <img src="https://github.com/gtbook/robotics/blob/main/Figures5/DDR-coordinate-frame.png?raw=1" style="width:9cm" alt="">
 <figcaption>A Coordinate frame that is rigidly attached to a DDR.</figcaption>
 </figure>
-<p id="index-1">In many robotics applications, if we are interested only in geometric aspects of the problem (e.g., if we are not concerned with dynamics, or with forces that are required to effect motion), we use the term <em>configuration space</em> instead of the term <em>state space</em>.
+<p id="index-2">Representing the state of the logistics robot was straightforward, we merely used the x- and y-coordinates of the robot’s center of mass
+(in the case of a robot with circular shape, the center of this circle).
+Representing orientation is slightly more complex, and cannot be accomplished by merely encoding properties of a single point on the robot.
+Instead, we rigidly attach a coordinate frame to the robot, and define the robot state by the position of the origin of this
+frame and the orientation of the frame with repsect to the world frame.
+We refer to the robot’s frame as the <em>body-attached frame</em>, or merely the robot frame.
+For DDRs, it is typical to place the origin of the body-attached frame at the midpoint between the two wheels, and to align its
+x-axis with the forward steering direction. The y-axis is coincident with the axis of wheel rotation.
+This frame is illustrated in Figure <a class="reference internal" href="#fig:DDR-coordinate-frame"><span class="xref myst">2</span></a>.</p>
+<p id="index-3">In many robotics applications, if we are interested only in geometric aspects of the problem (e.g., if we are not concerned with dynamics, or with forces that are required to effect motion), we use the term <em>configuration space</em> instead of the term <em>state space</em>.
 A <strong>configuration</strong>, denoted by <span class="math notranslate nohighlight">\(q\)</span>, is a complete specificiation of the location of every point on a robotic system (assuming that a model of the robot
 is available).  The <strong>configuration space</strong>, denoted by <span class="math notranslate nohighlight">\({\cal Q}\)</span>, is the set of all configurations.
 For a DDR, the position and orientation of the robot provide such a specification; if we know the position and orientation of the robot,
 we can infer the location of any point on the robot.
 In this chapter, we will therefore use <span class="math notranslate nohighlight">\({\cal Q} = \mathbb{R}^2 \times [0, 2\pi),\)</span>
 and <span class="math notranslate nohighlight">\(q = (x,y,\theta)\)</span> to parameterize the configuration space.</p>
-<p>As an example, consider the problem of determining the x-y position of the wheel centers for our DDR.
+<figure id="fig:DDR-wheel-centers">
+<img src="https://github.com/gtbook/robotics/blob/main/Figures5/DDR-wheel-centers.png?raw=1" style="width:9cm" alt="">
+<figcaption>Determining the position of the wheel centers.</figcaption>
+</figure>
+<p>As an example, consider the problem of determining the x-y position of the wheel centers
+for the DDR shown in Figure <a class="reference internal" href="#fig:DDR-wheel-centers"><span class="xref myst">3</span></a>.
 If the wheelbase (i.e., the distance between the two wheel centers) is denoted by <span class="math notranslate nohighlight">\(L\)</span>,
 and the robot is in configuration <span class="math notranslate nohighlight">\(q=(x,y.\theta)\)</span>,
 then the x-y coordinates of the left and right wheel centers are given by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-51e1289b-dbf2-4151-8a18-92963281ac5b">
-<span class="eqno">(5.1)<a class="headerlink" href="#equation-51e1289b-dbf2-4151-8a18-92963281ac5b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-b3bf2453-ca73-47d8-bdcb-0db44fcb06d8">
+<span class="eqno">(5.1)<a class="headerlink" href="#equation-b3bf2453-ca73-47d8-bdcb-0db44fcb06d8" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \left[ \begin{array}{c} x_{\mathrm{left}} \\ y_{\mathrm{left}} \end{array}\right]
 =
 \left[ \begin{array}{c} x - \frac{L}{2} \sin \theta \\ \ \\ y + \frac{L}{2} \cos \theta \end{array}\right]
@@ -443,28 +449,25 @@ then the x-y coordinates of the left and right wheel centers are given by</p>
 =
 \left[ \begin{array}{c} x + \frac{L}{2} \sin \theta \\ \ \\ y - \frac{L}{2} \cos \theta \end{array}\right]
 \end{equation}\]</div>
-<figure id="fig:DDR-wheel-centers">
-<img src="https://github.com/gtbook/robotics/blob/main/Figures5/DDR-wheel-centers.png?raw=1" style="width:9cm" alt="">
-<figcaption>Determining the position of the wheel centers.</figcaption>
-</figure><p>We can apply the same geometric analysis to any point on the robot. Consider a point <span class="math notranslate nohighlight">\(p\)</span> that is
-rigidly attached to the robot.
+<figure id="fig:DDR-arbitrary-point">
+<img src="https://github.com/gtbook/robotics/blob/main/Figures5/DDR-arbitrary-point.png?raw=1" style="width:9cm" alt="">
+<figcaption>A Coordinate frame that is rigidly attached to a DDR.</figcaption>
+</figure>
+<p>We can apply the same geometric analysis to any point on the robot.
+Consider a point <span class="math notranslate nohighlight">\(p\)</span> that is rigidly attached to the robot, as shown in Figure <a class="reference internal" href="#fig:DDR-arbitrary-point"><span class="xref myst">4</span></a>.
 We can define the coordinates of <span class="math notranslate nohighlight">\(p\)</span> with respect to the body-attached frame as
 <span class="math notranslate nohighlight">\(p^{\mathrm{body}} = [p_x, p_y]^T\)</span>.
 If the robot is in configuration <span class="math notranslate nohighlight">\(q=(x,y.\theta)\)</span>,
 then
 the x-y coordinates of <span class="math notranslate nohighlight">\(p\)</span> with respect to the world coordinate frame are given by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a0e1f1ea-892e-4407-8ae8-52d837af9214">
-<span class="eqno">(5.2)<a class="headerlink" href="#equation-a0e1f1ea-892e-4407-8ae8-52d837af9214" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-aab79323-fa27-4536-8080-5a612b3cd501">
+<span class="eqno">(5.2)<a class="headerlink" href="#equation-aab79323-fa27-4536-8080-5a612b3cd501" title="Permalink to this equation">#</a></span>\[\begin{equation}
 p^{\mathrm{world}} =
 \left[ \begin{array}{c} 
 x +p_x \cos \theta - p_y \sin \theta \\ 
 y +p_x \sin \theta + p_y \cos \theta
  \end{array}\right]
 \end{equation}\]</div>
-<figure id="fig:DDR-arbitrary-point">
-<img src="https://github.com/gtbook/robotics/blob/main/Figures5/DDR-arbitrary-point.png?raw=1" style="width:9cm" alt="">
-<figcaption>A Coordinate frame that is rigidly attached to a DDR.</figcaption>
-</figure>
 <p>As shown in these examples, given a model of the robot,
 knowing the configuration <span class="math notranslate nohighlight">\(q = (x,y,\theta)\)</span> is sufficient to allow us to determine the position of any point on the robot.
 Nevertheless, the procedure we used above – using simple planar geometry to infer positions in an ad hoc way – is not
@@ -496,7 +499,8 @@ with x=12.4, y=42.5, theta=0.7853981633974483
 </div>
 </div>
 </div>
-<p>Note that internally we represent poses using radians, hence the ugly looking number above. Often, it makes sense to specify <em>and</em> display angles in degrees, which makes specifying poses and debugging code easier. Hence, we also provide a “pretty” version that does the conversion for us:</p>
+<p>
+Note that internally we represent poses using radians, hence the ugly looking number above. Often, it makes sense to specify <em>and</em> display angles in degrees, which makes specifying poses and debugging code easier. Hence, we also provide a “pretty” version that does the conversion for us:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pretty</span><span class="p">(</span><span class="n">pose</span><span class="p">)</span>
@@ -506,15 +510,16 @@ with x=12.4, y=42.5, theta=0.7853981633974483
 <div class="cell_output docutils container">
 <div class="output text_html">(x=12.4, y=42.5, theta=45.0)</div></div>
 </div>
-<p>Using a real number <span class="math notranslate nohighlight">\(\theta\)</span> to represent orientation, while convenient and familiar, is <em>not</em> ideal as numbers that are offset by 360 degrees represent the same orientation. In other words, there is <em>not</em> a one-to-one relationship between orientation and its representation as a float value. Hence, internally GTSAM stores the orientation as <em>two</em> numbers, the unit vector <span class="math notranslate nohighlight">\((\cos\theta,\sin\theta)\)</span>, which <em>is</em> a unique representation.</p>
+<p>
+Using a real number <span class="math notranslate nohighlight">\(\theta\)</span> to represent orientation, while convenient and familiar, is <em>not</em> ideal as numbers that are offset by 360 degrees represent the same orientation. In other words, there is <em>not</em> a one-to-one relationship between orientation and its representation as a float value. Hence, internally GTSAM stores the orientation as <em>two</em> numbers, the unit vector <span class="math notranslate nohighlight">\((\cos\theta,\sin\theta)\)</span>, which <em>is</em> a unique representation.</p>
 </section>
 <section id="densities-over-pose">
 <h2><span class="section-number">5.1.2. </span>Densities over Pose<a class="headerlink" href="#densities-over-pose" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>We also need to think about probability densities over poses.</p>
 </div></blockquote>
-<p>It is conceptually easy to extend the <em>finite element</em> approximation to include orientation: just discretize <span class="math notranslate nohighlight">\(\theta\)</span> using some chosen resolution, e.g., one bin for every 5 degrees. However, one thing to keep in mind is that angles <em>wrap</em>. Hence, the topology of the “map” in the orientation dimension is like a torus.</p>
-<p>A sampling-based representation is <em>much</em> easier: we just add a value <span class="math notranslate nohighlight">\(\theta\)</span> to each sample, or, even better, uses <code class="docutils literal notranslate"><span class="pre">gtsam.Pose2</span></code> samples.</p>
+<p>It is conceptually easy to extend the <em>finite element</em> approximation to include orientation: just discretize <span class="math notranslate nohighlight">\(\theta\)</span> using some chosen resolution, e.g., one bin for every 5 degrees. However, one thing to keep in mind is that angles <em>wrap</em>. Hence, the topology of the “map” in the orientation dimension is like a circle.</p>
+<p>A sampling-based representation is <em>much</em> easier: we just add a value <span class="math notranslate nohighlight">\(\theta\)</span> to each sample, or, even better, uses <code class="docutils literal notranslate"><span class="pre">Pose2</span></code> samples.</p>
 <p>Finally, Gaussian densities over pose/orientation are not actually trivial to reason over, and we will postpone discussion of this to the next chapter.</p>
 </section>
 </section>

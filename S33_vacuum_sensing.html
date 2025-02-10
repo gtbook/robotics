@@ -202,9 +202,9 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="S50_diffdrive_intro.html">5. A Mobile Robot With Simple Kinematics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="S51_diffdrive_state.html">5.1. State Space for a Differential Drive Robot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S51_diffdrive_state.html">5.1. State Space for a differential-drive robot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S52_diffdrive_actions.html">5.2. Motion Model for the Differential Drive Robot</a></li>
-<li class="toctree-l2"><a class="reference internal" href="S53_diffdrive_sensing.html">5.3. Robot Vision</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S53_diffdrive_sensing.html">5.3. Cameras for Robot Vision</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S54_diffdrive_perception.html">5.4. Computer Vision 101</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S55_diffdrive_planning.html">5.5. Path Planning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S56_diffdrive_learning.html">5.6. Deep Learning</a></li>
@@ -505,8 +505,8 @@ over time, we call it a dynamic Bayes net or <strong>DBN</strong>.</p>
 </div>
 <p>Observe that after the first time step, the Bayes net is repeating the same “AXZ” pattern (or <em>slice</em>!) over and over again. Formally, the joint distribution <span class="math notranslate nohighlight">\(P(Z_{1:n},X_{1:n}|A_{1:n})\)</span> over states <span class="math notranslate nohighlight">\(X_{1:n} \doteq (X_1 \dots, X_n)\)</span> and measurements <span class="math notranslate nohighlight">\(Z_{1:n} \doteq (Z_1, \dots , Z_n)\)</span>, <em>given</em>
 the action sequence <span class="math notranslate nohighlight">\(A_{1:n} \doteq (A_1, \dots , A_n)\)</span> can be computed, given the DBN factorization, as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-1fa298e7-ecd3-45e2-84b4-672fdb46b0c8">
-<span class="eqno">(3.15)<a class="headerlink" href="#equation-1fa298e7-ecd3-45e2-84b4-672fdb46b0c8" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-148a817c-cc4e-481f-ac7f-b6404bed94b7">
+<span class="eqno">(3.15)<a class="headerlink" href="#equation-148a817c-cc4e-481f-ac7f-b6404bed94b7" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P(Z_{1:n},X_{1:n}|A_{1:n})= P(Z_1| X_1) P(X_1) \prod_{k=2}^{n} P(Z_k| X_k) P(X_k|A_{k-1},X_{k-1}).
 \end{equation}\]</div>
 <p>The AXZ slice at time <span class="math notranslate nohighlight">\(k\)</span> is given by <span class="math notranslate nohighlight">\(P(Z_k| X_k) P(X_k|A_{k-1},X_{k-1})\)</span>, whereas the chain is “jump-started” using the initial state distribution <span class="math notranslate nohighlight">\(P(X_1)\)</span> and the corresponding measurement model <span class="math notranslate nohighlight">\(P(Z_1|X_1)\)</span>.</p>
@@ -517,8 +517,8 @@ P(Z_{1:n},X_{1:n}|A_{1:n})= P(Z_1| X_1) P(X_1) \prod_{k=2}^{n} P(Z_k| X_k) P(X_k
 <div><p>FOR DBNs, ancestry matters!</p>
 </div></blockquote>
 <p>How do we sample over such a complex Bayes net? To explain, recall the Bayes net example from Figure <a class="reference internal" href="#fig:general_bayes_net"><span class="xref myst">11</span></a> in the previous section. It has four variables W,X,Y,Z, and the joint distribution</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c7f12534-8722-4f48-b9aa-bc5a79c129da">
-<span class="eqno">(3.16)<a class="headerlink" href="#equation-c7f12534-8722-4f48-b9aa-bc5a79c129da" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-1455e703-d40f-4d86-93a9-501ff393ff37">
+<span class="eqno">(3.16)<a class="headerlink" href="#equation-1455e703-d40f-4d86-93a9-501ff393ff37" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P(W,X,Y,Z)=P(W|X,Z)P(X|Y,Z)P(Y|Z)P(Z).
 \end{equation}\]</div>
 <p id="index-4">Sampling from the joint distribution given in Bayes net form can be done
@@ -627,12 +627,12 @@ Not surprisingly, we quickly transition from the dark hallway to the slightly br
 <blockquote>
 <div><p>The GTSAM concepts used in this section, explained.</p>
 </div></blockquote>
-<p>We use the <code class="docutils literal notranslate"><span class="pre">gtsam.DiscreteBayesNet</span></code> method <code class="docutils literal notranslate"><span class="pre">sample</span></code>, with signature</p>
+<p>We use the <code class="docutils literal notranslate"><span class="pre">DiscreteBayesNet</span></code> method <code class="docutils literal notranslate"><span class="pre">sample</span></code>, with signature</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="n">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">given</span><span class="p">:</span> <span class="n">gtsam</span><span class="p">::</span><span class="n">DiscreteValues</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gtsam</span><span class="p">::</span><span class="n">DiscreteValues</span>
 </pre></div>
 </div>
 <p>It implements ancestral sampling, but does assume that the Bayes net is reverse topologically sorted, i.e. last
-conditional will be sampled first. In addition, it can optionally take an assignment for certain <em>given</em> variables, as a <code class="docutils literal notranslate"><span class="pre">gtsam.DiscreteValues</span></code> instance.
+conditional will be sampled first. In addition, it can optionally take an assignment for certain <em>given</em> variables, as a <code class="docutils literal notranslate"><span class="pre">DiscreteValues</span></code> instance.
 In that case, it is also assumed that the Bayes net does not contain any conditionals for the given values.
 We used this functionality to pass the given action sequence above.</p>
 </section>

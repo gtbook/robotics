@@ -202,9 +202,9 @@
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="S50_diffdrive_intro.html">5. A Mobile Robot With Simple Kinematics</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="S51_diffdrive_state.html">5.1. State Space for a Differential Drive Robot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S51_diffdrive_state.html">5.1. State Space for a differential-drive robot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S52_diffdrive_actions.html">5.2. Motion Model for the Differential Drive Robot</a></li>
-<li class="toctree-l2"><a class="reference internal" href="S53_diffdrive_sensing.html">5.3. Robot Vision</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S53_diffdrive_sensing.html">5.3. Cameras for Robot Vision</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S54_diffdrive_perception.html">5.4. Computer Vision 101</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S55_diffdrive_planning.html">5.5. Path Planning</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">5.6. Deep Learning</a></li>
@@ -385,8 +385,11 @@
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#loss-functions">5.6.3. Loss Functions</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gradient-descent">5.6.4. Gradient Descent</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stochastic-gradient-descent">5.6.5. Stochastic Gradient Descent</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#validation-and-testing">5.6.6. Validation and Testing</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stochastic-gradient-descent">5.6.5. Stochastic Gradient Descent</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#validation-and-testing">5.6.5.1. Validation and Testing</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#transformer-architectures">5.6.6. Transformer Architectures</a></li>
 </ul>
             </nav>
         </div>
@@ -404,19 +407,19 @@
 <blockquote id="index-0">
 <div><p>Stochastic gradient descent and the like.</p>
 </div></blockquote>
-<a class="reference internal image-reference" href="_images/S56-Two-wheeled_Toy_Robot-09.jpg"><img alt="Splash image with steampunk differential drive robot" class="align-center" src="_images/S56-Two-wheeled_Toy_Robot-09.jpg" style="width: 40%;" /></a>
+<a class="reference internal image-reference" href="_images/S56-Two-wheeled_Toy_Robot-09.jpg"><img alt="Splash image with steampunk differential-drive robot" class="align-center" src="_images/S56-Two-wheeled_Toy_Robot-09.jpg" style="width: 40%;" /></a>
 <section id="supervised-learning-setup">
-<span id="index-1"></span><h2><span class="section-number">5.6.1. </span>Supervised Learning Setup<a class="headerlink" href="#supervised-learning-setup" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">5.6.1. </span>Supervised Learning Setup<a class="headerlink" href="#supervised-learning-setup" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>From data, learn concept.</p>
 </div></blockquote>
-<p>In the <strong>supervised learning</strong> setup, we have a large number of examples of inputs <span class="math notranslate nohighlight">\(x\)</span> and corresponding labels <span class="math notranslate nohighlight">\(y\)</span>.
+<p id="index-1">In the <strong>supervised learning</strong> setup, we have a large number of examples of inputs <span class="math notranslate nohighlight">\(x\)</span> and corresponding labels <span class="math notranslate nohighlight">\(y\)</span>.
 We will often refer to the <em>training dataset</em> as <span class="math notranslate nohighlight">\(D\)</span>, consisting of pairs <span class="math notranslate nohighlight">\((x,y)\)</span>. The nature of the output labels <span class="math notranslate nohighlight">\(y\)</span> determine the type of learning problem we are dealing with:</p>
 <ol class="arabic simple">
 <li><p><strong>Classification</strong>; If the labels <span class="math notranslate nohighlight">\(y\)</span> are <em>discrete</em>, we talk about a supervised <em>classification</em> problem. The prototypical example is classifying images as portraying either a cat or a dog: here the images are the inputs <span class="math notranslate nohighlight">\(x\)</span>, and the output label <span class="math notranslate nohighlight">\(y \in \{\text{cat},\text{dog}\}\)</span>.</p></li>
 <li><p><strong>Regression</strong> If the labels <span class="math notranslate nohighlight">\(y\)</span> are <em>continuous</em>, this is called a supervised <em>regression</em> problem. For example, predicting the blue-book value of a second-hand car based on its make, model, year, and miles driven.</p></li>
 </ol>
-<p>Whether we are talking about classification or regression, the supervised leaning process normally follows these steps:</p>
+<p id="index-2">Whether we are talking about classification or regression, the supervised leaning process normally follows these steps:</p>
 <ol class="arabic simple">
 <li><p>Define a model <span class="math notranslate nohighlight">\(f\)</span> and its parameters <span class="math notranslate nohighlight">\(\theta\)</span> that allow you to output a prediction <span class="math notranslate nohighlight">\(\hat{y}\)</span> from the input features <span class="math notranslate nohighlight">\(x\)</span>:
 \begin{equation}
@@ -424,13 +427,13 @@ We will often refer to the <em>training dataset</em> as <span class="math notran
 \end{equation}</p></li>
 <li><p>Divide your data into <em>training</em>, <em>validation</em>, and <em>test</em> datasets. Typically, the largest portion of the data is used for training, while setting aside smaller validation and test portions of the data.</p></li>
 <li><p>Train the model using the training data <span class="math notranslate nohighlight">\(D_{\text{train}}\)</span>, while monitoring for “overfitting” on the validation dataset <span class="math notranslate nohighlight">\(D_{\text{val}}\)</span>. We train by adjusting the parameters <span class="math notranslate nohighlight">\(\theta\)</span> to minimize a training loss, both of which we look at in more detail below.</p></li>
-<li><p>After we decided to stop the training process, we typically test the model on the held-out dataset <span class="math notranslate nohighlight">\(D_{\text{test}}\)</span> that the training process has never seen, to get an independent assessment on how well the model will generalize towards new, unseen data.</p></li>
+<li><p>After we decide to stop the training process, we typically test the model on the held-out dataset <span class="math notranslate nohighlight">\(D_{\text{test}}\)</span> that the training process has never seen, to get an independent assessment of how well the model will generalize towards new, unseen data.</p></li>
 </ol>
-<p>Supervised learning is the staple of machine learning and its use has exploded in recent years to encompass almost any human economic activity, ranging from finance to healthcare and everything in between. Most recently the success of large language models is also based on supervised learning, where a “transformer”-based model is trained to predict the next word (or token) in a sequence, from very large textual datasets, a paradigm which is rapidly finding its way to different modalities like vision as well.</p>
+<p>Supervised learning is the staple of machine learning and its use has exploded in recent years to encompass almost any human economic activity, ranging from finance to healthcare and everything in between. Most recently the success of large language models is also based on supervised learning, where a <em>transformer</em>-based model is trained to predict the next word (or token) in a sequence, from very large textual datasets, a paradigm which is rapidly finding its way to different modalities like vision as well.</p>
 </section>
 <section id="example-interpolation-in-1d">
 <h2><span class="section-number">5.6.2. </span>Example: Interpolation in 1D<a class="headerlink" href="#example-interpolation-in-1d" title="Link to this heading">#</a></h2>
-<p>As an example, e formulate a simple regression problem that asks for interpolating functions in 1D. We will create a <em>differentiable</em> interpolation scheme that can be trained using samples from any function we want to interpolate, even functions with multi-dimensional outputs.</p>
+<p>As an example, we formulate a simple regression problem that asks for interpolating functions in 1D. We will create a <em>differentiable</em> interpolation scheme that can be trained using samples from any function we want to interpolate, even functions with multi-dimensional outputs.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">LineGrid</span></code> class below is designed for this purpose, and divides up the 1D interval over which the function is defined in a number of <em>cells</em>, arranged in a 1D grid. It is initialized with two parameters:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">n</span></code>: the number of cells in a 1D grid</p></li>
@@ -469,9 +472,9 @@ We will often refer to the <em>training dataset</em> as <span class="math notran
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Interpolated Output: tensor([[-1.4196,  1.4477],
-        [-1.0157, -0.1393],
-        [-0.6316, -0.0242]], grad_fn=&lt;AddBackward0&gt;)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Interpolated Output: tensor([[ 0.5005, -0.2542],
+        [-0.0207, -0.8762],
+        [-0.2772, -0.8590]], grad_fn=&lt;AddBackward0&gt;)
 </pre></div>
 </div>
 </div>
@@ -484,13 +487,13 @@ We will often refer to the <em>training dataset</em> as <span class="math notran
 </section>
 </section>
 <section id="loss-functions">
-<span id="index-2"></span><h2><span class="section-number">5.6.3. </span>Loss Functions<a class="headerlink" href="#loss-functions" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">5.6.3. </span>Loss Functions<a class="headerlink" href="#loss-functions" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>A loss function for every occasion.</p>
 </div></blockquote>
-<p>Different tasks require different loss functions, and a lot of creativity and research goes into crafting loss functions for complex tasks. For “vanilla” regression tasks, we typically use a <strong>mean squared error</strong> loss function as we already encountered before:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-0a5a6d61-3210-40b9-9473-0d6f56949658">
-<span class="eqno">(5.55)<a class="headerlink" href="#equation-0a5a6d61-3210-40b9-9473-0d6f56949658" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<p id="index-3">Different tasks require different loss functions, and a lot of creativity and research goes into crafting loss functions for complex tasks. For “vanilla” regression tasks, we typically use a <strong>mean squared error</strong> loss function as we already encountered before:</p>
+<div class="amsmath math notranslate nohighlight" id="equation-c328cff1-2653-474c-af51-99727bfcf25e">
+<span class="eqno">(5.57)<a class="headerlink" href="#equation-c328cff1-2653-474c-af51-99727bfcf25e" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathcal{L}_{\text{MSE}}(\theta; D) \doteq \frac{1}{|D|} \sum_{(x,y)\in D}|f(x;\theta)-y|^2
 \end{equation}\]</div>
 <p>Above <span class="math notranslate nohighlight">\(f(x;\theta)\)</span> is the continuous prediction function implemented by, say, a neural network, where <span class="math notranslate nohighlight">\(\theta\)</span> represents the weights in all layers. Note that the formula above can be easily generalized to vector-valued labels <span class="math notranslate nohighlight">\(y\)</span>. In fact, our 1D interpolation example above yielded a 2-dimensional output, so let us illustrate the MSE loss in that case:</p>
@@ -502,12 +505,12 @@ We will often refer to the <em>training dataset</em> as <span class="math notran
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Our MSE Loss: 17.904043197631836
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Our MSE Loss: 18.85471534729004
 </pre></div>
 </div>
 </div>
 </div>
-<p>We used the vectorized versions of subtraction and power above, and then used the <code class="docutils literal notranslate"><span class="pre">mean</span></code> method of tensors. As you can see, the MSE loss in this case is 14.8715. Even though in this case the calculation is simple, many other loss functions exists and might not be that straightforward to implement. Luckily, PyTorch has many loss functions built-in:</p>
+<p>We used the vectorized versions of subtraction and power above, and then used the <code class="docutils literal notranslate"><span class="pre">mean</span></code> method of tensors. As you can see, the MSE loss in this case is 13.045638. Even though in this case the calculation is simple, many other loss functions exist and might not be as  straightforward to implement. Luckily, PyTorch has many loss functions built-in:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mse</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">()</span> <span class="c1"># Instantiate the loss function</span>
@@ -517,35 +520,37 @@ We will often refer to the <em>training dataset</em> as <span class="math notran
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Pytorch MSE Loss: 17.904043197631836
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Pytorch MSE Loss: 18.85471534729004
 </pre></div>
 </div>
 </div>
 </div>
-<p id="index-3">For classification, the <strong>cross entropy</strong> loss function is very popular: it measures the average disagreement of the predicted labels with the ground truth labels:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-509ffc0b-7a7c-4cd3-ac22-ba3f6162bd3f">
-<span class="eqno">(5.56)<a class="headerlink" href="#equation-509ffc0b-7a7c-4cd3-ac22-ba3f6162bd3f" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<p id="index-4">For classification, the <strong>cross entropy</strong> loss function is very popular.
+It measures the average disagreement of the predicted labels with the ground truth labels:</p>
+<div class="amsmath math notranslate nohighlight" id="equation-a63c63c5-8c93-497e-a195-de06722050f9">
+<span class="eqno">(5.58)<a class="headerlink" href="#equation-a63c63c5-8c93-497e-a195-de06722050f9" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathcal{L}_{\text{CE}}(\theta; D) \doteq \sum_c \sum_{(x,y=c)\in D}\log\frac{1}{p_c(x;\theta)}
 \end{equation}\]</div>
-<p>This formula seems perhaps unintuitive and rather complicated. However, it is actually quite intuitive once you understand a few concepts.
+<p>This formula seems perhaps unintuitive and rather complicated;
+however, it is actually quite intuitive once you understand a few concepts.
 In particular, in the multi-class classification problem we assume that the model outputs a probability <span class="math notranslate nohighlight">\(p_c(x;\theta)\)</span> for every class <span class="math notranslate nohighlight">\(c\in[N]\)</span>, where <span class="math notranslate nohighlight">\(N\)</span> is the number of classes. The quantity</p>
-<div class="amsmath math notranslate nohighlight" id="equation-215dba68-29d1-4843-8bcf-ea59e39a65ab">
-<span class="eqno">(5.57)<a class="headerlink" href="#equation-215dba68-29d1-4843-8bcf-ea59e39a65ab" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-9ae69c8e-11d0-4eed-9858-f2332ff0bf2e">
+<span class="eqno">(5.59)<a class="headerlink" href="#equation-9ae69c8e-11d0-4eed-9858-f2332ff0bf2e" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \log\frac{1}{p_c(x;\theta)}
 \end{equation}\]</div>
 <p>is called the <em>surprise</em> that we should experience when seeing a label <span class="math notranslate nohighlight">\(y=c\)</span>.
 Indeed, for example, if we see class <span class="math notranslate nohighlight">\(3\)</span> and the probability output by the network is <span class="math notranslate nohighlight">\(p_3(x;\theta)=1\)</span>, we are not surprised at all, as <span class="math notranslate nohighlight">\(\log\frac{1}{1}=\log 1 = 0\)</span>.
 However, if the probability is only <span class="math notranslate nohighlight">\(0.01\)</span>, our surprise is <span class="math notranslate nohighlight">\(\log\frac{1}{0.01}=\log 100 = 2\)</span>.
 The lower the probability, the higher the surprise. Hence, the cross-entropy above measures the <em>average surprise</em> for seeing the labeled examples in the training data. After training, the model is the least surprised possible, hopefully, which is why it is an intuitive loss function to minimize.</p>
-<p>Note that training with cross-entropy does not guarantee that the outputs can be <em>truly</em> interpreted as probabilities: the recent field of “model calibration” has shown that especially neural networks can severely over-estimate those probability values in attempting to minimize the loss. If this interpretation is important for the application at hand, several techniques now exist to “calibrate” the models to be more interpretable that way.</p>
+<p id="index-5">Note that training with cross-entropy does not guarantee that the outputs can be <em>truly</em> interpreted as probabilities: the recent field of <em>model calibration</em> has shown that especially neural networks can severely over-estimate those probability values in attempting to minimize the loss. If this interpretation is important for the application at hand, several techniques now exist to <em>calibrate</em> the models to be more interpretable that way.</p>
 </section>
 <section id="gradient-descent">
-<span id="index-4"></span><h2><span class="section-number">5.6.4. </span>Gradient Descent<a class="headerlink" href="#gradient-descent" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">5.6.4. </span>Gradient Descent<a class="headerlink" href="#gradient-descent" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>Calculate gradient, reduce loss.</p>
 </div></blockquote>
 <p>A neural network output, and in particular a CNN, depends on the large set of continuous weights <span class="math notranslate nohighlight">\(W\)</span> that make up its convolutional layers, pooling layers, and fully connected layers. In other words, the neural network is the model <span class="math notranslate nohighlight">\(f(x;\theta)\)</span> in the learning setup discussed above, and the weights <span class="math notranslate nohighlight">\(W\)</span> are its parameters <span class="math notranslate nohighlight">\(\theta\)</span>.</p>
-<p>When we train a neural networks, we adjust its weights <span class="math notranslate nohighlight">\(W\)</span> to perform better on the task at hand, be it classification or regression. To measure whether the model performs “better”, we can use one of the loss functions defined above. To adjust the weights, we could calculate the gradient of the loss function with respect to each of the weights, and adjust the weights accordingly. That procedure is called <strong>gradient descent</strong>.</p>
+<p id="index-6">When we train a neural networks, we adjust its weights <span class="math notranslate nohighlight">\(W\)</span> to perform better on the task at hand, be it classification or regression. To measure whether the model performs “better”, we can use one of the loss functions defined above. To adjust the weights, we could calculate the gradient of the loss function with respect to each of the weights, and adjust the weights accordingly. That procedure is called <strong>gradient descent</strong>.</p>
 <p>Below we illustrate gradient descent with the 1D interpolation model we created above. As an example, maybe we can learn a sine and cosine function at the same time? Let us create some training data by creating 500 noisy samples of these two functions. To integrate smoothly with the pytorch library we will use, we create a <code class="docutils literal notranslate"><span class="pre">TensorDataset</span></code> below.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -569,21 +574,23 @@ The lower the probability, the higher the surprise. Hence, the cross-entropy abo
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>dataset[12]: (tensor(12.2988), tensor([-0.6670, -0.8581]))
-dataset[10:15]: (tensor([ 7.0820, 19.7703, 12.2988, 15.2480, 18.1359]), tensor([[ 0.6144, -0.7176],
-        [ 0.0062,  0.9136],
-        [-0.6670, -0.8581],
-        [-0.8546,  0.0030],
-        [-0.6712,  0.9030]]))
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>dataset[12]: (tensor(15.6386), tensor([-0.8948,  0.1380]))
+dataset[10:15]: (tensor([18.3534, 15.1594, 15.6386, 18.3781, 10.2011]), tensor([[-0.6065,  0.8973],
+        [-0.9549,  0.0550],
+        [-0.8948,  0.1380],
+        [-0.5543,  0.9896],
+        [-0.0717, -0.9830]]))
 </pre></div>
 </div>
 </div>
 </div>
-<p>We can then use the PyTorch training code below, which is a standard way of training any differentiable function, including our LineGrid class. That is  because all the operations inside the LineGrid class are differentiable, so gradient descent will just work.</p>
-<p>Inside the training loop below, you’ll find the typical sequence of operations: zeroing gradients, performing a forward pass to get predictions, computing the loss, and doing a backward pass to update the model’s parameters. Try to understand the code, as this same training loop is at the core of most deep learning architectures. Now, let’s take a closer look at the code itself, which is extensively documented for clarity:</p>
+<p>We can then use the PyTorch training code below, which is a standard way of training any differentiable function, including our <code class="docutils literal notranslate"><span class="pre">LineGrid</span></code> class. That is  because all the operations inside the <code class="docutils literal notranslate"><span class="pre">LineGrid</span></code> class are differentiable, so gradient descent will just work.</p>
+<p>Inside the training loop below, you’ll find the typical sequence of operations: zeroing gradients, performing a forward pass to get predictions, computing the loss, and doing a backward pass to update the model’s parameters. Try to understand the code, as this same training loop is at the core of most deep learning architectures. Now, let’s take a closer look at the code itself, which is extensively documented for clarity, and listed in Figure <a class="reference internal" href="#train_gd"><span class="xref myst">2</span></a>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">train_gd</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">loss_fn</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">num_iterations</span><span class="o">=</span><span class="mi">301</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Code to train a model using gradient descent.</span>
+<span class="c1">#| label: code:train_gd</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">train_gd</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">loss_fn</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">num_iterations</span><span class="o">=</span><span class="mi">301</span><span class="p">):</span>
     <span class="c1"># Initialize optimizer</span>
     <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">learning_rate</span><span class="p">)</span>
     
@@ -641,40 +648,37 @@ dataset[10:15]: (tensor([ 7.0820, 19.7703, 12.2988, 15.2480, 18.1359]), tensor([
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/68c7673dd6a8f6ead43447494aca25788a87e69916ea8955344814c776c98026.png" src="_images/68c7673dd6a8f6ead43447494aca25788a87e69916ea8955344814c776c98026.png" />
+<img alt="_images/227fdaed5eac990372cbcb6aa015e84f5f7d0a2cb471f2ea3bef86e037c46790.png" src="_images/227fdaed5eac990372cbcb6aa015e84f5f7d0a2cb471f2ea3bef86e037c46790.png" />
 </div>
 </div>
-<p>Note that gradient descent converges rather slow. You could try experimenting with the learning rate to speed this up.</p>
-<p>After the training has converged, we can evaluate the resulting functions and plot the result against the training data, and we see that we get decent approximations of sin and cos, even with noisy training data:</p>
+<p>The resulting loss function is shown in Figure <a class="reference internal" href="#fig:loss_training"><span class="xref myst">2</span></a>.
+Note that gradient descent converges rather slowly.
+You could try experimenting with the learning rate to speed this up.</p>
+<p>After the training has converged, we can evaluate the resulting functions and plot the result against the training data,
+and Figure <a class="reference internal" href="#fig:sin_cos_approx"><span class="xref myst">3</span></a> that we get decent approximations of sin and cos, even with noisy training data.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x_sorted</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">x_samples</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Learned approximation of the sine and cosine functions. The model has learned to fit the data.</span>
+<span class="c1">#| label: fig:sin_cos_approx</span>
+<span class="n">x_sorted</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">x_samples</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
 <span class="n">y_pred</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x_sorted</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">plotly</span><span class="o">.</span><span class="n">graph_objects</span><span class="o">.</span><span class="n">Figure</span><span class="p">()</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">add_scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x_samples</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y_samples</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;markers&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;sin&#39;</span><span class="p">)</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">add_scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x_samples</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y_samples</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;markers&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;cos&#39;</span><span class="p">)</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">add_scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x_sorted</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y_pred</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;predicted sin&#39;</span><span class="p">)</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">add_scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x_sorted</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y_pred</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;predicted cos&#39;</span><span class="p">);</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Learned approximation of the sine and cosine functions. The model has learned to fit the data.</span>
-<span class="c1">#| label: fig:sin_cos_approx</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/53631393b13052ab8201d119c0792508909ef0d8335c15b19c3c52cc7c05e4b5.png" src="_images/53631393b13052ab8201d119c0792508909ef0d8335c15b19c3c52cc7c05e4b5.png" />
+<img alt="_images/d1ea2472ee872fdc7f364ae3104ecf14b2ff22c9ac953d29d5ed2284da5d1ef3.png" src="_images/d1ea2472ee872fdc7f364ae3104ecf14b2ff22c9ac953d29d5ed2284da5d1ef3.png" />
 </div>
 </div>
 </section>
 <section id="stochastic-gradient-descent">
-<span id="index-5"></span><h2><span class="section-number">5.6.5. </span>Stochastic Gradient Descent<a class="headerlink" href="#stochastic-gradient-descent" title="Link to this heading">#</a></h2>
-<p><strong>Stochastic gradient descent</strong> or <strong>SGD</strong> is an approximate gradient descent procedure, to cope with the very large data sets typically thrown at supervised problems. It is typically impossible to calculate the <em>exact</em> gradient, which requires looping over all the examples, which can run in the millions. An easy approximation scheme is to <em>randomly sample</em> a small subset of the examples, and calculate the gradient of the weights using only those examples. The upside is that this is much faster, but the downside is that this is only approximate. Hence, if we adjust weights with this approximate gradient, we might or might not make progress on the task. This procedure is called stochastic gradient descent, and it works amazingly well in practice.</p>
+<h2><span class="section-number">5.6.5. </span>Stochastic Gradient Descent<a class="headerlink" href="#stochastic-gradient-descent" title="Link to this heading">#</a></h2>
+<p id="index-7"><strong>Stochastic gradient descent</strong> or <strong>SGD</strong> is an approximate gradient descent procedure, to cope with the very large data sets typically thrown at supervised problems. It is typically impossible to calculate the <em>exact</em> gradient, which requires looping over all the examples, which can run in the millions. An easy approximation scheme is to <em>randomly sample</em> a small subset of the examples, and calculate the gradient of the weights using only those examples. The upside is that this is much faster, but the downside is that this is only approximate. Hence, if we adjust weights with this approximate gradient, we might or might not make progress on the task. This procedure is called stochastic gradient descent, and it works amazingly well in practice.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> class in PyTorch makes implementing SGD very easy: it can wrap any <code class="docutils literal notranslate"><span class="pre">Dataset</span></code> instance, and then retrieves training samples one “mini-batch” at a time. The code below uses a mini-batch size of 25, but feel free to experiment with different values for both this parameter and the learning rate to get a feel for what happens. Note that by convention we refer to one execution of the inner loop below, over a mini-batch, as an “iteration”. One full cycle through the dataset by randomly selecting mini-batches is referred to as an “epoch”.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -728,14 +732,23 @@ dataset[10:15]: (tensor([ 7.0820, 19.7703, 12.2988, 15.2480, 18.1359]), tensor([
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/ed26625416f0d31d285a62a01a73b386aa3dd550bf058c269efc5c04daea6589.png" src="_images/ed26625416f0d31d285a62a01a73b386aa3dd550bf058c269efc5c04daea6589.png" />
+<img alt="_images/bfff4cb7d4bf27dc7763da87c6a8e5599ad5be4cd2a04a27920b0fc3ff7fbdb2.png" src="_images/bfff4cb7d4bf27dc7763da87c6a8e5599ad5be4cd2a04a27920b0fc3ff7fbdb2.png" />
 </div>
 </div>
-<p>Note that we converged <em>much</em> faster in this case: in just 30 iterations we reached the same low loss as with 300 iterations before. The answer is because with 250 training samples and mini-batches of size 25, each epoch adjusts the model’s parameters 10 times. This effectively boosts the learning rate by a factor of 10. However, note that because each mini-batch looks at only one 10th of the dataset, each mini-batch’s adjustment could <em>adversely</em> affect the performance on the other training samples.</p>
-</section>
+<p>The training loss is shown in Figure <a class="reference internal" href="#fig:loss_training_sgd"><span class="xref myst">4</span></a>.
+Note that we converge <em>much</em> faster in this case: in just 30 iterations we reached the same low loss as with 300 iterations before. The answer is because with 250 training samples and mini-batches of size 25, each epoch adjusts the model’s parameters 10 times. This effectively boosts the learning rate by a factor of 10. However, note that because each mini-batch looks at only one 10th of the dataset, each mini-batch’s adjustment could <em>adversely</em> affect the performance on the other training samples.</p>
 <section id="validation-and-testing">
-<h2><span class="section-number">5.6.6. </span>Validation and Testing<a class="headerlink" href="#validation-and-testing" title="Link to this heading">#</a></h2>
+<h3><span class="section-number">5.6.5.1. </span>Validation and Testing<a class="headerlink" href="#validation-and-testing" title="Link to this heading">#</a></h3>
 <p>In practice, validation and test datasets are used to evaluate the performance of a model. The validation dataset is used to tune the hyperparameters of a model, while the test dataset is used to evaluate the performance of the model on unseen data.</p>
+</section>
+</section>
+<section id="transformer-architectures">
+<h2><span class="section-number">5.6.6. </span>Transformer Architectures<a class="headerlink" href="#transformer-architectures" title="Link to this heading">#</a></h2>
+<p id="index-9"><span id="index-8"></span>We would be remiss in not mentioning the increasing importance of <strong>transformer</strong> architectures in computer vision and robotics. A transformer network can be viewed as deep multi-layer neural network whose connections can be rewired during training, through a process called <strong>attention</strong>. This architecture has led to the breakthrough of <strong>large language models</strong> or <strong>LLMs</strong>, which take a large context of <em>tokens</em> and produce a <em>next-token probability distribution</em> , which is then sampled to output a response to an input prompt.</p>
+<p id="index-10">In computer vision, <strong>vision transformers</strong> or <strong>VITs</strong> use this same architecture, by <em>tokenizing</em> an image and provide it as part of the context. This allows LLM-style models to then answer questions about images, or perform traditional computer vision tasks such as object detection, image segmentation, and much more.</p>
+<p id="index-11">One step beyond VITs are <strong>vision-language-action</strong> models, specifically crafted for use in robots. They take not only visual input alongside language prompts, but also other signals such as joint angles (in case of articulated robotics), orientation sensors, etc… And, more importantly, they are trained to also output <em>actions</em> via specialized output heads, matched to the particular robot architecture that is targeted.</p>
+<p>A drawback of transformer-based methods is that they take a large aount of time and effort to train, and running the models on embedded computers is also a challenge. Hence, convolutional architectures remain competetive in robotics, especially when computational resources are constrained and/or there are constraints on communication that prevent calling a remote API. However, this is an intense area of study and the mix between fully connected, convolutional, and transformer architectures is sure to shift.</p>
+<p>While we do not discuss transformer architectures in detail here, some pointers into the literature are provided in section 5.7.</p>
 </section>
 </section>
 
@@ -811,8 +824,11 @@ dataset[10:15]: (tensor([ 7.0820, 19.7703, 12.2988, 15.2480, 18.1359]), tensor([
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#loss-functions">5.6.3. Loss Functions</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gradient-descent">5.6.4. Gradient Descent</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stochastic-gradient-descent">5.6.5. Stochastic Gradient Descent</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#validation-and-testing">5.6.6. Validation and Testing</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stochastic-gradient-descent">5.6.5. Stochastic Gradient Descent</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#validation-and-testing">5.6.5.1. Validation and Testing</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#transformer-architectures">5.6.6. Transformer Architectures</a></li>
 </ul>
   </nav></div>
 

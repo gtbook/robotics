@@ -202,9 +202,9 @@
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="S50_diffdrive_intro.html">5. A Mobile Robot With Simple Kinematics</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="S51_diffdrive_state.html">5.1. State Space for a Differential Drive Robot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S51_diffdrive_state.html">5.1. State Space for a differential-drive robot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S52_diffdrive_actions.html">5.2. Motion Model for the Differential Drive Robot</a></li>
-<li class="toctree-l2"><a class="reference internal" href="S53_diffdrive_sensing.html">5.3. Robot Vision</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S53_diffdrive_sensing.html">5.3. Cameras for Robot Vision</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S54_diffdrive_perception.html">5.4. Computer Vision 101</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">5.5. Path Planning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S56_diffdrive_learning.html">5.6. Deep Learning</a></li>
@@ -382,7 +382,7 @@
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#value-iteration">5.5.2. Value Iteration</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#artificial-potential-fields">5.5.3. Artificial Potential Fields</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#probabilistic-road-maps-prms">5.5.4. Probabilistic Road Maps (PRMs)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rrt">5.5.5. RRT</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rapidly-exploring-random-trees-rrts">5.5.5. Rapidly-Exploring Random Trees (RRTs)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-simple-rrt-implementation">5.5.6. A Simple RRT Implementation</a></li>
 </ul>
             </nav>
@@ -401,12 +401,13 @@
 <blockquote id="index-0">
 <div><p>Samples are useful for planning as well.</p>
 </div></blockquote>
-<a class="reference internal image-reference" href="_images/S55-Two-wheeled_Toy_Robot-05.jpg"><img alt="Splash image with steampunk differential drive robot" class="align-center" src="_images/S55-Two-wheeled_Toy_Robot-05.jpg" style="width: 40%;" /></a>
+<a class="reference internal image-reference" href="_images/S55-Two-wheeled_Toy_Robot-05.jpg"><img alt="Splash image with steampunk differential-drive robot" class="align-center" src="_images/S55-Two-wheeled_Toy_Robot-05.jpg" style="width: 40%;" /></a>
 <p id="index-1">Path planning is the problem of finding a collision-free path for
 the robot from its starting configuration to a goal configuration.
 This is one of the oldest fundamental problems in robotics.
 Ideally, a path planning algorithm would guarantee to find a collision-free path whenever such a path
-exists. Such algorithms are said to be <strong>complete</strong>.
+exists, and to terminate in finite time when no such path exists.
+Such algorithms are said to be <strong>complete</strong>.
 Unfortunately, it has been shown that the path planning problem is NP complete.
 Numerous hardness results have been obtained for different versions of the problem,
 but the sad fact is that planning collision-free paths is generally intractable
@@ -420,7 +421,7 @@ all of which operate in the configuration space, to illustrate
 the range of trade-offs that exist in this domain.</p>
 <section id="configuration-space-obstacles">
 <h2><span class="section-number">5.5.1. </span>Configuration Space Obstacles<a class="headerlink" href="#configuration-space-obstacles" title="Link to this heading">#</a></h2>
-<p>Although the robot moves physically in its workspace, the path planning problem is more easily addressed
+<p id="index-2">Although the robot moves physically in its workspace, the path planning problem is more easily addressed
 if we work directly in the robot’s configuration space.
 As in Section 5.2, we will denote a robot configuration by <span class="math notranslate nohighlight">\(q\)</span> and the configuration space of the robot by <span class="math notranslate nohighlight">\({\cal Q}\)</span>.
 In order to plan collision-free paths, it is useful to partition the configuration space into
@@ -430,13 +431,13 @@ which is sometimes referred to as the <em>configuration space obstacle region</e
 <p>Let <span class="math notranslate nohighlight">\(R(q)\)</span> denote the set of points in the workspace that are occupied by the robot when the robot is in configuration <span class="math notranslate nohighlight">\(q\)</span>,
 and let <span class="math notranslate nohighlight">\({\cal O}\)</span> denote the obstacle region in the workspace.
 We can define the set <span class="math notranslate nohighlight">\({\cal Q}_\mathrm{obst}\)</span> as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-cc4c1867-bd68-4bcc-9e65-d7e1c93f139d">
-<span class="eqno">(5.48)<a class="headerlink" href="#equation-cc4c1867-bd68-4bcc-9e65-d7e1c93f139d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-2cf10e00-c103-4a06-9e4f-d26135bcd7b8">
+<span class="eqno">(5.50)<a class="headerlink" href="#equation-2cf10e00-c103-4a06-9e4f-d26135bcd7b8" title="Permalink to this equation">#</a></span>\[\begin{equation}
 {\cal Q}_\mathrm{obst} = \{ q \in {\cal Q} \mid R(q) \cap {\cal O} = \emptyset \}
 \end{equation}\]</div>
 <p>The free configuration space is merely the complement of this set in <span class="math notranslate nohighlight">\(\cal Q\)</span>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-65ad26e8-c74d-419f-927b-f0f4ff832cda">
-<span class="eqno">(5.49)<a class="headerlink" href="#equation-65ad26e8-c74d-419f-927b-f0f4ff832cda" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-41cdbfa1-aabb-49bc-8e2f-d3715da7e67f">
+<span class="eqno">(5.51)<a class="headerlink" href="#equation-41cdbfa1-aabb-49bc-8e2f-d3715da7e67f" title="Permalink to this equation">#</a></span>\[\begin{equation}
 {\cal Q}_\mathrm{free} = {\cal Q} \backslash {\cal Q}_\mathrm{obst}
 \end{equation}\]</div>
 <p>We can now formally define a free path as a continuous map from the unit interval
@@ -450,7 +451,7 @@ dimension of the configuration space, so this approach is not taken for even mod
 </section>
 <section id="value-iteration">
 <h2><span class="section-number">5.5.2. </span>Value Iteration<a class="headerlink" href="#value-iteration" title="Link to this heading">#</a></h2>
-<p>In Chapter 4 we saw how the value function could be used to plan a path that led a robot with stochastic actions to a goal while avoiding obstacles.
+<p id="index-3">In Chapter 4 we saw how the value function could be used to plan a path that led a robot with stochastic actions to a goal while avoiding obstacles.
 We can apply this same method to the problem of planning collision-free paths in the configuration space.
 We merely place a large negative reward along the configuration space obstacle boundaries, and a large positive reward at the goal configuration.
 We can then use value iteration to compute an approximation to the value function over <span class="math notranslate nohighlight">\({\cal Q}_\mathrm{free}\)</span>,
@@ -475,17 +476,16 @@ precluding the use of this method to plan paths for more complex robots.</p>
 </section>
 <section id="artificial-potential-fields">
 <h2><span class="section-number">5.5.3. </span>Artificial Potential Fields<a class="headerlink" href="#artificial-potential-fields" title="Link to this heading">#</a></h2>
-<p>Instead of exhaustively applying value iteration to a 2D grid representation of the configuration space,
+<p id="index-4">Instead of exhaustively applying value iteration to a 2D grid representation of the configuration space,
 we could try to construct a function that can be expressed in closed-form, such that following
-the gradient of this function would lead to the goal configuration while avoiding any configuration
-space obstacles.
+the gradient of this function would lead to the goal configuration while avoiding any obstacles.
 Path planners that use artificial potential functions aim to do just this.</p>
 <p>The basic idea is simple: define a potential function on <span class="math notranslate nohighlight">\({\cal Q}_\mathrm{free}\)</span> with a single
 global minimum at <span class="math notranslate nohighlight">\(q_\mathrm{goal}\)</span>, and with arbitrarily high potential values on
 the boundary of <span class="math notranslate nohighlight">\({\cal Q}_\mathrm{obst}\)</span>.
 If this function were convex,
 since the potential increases arbitrarily at obstacle boundaries,
-gradient descent will achieve the goal of constructing a collision-free path to the goal.
+gradient descent would achieve the goal of constructing a collision-free path to the goal.
 Unfortunately, we can almost never construct such a function.
 Convexity is the problem; at the moment we introduce obstacles, it becomes very difficult to
 construct a convex potential function with the desired behavior.</p>
@@ -493,8 +493,8 @@ construct a convex potential function with the desired behavior.</p>
 (though it will likely be one of many minima for the function)
 that ensures collision-free paths.
 We can define such a potential function as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-83b8b4cd-a9cb-4327-847b-1e8620d53a44">
-<span class="eqno">(5.50)<a class="headerlink" href="#equation-83b8b4cd-a9cb-4327-847b-1e8620d53a44" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-a078ba40-86d1-4b8d-8cb6-65521b18f92f">
+<span class="eqno">(5.52)<a class="headerlink" href="#equation-a078ba40-86d1-4b8d-8cb6-65521b18f92f" title="Permalink to this equation">#</a></span>\[\begin{equation}
 U(q) = U_\mathrm{attr}(q) + U_\mathrm{rep}(q)
 \end{equation}\]</div>
 <p>in which <span class="math notranslate nohighlight">\(U_\mathrm{attr}\)</span> is the <em>attractive potential</em> with a single global minimum at <span class="math notranslate nohighlight">\(q_\mathrm{goal}\)</span>,
@@ -503,22 +503,22 @@ of <span class="math notranslate nohighlight">\({\cal Q}_\mathrm{obst}\)</span>.
 <p>There are many possible candidates for these two potentials, but the desired behavior
 can be captured by using a parabolic well for <span class="math notranslate nohighlight">\(U_\mathrm{attr}\)</span>, and defining <span class="math notranslate nohighlight">\(U_\mathrm{rep}\)</span>
 in terms of the inverse distance to the nearest obstacle:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-fac1aec4-61b8-4729-9dee-4aab77f1e327">
-<span class="eqno">(5.51)<a class="headerlink" href="#equation-fac1aec4-61b8-4729-9dee-4aab77f1e327" title="Permalink to this equation">#</a></span>\[\begin{equation}
-U_\mathrm{attr}(q) = \frac{1}{2} \| q -  q_\mathrm{goal} \|^2 ~~~~~~~~~~~~ U_\mathrm{rep}(q) = \frac{1}{d(q)}
+<div class="amsmath math notranslate nohighlight" id="equation-ee9a9db1-aac3-482a-8947-534913d4b2f4">
+<span class="eqno">(5.53)<a class="headerlink" href="#equation-ee9a9db1-aac3-482a-8947-534913d4b2f4" title="Permalink to this equation">#</a></span>\[\begin{equation}
+U_\mathrm{attr}(q) = \frac{1}{2} \| q -  q_\mathrm{goal} \|^2 \,\,\,\,\,\,\,\,\,\,\,\, U_\mathrm{rep}(q) = \frac{1}{d(q)}
 \end{equation}\]</div>
 <p>in which <span class="math notranslate nohighlight">\(d(q)\)</span> is defined as the minimum distance from configuration <span class="math notranslate nohighlight">\(q\)</span> to the boundary of
 <span class="math notranslate nohighlight">\({\cal Q}_\mathrm{obst}\)</span>.
 If we denote the boundary of the obstacle region by <span class="math notranslate nohighlight">\(\partial {\cal Q}_\mathrm{obst}\)</span>,
 we define <span class="math notranslate nohighlight">\(d(q)\)</span> by:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-2361d7d4-26b9-4475-8dfe-b928126300e9">
-<span class="eqno">(5.52)<a class="headerlink" href="#equation-2361d7d4-26b9-4475-8dfe-b928126300e9" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-f9985641-084a-4462-9ef5-462dd86ae645">
+<span class="eqno">(5.54)<a class="headerlink" href="#equation-f9985641-084a-4462-9ef5-462dd86ae645" title="Permalink to this equation">#</a></span>\[\begin{equation}
 d(q) = \min_{q' \in \partial {\cal Q}_\mathrm{obst} } \| q - q'\|^{\frac{1}{2}}
 \end{equation}\]</div>
 <p>Path planning can now be implemented using simple gradient descent.
 Let <span class="math notranslate nohighlight">\(q^0 = q_\mathrm{init}\)</span>, and iterate over <span class="math notranslate nohighlight">\(k\)</span> until <span class="math notranslate nohighlight">\(\| q^k - q_\mathrm{goal} \| &lt; \epsilon\)</span></p>
-<div class="amsmath math notranslate nohighlight" id="equation-cf862f34-6c19-4744-9f41-24b5139f9a86">
-<span class="eqno">(5.53)<a class="headerlink" href="#equation-cf862f34-6c19-4744-9f41-24b5139f9a86" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-24fca13a-0b98-4ea9-a30f-e3e29830d538">
+<span class="eqno">(5.55)<a class="headerlink" href="#equation-24fca13a-0b98-4ea9-a30f-e3e29830d538" title="Permalink to this equation">#</a></span>\[\begin{equation}
 q^{k+1} = q^k - \alpha_k \nabla U(q)
 \end{equation}\]</div>
 <p>Here, <span class="math notranslate nohighlight">\(\alpha_k\)</span> is a constant that determines the step size for each iteration.
@@ -531,7 +531,7 @@ for any local minimum in the field).</p>
 <p>Note that the basic idea behind potential field planning is similar to the basic idea behind
 using the value function to construct a path:
 Create a function whose optimal value is at the goal
-(this is a maximum of the value function, but a minimum of the potential fiels),
+(this is a maximum of the value function, but a minimum of the potential fields),
 and assign high cost (or, in the case of the value function, negative reward)
 along the boundary of <span class="math notranslate nohighlight">\({\cal Q}_\mathrm{obst}\)</span>.
 Then use gradient descent to find the path to the goal.
@@ -545,10 +545,10 @@ descent is guaranteed to find it, unlike potential fields that are apt to contai
 </section>
 <section id="probabilistic-road-maps-prms">
 <h2><span class="section-number">5.5.4. </span>Probabilistic Road Maps (PRMs)<a class="headerlink" href="#probabilistic-road-maps-prms" title="Link to this heading">#</a></h2>
-<p>As discussed above, the value function is guaranteed to find a path because it essentially explores the entire configuration space (applying dynamic programming outward from the goal configuration), while potential field planning is efficient because it focuses computation on the search for an individual path.
+<p id="index-5">As discussed above, the value function is guaranteed to find a path because it essentially explores the entire configuration space (applying dynamic programming outward from the goal configuration), while potential field planning is efficient because it focuses computation on the search for an individual path.
 A compromise approach would be to build a global representation, but to encode only a small number of
 paths in that representation.
-Probabilistic Road Maps (PRMs) do just this.</p>
+<strong>Probabilistic Road Maps</strong> (<strong>PRMs</strong>) do just this.</p>
 <p>A PRM is a graph <span class="math notranslate nohighlight">\(G=(V,E)\)</span> that is embedded in the configuration space.
 Vertices correspond to configurations, and edges correspond to free paths.
 A PRM is constructed by randomly sampling the configuration space to generate
@@ -566,7 +566,7 @@ First, generate vertices <span class="math notranslate nohighlight">\(v_\mathrm{
 corresponding to configurations <span class="math notranslate nohighlight">\(q_\mathrm{init}\)</span> and <span class="math notranslate nohighlight">\(q_\mathrm{goal}\)</span>, and connect these
 to the existing graph.
 Second, search the graph for a path from <span class="math notranslate nohighlight">\(v_\mathrm{init}\)</span> to <span class="math notranslate nohighlight">\(v_\mathrm{goal}\)</span> in <span class="math notranslate nohighlight">\(G\)</span>.</p>
-<p id="index-2">It should be clear that such a method has no hope to yield a complete algorithm.
+<p id="index-6">It should be clear that such a method has no hope to yield a complete algorithm.
 The mere fact that every node in the graph is the result of random sampling is enough
 to preclude any proof that this approach will guarantee to find a path when a path exists.
 There is, however, another useful completeness concept that applies in this case.
@@ -574,20 +574,20 @@ Suppose a free path exists.
 Let <span class="math notranslate nohighlight">\(p_f(n)\)</span> denote the probability that the algorithm fails to find a path
 after adding <span class="math notranslate nohighlight">\(n\)</span> random vertices to the graph.
 A path planning algorithm is said to be <strong>probabilistically complete</strong> if</p>
-<div class="amsmath math notranslate nohighlight" id="equation-ce753cf4-3cdd-4d30-90dc-085348abb477">
-<span class="eqno">(5.54)<a class="headerlink" href="#equation-ce753cf4-3cdd-4d30-90dc-085348abb477" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-af53c28f-d397-4249-ac26-876ffb16dd30">
+<span class="eqno">(5.56)<a class="headerlink" href="#equation-af53c28f-d397-4249-ac26-876ffb16dd30" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \lim_{n\rightarrow \infty} p_f(n) = 0
 \end{equation}\]</div>
 <p>Not only are PRM methods probabilistically complete, but in addition
 they have the property that <span class="math notranslate nohighlight">\(p_f(n)\)</span> decreases to zero exponentially as <span class="math notranslate nohighlight">\(n\)</span> increases.
 This is a powerful result, even if it fails to provide a deterministic guarantee of completeness.</p>
 </section>
-<section id="rrt">
-<h2><span class="section-number">5.5.5. </span>RRT<a class="headerlink" href="#rrt" title="Link to this heading">#</a></h2>
-<p>An alternative to building a single, global PRM is to grow a random tree from the initial
+<section id="rapidly-exploring-random-trees-rrts">
+<h2><span class="section-number">5.5.5. </span>Rapidly-Exploring Random Trees (RRTs)<a class="headerlink" href="#rapidly-exploring-random-trees-rrts" title="Link to this heading">#</a></h2>
+<p id="index-7">An alternative to building a single, global PRM is to grow a random tree from the initial
 configuration <span class="math notranslate nohighlight">\(q_\mathrm{init}\)</span> until one of the leaf nodes in the tree can be connected
 to <span class="math notranslate nohighlight">\(q_\mathrm{goal}\)</span>.
-This is the approach taken with Rapidly-Exploring Random Trees (RRTs).</p>
+This is the approach taken with <strong>Rapidly-Exploring Random Trees</strong> (<strong>RRTs</strong>).</p>
 <p>An RRT is constructed by iteratively adding randomly generated nodes to an existing
 tree.
 Let <span class="math notranslate nohighlight">\(T_k\)</span> denote the tree that exists at the <span class="math notranslate nohighlight">\(k^{th}\)</span> iteration.
@@ -613,7 +613,7 @@ in <span class="math notranslate nohighlight">\(T_k\)</span> will converge to a 
 <h2><span class="section-number">5.5.6. </span>A Simple RRT Implementation<a class="headerlink" href="#a-simple-rrt-implementation" title="Link to this heading">#</a></h2>
 <p>RRTs have become increasingly popular in the robot motion planning community, for reasons that will become more apparent when we revisit RRT-style planning for aerial drones in Chapter 7.
 For now, we will use a very simple implementation of RRTs to construct motion plans for our DDR.
-Because the DDR can turn in place, we have will build an RRT for the <em>position</em> of the DDR.</p>
+Because the DDR can turn in place, we will build an RRT for the <em>position</em> of the DDR.</p>
 <p>First, we need to be able to generate new nodes and calculate the distance between them:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -621,11 +621,9 @@ Because the DDR can turn in place, we have will build an RRT for the <em>positio
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a random node in a square around the origin.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,))</span>
 
-
 <span class="k">def</span><span class="w"> </span><span class="nf">distance</span><span class="p">(</span><span class="n">p1</span><span class="p">:</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Point2</span><span class="p">,</span> <span class="n">p2</span><span class="p">:</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Point2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">  </span><span class="sd">&quot;&quot;&quot;Calculate the distance between 2 nodes.&quot;&quot;&quot;</span>
   <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">p2</span> <span class="o">-</span> <span class="n">p1</span><span class="p">)</span>
-
 
 <span class="k">def</span><span class="w"> </span><span class="nf">find_nearest_node</span><span class="p">(</span><span class="n">rrt</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">gtsam</span><span class="o">.</span><span class="n">Point2</span><span class="p">],</span> <span class="n">node</span><span class="p">:</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Point2</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Find nearest point in RRT to given node (linear time).&quot;&quot;&quot;</span>
@@ -686,10 +684,13 @@ Found motion.
 </div>
 </div>
 </div>
+<p>In Figure <a class="reference internal" href="#fig:rrt_example"><span class="xref myst">1</span></a> we use plotly to visualize the RRT.
+You can see that the RRT increasingly “fills” the entire area of interest.
+The algorithm terminates when it finds a leaf vertex that is near the goal.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Use plotly to visualize RRT</span>
-
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Rapidly Exploring Random Tree (RRT) from start to goal. The green points are the start and goal.</span>
+<span class="c1">#| label: fig:rrt_example</span>
 <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">group</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">node</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rrt</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
   <span class="c1"># create line from parent to next node</span>
@@ -709,24 +710,14 @@ Found motion.
 <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">update_xaxes</span><span class="p">(</span><span class="nb">range</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span> <span class="n">autorange</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">scaleratio</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">update_yaxes</span><span class="p">(</span><span class="nb">range</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span> <span class="n">autorange</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">scaleratio</span> <span class="o">=</span> <span class="mi">1</span><span class="p">);</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Rapidly Exploring Random Tree (RRT) from start to goal. The green points are the start and goal.</span>
-<span class="c1">#| label: fig:rrt_example</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/2810c7764c890045f42f75cedc9ad9b5b1e1948cfebd6abbfb23d2ef6d3c6a1e.png" src="_images/2810c7764c890045f42f75cedc9ad9b5b1e1948cfebd6abbfb23d2ef6d3c6a1e.png" />
+<img alt="_images/14c9dbf238294e21e7335e50771d29b842d2360295d6d771f785bb0ffc09e44e.png" src="_images/14c9dbf238294e21e7335e50771d29b842d2360295d6d771f785bb0ffc09e44e.png" />
 </div>
 </div>
-<p>You can see that the RRT increasingly “fills” the entire area of interest.
-The algorithm terminates when it finds a leaf vertex that is near the goal.</p>
 </section>
 </section>
 
@@ -799,7 +790,7 @@ The algorithm terminates when it finds a leaf vertex that is near the goal.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#value-iteration">5.5.2. Value Iteration</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#artificial-potential-fields">5.5.3. Artificial Potential Fields</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#probabilistic-road-maps-prms">5.5.4. Probabilistic Road Maps (PRMs)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rrt">5.5.5. RRT</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rapidly-exploring-random-trees-rrts">5.5.5. Rapidly-Exploring Random Trees (RRTs)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-simple-rrt-implementation">5.5.6. A Simple RRT Implementation</a></li>
 </ul>
   </nav></div>

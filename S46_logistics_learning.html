@@ -202,9 +202,9 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="S50_diffdrive_intro.html">5. A Mobile Robot With Simple Kinematics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="S51_diffdrive_state.html">5.1. State Space for a Differential Drive Robot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S51_diffdrive_state.html">5.1. State Space for a differential-drive robot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S52_diffdrive_actions.html">5.2. Motion Model for the Differential Drive Robot</a></li>
-<li class="toctree-l2"><a class="reference internal" href="S53_diffdrive_sensing.html">5.3. Robot Vision</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S53_diffdrive_sensing.html">5.3. Cameras for Robot Vision</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S54_diffdrive_perception.html">5.4. Computer Vision 101</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S55_diffdrive_planning.html">5.5. Path Planning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S56_diffdrive_learning.html">5.6. Deep Learning</a></li>
@@ -412,19 +412,19 @@ However, in each case the motion model was the same: a conditional Gaussian wher
 <h2><span class="section-number">4.6.1. </span>Maximum Likelihood Parameter Estimation<a class="headerlink" href="#maximum-likelihood-parameter-estimation" title="Link to this heading">#</a></h2>
 <p id="index-1">Let us first consider a one dimensional system (i.e., <span class="math notranslate nohighlight">\(x_k \in \mathbb{R}\)</span> is a scalar),
 and a sensor model that is linear with additive Gaussian noise,</p>
-<div class="amsmath math notranslate nohighlight" id="equation-66093aea-6e2e-402e-a83d-519bb6e84ecd">
-<span class="eqno">(4.51)<a class="headerlink" href="#equation-66093aea-6e2e-402e-a83d-519bb6e84ecd" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-3e0afd2b-4fdc-4627-94b2-5e13ed11976f">
+<span class="eqno">(4.51)<a class="headerlink" href="#equation-3e0afd2b-4fdc-4627-94b2-5e13ed11976f" title="Permalink to this equation">#</a></span>\[\begin{equation}
 z_k = h(x_k) + n_k = C x_k + n_k,
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(C\)</span> is a <strong>system matrix</strong>, and <span class="math notranslate nohighlight">\(n_k\)</span> denotes zero-mean, Gaussian noise with covariance <span class="math notranslate nohighlight">\(R\)</span>.</p>
 <p>In the one dimensional case, both <span class="math notranslate nohighlight">\(C\)</span> and <span class="math notranslate nohighlight">\(R=\sigma^2\)</span> are scalars, and estimating them will be similar to the Gaussian parameter estimation from <a class="reference internal" href="S26_sorter_learning.html#sec-sorter-learning"><span class="std std-ref">Section 2.6</span></a>. Remember that there we estimated a sample mean <span class="math notranslate nohighlight">\(\hat{\mu}\)</span> from a set of <span class="math notranslate nohighlight">\(N\)</span> data points, by simply computing the average of the data values:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-e30a8016-1fce-47d3-b77f-559a955039a2">
-<span class="eqno">(4.52)<a class="headerlink" href="#equation-e30a8016-1fce-47d3-b77f-559a955039a2" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-1626c65a-ed81-46cb-9103-8985ef85ecb2">
+<span class="eqno">(4.52)<a class="headerlink" href="#equation-1626c65a-ed81-46cb-9103-8985ef85ecb2" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \hat{\mu} = \frac{1}{N} \sum_i z_i.
 \end{equation}\]</div>
 <p id="index-2">The underlying reason is that this minimizes the <em>negative log likelihood</em> (nll) of <span class="math notranslate nohighlight">\(\mu\)</span> given the data <span class="math notranslate nohighlight">\(X\)</span> by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-9369f3b6-fd83-4d35-a8e2-cfdf6ef030fd">
-<span class="eqno">(4.53)<a class="headerlink" href="#equation-9369f3b6-fd83-4d35-a8e2-cfdf6ef030fd" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-eb557b17-e303-4a4b-962f-85b8529c6f90">
+<span class="eqno">(4.53)<a class="headerlink" href="#equation-eb557b17-e303-4a4b-962f-85b8529c6f90" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \hat{\mu} = \arg \min_\mu \sum_i \text{nll}(\mu; z_i) = \arg \min_\mu \sum_i \frac{1}{2\sigma^2} (\mu - z_i)^2,
 \end{equation}\]</div>
 <p>hence this is a <em>maximum likelihood</em> (ML) estimator of <span class="math notranslate nohighlight">\(\mu\)</span>.</p>
@@ -432,23 +432,23 @@ z_k = h(x_k) + n_k = C x_k + n_k,
 Suppose we are given a set of ground truth values <span class="math notranslate nohighlight">\(\{x_k\}\)</span> for the state along with corresponding
 measurement values <span class="math notranslate nohighlight">\(\{z_k\}\)</span>.
 If we generalize the scheme from Chapter 2, the negative log likelihood of <span class="math notranslate nohighlight">\(C\)</span> given the data for our measurement model becomes</p>
-<div class="amsmath math notranslate nohighlight" id="equation-d17fc736-e989-4646-9c4f-cc021dc5f0da">
-<span class="eqno">(4.54)<a class="headerlink" href="#equation-d17fc736-e989-4646-9c4f-cc021dc5f0da" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-308800fb-a964-412c-b38c-cfd712da2742">
+<span class="eqno">(4.54)<a class="headerlink" href="#equation-308800fb-a964-412c-b38c-cfd712da2742" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \hat{C} = \arg \min_C \sum_k \text{nll}(C; x_k, z_k) = \arg \min_C \sum_k \frac{1}{2\sigma^2} (C x_k - z_k)^2.
 \end{equation}\]</div>
 <p>Taking the derivative with respect to <span class="math notranslate nohighlight">\(C\)</span> and setting to zero we have</p>
-<div class="amsmath math notranslate nohighlight" id="equation-87a62fe0-12c0-4996-b2d3-5b6cd3e94385">
-<span class="eqno">(4.55)<a class="headerlink" href="#equation-87a62fe0-12c0-4996-b2d3-5b6cd3e94385" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-1a5a4c18-3394-4891-9934-18dfff664f03">
+<span class="eqno">(4.55)<a class="headerlink" href="#equation-1a5a4c18-3394-4891-9934-18dfff664f03" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \sum_k x_k(\hat{C} x_k - z_k) = 0,
 \end{equation}\]</div>
 <p>yielding</p>
-<div class="amsmath math notranslate nohighlight" id="equation-918eea70-5191-437d-be6a-b0a414f473db">
-<span class="eqno">(4.56)<a class="headerlink" href="#equation-918eea70-5191-437d-be6a-b0a414f473db" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d302f362-fd0a-4d51-8f8c-b3112e8655a9">
+<span class="eqno">(4.56)<a class="headerlink" href="#equation-d302f362-fd0a-4d51-8f8c-b3112e8655a9" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \hat{C} = \frac{\sum_k x_k z_k}{\sum_k x_k^2}.
 \end{equation}\]</div>
 <p>Note that above the value of <span class="math notranslate nohighlight">\(\sigma\)</span> did not affect the value of the estimate <span class="math notranslate nohighlight">\(\hat C\)</span>. Once we have that estimate in hand, however, we can use it to estimate the variance <span class="math notranslate nohighlight">\(\sigma^2\)</span> by using</p>
-<div class="amsmath math notranslate nohighlight" id="equation-de7622ac-093d-4afb-8d90-e5721269b1c3">
-<span class="eqno">(4.57)<a class="headerlink" href="#equation-de7622ac-093d-4afb-8d90-e5721269b1c3" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-b1a15582-4bed-4cb5-89d6-6c5577c1526a">
+<span class="eqno">(4.57)<a class="headerlink" href="#equation-b1a15582-4bed-4cb5-89d6-6c5577c1526a" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \widehat{\sigma^2} = \frac{1}{N-1} \sum_k (\hat{C} x_k - z_k)^2.
 \end{equation} \]</div>
 </section>
@@ -471,7 +471,7 @@ In Figure <a class="reference internal" href="#fig:location_vs_measured_location
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/d039f6c2db3afac2163ddf5e90229fe5c7184b9e73b3f72e4047eff2ec544f4d.png" src="_images/d039f6c2db3afac2163ddf5e90229fe5c7184b9e73b3f72e4047eff2ec544f4d.png" />
+<img alt="_images/2daeb4ed60419b83d42f52f6b926fb170595c9f8f3ab6532a6fcbc5513a6af7b.png" src="_images/2daeb4ed60419b83d42f52f6b926fb170595c9f8f3ab6532a6fcbc5513a6af7b.png" />
 </div>
 </div>
 <p>It is pretty clear that the slope is 100. Can our math corroborate?</p>
@@ -483,7 +483,7 @@ In Figure <a class="reference internal" href="#fig:location_vs_measured_location
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>estimated C = 99.99227861214027 (cm/m)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>estimated C = 100.03246432265857 (cm/m)
 </pre></div>
 </div>
 </div>
@@ -498,7 +498,7 @@ That estimate <span class="math notranslate nohighlight">\(\hat C\)</span> is qu
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>estimated R=959.8498945127394 (cm^2), stddev=30.981444358078907 (cm)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>estimated R=867.993367942349 (cm^2), stddev=29.461727171745192 (cm)
 </pre></div>
 </div>
 </div>
@@ -518,42 +518,42 @@ We can use the code above to do so for <span class="math notranslate nohighlight
 <section id="multivariate-linear-regression">
 <h2><span class="section-number">4.6.4. </span>Multivariate Linear Regression<a class="headerlink" href="#multivariate-linear-regression" title="Link to this heading">#</a></h2>
 <p id="index-3">For more general measurement processes or motion models, we typically need heavier machinery. The scalar case above is an instance of <em>linear regression</em>, and it can be generalized to the multivariate case. Let us assume a multivariate linear measurement model</p>
-<div class="amsmath math notranslate nohighlight" id="equation-d99b499b-a992-49b5-ab75-703483966b27">
-<span class="eqno">(4.58)<a class="headerlink" href="#equation-d99b499b-a992-49b5-ab75-703483966b27" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-21cf913a-aca4-4da6-a415-5bfcb0817308">
+<span class="eqno">(4.58)<a class="headerlink" href="#equation-21cf913a-aca4-4da6-a415-5bfcb0817308" title="Permalink to this equation">#</a></span>\[\begin{equation}
 z_k = H x_k + n_k
 \end{equation}\]</div>
 <p>where now <span class="math notranslate nohighlight">\(z_k\in\mathbb{R}^m\)</span>, <span class="math notranslate nohighlight">\(x_k\in\mathbb{R}^n\)</span>, and <span class="math notranslate nohighlight">\(H\)</span> an <span class="math notranslate nohighlight">\(m \times n\)</span> matrix. Again, <span class="math notranslate nohighlight">\(n_k\)</span> is assumed zero mean Gaussian, with covariance matrix <span class="math notranslate nohighlight">\(R\)</span>.</p>
 <p id="index-4">The negative log likelihood of <span class="math notranslate nohighlight">\(H\)</span> given the data for our measurement model is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-3e48e7de-a5d9-4843-8783-5be7f553174d">
-<span class="eqno">(4.59)<a class="headerlink" href="#equation-3e48e7de-a5d9-4843-8783-5be7f553174d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-2b7a5874-b644-4495-814a-97f61c1a8046">
+<span class="eqno">(4.59)<a class="headerlink" href="#equation-2b7a5874-b644-4495-814a-97f61c1a8046" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \hat{H} = \arg \min_H \sum_k \text{nll}(H; x_k, z_k) = \arg \min_H \sum_k \frac{1}{2} (H x_k - z_k)^T R^{-1}(H x_k - z_k).
 \end{equation}\]</div>
 <p>Unfortunately, the estimation process for arbitrary <span class="math notranslate nohighlight">\(R\)</span> is out of scope for this text. But if we assume <em>isotropic</em> noise with covariance matrix <span class="math notranslate nohighlight">\(I \sigma^2\)</span>, then the optimization problem simplifies to</p>
-<div class="amsmath math notranslate nohighlight" id="equation-5e39173a-4831-456e-ac87-1389f6ca6b64">
-<span class="eqno">(4.60)<a class="headerlink" href="#equation-5e39173a-4831-456e-ac87-1389f6ca6b64" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-0b1b9c21-320b-47ba-b308-330044f2d6ab">
+<span class="eqno">(4.60)<a class="headerlink" href="#equation-0b1b9c21-320b-47ba-b308-330044f2d6ab" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \hat{H} = \arg \min_H \frac{1}{2\sigma^2} \sum_k \sum_i (H_i x_k - z_{ki})^2,
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(H_i\)</span> is the <span class="math notranslate nohighlight">\(i^th\)</span> row of <span class="math notranslate nohighlight">\(H\)</span>. Making use of the fact that the scalar <span class="math notranslate nohighlight">\(H_i x_k\)</span> can be re-written as <span class="math notranslate nohighlight">\(x_k^T H_i^T\)</span>, and then setting the derivative with respect to <span class="math notranslate nohighlight">\(H_i^T\)</span> to zero we have, for all <span class="math notranslate nohighlight">\(i\)</span>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-318f3bf3-d480-4012-87bc-ce815567bb6e">
-<span class="eqno">(4.61)<a class="headerlink" href="#equation-318f3bf3-d480-4012-87bc-ce815567bb6e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-e06532a3-ad71-41bc-b79c-3734bc8ba68e">
+<span class="eqno">(4.61)<a class="headerlink" href="#equation-e06532a3-ad71-41bc-b79c-3734bc8ba68e" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \sum_k x_k (x_k^T \hat{H}_i^T - z_{ki}) = 0,
 \end{equation}\]</div>
 <p>yielding the following expression for the <span class="math notranslate nohighlight">\(i^{th}\)</span> row of <span class="math notranslate nohighlight">\(H\)</span>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-796b19ec-de2e-4b15-87c2-5b69e24b137f">
-<span class="eqno">(4.62)<a class="headerlink" href="#equation-796b19ec-de2e-4b15-87c2-5b69e24b137f" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-a3f6e148-5ae5-41c2-908e-4b95d934e5ee">
+<span class="eqno">(4.62)<a class="headerlink" href="#equation-a3f6e148-5ae5-41c2-908e-4b95d934e5ee" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \hat{H}_i^T = (\sum_k x_k x_k^T)^{-1} \sum_k x_k z_{ki}.
 \end{equation}\]</div>
 <p>Note the resemblance with the scalar case, but be mindful that the quantity in parentheses is an <span class="math notranslate nohighlight">\(n\times n\)</span> matrix whose inverse will exist only if its rank is equal to the dimensionality of the system, <span class="math notranslate nohighlight">\(n\)</span>.
 This rank condition is farily easy to satisfy, and is essentially a requirement that the data set
 be sufficiently rich.
 It is interesting to note that the <span class="math notranslate nohighlight">\(i^{th}\)</span> row of <span class="math notranslate nohighlight">\(\hat{H}\)</span> is formed as sum of the input vectors <span class="math notranslate nohighlight">\(x_k\)</span>, weighted by the <span class="math notranslate nohighlight">\(i^{th}\)</span> element of the measurement. Finally, we can collect the above for all <span class="math notranslate nohighlight">\(i\)</span> and write:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-839cec7c-caca-4562-a516-12a10f8b1d96">
-<span class="eqno">(4.63)<a class="headerlink" href="#equation-839cec7c-caca-4562-a516-12a10f8b1d96" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-26e7e017-4bc5-44c9-b4f8-13b3638b41a3">
+<span class="eqno">(4.63)<a class="headerlink" href="#equation-26e7e017-4bc5-44c9-b4f8-13b3638b41a3" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \hat{H}^T = (\sum_k x_k x_k^T)^{-1} \sum_k x_k z_k^T.
 \end{equation}\]</div>
 <p>After this, we can again recover the variance <span class="math notranslate nohighlight">\(\sigma^2\)</span> by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-97975b8a-87d9-4a5b-83b5-9910b2fb132f">
-<span class="eqno">(4.64)<a class="headerlink" href="#equation-97975b8a-87d9-4a5b-83b5-9910b2fb132f" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-09f7b7ad-ceb3-45b4-8355-52f951bbd771">
+<span class="eqno">(4.64)<a class="headerlink" href="#equation-09f7b7ad-ceb3-45b4-8355-52f951bbd771" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \widehat{\sigma^2} = \frac{1}{(m N-m n)} \sum_k \sum_i |\hat{H}_i x_k - z_{ki}|^2.
 \end{equation}\]</div>
 <p>in which <span class="math notranslate nohighlight">\(N\)</span> is the number of data points.
@@ -584,9 +584,9 @@ Above we would divide by <span class="math notranslate nohighlight">\(m N\)</spa
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>H_optimal=
-[[ 9.99 20.01]
- [29.95 40.14]
- [50.04 59.92]]
+[[10.06 19.95]
+ [30.08 39.86]
+ [50.02 59.95]]
 </pre></div>
 </div>
 </div>
@@ -599,7 +599,7 @@ Above we would divide by <span class="math notranslate nohighlight">\(m N\)</spa
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>28.480727387145915
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>30.823737017067234
 </pre></div>
 </div>
 </div>
@@ -611,13 +611,13 @@ Above we would divide by <span class="math notranslate nohighlight">\(m N\)</spa
 <div><p>Linear regression can be used to estimate all of the parameters of a general linear motion model.</p>
 </div></blockquote>
 <p>Assuming we have a dataset of triplets <span class="math notranslate nohighlight">\(x_k, u_k, x_{k+1}\)</span>, i.e., the current state <span class="math notranslate nohighlight">\(x_k\in\mathbb{R}^n\)</span>, the control <span class="math notranslate nohighlight">\(u_k\in\mathbb{R}^p\)</span>, and the next state <span class="math notranslate nohighlight">\(x_{k+1}\in\mathbb{R}^n\)</span>. Note the similarities with the reinforcement learning setup in Section 3.6! If we assume a <em>linear process model</em> then we should have:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c7b91887-0eae-49df-8940-60da81b75174">
-<span class="eqno">(4.65)<a class="headerlink" href="#equation-c7b91887-0eae-49df-8940-60da81b75174" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-b3d2076d-ed5d-4c00-9f12-c09404b4d80f">
+<span class="eqno">(4.65)<a class="headerlink" href="#equation-b3d2076d-ed5d-4c00-9f12-c09404b4d80f" title="Permalink to this equation">#</a></span>\[\begin{equation}
 x_{k+1} = A x_k + B u_k + w_k
 \end{equation}\]</div>
 <p>where typically the covariance on the <em>process noise</em> <span class="math notranslate nohighlight">\(w_k\)</span> is denoted as <span class="math notranslate nohighlight">\(Q\)</span>. We only have to note that we can write this in the form needed by the multivariate ML estimator, as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-5b10fa92-0c21-4f15-a86b-043083d8083b">
-<span class="eqno">(4.66)<a class="headerlink" href="#equation-5b10fa92-0c21-4f15-a86b-043083d8083b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-7dfce864-e631-49d8-84d9-32c07a083940">
+<span class="eqno">(4.66)<a class="headerlink" href="#equation-7dfce864-e631-49d8-84d9-32c07a083940" title="Permalink to this equation">#</a></span>\[\begin{equation}
 x_{k+1} = \begin{bmatrix} A &amp; B \end{bmatrix} \begin{bmatrix} x_k \\ u_k \end{bmatrix} + w_k
 \end{equation}\]</div>
 <p>Again, we generate some random states, controls, and next states:</p>
@@ -660,11 +660,11 @@ x_{k+1} = \begin{bmatrix} A &amp; B \end{bmatrix} \begin{bmatrix} x_k \\ u_k \en
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>A_optimal=
-[[ 1. -0.]
- [-0.  1.]]
+[[ 1.    0.01]
+ [-0.    1.  ]]
 B_optimal=
-[[0.99 0.01]
- [0.01 0.99]]
+[[0.97 0.02]
+ [0.02 1.02]]
 </pre></div>
 </div>
 </div>
@@ -677,7 +677,7 @@ B_optimal=
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2.0366893785660998
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1.952075957883004
 </pre></div>
 </div>
 </div>

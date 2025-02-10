@@ -67,8 +67,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="5.3. Robot Vision" href="S53_diffdrive_sensing.html" />
-    <link rel="prev" title="5.1. State Space for a Differential Drive Robot" href="S51_diffdrive_state.html" />
+    <link rel="next" title="5.3. Cameras for Robot Vision" href="S53_diffdrive_sensing.html" />
+    <link rel="prev" title="5.1. State Space for a differential-drive robot" href="S51_diffdrive_state.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -202,9 +202,9 @@
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="S50_diffdrive_intro.html">5. A Mobile Robot With Simple Kinematics</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="S51_diffdrive_state.html">5.1. State Space for a Differential Drive Robot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S51_diffdrive_state.html">5.1. State Space for a differential-drive robot</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">5.2. Motion Model for the Differential Drive Robot</a></li>
-<li class="toctree-l2"><a class="reference internal" href="S53_diffdrive_sensing.html">5.3. Robot Vision</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S53_diffdrive_sensing.html">5.3. Cameras for Robot Vision</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S54_diffdrive_perception.html">5.4. Computer Vision 101</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S55_diffdrive_planning.html">5.5. Path Planning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S56_diffdrive_learning.html">5.6. Deep Learning</a></li>
@@ -397,121 +397,128 @@
 <blockquote id="index-0">
 <div><p>By rotating the two wheels independently, we can control both the linear and angular velocity of the DDR.</p>
 </div></blockquote>
-<a class="reference internal image-reference" href="_images/S52-Two-wheeled_Toy_Robot-00.jpg"><img alt="Splash image with steampunk differential drive robot" class="align-center" src="_images/S52-Two-wheeled_Toy_Robot-00.jpg" style="width: 40%;" /></a>
+<a class="reference internal image-reference" href="_images/S52-Two-wheeled_Toy_Robot-00.jpg"><img alt="Splash image with steampunk differential-drive robot" class="align-center" src="_images/S52-Two-wheeled_Toy_Robot-00.jpg" style="width: 40%;" /></a>
 <p>The motion model for the logistics robot of the previous chapter was fairly simple;
 we assumed that the robot moved with constant linear velocity <span class="math notranslate nohighlight">\(v\)</span> for a time interval <span class="math notranslate nohighlight">\(\Delta T\)</span>,
 and therefore we expressed the motion model as <span class="math notranslate nohighlight">\(x_{k+1} = x_k + v \Delta T\)</span>.
 Further, by assigning the robot’s body-attached frame to be parallel to the world frame,
 we were able to simply ignore the body-attached frame, and reason directly in the world frame without difficulty.
 Things are more complex for our DDR, due to the role of orientation.</p>
+<figure id="fig:DDR-velocity">
+<img src="https://github.com/gtbook/robotics/blob/main/Figures5/DDR-velocity.png?raw=1" style="width:9cm" alt="">
+<figcaption>The linear velocity is always in the steering direction.</figcaption>
+</figure>
 <p>When describing the motion of our DDR, the orientation of the robot enters in two ways.
 First, because the robot wheels roll without slipping,
 the linear velocity of the robot is always instantaneously in the steering direction.
 Second, because the robot can rotate, we must take account of its angular velocity, in addition to the linear velocity.
-This is illustrated in the figure below.
+This is illustrated in Figure <a class="reference internal" href="#fig:DDR-velocity"><span class="xref myst">1</span></a>.
 Suppose the robot is following a path <span class="math notranslate nohighlight">\(\gamma(s)\)</span> (where <span class="math notranslate nohighlight">\(s\)</span> parameterizes the path).
 The instantaneous linear velocity expressed with respect to the body frame is given by:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-910d0a33-b363-4a9c-abd9-e97902f4eb45">
-<span class="eqno">(5.3)<a class="headerlink" href="#equation-910d0a33-b363-4a9c-abd9-e97902f4eb45" title="Permalink to this equation">#</a></span>\[\begin{equation}
-v^{\mathrm{body,linear}}
+<div class="amsmath math notranslate nohighlight" id="equation-c8a28e4d-2d44-4a67-9d74-7dd70631ff46">
+<span class="eqno">(5.3)<a class="headerlink" href="#equation-c8a28e4d-2d44-4a67-9d74-7dd70631ff46" title="Permalink to this equation">#</a></span>\[\begin{equation}
+v^{\mathrm{body,linear}}=
 \begin{bmatrix} v_x \\ 0 \end{bmatrix}
 \end{equation}\]</div>
 <p>Note that the velocity is tangent to the curve <span class="math notranslate nohighlight">\(\gamma\)</span> at <span class="math notranslate nohighlight">\(s\)</span>, and that in the body-attached frame the y-component of the velocity
 is zero (i.e., in the body-attached frame, <span class="math notranslate nohighlight">\(v_y = 0\)</span>).
 The steering direction is determined by the angle <span class="math notranslate nohighlight">\(\theta\)</span> as <span class="math notranslate nohighlight">\([\cos \theta, \sin \theta]^T\)</span>,
 so that the linear velocity with respect to the world frame is given by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-1c7355f9-e781-4e3d-92fd-5a6c244708f2">
-<span class="eqno">(5.4)<a class="headerlink" href="#equation-1c7355f9-e781-4e3d-92fd-5a6c244708f2" title="Permalink to this equation">#</a></span>\[\begin{equation}
-v^{\mathrm{world,linear}}
+<div class="amsmath math notranslate nohighlight" id="equation-bd9c4169-6561-484d-8e28-e018826713f2">
+<span class="eqno">(5.4)<a class="headerlink" href="#equation-bd9c4169-6561-484d-8e28-e018826713f2" title="Permalink to this equation">#</a></span>\[\begin{equation}
+v^{\mathrm{world,linear}}=
 \begin{bmatrix} v_x \cos \theta \\ v_x \sin \theta \end{bmatrix}
 \end{equation}\]</div>
 <p>Because our robot moves in the plane, the z-axis of the body-attached frame is always parallel to the z-axis of the world frame.
 This greatly simplifies the description of angular velocity, which in this case we may define as <span class="math notranslate nohighlight">\(\omega = \dot{\theta}\)</span>,
 the instantaneous rate of change of the robot’s orientation.</p>
-<p>It is common to combine the angular and linear velocity into a single vector,</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c59d5369-aff9-4b94-8822-59389973fb4a">
-<span class="eqno">(5.5)<a class="headerlink" href="#equation-c59d5369-aff9-4b94-8822-59389973fb4a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<p>It is common to combine the angular and linear velocity into a single vector, either in the body frame,</p>
+<div class="amsmath math notranslate nohighlight" id="equation-6823c7d8-e191-475d-90dc-d14d6e14be07">
+<span class="eqno">(5.5)<a class="headerlink" href="#equation-6823c7d8-e191-475d-90dc-d14d6e14be07" title="Permalink to this equation">#</a></span>\[\begin{equation}
 v^{\mathrm{body}}=
-\begin{bmatrix} v_x   \\ 0 \\ \dot{\theta} \end{bmatrix}
-~~~~~~~
-v^{\mathrm{world}}=
-\begin{bmatrix} v_x \cos \theta \\ v_x \sin \theta \\ \dot{\theta} \end{bmatrix}
+\begin{bmatrix}
+v_x \\ 0 \\ \dot{\theta} 
+\end{bmatrix},
 \end{equation}\]</div>
-<figure id="fig:DDR-velocity">
-<img src="https://github.com/gtbook/robotics/blob/main/Figures5/DDR-velocity.png?raw=1" style="width:9cm" alt="">
-<figcaption>The linear velocity is always in the steering direction.</figcaption>
-</figure><section id="the-relationship-between-wheel-rotation-and-robot-velocity">
+<p>or in the world frame:</p>
+<div class="amsmath math notranslate nohighlight" id="equation-c6cf7fa4-cefd-478d-87d7-86c8174cfb9a">
+<span class="eqno">(5.6)<a class="headerlink" href="#equation-c6cf7fa4-cefd-478d-87d7-86c8174cfb9a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+v^{\mathrm{world}}=
+\begin{bmatrix}
+v_x \cos \theta \\ v_x \sin \theta \\ \dot{\theta}
+\end{bmatrix}.
+\end{equation}\]</div>
+<section id="the-relationship-between-wheel-rotation-and-robot-velocity">
 <h2><span class="section-number">5.2.1. </span>The Relationship Between Wheel Rotation and Robot Velocity<a class="headerlink" href="#the-relationship-between-wheel-rotation-and-robot-velocity" title="Link to this heading">#</a></h2>
 <p>Because the wheels of the DDR are independently actuated, it is possible to achieve a large range of robot velocities.
 We can derive the relationship between wheel rotation and robot velocity by considering first the motion of a single
 wheel, and then considering the effect of coupling the two wheels along a single axis of rotation.</p>
-<p>The figure below shows a side-view of the right wheel.
+<figure id="fig:DDR-one-wheel">
+<img src="https://github.com/gtbook/robotics/blob/main/Figures5/DDR-one-wheel.png?raw=1" style="width:9cm" alt="">
+<figcaption>The linear velocity is always in the steering direction.</figcaption>
+</figure><p>Figure <a class="reference internal" href="#fig:DDR-one-wheel"><span class="xref myst">2</span></a> shows a side-view of the right wheel.
 We denote by <span class="math notranslate nohighlight">\(\phi_R\)</span> the instantaneous orientation of the right wheel with respect to the world z-axis (Note
 that we measure the angle <span class="math notranslate nohighlight">\(\phi_R\)</span> by attaching a distinguished point to the wheel, so that we can uniquely identify
 its orientation. In the figure, a red star is used to denote this point.)
 As we have seen in the previous chapter when modeling the forward motion of an omni-wheel,
 the relationship between the forward linear speed of the wheel and the rotation speed is
 given by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-68cf2d73-b729-4c81-a894-17d18aecd83f">
-<span class="eqno">(5.6)<a class="headerlink" href="#equation-68cf2d73-b729-4c81-a894-17d18aecd83f" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-0973baa7-7917-4b9e-957a-a1732c48a33d">
+<span class="eqno">(5.7)<a class="headerlink" href="#equation-0973baa7-7917-4b9e-957a-a1732c48a33d" title="Permalink to this equation">#</a></span>\[\begin{equation}
 v_\mathrm{right} = r \dot{\phi}_R
 \end{equation}\]</div>
 <p>The same reasoning can be applied to the left wheel  to obtain</p>
-<div class="amsmath math notranslate nohighlight" id="equation-59aad2f7-97d6-4918-9832-c2507129e7e7">
-<span class="eqno">(5.7)<a class="headerlink" href="#equation-59aad2f7-97d6-4918-9832-c2507129e7e7" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-4c3efdf7-7433-472b-a59b-85f561949186">
+<span class="eqno">(5.8)<a class="headerlink" href="#equation-4c3efdf7-7433-472b-a59b-85f561949186" title="Permalink to this equation">#</a></span>\[\begin{equation}
 v_\mathrm{left} = r \dot{\phi}_L
 \end{equation}\]</div>
-<figure id="fig:DDR-one-wheel">
-<img src="https://github.com/gtbook/robotics/blob/main/Figures5/DDR-one-wheel.png?raw=1" style="width:9cm" alt="">
-<figcaption>The linear velocity is always in the steering direction.</figcaption>
+<figure id="fig:DDR-pure-translation">
+<img src="https://github.com/gtbook/robotics/blob/main/Figures5/DDR-pure-translation.png?raw=1" style="width:9cm" alt="">
+<figcaption>When the wheels spin in the same direction with the same speed, the robot moves with pure translation.</figcaption>
 </figure>
-<p>Suppose now that both wheels spin at the same speed, <span class="math notranslate nohighlight">\(\dot{\phi}_R = \dot{\phi}_L\)</span>.
+<p>Suppose now that both wheels spin at the same speed, <span class="math notranslate nohighlight">\(\dot{\phi}_R = \dot{\phi}_L\)</span>, as in Figure <a class="reference internal" href="#fig:DDR-pure-translation"><span class="xref myst">3</span></a>.
 In this case, the forward speed of the wheels will also be equal, <span class="math notranslate nohighlight">\(v_\mathrm{left} = v_\mathrm{right}\)</span>,
 and the robot will move in purely translational motion (i.e., <span class="math notranslate nohighlight">\(\omega = 0\)</span>), with
 <span class="math notranslate nohighlight">\(v_x = v_\mathrm{left} = v_\mathrm{right}\)</span>, since all points on the robot move with exactly the
 same velocity for pure translational motion.
 Using the results above, we obtain</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c7d799e7-7e8a-45b8-97a3-40feee31fcf4">
-<span class="eqno">(5.8)<a class="headerlink" href="#equation-c7d799e7-7e8a-45b8-97a3-40feee31fcf4" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-8c646843-091b-4fe0-8521-ab39cfb72605">
+<span class="eqno">(5.9)<a class="headerlink" href="#equation-8c646843-091b-4fe0-8521-ab39cfb72605" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \dot{\phi}_L = \dot{\phi}_R = \frac{v_x}{r}
-\end{equation}\]</div>
-<figure id="fig:DDR-pure-translation">
-<img src="https://github.com/gtbook/robotics/blob/main/Figures5/DDR-pure-translation.png?raw=1" style="width:9cm" alt="">
-<figcaption>When the wheels spin in the same direction with the same speed, the robot moves with pure translation.</figcaption>
-</figure><p>Suppose instead that the two wheels spin in opposite directions,
-so that <span class="math notranslate nohighlight">\(\dot{\phi}_R = -\dot{\phi}_L\)</span>.
-In this case, <span class="math notranslate nohighlight">\(v_\mathrm{left} = -r\dot{\phi}_L \)</span> and <span class="math notranslate nohighlight">\(v_\mathrm{right} = r\dot{\phi}_R\)</span>.
-Because the two wheels are constrained by the physical mechanism to remain in a fixed geometric relationship
-to one another, these opposite but equal forward wheel speeds cause the robot to rotate,
-with both <span class="math notranslate nohighlight">\(v_\mathrm{left}\)</span> and <span class="math notranslate nohighlight">\(v_\mathrm{right}\)</span> tangent to a circle of diameter <span class="math notranslate nohighlight">\(L\)</span> centered at the origin of the body-attached frame.
-Note that the linear velocity of the robot, <span class="math notranslate nohighlight">\(v_x\)</span>, is zero in this case,
-since <span class="math notranslate nohighlight">\(v_\mathrm{left}\)</span> and <span class="math notranslate nohighlight">\(v_\mathrm{right}\)</span> “cancel one another out” with respect to the linear velocity of the robot.
-Applying the equation of circular motion yields</p>
-<div class="amsmath math notranslate nohighlight" id="equation-fdfd932b-fcf6-4a05-9eda-26615ad6c291">
-<span class="eqno">(5.9)<a class="headerlink" href="#equation-fdfd932b-fcf6-4a05-9eda-26615ad6c291" title="Permalink to this equation">#</a></span>\[\begin{equation}
-\frac{L}{2} \omega = -v_\mathrm{left} = -r\dot{\phi}_R
-~~~~~~~
-\frac{L}{2} \omega =  v_\mathrm{right} = r\dot{\phi}_R
-\end{equation}\]</div>
-<p>which leads to</p>
-<div class="amsmath math notranslate nohighlight" id="equation-ea88936e-4f1f-4883-a60d-a8cac0678984">
-<span class="eqno">(5.10)<a class="headerlink" href="#equation-ea88936e-4f1f-4883-a60d-a8cac0678984" title="Permalink to this equation">#</a></span>\[\begin{equation}
-\dot{\phi}_L= -\frac{L}{2} \frac{\omega}{r}
-~~~~~~~
-\dot{\phi}_R= \frac{L}{2} \frac{\omega}{r}
 \end{equation}\]</div>
 <figure id="fig:DDR-pure-rotation">
 <img src="https://github.com/gtbook/robotics/blob/main/Figures5/DDR-pure-rotation.png?raw=1" style="width:9cm" alt="">
 <figcaption>When the wheels spin in the opposite direction with the same speed, the robot moves with pure rotation..</figcaption>
 </figure>
+<p>If instead, as in Figure <a class="reference internal" href="#fig:DDR-pure-rotation"><span class="xref myst">4</span></a>, the two wheels spin in opposite directions, i.e., we have <span class="math notranslate nohighlight">\(\dot{\phi}_R = -\dot{\phi}_L\)</span>.
+In this case, <span class="math notranslate nohighlight">\(v_\mathrm{left} = -r\dot{\phi}_L \)</span> and <span class="math notranslate nohighlight">\(v_\mathrm{right} = r\dot{\phi}_R\)</span>.
+Because the two wheels are constrained by the physical mechanism to remain in a fixed geometric relationship
+to one another, these opposite but equal forward wheel speeds cause the robot to rotate,
+with both <span class="math notranslate nohighlight">\(v_\mathrm{left}\)</span> and <span class="math notranslate nohighlight">\(v_\mathrm{right}\)</span> tangent to a circle of diameter <span class="math notranslate nohighlight">\(L\)</span> centered at the origin of the body-attached frame.
+Note that the linear velocity of the robot, <span class="math notranslate nohighlight">\(v_x\)</span>, is zero in this case,
+since <span class="math notranslate nohighlight">\(v_\mathrm{left}\)</span> and <span class="math notranslate nohighlight">\(v_\mathrm{right}\)</span> “cancel one another out” with respect to the linear velocity of the robot.</p>
+<p>Applying the equation of circular motion yields</p>
+<div class="amsmath math notranslate nohighlight" id="equation-5e3bc96c-7578-4078-8c35-4081b1bdba72">
+<span class="eqno">(5.10)<a class="headerlink" href="#equation-5e3bc96c-7578-4078-8c35-4081b1bdba72" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\frac{L}{2} \omega = -v_\mathrm{left} = -r\dot{\phi}_L
+\,\,\,\,\,\,\,\,
+\frac{L}{2} \omega =  v_\mathrm{right} = r\dot{\phi}_R
+\end{equation}\]</div>
+<p>which leads to</p>
+<div class="amsmath math notranslate nohighlight" id="equation-4691d71e-bbbf-44a6-89dd-cf3d25037747">
+<span class="eqno">(5.11)<a class="headerlink" href="#equation-4691d71e-bbbf-44a6-89dd-cf3d25037747" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\dot{\phi}_L= -\frac{L}{2} \frac{\omega}{r}
+\,\,\,\,\,\,\,\,
+\dot{\phi}_R= \frac{L}{2} \frac{\omega}{r}
+\end{equation}\]</div>
 <p id="index-1">We have now considered the two special cases of pure translation and pure rotation.
 Because instantaneous velocities lie in a vector space, we can add these in the same
 way that we would add any vectors.
 Therefore, by spinning the wheels at different rates, we can obtain various linear combinations
 of the above pure translations and rotations.
 Adding the equations for linear and angular velocities of the two wheels, we obtain</p>
-<div class="amsmath math notranslate nohighlight" id="equation-04d7443e-dc8d-4d3d-a86a-3661f718b9c7">
-<span class="eqno">(5.11)<a class="headerlink" href="#equation-04d7443e-dc8d-4d3d-a86a-3661f718b9c7" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-6b9c985d-73f2-4ed3-8912-5a2e733f1f65">
+<span class="eqno">(5.12)<a class="headerlink" href="#equation-6b9c985d-73f2-4ed3-8912-5a2e733f1f65" title="Permalink to this equation">#</a></span>\[\begin{align}
 \dot{\phi}_L = \frac{v_x}{r} -\frac{L}{2} \frac{\omega}{r} \\
 \dot{\phi}_R = \frac{v_x}{r} + \frac{L}{2} \frac{\omega}{r}
 \end{align}\]</div>
@@ -522,15 +529,15 @@ These equations can be used to determine the required wheel actuation to achieve
 the desired linear and angular velocities of the robot.</p>
 <p id="index-2">The <strong>forward velocity kinematics</strong>
 are easily obtained from the above equations via simple algebra:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-82ee11b0-3bb4-4cd8-9a42-2d4f9cc8f65e">
-<span class="eqno">(5.12)<a class="headerlink" href="#equation-82ee11b0-3bb4-4cd8-9a42-2d4f9cc8f65e" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-7fe2a8d8-04fe-4c5a-b30f-9e857e13eacf">
+<span class="eqno">(5.13)<a class="headerlink" href="#equation-7fe2a8d8-04fe-4c5a-b30f-9e857e13eacf" title="Permalink to this equation">#</a></span>\[\begin{align}
 v_x = \frac{r}{2} (\dot{\phi}_R + \dot{\phi}_L) \\
 \omega = \frac{r}{L} (\dot{\phi}_R - \dot{\phi}_L)
 \end{align}\]</div>
 <p>This leads immediately to the system equations with respect to the body-attached frame
 and with respect to the world frame</p>
-<div class="amsmath math notranslate nohighlight" id="equation-da69d210-b8a5-43f7-8a86-569b9c4ad5f7">
-<span class="eqno">(5.13)<a class="headerlink" href="#equation-da69d210-b8a5-43f7-8a86-569b9c4ad5f7" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-cc3e8838-fdf9-4f81-8499-ad68589aaec3">
+<span class="eqno">(5.14)<a class="headerlink" href="#equation-cc3e8838-fdf9-4f81-8499-ad68589aaec3" title="Permalink to this equation">#</a></span>\[\begin{align}
 v^{\mathrm{body}} =
 \begin{bmatrix} v_x   \\ 0 \\ \dot{\theta} \end{bmatrix}
 &amp;=
@@ -562,7 +569,8 @@ v^{\mathrm{world}} =
 </div>
 </div>
 </div>
-<p>As an example, let us try to move forward with a velocity of 20 cm/s, while turning counterclockwise at 0.3 rad/s:</p>
+<p>
+As an example, let us try to move forward with a velocity of 20 cm/s, while turning counterclockwise at 0.3 rad/s:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">phidot_L</span><span class="p">,</span> <span class="n">phidot_R</span> <span class="o">=</span> <span class="n">ddr_ik</span><span class="p">(</span><span class="n">v_x</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">omega</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
@@ -576,7 +584,8 @@ v^{\mathrm{world}} =
 </div>
 </div>
 </div>
-<p>As expected, the left wheel rotates less quickly, making us turn counter-clockwise. To sanity-check, let us put these same wheel speeds through the <em>forward</em> kinematics:</p>
+<p>
+As expected, the left wheel rotates less quickly, making us turn counter-clockwise. To sanity-check, let us put these same wheel speeds through the <em>forward</em> kinematics:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">ddr_fk</span><span class="p">(</span><span class="n">phidot_L</span><span class="p">,</span> <span class="n">phidot_R</span><span class="p">))</span>
@@ -589,7 +598,8 @@ v^{\mathrm{world}} =
 </div>
 </div>
 </div>
-<p>The velocities are as desired, validating both the equations and their implementation. Feel free to experiment with other values using the code above!</p>
+<p>
+The velocities are as desired, validating both the equations and their implementation. Feel free to experiment with other values using the code above!</p>
 </section>
 </section>
 
@@ -629,7 +639,7 @@ v^{\mathrm{world}} =
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title"><span class="section-number">5.1. </span>State Space for a Differential Drive Robot</p>
+        <p class="prev-next-title"><span class="section-number">5.1. </span>State Space for a differential-drive robot</p>
       </div>
     </a>
     <a class="right-next"
@@ -637,7 +647,7 @@ v^{\mathrm{world}} =
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title"><span class="section-number">5.3. </span>Robot Vision</p>
+        <p class="prev-next-title"><span class="section-number">5.3. </span>Cameras for Robot Vision</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

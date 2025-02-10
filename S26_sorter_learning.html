@@ -202,9 +202,9 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="S50_diffdrive_intro.html">5. A Mobile Robot With Simple Kinematics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="S51_diffdrive_state.html">5.1. State Space for a Differential Drive Robot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S51_diffdrive_state.html">5.1. State Space for a differential-drive robot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S52_diffdrive_actions.html">5.2. Motion Model for the Differential Drive Robot</a></li>
-<li class="toctree-l2"><a class="reference internal" href="S53_diffdrive_sensing.html">5.3. Robot Vision</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S53_diffdrive_sensing.html">5.3. Cameras for Robot Vision</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S54_diffdrive_perception.html">5.4. Computer Vision 101</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S55_diffdrive_planning.html">5.5. Path Planning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S56_diffdrive_learning.html">5.6. Deep Learning</a></li>
@@ -437,8 +437,8 @@
 </div>
 </div>
 <p>We can then estimate the probability of each category <span class="math notranslate nohighlight">\(c_k\)</span> simply by dividing the count <span class="math notranslate nohighlight">\(N_k\)</span> by the number of data points <span class="math notranslate nohighlight">\(N\)</span>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-be48b70d-b784-402c-a4a5-54b82aee7da0">
-<span class="eqno">(2.45)<a class="headerlink" href="#equation-be48b70d-b784-402c-a4a5-54b82aee7da0" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ca24b7b0-c2ab-4f50-bde3-de4ea04d3624">
+<span class="eqno">(2.45)<a class="headerlink" href="#equation-ca24b7b0-c2ab-4f50-bde3-de4ea04d3624" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P(x_k) \approx \frac{N_k}{N}
 \end{equation}\]</div>
 <p>In our example:</p>
@@ -606,7 +606,7 @@ Estimated PMF: [0.12 0.44 0.28 0.04 0.12]
 <blockquote>
 <div><p>When learning a conditional distribution, we need to separate out the counts based on the conditioning variable.</p>
 </div></blockquote>
-<p>A <code class="docutils literal notranslate"><span class="pre">gtsam.DiscreteConditional</span></code> determines the counts, grouped by the conditioning variable. In our case, <code class="docutils literal notranslate"><span class="pre">Category</span></code> can take on 5 separate values, and hence we have five groups. For example, for a binary sensor:</p>
+<p>A <code class="docutils literal notranslate"><span class="pre">DiscreteConditional</span></code> determines the counts, grouped by the conditioning variable. In our case, <code class="docutils literal notranslate"><span class="pre">Category</span></code> can take on 5 separate values, and hence we have five groups. For example, for a binary sensor:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Conductivity</span> <span class="o">=</span> <span class="n">variables</span><span class="o">.</span><span class="n">binary</span><span class="p">(</span><span class="s2">&quot;Conductivity&quot;</span><span class="p">)</span>
@@ -668,26 +668,26 @@ Estimated PMF: [0.12 0.44 0.28 0.04 0.12]
 <p>Recall that a Gaussian distribution is completely specified by two parameters: the mean <span class="math notranslate nohighlight">\(\mu\)</span>
 and the variance <span class="math notranslate nohighlight">\(\sigma^2\)</span>.</p>
 <p>If we observe <em>continuous</em> data that we suspect is generated from a Gaussian density, then we can easily compute an estimate of the mean <span class="math notranslate nohighlight">\(\hat{\mu}\)</span> by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-f92aab7f-a5ea-4d13-b4e9-604dbe1e23e4">
-<span class="eqno">(2.46)<a class="headerlink" href="#equation-f92aab7f-a5ea-4d13-b4e9-604dbe1e23e4" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ac483ff4-6b33-4593-b060-969579ba4f14">
+<span class="eqno">(2.46)<a class="headerlink" href="#equation-ac483ff4-6b33-4593-b060-969579ba4f14" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \hat{\mu} = \frac{1}{N} \sum_i x_i.
 \end{equation} \]</div>
 <p>The estimate <span class="math notranslate nohighlight">\(\hat{\mu}\)</span> is sometimes called the <strong>empirical mean</strong>.
 The other parameter we need is the variance <span class="math notranslate nohighlight">\(\sigma^2\)</span> defined as the expectation of the squared
 deviation from the mean:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-e9354bdd-0faf-49d3-99fa-469f8bbbc962">
-<span class="eqno">(2.47)<a class="headerlink" href="#equation-e9354bdd-0faf-49d3-99fa-469f8bbbc962" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-955b4d3f-4e02-4fde-a879-38dae47bc32b">
+<span class="eqno">(2.47)<a class="headerlink" href="#equation-955b4d3f-4e02-4fde-a879-38dae47bc32b" title="Permalink to this equation">#</a></span>\[\begin{equation}
 E[(x-\mu)^2].
 \end{equation}\]</div>
 <p>Estimating the variance can be done after we obtain the empirical mean <span class="math notranslate nohighlight">\(\hat{\mu}\)</span>, by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-e0947126-9662-45f0-bb62-c8fff63739c9">
-<span class="eqno">(2.48)<a class="headerlink" href="#equation-e0947126-9662-45f0-bb62-c8fff63739c9" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-93c52ee4-52f5-401f-a22b-4d0c1b5c3446">
+<span class="eqno">(2.48)<a class="headerlink" href="#equation-93c52ee4-52f5-401f-a22b-4d0c1b5c3446" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \widehat{\sigma^2} = \frac{1}{N-1} \sum_i (x_i-\hat{\mu})^2.
 \end{equation} \]</div>
 <p>The standard deviation, <span class="math notranslate nohighlight">\(\sigma\)</span>, is defined as the square root of the variance, and hence
 an estimate of the standard deviation is given by:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-03e81df3-8ab7-4d11-a31e-f3ee5ec87e9a">
-<span class="eqno">(2.49)<a class="headerlink" href="#equation-03e81df3-8ab7-4d11-a31e-f3ee5ec87e9a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-612472bf-3534-427b-b2fd-d75e5d3d0a45">
+<span class="eqno">(2.49)<a class="headerlink" href="#equation-612472bf-3534-427b-b2fd-d75e5d3d0a45" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \widehat{\sigma} = \sqrt{\widehat{\sigma^2}}.
 \end{equation}\]</div>
 <p><em>Note</em>: Above we divide by <span class="math notranslate nohighlight">\(N-1\)</span> and not by <span class="math notranslate nohighlight">\(N\)</span>. Informally, the reason is that we already “used up” one data point by estimating the mean from our samples, and we correct for that to get an “unbiased” estimate for the variance.</p>
@@ -713,7 +713,7 @@ an estimate of the standard deviation is given by:</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/807098599c8ee2a49a7ad88ac608bb667858be466ae170faac58ff2060d91657.png" src="_images/807098599c8ee2a49a7ad88ac608bb667858be466ae170faac58ff2060d91657.png" />
+<img alt="_images/82cad400a83104e71803d802f2fc42c87b3ed4029228a8fa264e415a880f4513.png" src="_images/82cad400a83104e71803d802f2fc42c87b3ed4029228a8fa264e415a880f4513.png" />
 </div>
 </div>
 <p>The sample mean is easy enough to compute with <code class="docutils literal notranslate"><span class="pre">np.mean</span></code> :</p>
@@ -725,7 +725,7 @@ an estimate of the standard deviation is given by:</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>198.23141480828264
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>199.26311115117295
 </pre></div>
 </div>
 </div>
@@ -737,7 +737,7 @@ an estimate of the standard deviation is given by:</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2227.3914211366373
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2541.7383230280334
 </pre></div>
 </div>
 </div>
@@ -753,7 +753,7 @@ an estimate of the standard deviation is given by:</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2227.3914211366373
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2541.7383230280334
 </pre></div>
 </div>
 </div>
@@ -767,7 +767,7 @@ an estimate of the standard deviation is given by:</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>47.19524786603665
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>50.41565553504222
 </pre></div>
 </div>
 </div>
@@ -788,7 +788,7 @@ an estimate of the standard deviation is given by:</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/3f64bca27e444a70d13d35f1d03fec9424c7418920c3702f4f55279e6ad9e478.png" src="_images/3f64bca27e444a70d13d35f1d03fec9424c7418920c3702f4f55279e6ad9e478.png" />
+<img alt="_images/9025f21fd079de7e3d4d02aa8e4c89a444bc68c8da4bd942de6334f5065c4fbe.png" src="_images/9025f21fd079de7e3d4d02aa8e4c89a444bc68c8da4bd942de6334f5065c4fbe.png" />
 </div>
 </div>
 </section>

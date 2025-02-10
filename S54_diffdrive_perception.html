@@ -68,7 +68,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="5.5. Path Planning" href="S55_diffdrive_planning.html" />
-    <link rel="prev" title="5.3. Robot Vision" href="S53_diffdrive_sensing.html" />
+    <link rel="prev" title="5.3. Cameras for Robot Vision" href="S53_diffdrive_sensing.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -202,9 +202,9 @@
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="S50_diffdrive_intro.html">5. A Mobile Robot With Simple Kinematics</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="S51_diffdrive_state.html">5.1. State Space for a Differential Drive Robot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S51_diffdrive_state.html">5.1. State Space for a differential-drive robot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S52_diffdrive_actions.html">5.2. Motion Model for the Differential Drive Robot</a></li>
-<li class="toctree-l2"><a class="reference internal" href="S53_diffdrive_sensing.html">5.3. Robot Vision</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S53_diffdrive_sensing.html">5.3. Cameras for Robot Vision</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">5.4. Computer Vision 101</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S55_diffdrive_planning.html">5.5. Path Planning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S56_diffdrive_learning.html">5.6. Deep Learning</a></li>
@@ -409,17 +409,16 @@
 <blockquote id="index-0">
 <div><p>Convolution is the workhorse for much of computer vision.</p>
 </div></blockquote>
-<a class="reference internal image-reference" href="_images/S54-Two-wheeled_Toy_Robot-03.jpg"><img alt="Splash image with steampunk differential drive robot thinking" class="align-center" src="_images/S54-Two-wheeled_Toy_Robot-03.jpg" style="width: 40%;" /></a>
-<p>No book about robotics is complete without mentioning computer vision and introducing some of its main ideas, which we do in this section. However, computer vision is a large subject and it is not our intention to summarize the entire field and its many recent developments in this section. Rather, we give a broad overview of the ideas, and our treatment is necessarily light and superficial.</p>
-<p>A very good resource for a deeper dive into the concepts introduced here and in Section 5.6 is the book <a class="reference external" href="https://d2l.ai/">Dive into Deep Learning</a>, which is structured as a completely executable set of jupyter notebooks. We encourage you to check it out.</p>
+<a class="reference internal image-reference" href="_images/S54-Two-wheeled_Toy_Robot-03.jpg"><img alt="Splash image with steampunk differential-drive robot thinking" class="align-center" src="_images/S54-Two-wheeled_Toy_Robot-03.jpg" style="width: 40%;" /></a>
+<p>No book about robotics is complete without mentioning computer vision and introducing some of its main ideas, which we do in this section. However, computer vision is a large subject and it is not our intention to summarize the entire field and its many recent developments in this section. Rather, we give a broad overview of the ideas, and our treatment is necessarily somewhat superficial.</p>
+<p>A very good resource for a deeper dive into the concepts introduced here and in Section 5.6 is the book <a class="reference external" href="https://d2l.ai/">Dive into Deep Learning</a> <span id="id1">[<a class="reference internal" href="bibliography.html#id32" title="Aston Zhang, Zachary C. Lipton, Mu Li, and Alexander J. Smola. Dive into Deep Learning. Cambridge University Press, 2023. URL: https://d2l.ai.">Zhang <em>et al.</em>, 2023</a>]</span>, which -like this book- was authored as a set of executable jupyter notebooks. We encourage you to check it out.</p>
 <section id="linear-filtering">
 <h2><span class="section-number">5.4.1. </span>Linear Filtering<a class="headerlink" href="#linear-filtering" title="Link to this heading">#</a></h2>
-<blockquote>
+<blockquote id="index-1">
 <div><p>Filtering can be applied to spatial, as well as temporal, data.</p>
 </div></blockquote>
 <p>In the previous chapter, we developed the Bayes filter, and applied it to temporal data streams.
 Here, we extend the idea of filtering to spatial data, such as images, instead of time sequences.</p>
-<p>Recall the image from the previous section:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: The color image from the previous section.</span>
@@ -434,7 +433,9 @@ Here, we extend the idea of filtering to spatial data, such as images, instead o
 <img alt="_images/6f65948a3d30d2b3706c89034bef2c63b1e2a3945f9a0e5b4a2865276bbd69a5.png" src="_images/6f65948a3d30d2b3706c89034bef2c63b1e2a3945f9a0e5b4a2865276bbd69a5.png" />
 </div>
 </div>
-<p>First, to explain linear filtering operations, we will convert the image to grayscale:</p>
+<p>Recall the image from the previous section, shown again in Figure <a class="reference internal" href="#fig:color_image_by_robot"><span class="xref myst">1</span></a>.
+First, to explain linear filtering operations, we will convert the image to grayscale.
+The PIL code to do so and the result is shown in Figure <a class="reference internal" href="#fig:gray_image_by_robot"><span class="xref myst">2</span></a>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Gray scale version of the same image.</span>
@@ -448,7 +449,7 @@ Here, we extend the idea of filtering to spatial data, such as images, instead o
 <img alt="_images/ad9369322527c92b317f3b7ed329bb78009e3bb8684d65ef7422781d54f72ffe.png" src="_images/ad9369322527c92b317f3b7ed329bb78009e3bb8684d65ef7422781d54f72ffe.png" />
 </div>
 </div>
-<p>We will be using the <code class="docutils literal notranslate"><span class="pre">pytorch</span></code> library below, which operates on <em>tensors</em>, which are basically equivalent to multidimensional numpy arrays. It is easy to convert from numpy to pytorch tensors:</p>
+<p id="index-2">To further analyze this image, we use the <code class="docutils literal notranslate"><span class="pre">pytorch</span></code> library below, which operates on <strong>tensors</strong>. These are basically equivalent to multidimensional numpy arrays. It is easy to convert from numpy to pytorch tensors:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">grayscale</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">grayscale_image</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">))</span>
@@ -462,8 +463,8 @@ Here, we extend the idea of filtering to spatial data, such as images, instead o
 </div>
 </div>
 </div>
-<p>Below we first motivate filtering using an edge detection example, explain it in 1D, and then generalize to arbitrary filters.</p>
-<p id="index-1">A frequent operation in computer vision is <strong>edge detection</strong>, which is to find transitions between dark and light areas, or vice versa. A simple edge detector can be implemented using a linear “filtering” operation.  We first show the code below and then explain it in depth:</p>
+<p id="index-3">Below we first motivate filtering using an edge detection example, explain it in 1D, and then generalize to arbitrary filters.</p>
+<p>A frequent operation in computer vision is <strong>edge detection</strong>, which is to find transitions between dark and light areas in an image, or vice versa. A simple edge detector can be implemented using a <em>linear filtering</em> operation.  We first show the code below and then explain it below that:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sobel_u</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
@@ -472,7 +473,8 @@ Here, we extend the idea of filtering to spatial data, such as images, instead o
 </div>
 </div>
 </div>
-<p>Above the first line creates a “filter” of size <span class="math notranslate nohighlight">\(1 \times 3\)</span>, with values <span class="math notranslate nohighlight">\(\begin{bmatrix}-1 &amp; 0 &amp; 1\end{bmatrix}\)</span>, and then the second line calls a function <code class="docutils literal notranslate"><span class="pre">conv2</span></code> which implements the filtering. The results are shown below:</p>
+<p>Above the first line creates a “filter” of size <span class="math notranslate nohighlight">\(1 \times 3\)</span>, with values <span class="math notranslate nohighlight">\(\begin{bmatrix}-1 &amp; 0 &amp; 1\end{bmatrix}\)</span>, and then the second line calls a function <code class="docutils literal notranslate"><span class="pre">conv2</span></code> which implements the filtering. The results are shown in Figure <a class="reference internal" href="#fig:gray_image_and_edges_by_robot"><span class="xref myst">3</span></a>.
+We show the input image and the computed “edge image” side by side. The edge image is color-coded: red is negative, green is positive, and yellow is zero. By comparing with the input, you can see that the edge image highlights strong <em>vertical edges</em> in the input image, where green corresponds to dark-light transitions, and red corresponds to light-dark transitions.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Gray scale image and its edges.</span>
@@ -487,7 +489,6 @@ Here, we extend the idea of filtering to spatial data, such as images, instead o
 <img alt="_images/4b4d43b7d814db1097ba1a941a14675ea57299fdf75307037cc8dfefd9d68303.png" src="_images/4b4d43b7d814db1097ba1a941a14675ea57299fdf75307037cc8dfefd9d68303.png" />
 </div>
 </div>
-<p>Above we show the input image and the computed “edge image” side by side. The edge image is color-coded: red is negative, green is positive, and yellow is zero. By comparing with the input, you can see that it highlights strong <em>vertical edges</em> in the input image, where green corresponds to dark-light transitions, and red corresponds to light-dark transitions.</p>
 </section>
 <section id="d-convolution-example">
 <h2><span class="section-number">5.4.2. </span>1D Convolution Example<a class="headerlink" href="#d-convolution-example" title="Link to this heading">#</a></h2>
@@ -509,13 +510,14 @@ What happens if we apply the Sobel edge detector to this image?</p>
 </div>
 </div>
 </div>
-<p>The first line above shows the pixel values for the original <span class="math notranslate nohighlight">\(1 \times 10\)</span> image,
+<p>
+The first line above shows the pixel values for the original <span class="math notranslate nohighlight">\(1 \times 10\)</span> image,
 and the second line shows the “edge” image.
 Every value in the edge image is computed from three values in the original image.
 For example, the first pixel in the edge image has the value 2, which is calculated from the values
 <span class="math notranslate nohighlight">\(\begin{bmatrix}3 &amp; 3 &amp; 5\end{bmatrix}\)</span>, as highlighted below:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b148ee32-3d08-4f12-a5cc-d917cda83453">
-<span class="eqno">(5.29)<a class="headerlink" href="#equation-b148ee32-3d08-4f12-a5cc-d917cda83453" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-5e2c21fc-0632-4368-94fb-18e4813aa643">
+<span class="eqno">(5.31)<a class="headerlink" href="#equation-5e2c21fc-0632-4368-94fb-18e4813aa643" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{align}
 \begin{bmatrix}
 3 &amp; \textbf{3} &amp; \textbf{3} &amp; \textbf{5} &amp; 5 &amp; 5 &amp; 5 &amp; 2 &amp; 2 &amp; 2 \\
@@ -525,20 +527,20 @@ For example, the first pixel in the edge image has the value 2, which is calcula
 \end{equation}\]</div>
 <p>The “recipe” to calculate the edge value is just taking a weighted sum,
 where the weights are defined by our filter:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-17b75cdc-2eaf-4314-a8d0-68f8668c3d6d">
-<span class="eqno">(5.30)<a class="headerlink" href="#equation-17b75cdc-2eaf-4314-a8d0-68f8668c3d6d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-9a160613-c189-450c-a812-a124e553b07c">
+<span class="eqno">(5.32)<a class="headerlink" href="#equation-9a160613-c189-450c-a812-a124e553b07c" title="Permalink to this equation">#</a></span>\[\begin{equation}
 3 \times -1 + 3 \times 0 + 5 \times 1 = 2 = \begin{bmatrix}3 &amp; 3 &amp; 5\end{bmatrix} \begin{bmatrix}-1 &amp; 0 &amp; 1\end{bmatrix}^T
 \end{equation}\]</div>
 <p>The value <span class="math notranslate nohighlight">\(2\)</span> indicates a <em>positive</em> edge where the input values go from <span class="math notranslate nohighlight">\(3\)</span> to <span class="math notranslate nohighlight">\(5\)</span>. This operation is then repeated for every output pixel. In other words, every output pixel is computed as the dot product of the filter <span class="math notranslate nohighlight">\(\begin{bmatrix}-1 &amp; 0 &amp; 1\end{bmatrix}\)</span> with the <em>window</em> of pixels in the input image, centered around the location of the output pixel.</p>
-<p>For the simple 1D example above, we could write this with the simple formula</p>
-<div class="amsmath math notranslate nohighlight" id="equation-6964d503-aabf-403f-b200-fe5956657f2b">
-<span class="eqno">(5.31)<a class="headerlink" href="#equation-6964d503-aabf-403f-b200-fe5956657f2b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<p id="index-4">For the simple 1D example above, we could write this with the simple formula</p>
+<div class="amsmath math notranslate nohighlight" id="equation-c074490c-11c8-4871-bc18-fd90b230d41d">
+<span class="eqno">(5.33)<a class="headerlink" href="#equation-c074490c-11c8-4871-bc18-fd90b230d41d" title="Permalink to this equation">#</a></span>\[\begin{equation}
 h[i] = \sum_{k=-1}^1 g[k] f[i+k]
 \end{equation}\]</div>
-<p>where <span class="math notranslate nohighlight">\(f\)</span> is the 1D input image, <span class="math notranslate nohighlight">\(g\)</span> is the 1D filter or <em>kernel</em>, and <span class="math notranslate nohighlight">\(h\)</span> is the output edge image. Note that we index into the kernel <span class="math notranslate nohighlight">\(g\)</span> with coordinates <span class="math notranslate nohighlight">\(k\in[-1,0,1]\)</span>. By adding <span class="math notranslate nohighlight">\(k\)</span> to the output coordinate <span class="math notranslate nohighlight">\(i\)</span>, we automatically take the weighted sum of pixels in the input image <span class="math notranslate nohighlight">\(f\)</span> centered around <span class="math notranslate nohighlight">\(i\)</span>.</p>
-<p id="index-2">Let us examine the input and output again:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c6852093-e8f9-4ac3-a694-30e111cbd4fb">
-<span class="eqno">(5.32)<a class="headerlink" href="#equation-c6852093-e8f9-4ac3-a694-30e111cbd4fb" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<p>where <span class="math notranslate nohighlight">\(f\)</span> is the 1D input image, <span class="math notranslate nohighlight">\(g\)</span> is the 1D filter or <strong>kernel</strong>, and <span class="math notranslate nohighlight">\(h\)</span> is the output edge image. Note that we index into the kernel <span class="math notranslate nohighlight">\(g\)</span> with coordinates <span class="math notranslate nohighlight">\(k\in[-1,0,1]\)</span>. By adding <span class="math notranslate nohighlight">\(k\)</span> to the output coordinate <span class="math notranslate nohighlight">\(i\)</span>, we automatically take the weighted sum of pixels in the input image <span class="math notranslate nohighlight">\(f\)</span> centered around <span class="math notranslate nohighlight">\(i\)</span>.</p>
+<p id="index-5">Let us examine the input and output again:</p>
+<div class="amsmath math notranslate nohighlight" id="equation-38f6f570-64a4-44c7-b832-3380fd9a48f1">
+<span class="eqno">(5.34)<a class="headerlink" href="#equation-38f6f570-64a4-44c7-b832-3380fd9a48f1" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{align}
 \begin{bmatrix}
 3 &amp; 3 &amp; 3 &amp; 5 &amp; 5 &amp; 5 &amp; 5 &amp; 2 &amp; 2 &amp; 2 \\
@@ -549,22 +551,22 @@ h[i] = \sum_{k=-1}^1 g[k] f[i+k]
 <p>We already understand the first <span class="math notranslate nohighlight">\(2\)</span>. The output pixel next to it <em>also</em> has the value <span class="math notranslate nohighlight">\(2\)</span>, as you can verify using the formula. You might object to the fact that the edge seems to be “doubly wide”, and that we could do better with the simpler filter <span class="math notranslate nohighlight">\(\begin{bmatrix}-1 &amp; 1\end{bmatrix}\)</span>, which people also use. However, making a <span class="math notranslate nohighlight">\(1\times 3\)</span> filter with a zero in the middle ensures that the edges do not “shift”. The resulting simple filter is widely used and known a <strong>Sobel filter</strong>.</p>
 <p>We can now look at the remaining values. It is easy to verify that the <span class="math notranslate nohighlight">\(-3\)</span> values result from the negative edge transition from <span class="math notranslate nohighlight">\(5\)</span> to <span class="math notranslate nohighlight">\(2\)</span> in the image. Also, where the input image is <em>constant</em>, the edge output image has a zero, which is great!</p>
 <p>However, we need to make a decision about the output array size and padding. Indeed, what is less obvious are the <span class="math notranslate nohighlight">\(3\)</span> and <span class="math notranslate nohighlight">\(-2\)</span> values at the beginning and end of the output array. The answer is that here we used <em>zero-padding</em>: note that the calculation of the output <span class="math notranslate nohighlight">\(h[0]\)</span> requires access to input values <span class="math notranslate nohighlight">\(f[-1]\)</span>, <span class="math notranslate nohighlight">\(f[0]\)</span>, and <span class="math notranslate nohighlight">\(f[1]\)</span>. This is problematic, because <span class="math notranslate nohighlight">\(f[-1]\)</span> is <em>out of bounds</em>. Zero-padding is the convention to use a zero for every value that is out of bounds for the input. Another way to deal with this issue is to calculate a smaller output image that will only require access to valid input values. Many other strategies can be employed but “zero padding” and “valid” output image size are the two most common ones.</p>
-<p><strong>Correlation vs. Convolution</strong>: we use the term convolution above, but the formula above is really <em>correlation</em>. The correct formula for <em>convolution</em>, a term from the signal processing literature, is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-8d68df72-515c-4668-a7e7-8b5fecb4519c">
-<span class="eqno">(5.33)<a class="headerlink" href="#equation-8d68df72-515c-4668-a7e7-8b5fecb4519c" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<p id="index-6"><strong>Correlation vs. Convolution</strong>: we use the term convolution above, but the formula above is really <em>correlation</em>. The correct formula for <em>convolution</em>, a term from the signal processing literature, is</p>
+<div class="amsmath math notranslate nohighlight" id="equation-1e69bb37-fd2a-419a-b76a-725d350452df">
+<span class="eqno">(5.35)<a class="headerlink" href="#equation-1e69bb37-fd2a-419a-b76a-725d350452df" title="Permalink to this equation">#</a></span>\[\begin{equation}
 h[i] = \sum_{k=-1}^1 g[k] f[i-k]
 \end{equation}\]</div>
 <p>with the only difference being the minus sign. With the advent of convolutional neural networks (CNNs),
 which we will see below, everyone is now using the term <em>convolution</em> even when strictly speaking we mean <em>correlation</em>. The justification is that when the kernel is <em>learned</em>, the distinction stops mattering, which is actually true: you can just flip the kernel and get the same output as convolution would give you. However, hardcore signal and image processing experts still bristle at this.</p>
 </section>
 <section id="arbitrary-2d-convolutions">
-<span id="index-3"></span><h2><span class="section-number">5.4.3. </span>Arbitrary 2D convolutions<a class="headerlink" href="#arbitrary-2d-convolutions" title="Link to this heading">#</a></h2>
+<span id="index-7"></span><h2><span class="section-number">5.4.3. </span>Arbitrary 2D convolutions<a class="headerlink" href="#arbitrary-2d-convolutions" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>Extending the concept of convolution to 2D.</p>
 </div></blockquote>
 <p>The 1D definition of convolution above can be easily extended to 2D images and 2D filters:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-cdf6d5e0-ed65-4436-8e9e-4f8c0a378c8b">
-<span class="eqno">(5.34)<a class="headerlink" href="#equation-cdf6d5e0-ed65-4436-8e9e-4f8c0a378c8b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-e4f45464-85c9-4743-bdc2-3d2c87ebcecb">
+<span class="eqno">(5.36)<a class="headerlink" href="#equation-e4f45464-85c9-4743-bdc2-3d2c87ebcecb" title="Permalink to this equation">#</a></span>\[\begin{equation}
 h[i,j] = \sum_{k, l} g[k,l] f[i+k, j+l]
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(k\)</span> and <span class="math notranslate nohighlight">\(l\)</span> range over the two kernel dimensions.
@@ -572,26 +574,27 @@ For example, if we applied our 1D filter above to a 2D image,
 we would have <span class="math notranslate nohighlight">\(k \in \{ 0 \}\)</span> and <span class="math notranslate nohighlight">\(l \in \{ -1, 0 1 \}\)</span>,
 which would apply the filter along individual rows of the image.</p>
 <p>Armed with this formula, we can now understand the edge detection above. For each output pixel <span class="math notranslate nohighlight">\(h[i,j]\)</span>, we do a pointwise multiplication of the <span class="math notranslate nohighlight">\(1 \times 3\)</span> filter</p>
-<div class="amsmath math notranslate nohighlight" id="equation-7d4868de-6d9b-4da1-b561-54c8f0c15942">
-<span class="eqno">(5.35)<a class="headerlink" href="#equation-7d4868de-6d9b-4da1-b561-54c8f0c15942" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-f27a17ce-423a-4a0a-944f-a2201e69d67a">
+<span class="eqno">(5.37)<a class="headerlink" href="#equation-f27a17ce-423a-4a0a-944f-a2201e69d67a" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{align}
 \begin{pmatrix}g[0,-1] &amp; g[0,0] &amp; g[0,1]\end{pmatrix} = \begin{pmatrix}-1 &amp; 0 &amp; 1\end{pmatrix}
 \end{align}
 \end{equation}\]</div>
 <p>with the <span class="math notranslate nohighlight">\(1 \times 3\)</span> window</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c5bed8dc-0b62-40ff-b35d-617b87315714">
-<span class="eqno">(5.36)<a class="headerlink" href="#equation-c5bed8dc-0b62-40ff-b35d-617b87315714" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d71c24b6-b8c4-4a16-9126-949a4bab84fe">
+<span class="eqno">(5.38)<a class="headerlink" href="#equation-d71c24b6-b8c4-4a16-9126-949a4bab84fe" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{align}
 \begin{pmatrix}f[i,j-1] &amp; f[i,j+0] &amp; f[i,j+1]\end{pmatrix}
 \end{align}
 \end{equation}\]</div>
 <p>in the input image <span class="math notranslate nohighlight">\(f\)</span>.</p>
 <p>We can use a different filter to detect horizontal edges. Indeed, the <strong>Horizontal Sobel edge detector</strong> is simply the <span class="math notranslate nohighlight">\(3 \times 1\)</span> equivalent, with</p>
-<div class="amsmath math notranslate nohighlight" id="equation-4ba1437e-12c2-4c7c-b484-c843ad4943d7">
-<span class="eqno">(5.37)<a class="headerlink" href="#equation-4ba1437e-12c2-4c7c-b484-c843ad4943d7" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-3bd87e9b-504c-4d4f-afcb-d364b441c44c">
+<span class="eqno">(5.39)<a class="headerlink" href="#equation-3bd87e9b-504c-4d4f-afcb-d364b441c44c" title="Permalink to this equation">#</a></span>\[\begin{equation}
 g = \begin{pmatrix}-1 \\ 0 \\ 1\end{pmatrix}
 \end{equation}\]</div>
-<p>The code below applies the horizontal Sobel edge detector to our original image from above.</p>
+<p>The code in Figure <a class="reference internal" href="#fig:gray_image_and_horizontal_edges_by_robot"><span class="xref myst">4</span></a> applies the horizontal Sobel edge detector to our original image from above, and shows the result alongside the original.
+Note that above we defined the filter such that a positive transition is defined as having dark then light for an increasing value of the <em>row</em> coordinate. This explains why above the strong edge with the sky shows up as <em>negative</em>, perhaps counter to your intuition.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Gray scale image and the result of the horizontal Sobel edge detector.</span>
@@ -608,16 +611,15 @@ g = \begin{pmatrix}-1 \\ 0 \\ 1\end{pmatrix}
 <img alt="_images/f62d86ec0e3bcf918920fdf03335e0e6dbe3b045dafef4f355b2d8055a56f110.png" src="_images/f62d86ec0e3bcf918920fdf03335e0e6dbe3b045dafef4f355b2d8055a56f110.png" />
 </div>
 </div>
-<p>Note that above we defined the filter such that a positive transition is defined as having dark then light for an increasing value of the <em>row</em> coordinate. This explains why above the strong edge with the sky shows up as <em>negative</em>, perhaps counter to your intuition.</p>
 </section>
 <section id="gradients-vs-edges">
 <h2><span class="section-number">5.4.4. </span>Gradients vs. Edges<a class="headerlink" href="#gradients-vs-edges" title="Link to this heading">#</a></h2>
 <blockquote>
-<div><p>In fact, the Sobel operator is a gradient operator, not an edge detector.</p>
+<div><p>The Sobel operator is a gradient operator, not an edge detector.</p>
 </div></blockquote>
-<p>Actually, above we told a small white lie: the Sobel filters actually approximate the image <em>gradient</em>, i.e., the spatial derivatives of the image values in the horizontal or vertical directions. We associate high gradient values with edges, but actually the two concepts are not the same: saying that there is an edge in the image can be regarded as a binary classification decision: either there is one, or not.
+<p>Above we told a small white lie: the Sobel filters actually approximate the image <em>gradient</em>, i.e., the spatial derivatives of the image values in the horizontal or vertical directions. We associate high gradient values with edges, but actually the two concepts are not the same: saying that there is an edge in the image can be regarded as a binary classification decision: either there is an edge, or not.
 Could we use our Sobel gradient operators to construct an edge detector?</p>
-<p>The gradient magnitude (i.e., the Euclidean norm of the gradient) is a positive number that combines both horizontal and vertical gradient values. We can calculate and visualize it as follows:</p>
+<p>The gradient magnitude (i.e., the Euclidean norm of the gradient) is a positive number that combines both horizontal and vertical gradient values. We can calculate and visualize it in Figure <a class="reference internal" href="#fig:gray_image_and_gradient_magnitude_by_robot"><span class="xref myst">5</span></a>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Gray scale and gradient magnitude.</span>
@@ -633,7 +635,7 @@ Could we use our Sobel gradient operators to construct an edge detector?</p>
 <img alt="_images/25676f1e20d887c89c96bd69553c9cdaefead22bfde5cede1e50cf0434ffd431.png" src="_images/25676f1e20d887c89c96bd69553c9cdaefead22bfde5cede1e50cf0434ffd431.png" />
 </div>
 </div>
-<p>Above, it seems that edges have a high magnitude, and non-edges have a low magnitude, so a very simple idea is to simply threshold and get a <em>binary edge image</em>:</p>
+<p id="index-8">From the figure, you should notice that edges seem to have a high magnitude, and non-edges have a low magnitude. Hence, a simple idea is to threshold the gradient to obtain a <em>binary edge image</em>, as we do in Figure <a class="reference internal" href="#fig:gray_image_and_thresholded_gradient_magnitude_by_robot"><span class="xref myst">6</span></a>. We used a threshold <span class="math notranslate nohighlight">\(\theta=50\)</span>, but feel free to play with this threshold a bit and see what you like best. You might experience that it is not so easy to make this simple, hand-designed edge detector to do what we <em>really</em> want, which is to detect edges as we think of them, and not react to all the noise in the image. Image processing, and computer vision in general, is messy and hard!</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Gray scale version and thresholded gradient magnitude.</span>
@@ -649,35 +651,34 @@ Could we use our Sobel gradient operators to construct an edge detector?</p>
 <img alt="_images/60e8f20a02e48b61c73a83d33a321b762693599bad764a8b423998b4284370d6.png" src="_images/60e8f20a02e48b61c73a83d33a321b762693599bad764a8b423998b4284370d6.png" />
 </div>
 </div>
-<p>In the above we used a threshold <span class="math notranslate nohighlight">\(\theta=50\)</span>, but feel free to play with this threshold a bit and see what you like best. You can see that it is not so easy to make this simple, hand-designed edge detector to do what we <em>really</em> want, which is to detect edges as we think of them, and not react to all the noise in the image. Image processing, and computer vision in general, is messy and hard!</p>
 </section>
 <section id="fully-connected-neural-networks">
-<span id="index-4"></span><h2><span class="section-number">5.4.5. </span>Fully Connected Neural Networks<a class="headerlink" href="#fully-connected-neural-networks" title="Link to this heading">#</a></h2>
+<span id="index-9"></span><h2><span class="section-number">5.4.5. </span>Fully Connected Neural Networks<a class="headerlink" href="#fully-connected-neural-networks" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>Convolution can be used to implement neural networks.</p>
 </div></blockquote>
 <p>Above we looked at edge detection as a classification problem. Our solution was to calculate the output of two different filters (both Sobel operators), combine these with a non-linear operation (the norm), and then apply a threshold at some hand-tuned level. It is only natural to ask whether this idea of taking a linear combination of pixels and feeding it into some “decision maker” could solve other tasks, including the a main goal of computer vision, detecting and recognizing objects, a capability which seems effortless to people yet which eluded computer vision researchers for a long time.</p>
-<p>Inspired by the way neurons in the brain appear to be connected, <strong>neural networks</strong> were first proposed by <a class="reference external" href="https://en.wikipedia.org/wiki/Frank_Rosenblatt">Frank Rosenblatt</a> in the 50s, who with his collaborators proposed the <strong>Perceptron</strong>. The mathematical equation for a perceptron is simple:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-e2e777bf-93b7-407d-a314-2d04bb956ae5">
-<span class="eqno">(5.38)<a class="headerlink" href="#equation-e2e777bf-93b7-407d-a314-2d04bb956ae5" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<p>Inspired by the way neurons in the brain appear to be connected, <strong>neural networks</strong> were first proposed by <a class="reference external" href="https://en.wikipedia.org/wiki/Frank_Rosenblatt">Frank Rosenblatt</a> in the 1950s, who with his collaborators proposed the <strong>Perceptron</strong>. The mathematical equation for a perceptron is simple:</p>
+<div class="amsmath math notranslate nohighlight" id="equation-f52a94e8-b51c-4022-a34a-d264ce702b47">
+<span class="eqno">(5.40)<a class="headerlink" href="#equation-f52a94e8-b51c-4022-a34a-d264ce702b47" title="Permalink to this equation">#</a></span>\[\begin{equation}
 f(x) = \theta \begin{pmatrix}\sum_k w[k] x[k] + b\end{pmatrix} = \theta(w \cdot x + b)
 \end{equation}\]</div>
 <p>Here, <span class="math notranslate nohighlight">\(w \in \mathbb{R}^n\)</span> is the 1D vector of weights and <span class="math notranslate nohighlight">\(x \in \mathbb{R}^n\)</span> is the 1D input signal.
 The output <span class="math notranslate nohighlight">\(f(x) \in \mathbb{R} \)</span> of the network is obtained by pointwise multiplying the input signal <span class="math notranslate nohighlight">\(x\)</span> and the weights <span class="math notranslate nohighlight">\(w\)</span>, and thresholding.
 Here, <span class="math notranslate nohighlight">\(\theta :\mathbb{R} \rightarrow \{0,1\} \)</span> denotes the thresholding operation:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c5f0130f-e4d4-4a23-8a93-931cb17976b4">
-<span class="eqno">(5.39)<a class="headerlink" href="#equation-c5f0130f-e4d4-4a23-8a93-931cb17976b4" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-6ae8ae5b-f7ea-451c-b289-bba147e452f2">
+<span class="eqno">(5.41)<a class="headerlink" href="#equation-6ae8ae5b-f7ea-451c-b289-bba147e452f2" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \theta(x) \doteq 1 \text{  if  } (x&gt;0) \text{  else  } 0
 \end{equation}\]</div>
 <p>The scalar quantity <span class="math notranslate nohighlight">\(b\)</span> is known as the bias, and can be seen as shifting the decision boundary to values different from <span class="math notranslate nohighlight">\(0\)</span>.</p>
-<p id="index-5">While a perceptron computes a single output <span class="math notranslate nohighlight">\(f(x)\)</span> from the input signal <span class="math notranslate nohighlight">\(x\)</span>, there are two ways to extend the concept: going <em>wide</em> and going <em>deep</em>. First, we can extend the concept of the perceptron to be multi-output, yielding <span class="math notranslate nohighlight">\(n_o\)</span> <strong>output features</strong>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-087d84cd-0d1b-417f-8dab-7a9d73737591">
-<span class="eqno">(5.40)<a class="headerlink" href="#equation-087d84cd-0d1b-417f-8dab-7a9d73737591" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<p id="index-10">While a perceptron computes a single output <span class="math notranslate nohighlight">\(f(x)\)</span> from the input signal <span class="math notranslate nohighlight">\(x\)</span>, there are two ways to extend the concept: going <em>wide</em> and going <em>deep</em>. First, we can extend the concept of the perceptron to be multi-output, yielding <span class="math notranslate nohighlight">\(n_o\)</span> <strong>output features</strong>:</p>
+<div class="amsmath math notranslate nohighlight" id="equation-522a7c00-2946-418f-8b32-c54ae2224795">
+<span class="eqno">(5.42)<a class="headerlink" href="#equation-522a7c00-2946-418f-8b32-c54ae2224795" title="Permalink to this equation">#</a></span>\[\begin{equation}
 f_o(x) = \theta \begin{pmatrix}\sum_k W[o,k] x[k] + b[o]\end{pmatrix} 
 \end{equation}\]</div>
 <p>We can stack the <span class="math notranslate nohighlight">\(n_o\)</span> equations to build a single matrix equation for the multi-output case:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-1ab2fe70-f90f-4de0-b1bf-db7624188145">
-<span class="eqno">(5.41)<a class="headerlink" href="#equation-1ab2fe70-f90f-4de0-b1bf-db7624188145" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-5dc86301-1276-4b7a-9e2e-0e07a01f710a">
+<span class="eqno">(5.43)<a class="headerlink" href="#equation-5dc86301-1276-4b7a-9e2e-0e07a01f710a" title="Permalink to this equation">#</a></span>\[\begin{equation}
 f(x) =
 \begin{bmatrix}
 f_1(x) \\ \vdots \\ f_{n_o}(x)
@@ -696,26 +697,26 @@ The threshold function <span class="math notranslate nohighlight">\(\theta: \mat
 applies a threshold operation to each entry of a vector (merely a vector version of the threshold
 operation above).
 This is called going “wide” as we now create multi-dimensional outputs.</p>
-<p>Going <em>deep</em> is taking the output from one (multi-dimensional) perceptron and feeding it into a subsequent perceptron.
-We call each stage a “layer” in the neural network.
-Multi-layer perceptrons or MLPs can capture increasingly complex concepts present in the input signal.
+<p id="index-12"><span id="index-11"></span>Going <em>deep</em> is taking the output from one (multi-dimensional) perceptron and feeding it into a subsequent perceptron.
+We call each stage a <strong>layer</strong> in the neural network.
+<strong>Multi-layer perceptrons</strong> or <strong>MLPs</strong> can capture increasingly complex concepts present in the input signal.
 The idea is that the output of the first layer learns simpler concepts from the input signal, and the next layer combines these concepts into more complex concepts</p>
-<p>The notion of “simple concepts” computed at each layer is very useful, and we have already introduced the term <em>feature</em> above to denote these concepts. A feature can be hand-designed, much like the output of the Sobel operator we introduced above, or <em>learned</em>. While we will postpone the discussion of <em>how</em> to learn these features from data until section 5.6, it is important to know that almost all successful vision pipelines these days learn the feature representations from data, and which features are learned very heavily depends on the task.</p>
-<p id="index-6">The MLP architecture is very powerful, but it is also <em>very</em> expensive. For every MLP layer with <span class="math notranslate nohighlight">\(n\)</span> input features and <span class="math notranslate nohighlight">\(n_o\)</span>, we need a <em>weight matrix</em> <span class="math notranslate nohighlight">\(W\)</span> of size <span class="math notranslate nohighlight">\(n_o \times n\)</span>. That seems doable in the 1D case, but when thinking about images this becomes rather expensive. Even for relatively low-resolution images, say <span class="math notranslate nohighlight">\(256\times 256\)</span>, the number of input features <span class="math notranslate nohighlight">\(n =256^2=65,536\)</span>. Even if we wanted to only compute a relatively modest number of features, say <span class="math notranslate nohighlight">\(32\)</span>, that still requires over <span class="math notranslate nohighlight">\(2\)</span> million weights to be specified. However, even if we had infinite compute and storage, there is another issue with having that many weights when they are to be learned: there might simply not be enough <em>data</em> to nail down the weights in a principled manner.</p>
-<p>For computer vision applications, a different class of neural networks called
+<p id="index-13">The notion of “simple concepts” computed at each layer is very useful, and we have already introduced the term <em>feature</em> above to denote these concepts. A feature can be hand-designed, much like the output of the Sobel operator we introduced above, or <em>learned</em>. While we will postpone the discussion of <em>how</em> to learn these features from data until section 5.6, it is important to know that almost all successful vision pipelines these days learn the feature representations from data, and which features are learned very heavily depends on the task.</p>
+<p>The MLP architecture is very powerful, but it is also expensive. For every MLP layer with <span class="math notranslate nohighlight">\(n\)</span> input features and <span class="math notranslate nohighlight">\(n_o\)</span>, we need a <em>weight matrix</em> <span class="math notranslate nohighlight">\(W\)</span> of size <span class="math notranslate nohighlight">\(n_o \times n\)</span>. That seems doable in the 1D case, but when thinking about images this becomes rather expensive. Even for relatively low-resolution images, say <span class="math notranslate nohighlight">\(256\times 256\)</span>, the number of input features <span class="math notranslate nohighlight">\(n =256^2=65,536\)</span>. Even if we wanted to only compute a relatively modest number of features, say <span class="math notranslate nohighlight">\(32\)</span>, that still requires over <span class="math notranslate nohighlight">\(2\)</span> million weights to be specified. However, even if we had infinite compute and storage, there is another issue with having that many weights when they are to be learned: there might simply not be enough <em>data</em> to nail down the weights in a principled manner.</p>
+<p id="index-14">For computer vision applications, a different class of neural networks called
 <strong>convolutional neural networks</strong> alleviates both concerns
 by combining notions of multi-layer networks with the earlier introduced concept of convolutions.</p>
 </section>
 <section id="convolutional-neural-networks">
-<span id="index-7"></span><h2><span class="section-number">5.4.6. </span>Convolutional Neural Networks<a class="headerlink" href="#convolutional-neural-networks" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">5.4.6. </span>Convolutional Neural Networks<a class="headerlink" href="#convolutional-neural-networks" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>Convolve, “threshold”, repeat…</p>
 </div></blockquote>
-<p>Three separate ideas gave rise to <strong>convolutional neural networks</strong> or <strong>CNN</strong>s, which replace fully connected or <em>dense</em> layers with <em>convolutional</em> layers:</p>
+<p id="index-15">Three separate ideas gave rise to <strong>convolutional neural networks</strong> or <strong>CNN</strong>s, which replace fully connected or <em>dense</em> layers with <em>convolutional</em> layers:</p>
 <ul class="simple">
-<li><p>Linear filtering: Convolution and correlation, and linear filtering in general, are primordial concepts from signal and image processing where they have proved immensely useful.</p></li>
-<li><p>Shared weights: The idea to replace a very large weight matrix <span class="math notranslate nohighlight">\(W\)</span> with a much smaller <span class="math notranslate nohighlight">\(kernel\)</span>, which we will denote by <span class="math notranslate nohighlight">\(g\)</span>, was attractive from a computational resources point of view.</p></li>
-<li><p>Translation invariance: Intuitively, a useful feature at one location in the image (or 1D signal) should also be useful at another location.</p></li>
+<li><p>Linear filtering: convolution and correlation, and linear filtering in general, are primordial concepts from signal and image processing where they have proved immensely useful.</p></li>
+<li><p>Shared weights: The idea to replace a very large weight matrix <span class="math notranslate nohighlight">\(W\)</span> with a much smaller <span class="math notranslate nohighlight">\(kernel\)</span>, which we will denote by <span class="math notranslate nohighlight">\(g\)</span>, is attractive from a computational resources point of view.</p></li>
+<li><p>Translation invariance: Intuitively, a useful feature at one location in the image (or 1D signal) should also be useful at other locations.</p></li>
 </ul>
 <p>The concept of translation invariance is important,
 and warrants some more explanation.
@@ -723,51 +724,51 @@ Suppose we apply kernel <span class="math notranslate nohighlight">\(g\)</span> 
 Translation invariance implies that if we shift the input by <span class="math notranslate nohighlight">\(t\)</span>, the resulting output
 will merely be the original <span class="math notranslate nohighlight">\(f\)</span> also shifted by <span class="math notranslate nohighlight">\(t\)</span>.
 Formally, in 1D we write this condition as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-81d13519-bd88-4ddb-ae10-2c4145fd470b">
-<span class="eqno">(5.42)<a class="headerlink" href="#equation-81d13519-bd88-4ddb-ae10-2c4145fd470b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-43253f24-d308-49f8-a4ec-3a4fcc79d4cf">
+<span class="eqno">(5.44)<a class="headerlink" href="#equation-43253f24-d308-49f8-a4ec-3a4fcc79d4cf" title="Permalink to this equation">#</a></span>\[\begin{equation}
 f[i+t] = \sum_{k=-1}^1 g[k] x[i+t+k],
 \end{equation}\]</div>
 <p>i.e., if we <em>translate</em> the input signal <span class="math notranslate nohighlight">\(x\)</span> by <span class="math notranslate nohighlight">\(t\)</span>, the output signal <span class="math notranslate nohighlight">\(f\)</span> is identical but translated by the same amount. A similar definition holds for 2D translation in the case of 2D convolution.</p>
 <section id="going-wide-in-cnns">
-<span id="index-8"></span><h3><span class="section-number">5.4.6.1. </span>Going Wide in CNNs<a class="headerlink" href="#going-wide-in-cnns" title="Link to this heading">#</a></h3>
-<p>As with fully connected neural networks, we can go wide with multi-layer CNNs.
+<h3><span class="section-number">5.4.6.1. </span>Going Wide in CNNs<a class="headerlink" href="#going-wide-in-cnns" title="Link to this heading">#</a></h3>
+<p id="index-16">As with fully connected neural networks, we can go wide with multi-layer CNNs.
 For <strong>convolutional layer</strong> <span class="math notranslate nohighlight">\(l\)</span>, denote the number of input channels by <span class="math notranslate nohighlight">\(n_{l,i}\)</span> and the number
 of output channels by <span class="math notranslate nohighlight">\(n_{l,o}\)</span>.
 The <span class="math notranslate nohighlight">\(o^{th}\)</span> output of layer <span class="math notranslate nohighlight">\(l\)</span> is obtained by convolution of its input with the
 kernel for output <span class="math notranslate nohighlight">\(o\)</span> of layer <span class="math notranslate nohighlight">\(l\)</span>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-f66e218e-d223-4dc5-a2e8-d63216d3c016">
-<span class="eqno">(5.43)<a class="headerlink" href="#equation-f66e218e-d223-4dc5-a2e8-d63216d3c016" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-8b2e9695-6bcc-46a3-abce-701e3dec1e53">
+<span class="eqno">(5.45)<a class="headerlink" href="#equation-8b2e9695-6bcc-46a3-abce-701e3dec1e53" title="Permalink to this equation">#</a></span>\[\begin{equation}
 f_{l,o}(x) = \sum_{ k} g[l, o, k] x[l, k] + b[l, o]
 \end{equation}\]</div>
 <p>In CNNs, each layer also has one bias value <span class="math notranslate nohighlight">\(b[o]\)</span> per output channel, as indicated above.</p>
 </section>
 <section id="going-deep-in-cnns">
-<span id="index-10"></span><span id="index-9"></span><h3><span class="section-number">5.4.6.2. </span>Going Deep in CNNS<a class="headerlink" href="#going-deep-in-cnns" title="Link to this heading">#</a></h3>
-<p>To go <em>deep</em>, we specify a nonlinear operation or <strong>activation function</strong> that is applied after the linear convolution step.
+<h3><span class="section-number">5.4.6.2. </span>Going Deep in CNNS<a class="headerlink" href="#going-deep-in-cnns" title="Link to this heading">#</a></h3>
+<p id="index-18"><span id="index-17"></span>To go <em>deep</em>, we specify a nonlinear operation or <strong>activation function</strong> that is applied after the linear convolution step.
 This activation function plays the role of <span class="math notranslate nohighlight">\(\theta\)</span> in our fully connected networks above.
 Indeed, <em>without</em> an activation function, it makes little sense to have two successive linear layers with weights <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(B\)</span>: one could just as easily replace them with a <em>single</em> linear layer with weights <span class="math notranslate nohighlight">\(W = A B\)</span>. In addition, from the multi-layer perceptron work we know that the <em>threshold</em> operation is a crucial step in <em>activating</em> a feature, i.e., deciding when a feature is really present or whether the generated signal is just due to noise. Think back to our primitive edge detector above as well: both the thresholding and the threshold value (which in a perceptron is encoded in a bias <span class="math notranslate nohighlight">\(b\)</span>) are important for the final result.</p>
 <p>The most important activation functions are the sigmoid and “ReLU”. We have already encountered the threshold function <span class="math notranslate nohighlight">\(\theta\)</span>, but historically a “soft threshold” function called the <strong>sigmoid function</strong> was, and still is, very popular:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c7ddbe84-a9e0-44bd-8585-6cf877ab0310">
-<span class="eqno">(5.44)<a class="headerlink" href="#equation-c7ddbe84-a9e0-44bd-8585-6cf877ab0310" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-a99265bf-b184-4729-96a5-a42a49c47b89">
+<span class="eqno">(5.46)<a class="headerlink" href="#equation-a99265bf-b184-4729-96a5-a42a49c47b89" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \sigma(x) \doteq \frac{1}{1+\exp(-x)}.
 \end{equation}\]</div>
 <p>Many other activation functions have been proposed since, but it is now widely accepted that the exact shape of the function matters less than the simple fact of having <em>some</em> non-linearity. One of the simplest and most popular activation functions just zeroes out any negative values, but otherwise leaves the input signal untouched. This is called the <strong>rectified linear unit</strong>, abbreviated ReLU, and is given by this simple formula:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-13ce8884-4e6c-4dc8-9126-89b1eb953172">
-<span class="eqno">(5.45)<a class="headerlink" href="#equation-13ce8884-4e6c-4dc8-9126-89b1eb953172" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-546d897d-2ea6-41da-acf8-80fe37353e6d">
+<span class="eqno">(5.47)<a class="headerlink" href="#equation-546d897d-2ea6-41da-acf8-80fe37353e6d" title="Permalink to this equation">#</a></span>\[\begin{equation}
 ReLU(x) \doteq \max(0,x).
 \end{equation}\]</div>
 </section>
 <section id="pooling-layers">
-<span id="index-11"></span><h3><span class="section-number">5.4.6.3. </span>Pooling Layers<a class="headerlink" href="#pooling-layers" title="Link to this heading">#</a></h3>
-<p>Finally, CNNs also frequently have <strong>pooling layers</strong>. A downside of a convolutional layer is that each output layer is as large as the previous one: the convolution, even when in <code class="docutils literal notranslate"><span class="pre">valid</span></code> mode, only slightly reduces the image size, and not at all when using <code class="docutils literal notranslate"><span class="pre">same</span></code> mode with zero-padding. So called <em>pooling</em> layers were again inspired by the human visual system, where an experimentalists observed that while early processing layers where “retinotopic”, i.e., had a one-to-one mapping to locations on the imaging surface, successive layers gradually became coarser <em>and</em> activated by wider “receptive fields”, defined as the area on the retina that were able to influence the activation of a neuron at a given processing stage. There are also computational reasons to wanting to “downscale” the resolution in deeper layers, as many neural net architectures increase the number of features with depth, and hence reducing the resolution correspondingly yielded in approximately the same amount of computation per layer.</p>
+<h3><span class="section-number">5.4.6.3. </span>Pooling Layers<a class="headerlink" href="#pooling-layers" title="Link to this heading">#</a></h3>
+<p id="index-19">Finally, CNNs also frequently have <strong>pooling layers</strong>. A downside of a convolutional layer is that each output layer is as large as the previous one: the convolution, even when in <code class="docutils literal notranslate"><span class="pre">valid</span></code> mode, only slightly reduces the image size, and not at all when using <code class="docutils literal notranslate"><span class="pre">same</span></code> mode with zero-padding. So called <em>pooling</em> layers were again inspired by the human visual system, where an experimentalists observed that while early processing layers where “retinotopic”, i.e., had a one-to-one mapping to locations on the imaging surface, successive layers gradually became coarser <em>and</em> activated by wider “receptive fields”, defined as the area on the retina that were able to influence the activation of a neuron at a given processing stage. There are also computational reasons to wanting to “downscale” the resolution in deeper layers, as many neural net architectures increase the number of features with depth, and hence reducing the resolution correspondingly yielded in approximately the same amount of computation per layer.</p>
 <p>Formally, a pooling layer is most often an averaging or maximization operation over an input window of a given size. For example, a “max-pooling” layer in 2D implements the following equation,</p>
-<div class="amsmath math notranslate nohighlight" id="equation-5e7d5b0d-39e7-4393-9fc6-7de295ed5d5a">
-<span class="eqno">(5.46)<a class="headerlink" href="#equation-5e7d5b0d-39e7-4393-9fc6-7de295ed5d5a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-54f5463c-6b63-4309-8bba-bbfc60e1776e">
+<span class="eqno">(5.48)<a class="headerlink" href="#equation-54f5463c-6b63-4309-8bba-bbfc60e1776e" title="Permalink to this equation">#</a></span>\[\begin{equation}
 h[c, i, j] = \max_{k, l} f[c, i+k, j+l],
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(c\in[n_c]\)</span> ranges over the <span class="math notranslate nohighlight">\(n_c\)</span> channels, and once again <span class="math notranslate nohighlight">\(k \in [H_k]\)</span> and <span class="math notranslate nohighlight">\(l \in [W_k]\)</span>. The max operation actually <em>does</em> not reduce the resolution by itself: that is done by only computing the pooling output at a certain <em>stride</em> <span class="math notranslate nohighlight">\(s\)</span>, where often the stride is equal to the size of the window. Formally, we have</p>
-<div class="amsmath math notranslate nohighlight" id="equation-8259e094-50be-46a6-8314-a433f08ea84a">
-<span class="eqno">(5.47)<a class="headerlink" href="#equation-8259e094-50be-46a6-8314-a433f08ea84a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-257eb016-11ca-45f2-8963-718acd35f7b5">
+<span class="eqno">(5.49)<a class="headerlink" href="#equation-257eb016-11ca-45f2-8963-718acd35f7b5" title="Permalink to this equation">#</a></span>\[\begin{equation}
 h[c, i, j] = \max_{k, l} f[c, i s_i + k, j s_j + l],
 \end{equation}\]</div>
 <p>where the strides <span class="math notranslate nohighlight">\(s_i\)</span> and <span class="math notranslate nohighlight">\(s_j\)</span> for the row and column indexing can be different. More often than not, however, practitioners choose <span class="math notranslate nohighlight">\(s_i=s_j=W_k=H_k\)</span>, i.e., square pooling windows with the same stride, e.g., max pooling over <span class="math notranslate nohighlight">\(2\times 2\)</span> windows with a stride of <span class="math notranslate nohighlight">\(2\)</span>. Average and sum-pooling are similarly defined, and are equivalent up to a constant scaling factor.</p>
@@ -778,7 +779,7 @@ h[c, i, j] = \max_{k, l} f[c, i s_i + k, j s_j + l],
 <blockquote>
 <div><p>A historically important example.</p>
 </div></blockquote>
-<p>Convolutional neural networks were pioneered by <a class="reference external" href="https://en.wikipedia.org/wiki/Kunihiko_Fukushima">Kunihiko Fukushima</a> in the 70s, and and <a class="reference external" href="https://en.wikipedia.org/wiki/Yann_LeCun">Yann LeCun</a> in the 80s. The latter created several CNN-style neural networks for the task of handwritten digit recognition, motivated by an application for the US Postal Service. This work took part from the late 80s to well into the 90s, and is described in a <a class="reference external" href="https://ieeexplore.ieee.org/abstract/document/726791">highly cited 1998 overview paper</a>. Below we show the architecture of LeNet-5 described in that paper.</p>
+<p>Convolutional neural networks were pioneered by <a class="reference external" href="https://en.wikipedia.org/wiki/Kunihiko_Fukushima">Kunihiko Fukushima</a> in the 70s, and and <a class="reference external" href="https://en.wikipedia.org/wiki/Yann_LeCun">Yann LeCun</a> in the 1980s. The latter created several CNN-style neural networks for the task of handwritten digit recognition, motivated by an application for the US Postal Service. This work took part from the late 80s to well into the 90s, and is described in a <a class="reference external" href="https://ieeexplore.ieee.org/abstract/document/726791">highly cited 1998 overview paper</a> <span id="id2">[<a class="reference internal" href="bibliography.html#id60" title="Yann LeCun, Léon Bottou, Yoshua Bengio, and Patrick Haffner. Gradient-based learning applied to document recognition. Proceedings of the IEEE, 86(11):2278–2324, 1998. URL: https://ieeexplore.ieee.org/abstract/document/726791.">LeCun <em>et al.</em>, 1998</a>]</span>. Below we show the architecture of LeNet-5 described in that paper.</p>
 <p>LeNet-5 takes a single-channel, <span class="math notranslate nohighlight">\(32\times 32\)</span> grayscale image as input, and has the following layers:</p>
 <ul class="simple">
 <li><p>6-channel, <span class="math notranslate nohighlight">\(28\times 28\)</span> convolutional layer with <span class="math notranslate nohighlight">\(5\times 5\)</span> kernel;</p></li>
@@ -796,8 +797,8 @@ The MNIST task is now considered solved, and LeNet-5 is not even the best perfor
 <p>LeNet-5 it is an example of a very typical architecture that is still used by many modern methods: a sequence of convolutional and pooling layers, progressively increasing the feature-channel count as we go deeper while at the same time decreasing the feature map resolution, until the point where a few fully connected layers are used to perform a final classification decision.</p>
 </section>
 <section id="semantic-segmentation">
-<span id="index-12"></span><h2><span class="section-number">5.4.8. </span>Semantic Segmentation<a class="headerlink" href="#semantic-segmentation" title="Link to this heading">#</a></h2>
-<blockquote>
+<h2><span class="section-number">5.4.8. </span>Semantic Segmentation<a class="headerlink" href="#semantic-segmentation" title="Link to this heading">#</a></h2>
+<blockquote id="index-20">
 <div><p>What can neural networks do for robots?</p>
 </div></blockquote>
 <p>In section 5.6 we will see some other applications, but a very relevant task for robotics is <strong>semantic segmentation</strong>. In this task, every pixel in the image is classified into a finite set of <em>classes</em>, such as road, vegetation, building, sky, etc. Think back to the trash sorting robot’s need to classify pieces of trash into different categories. Semantic segmentation is similar, but we now do this for <em>every pixel</em> in the image. This is a very useful capability for a <em>mobile</em> robot, e.g., it can help plan a path over drivable surfaces.</p>
@@ -811,7 +812,7 @@ The MNIST task is now considered solved, and LeNet-5 is not even the best perfor
 </div>
 </div>
 </div>
-<p>We load a highway driving example to test it:</p>
+<p>In Figure <a class="reference internal" href="#fig:highway_image_by_robot"><span class="xref myst">7</span></a> we load a highway driving example for the purposes of testing.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Color image taken from a front-facing camera on a highway.</span>
@@ -852,7 +853,7 @@ The MNIST task is now considered solved, and LeNet-5 is not even the best perfor
 </div>
 </div>
 </div>
-<p>Again, we use example code from PyTorch Hub to display the result as a color-coded per-pixel segmentation image. Note the method calls <code class="docutils literal notranslate"><span class="pre">.cpu()</span></code> and <code class="docutils literal notranslate"><span class="pre">.numpy()</span></code> which respectively transfer a PyTorch tensor to the CPU (if it’s not already there) and then convert the tensor to a <code class="docutils literal notranslate"><span class="pre">numpy</span></code> array, to play nicely with <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code>:</p>
+<p>Again, we use example code from PyTorch Hub to display the result as a color-coded per-pixel segmentation image. Note the method calls <code class="docutils literal notranslate"><span class="pre">.cpu()</span></code> and <code class="docutils literal notranslate"><span class="pre">.numpy()</span></code> which respectively transfer a PyTorch tensor to the CPU (if it’s not already there) and then convert the tensor to a <code class="docutils literal notranslate"><span class="pre">numpy</span></code> array, to play nicely with <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code>. The result is shown in Figure <a class="reference internal" href="#fig:semantic_segmentation_by_robot"><span class="xref myst">8</span></a>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Semantic segmentation of the highway image.</span>
@@ -884,7 +885,7 @@ The MNIST task is now considered solved, and LeNet-5 is not even the best perfor
 <p>Below we give a pytorch example running a pre-trained single image depth neural network. Again we read it from the PyTorch Hub, using the MiDaS model trained by Intel researchers:</p>
 <div class="cell tag_remove-output docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model_type</span> <span class="o">=</span> <span class="s2">&quot;MiDaS_small&quot;</span>  <span class="c1"># MiDaS v2.1 - Small   (lowest accuracy, highest inference speed)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model_type</span> <span class="o">=</span> <span class="s2">&quot;MiDaS_small&quot;</span>  <span class="c1"># MiDaS v2.1 - Small</span>
 <span class="n">midas</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;intel-isl/MiDaS&quot;</span><span class="p">,</span> <span class="n">model_type</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">);</span>
 <span class="n">midas</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">DEVICE</span><span class="p">);</span>
 <span class="n">midas</span><span class="o">.</span><span class="n">eval</span><span class="p">();</span>
@@ -904,7 +905,7 @@ The MNIST task is now considered solved, and LeNet-5 is not even the best perfor
 </div>
 </div>
 </div>
-<p>After evaluating the network, we show the result using matplotlib:</p>
+<p>After evaluating the network, we show the result using matplotlib, in Figure <a class="reference internal" href="#fig:depth_estimation_by_robot"><span class="xref myst">9</span></a>. The output of this network, which was selected for its high inference speed, is not particularly accurate.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Depth estimation of the highway image.</span>
@@ -960,7 +961,7 @@ The MNIST task is now considered solved, and LeNet-5 is not even the best perfor
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title"><span class="section-number">5.3. </span>Robot Vision</p>
+        <p class="prev-next-title"><span class="section-number">5.3. </span>Cameras for Robot Vision</p>
       </div>
     </a>
     <a class="right-next"

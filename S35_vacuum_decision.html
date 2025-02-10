@@ -202,9 +202,9 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="S50_diffdrive_intro.html">5. A Mobile Robot With Simple Kinematics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="S51_diffdrive_state.html">5.1. State Space for a Differential Drive Robot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S51_diffdrive_state.html">5.1. State Space for a differential-drive robot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S52_diffdrive_actions.html">5.2. Motion Model for the Differential Drive Robot</a></li>
-<li class="toctree-l2"><a class="reference internal" href="S53_diffdrive_sensing.html">5.3. Robot Vision</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S53_diffdrive_sensing.html">5.3. Cameras for Robot Vision</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S54_diffdrive_perception.html">5.4. Computer Vision 101</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S55_diffdrive_planning.html">5.5. Path Planning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S56_diffdrive_learning.html">5.6. Deep Learning</a></li>
@@ -525,8 +525,8 @@ even if it provides no guarantees about the reward that will be obtained at any 
 <p>We denote the expected reward for executing action <span class="math notranslate nohighlight">\(a\)</span> in state <span class="math notranslate nohighlight">\(x\)</span>
 by <span class="math notranslate nohighlight">\(\bar{R}(x,a)\)</span>,
 and its value is obtained by evaluating the expectation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-6633c150-5405-4bbf-a977-2f6df9d1fabb">
-<span class="eqno">(3.42)<a class="headerlink" href="#equation-6633c150-5405-4bbf-a977-2f6df9d1fabb" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-a39e7c87-969c-47c3-9827-9b8ce1c9369c">
+<span class="eqno">(3.42)<a class="headerlink" href="#equation-a39e7c87-969c-47c3-9827-9b8ce1c9369c" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \bar{R}(x,a) \doteq E[R(x,a,X')] = \sum_{x'} P(x'|x,a) R(x, a, x').
 \end{equation}\]</div>
 <p>Note that we use the upper case <span class="math notranslate nohighlight">\(X'\)</span> to indicate that the expectation is taken with
@@ -613,8 +613,8 @@ all other entries.
 Therefore, this form is somewhat more general than that given above. -->
 <p>Equipped with the definition of expected reward, we can introduce a first, <strong>greedy planning</strong> algorithm.
 Given the current state <span class="math notranslate nohighlight">\(x_k\)</span>, execute the action that maximizes the expected reward:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-511f9e17-da24-4e92-9aa3-a0b9953fbeac">
-<span class="eqno">(3.43)<a class="headerlink" href="#equation-511f9e17-da24-4e92-9aa3-a0b9953fbeac" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-cf049468-3711-4282-b964-599fc2457380">
+<span class="eqno">(3.43)<a class="headerlink" href="#equation-cf049468-3711-4282-b964-599fc2457380" title="Permalink to this equation">#</a></span>\[\begin{equation}
 a_k^* = \arg  \max_{a \in {\cal A}} E[ R(x_k, a, X_{k+t})]
 \end{equation}\]</div>
  <!-- = \arg \max_{a \in {\cal A}}\left( b_k M_{A}\right) R --><p>For example, in the kitchen, we can calculate the expected award for all actions:</p>
@@ -668,14 +668,14 @@ Suppose the robot executes a sequence of actions, <span class="math notranslate 
 starting in state  <span class="math notranslate nohighlight">\(X_1=x_1\)</span>, and passes through
 state sequence <span class="math notranslate nohighlight">\(x_1,x_2,x_3\dots x_{n+1}\)</span>.
 We define the <strong>utility function</strong> <span class="math notranslate nohighlight">\(U: {\cal A}^n \times {\cal X}^{n+1} \rightarrow \mathbb{R}\)</span> as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-44f6fc79-fae1-4d9b-be47-ae4cc82c6676">
-<span class="eqno">(3.44)<a class="headerlink" href="#equation-44f6fc79-fae1-4d9b-be47-ae4cc82c6676" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-8957b6d7-aa4b-43b1-8f8b-e609165f0ae6">
+<span class="eqno">(3.44)<a class="headerlink" href="#equation-8957b6d7-aa4b-43b1-8f8b-e609165f0ae6" title="Permalink to this equation">#</a></span>\[\begin{equation}
 U(a_1, \dots, a_n, x_1, \dots x_{n+1}) =
 R(x_1,a_1, x_2) + \gamma R(x_2, a_2, x_3) + \dots \gamma^{n-1} R(x_{n}, a_{n}, x_{n+1})
 \end{equation}\]</div>
 <p>We can write this more compactly as the summation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-578796cd-07c4-41cd-82c2-a5cb78a3e55c">
-<span class="eqno">(3.45)<a class="headerlink" href="#equation-578796cd-07c4-41cd-82c2-a5cb78a3e55c" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-3a8d149c-6433-4b6a-9c7d-2b160bc51654">
+<span class="eqno">(3.45)<a class="headerlink" href="#equation-3a8d149c-6433-4b6a-9c7d-2b160bc51654" title="Permalink to this equation">#</a></span>\[\begin{equation}
 U(a_1, \dots, a_n, x_1, \dots x_{n+1}) =
 \sum_{k=1}^{n} = \gamma^{k-1} R(x_k, a_k, x_{k+1}) 
 \end{equation}\]</div>
@@ -688,8 +688,8 @@ We can, again, deal with this difficulty by computing the <em>expected</em> util
 given sequence of actions,
 <span class="math notranslate nohighlight">\(E[U(a_1, \dots, a_n, X_1, \dots X_n)]\)</span>.
 We can now formulate a slightly more sophisticated version of our planning problem: <em>choose the sequence of actions <span class="math notranslate nohighlight">\(a_{1:n}\)</span> that maximizes the expected utility</em>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-717f5132-4aff-4328-b8b9-49da24ae3c4e">
-<span class="eqno">(3.46)<a class="headerlink" href="#equation-717f5132-4aff-4328-b8b9-49da24ae3c4e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-e24bec1f-6ecd-48f9-a1f8-8159dd1089d7">
+<span class="eqno">(3.46)<a class="headerlink" href="#equation-e24bec1f-6ecd-48f9-a1f8-8159dd1089d7" title="Permalink to this equation">#</a></span>\[\begin{equation}
 a_1^*, \dots a_n^* = \arg  \max_{a_1 \dots a_n \in {\cal A}^n} E[U(a_1, \dots, a_n, X_1, \dots X_{n+1})]
 \end{equation}\]</div>
 <p>As formulated above, this problem could be solved by merely enumerating every possible action sequence,
@@ -705,8 +705,8 @@ We can, however, approximate this optimization process using the concept of roll
 <div><p>Rollin’, rollin’, rollin’…</p>
 </div></blockquote>
 <p>Consider the computation required to determine the expected utility for a sequence of only two actions:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-f5afc181-2836-4b35-b3e7-8b1779f0549e">
-<span class="eqno">(3.47)<a class="headerlink" href="#equation-f5afc181-2836-4b35-b3e7-8b1779f0549e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-60ad53d2-d707-4983-a4b1-8df41e0af3d9">
+<span class="eqno">(3.47)<a class="headerlink" href="#equation-60ad53d2-d707-4983-a4b1-8df41e0af3d9" title="Permalink to this equation">#</a></span>\[\begin{equation}
 E[U(a_1,a_2, X_1, X_2, X_3)] = E[R(X_1, a_1, X_2) + \gamma R(X_2, a_2, X_3)]
 \end{equation}\]</div>
 <p>Computing the expectation requires summing over all combinations of values for states
@@ -958,8 +958,8 @@ for a fixed sequence of actions.</p>
 </div></blockquote>
 <p>We would now like to characterize the quality of any given policy.
 Above, we defined the utility for a specific sequence of <span class="math notranslate nohighlight">\(n\)</span> actions as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-ddbb0fda-e1f9-4d8e-a112-226ba2ab644d">
-<span class="eqno">(3.48)<a class="headerlink" href="#equation-ddbb0fda-e1f9-4d8e-a112-226ba2ab644d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-9d0489fb-bf4d-4ec1-98e6-6ca76d91ee65">
+<span class="eqno">(3.48)<a class="headerlink" href="#equation-9d0489fb-bf4d-4ec1-98e6-6ca76d91ee65" title="Permalink to this equation">#</a></span>\[\begin{equation}
 U(a_1, \dots, a_n, x_1, \dots x_{n+1}) =
 R(x_1,a_1, x_2) + \gamma R(x_2, a_2, x_3) + \dots \gamma^{n-1} R(x_{n}, a_{n}, x_{n+1})
 \end{equation}\]</div>
@@ -969,8 +969,8 @@ We can apply this same type of reasoning for a policy, <span class="math notrans
 When evaluating policies, it is typical to use a discounted
 reward over an infinite time horizon.
 In this case, we define the <strong>value function</strong> <span class="math notranslate nohighlight">\(V^\pi:{\cal X} \rightarrow \mathbb{R}\)</span> for policy <span class="math notranslate nohighlight">\(\pi\)</span> as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-78d1665f-460b-4678-a899-fa3092e7e7aa">
-<span class="eqno">(3.49)<a class="headerlink" href="#equation-78d1665f-460b-4678-a899-fa3092e7e7aa" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-4ef4d761-f599-4588-a347-7738152bfa7b">
+<span class="eqno">(3.49)<a class="headerlink" href="#equation-4ef4d761-f599-4588-a347-7738152bfa7b" title="Permalink to this equation">#</a></span>\[\begin{equation}
 V^\pi(x_1) \doteq E [R(x_1, \pi(x_1), X_2) + \gamma R(X_2, \pi(X_2), X_3) + \gamma^2 R(X_3, \pi(X_3), X_4) + \dots]
 \end{equation}\]</div>
 <p>where the expectation is taken over the possible values
@@ -983,8 +983,8 @@ We can easily generalize this to arbitrary time steps as
 V^\pi(x_k) \doteq E [R(x_k, \pi(x_k), X_{k+1}) + \gamma R(X_{k+1}, \pi(X_{k+1}), X_{k+2}) + \dots]
 \end{equation} --><p>The value function for a policy can be written in a nice recursive form
 that can be obtained by the following derivation.</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a072700e-6023-471c-98ec-2223a7f7db75">
-<span class="eqno">(3.50)<a class="headerlink" href="#equation-a072700e-6023-471c-98ec-2223a7f7db75" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-4d95d28a-8a7c-473d-b382-f157e4e51cd7">
+<span class="eqno">(3.50)<a class="headerlink" href="#equation-4d95d28a-8a7c-473d-b382-f157e4e51cd7" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{aligned}
 V^\pi(x_1) &amp;=
 E [R(x_1, \pi(x_1), X_2) + \gamma R(X_2, \pi(X_2), X_3) + \gamma^2 R(X_3, \pi(X_3), X_4) + \dots] \\
@@ -998,8 +998,8 @@ taken with respect to the random state <span class="math notranslate nohighlight
 and the third line is obtained by noticing that
 <span class="math notranslate nohighlight">\(E [\gamma R(x_2, \pi(x_2), X_3) + \gamma^2 R(X_3, \pi(X_3), X_4) + \dots] = \gamma V^\pi(x_2)\)</span>.</p>
 <p>We can apply the distributivity property to this expression to obtain</p>
-<div class="amsmath math notranslate nohighlight" id="equation-17a941bc-d878-4727-8475-32267a856d63">
-<span class="eqno">(3.51)<a class="headerlink" href="#equation-17a941bc-d878-4727-8475-32267a856d63" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d97239d2-3c0c-4ae7-a6b2-15093fd05ee9">
+<span class="eqno">(3.51)<a class="headerlink" href="#equation-d97239d2-3c0c-4ae7-a6b2-15093fd05ee9" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{aligned}
 V^\pi(x_1) &amp;= \sum_{x_2} P(x_2|x_1, \pi(x_1)) R(x_1, \pi(x_1), x_2) + \gamma  \sum_{x_2} P(x_2|x_1, \pi(x_1))  V^\pi(x_2) \\
 &amp;= \bar{R}(x_1,\pi(x_1)) + \gamma \sum_{x_2} P(x_2|x_1, \pi(x_1)) V^\pi(x_2)
@@ -1008,8 +1008,8 @@ V^\pi(x_1) &amp;= \sum_{x_2} P(x_2|x_1, \pi(x_1)) R(x_1, \pi(x_1), x_2) + \gamma
 <p>in which the term <span class="math notranslate nohighlight">\(\bar{R}(x_1,\pi(x_1))\)</span> is the expected reward for applying action <span class="math notranslate nohighlight">\(a = \pi(x_1)\)</span> in state <span class="math notranslate nohighlight">\(x_1\)</span>, which we already know how to compute from the reward function <span class="math notranslate nohighlight">\(R\)</span> and transition probabilities.
 By now substituting <span class="math notranslate nohighlight">\(x\)</span> for <span class="math notranslate nohighlight">\(x_1\)</span>, and <span class="math notranslate nohighlight">\(x'\)</span> for <span class="math notranslate nohighlight">\(x_{2}\)</span> we can generalize this expression
 to apply to the state <span class="math notranslate nohighlight">\(x\)</span> at any arbitrary time:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-1d276c91-4eb7-4f39-b7f3-4bcd97727fff">
-<span class="eqno">(3.52)<a class="headerlink" href="#equation-1d276c91-4eb7-4f39-b7f3-4bcd97727fff" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-4b182bc1-a536-4407-8b90-6e132648c5c6">
+<span class="eqno">(3.52)<a class="headerlink" href="#equation-4b182bc1-a536-4407-8b90-6e132648c5c6" title="Permalink to this equation">#</a></span>\[\begin{equation}
 V^\pi(x) = \bar{R}(x,\pi(x)) + \gamma \sum_{x'} P(x'|x, \pi(x)) V^\pi(x')
 \end{equation}\]</div>
 <p>This has a very nice interpretation: the value of a state under a given policy is the expected reward <span class="math notranslate nohighlight">\(\bar{R}(x,\pi(x))\)</span> under that policy, <em>plus</em> the discounted expected value of the value function at the next state.</p>
@@ -1044,16 +1044,16 @@ Since <span class="math notranslate nohighlight">\(R(x, a, x') \)</span> is fini
 we know that there is some upper bound <span class="math notranslate nohighlight">\(R_{\rm{max}}\)</span> such that <span class="math notranslate nohighlight">\(R(x, a, x') &lt; R_{\rm{max}}\)</span>, for all
 possible <span class="math notranslate nohighlight">\(x,a,x'\)</span>.
 We can use this fact to find a bound on <span class="math notranslate nohighlight">\(V^\pi\)</span>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-102105d2-f3af-4ff2-a168-3f996530b2a7">
-<span class="eqno">(3.53)<a class="headerlink" href="#equation-102105d2-f3af-4ff2-a168-3f996530b2a7" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-456bb6b7-6611-4264-8b0e-56a55a7b9b7a">
+<span class="eqno">(3.53)<a class="headerlink" href="#equation-456bb6b7-6611-4264-8b0e-56a55a7b9b7a" title="Permalink to this equation">#</a></span>\[\begin{equation}
 V^\pi(x_k)
 \leq \max_{x_k, x_{k+1}, \dots} \sum_{i=0}^\infty \gamma ^i R(x_{k+i},\pi(x_{k+i}), x_{k+i+1})
 \leq \sum_{i=0}^\infty \gamma ^i R_{\rm{max}} = \frac{R_{\rm{max}}}{1 - \gamma}
 \end{equation}\]</div>
 <p>in which the final term applies for <span class="math notranslate nohighlight">\(0 &lt; \gamma &lt; 1\)</span>.
 This expression can then be used to bound the error</p>
-<div class="amsmath math notranslate nohighlight" id="equation-0d3cc297-ab48-4587-8691-19b28983a0cc">
-<span class="eqno">(3.54)<a class="headerlink" href="#equation-0d3cc297-ab48-4587-8691-19b28983a0cc" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d2b29995-9fe0-47cb-83e9-252405a92083">
+<span class="eqno">(3.54)<a class="headerlink" href="#equation-d2b29995-9fe0-47cb-83e9-252405a92083" title="Permalink to this equation">#</a></span>\[\begin{equation}
 V^\pi(x) - \sum_{i=0}^{N_{\rm{ro}}}\gamma ^i R(x_i,\pi(xi), x_{i+1})
 \end{equation}\]</div>
 <p>Because we have functions to sample a policy rollout <em>and</em> to calculate the value of a rollout, the code is simple enough:</p>
@@ -1119,8 +1119,8 @@ V(Office) ~ 84.74
 </div></blockquote>
 <p>We can compute the exact value of <span class="math notranslate nohighlight">\(V^\pi\)</span> by solving a system of linear equations.
 Recall our recursive definition of the value function:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-efff4dc1-4a46-4597-ab94-9a4afbf5a19f">
-<span class="eqno">(3.55)<a class="headerlink" href="#equation-efff4dc1-4a46-4597-ab94-9a4afbf5a19f" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-b339f280-8ebd-474d-ac64-d72e66888aa8">
+<span class="eqno">(3.55)<a class="headerlink" href="#equation-b339f280-8ebd-474d-ac64-d72e66888aa8" title="Permalink to this equation">#</a></span>\[\begin{equation}
 V^\pi(x) = \bar{R}(x,\pi(x)) + \gamma \sum_{x'} P(x'|x, \pi(x)) V^\pi(x')
 \end{equation}\]</div>
 <p>This equation holds for every possible value <span class="math notranslate nohighlight">\(x\)</span> for the state.
@@ -1128,8 +1128,8 @@ Hence, if there are <span class="math notranslate nohighlight">\(n\)</span> poss
 Each of these <span class="math notranslate nohighlight">\(n\)</span> equations is obtained by evaluating <span class="math notranslate nohighlight">\(V^\pi(x)\)</span> for a specific value of <span class="math notranslate nohighlight">\(x\)</span>.
 Collecting the unknown <span class="math notranslate nohighlight">\(V^\pi\)</span> terms on the left hand side and the known <span class="math notranslate nohighlight">\(\bar{R}(x,\pi(x))\)</span>
 terms on the right hand side, we obtain</p>
-<div class="amsmath math notranslate nohighlight" id="equation-d86a4579-b4c0-470c-b76a-fbd280a478a3">
-<span class="eqno">(3.56)<a class="headerlink" href="#equation-d86a4579-b4c0-470c-b76a-fbd280a478a3" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-b848db4b-97b5-4dcf-b646-a7d985fef0d1">
+<span class="eqno">(3.56)<a class="headerlink" href="#equation-b848db4b-97b5-4dcf-b646-a7d985fef0d1" title="Permalink to this equation">#</a></span>\[\begin{equation}
 V^\pi(x) - \gamma \sum_{x'} P(x'|x, \pi(x)) V^\pi(x') = \bar{R}(x,\pi(x)).
 \end{equation}\]</div>
 <p>To make this explicit yet concise for our vacuum cleaning robot example,
@@ -1137,13 +1137,13 @@ let us define the <em>scalar</em> <span class="math notranslate nohighlight">\(T
 In addition, we use the abbreviations L,K,O,H, and D for the rooms, and use the shorthand <span class="math notranslate nohighlight">\(V^\pi_x\doteq V^\pi(x)\)</span> for the value of state <span class="math notranslate nohighlight">\(x\)</span> under policy <span class="math notranslate nohighlight">\(\pi\)</span>.
 Using this notation, we can evaluate the above expression.
 For <span class="math notranslate nohighlight">\(x = L\)</span>, we obtain</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a082b3b4-764d-47e3-ae0f-f3b0960e5bf5">
-<span class="eqno">(3.57)<a class="headerlink" href="#equation-a082b3b4-764d-47e3-ae0f-f3b0960e5bf5" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-cfabf224-eab0-496e-84b0-25db99c6d312">
+<span class="eqno">(3.57)<a class="headerlink" href="#equation-cfabf224-eab0-496e-84b0-25db99c6d312" title="Permalink to this equation">#</a></span>\[\begin{equation}
 V^\pi_L - \gamma \sum_{x'\in {L,K,O,H,D}} T^\pi_{Lx'} V^\pi_{x'} = \bar{R}(L,\pi(L))
 \end{equation}\]</div>
 <p>or, after some algebra:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-fc5b7418-1670-4de4-82c9-79420722e04d">
-<span class="eqno">(3.58)<a class="headerlink" href="#equation-fc5b7418-1670-4de4-82c9-79420722e04d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-63b94578-cf8e-4d92-9f0f-e8181731b902">
+<span class="eqno">(3.58)<a class="headerlink" href="#equation-63b94578-cf8e-4d92-9f0f-e8181731b902" title="Permalink to this equation">#</a></span>\[\begin{equation}
 (1 - \gamma T^\pi_{LL}) V^\pi_{L}
 - \gamma T^\pi_{LK} V^\pi_{K} 
 - \gamma T^\pi_{LO} V^\pi_{O} 
@@ -1153,8 +1153,8 @@ V^\pi_L - \gamma \sum_{x'\in {L,K,O,H,D}} T^\pi_{Lx'} V^\pi_{x'} = \bar{R}(L,\pi
 \end{equation}\]</div>
 <p>If we apply this same process for each of the five rooms,
 we obtain the following five equations:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-3e844350-f96a-42d0-b965-daeede33df36">
-<span class="eqno">(3.59)<a class="headerlink" href="#equation-3e844350-f96a-42d0-b965-daeede33df36" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-31bc9485-e674-44e3-9a11-164c4cb39b67">
+<span class="eqno">(3.59)<a class="headerlink" href="#equation-31bc9485-e674-44e3-9a11-164c4cb39b67" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{aligned}
 (1 - \gamma T^\pi_{LL}) V^\pi_{L}
 - \gamma T^\pi_{LK} V^\pi_{K} 
