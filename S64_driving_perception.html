@@ -67,7 +67,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="6.5. Planning for Autonomous Driving." href="S65_driving_planning.html" />
+    <link rel="next" title="6.5. Planning for Autonomous Driving" href="S65_driving_planning.html" />
     <link rel="prev" title="6.3. Sensing for Autonomous Vehicles" href="S63_driving_sensing.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -216,7 +216,7 @@
 <li class="toctree-l2"><a class="reference internal" href="S62_driving_actions.html">6.2. Kinematics for Driving</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S63_driving_sensing.html">6.3. Sensing for Autonomous Vehicles</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">6.4. SLAM</a></li>
-<li class="toctree-l2"><a class="reference internal" href="S65_driving_planning.html">6.5. Planning for Autonomous Driving.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S65_driving_planning.html">6.5. Planning for Autonomous Driving</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S66_driving_DRL.html">6.6. Deep Reinforcement Learning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S67_driving_summary.html">6.7. Chapter Summary</a></li>
 </ul>
@@ -386,7 +386,7 @@
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#poseslam">6.4.3. PoseSLAM</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-poseslam-factor-graph">6.4.4. The PoseSLAM Factor Graph</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#map-inference-via-least-squares">6.4.5. MAP Inference via Least-Squares</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#map-inference-via-least-squares">6.4.5. MAP Inference via Least Squares</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#poseslam-is-nonlinear">6.4.6. PoseSLAM is Nonlinear !</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nonlinear-optimization-for-poseslam">6.4.7. Nonlinear Optimization for PoseSLAM</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optimization-with-gtsam">6.4.8. Optimization with GTSAM</a></li>
@@ -411,7 +411,7 @@
 </div></blockquote>
 <a class="reference internal image-reference" href="_images/S64-Autonomous_Vehicle_with_LIDAR_and_cameras-03.jpg"><img alt="Splash image with steampunk autonomous car" class="align-center" src="_images/S64-Autonomous_Vehicle_with_LIDAR_and_cameras-03.jpg" style="width: 40%;" /></a>
 <p id="index-1">When an autonomous vehicle explores a new environment, it should be able to simultaneously build a map of this environment, and localize itself relative to that map. That capability is known as <strong>Simultaneous Localization and Mapping</strong> or <strong>SLAM</strong>. SLAM is a bit like a chicken and egg problem: if we knew the map, we could use the localization techniques we studied in Section 4.4, e.g., Monte Carlo Localization. Conversely, if we were already localized, it would not be too hard to create a map: if we have a LIDAR sensor, we could simply transform the points from the LIDAR frame into the world frame. But now we have to do <em>both</em> at the same time! Is that even possible?</p>
-<p>In this section we show that this <em>is</em> possible, and we expand upon two different SLAM techniques: <em>PoseSLAM</em> and <em>SLAM with landmarks</em>. In the former we concentrate on estimating the robot’s motion from a rich sensor such as LIDAR, and building the map is generated as a side effect. In the latter, we truly optimize for both the location of the vehicle and the location of a observed landmarks, which leads to a sparse map of the environment. Before investigating these two SLAM algorithms, we review the math of vehicle poses in 2D, and discuss ICP, a seminal algorithm for aligning two point clouds, and which we use as a building block in PoseSLAM.</p>
+<p id="index-2">In this section we show that this <em>is</em> possible, and we introduce two different SLAM techniques: <em>PoseSLAM</em> and <em>SLAM with landmarks</em>. In the former we concentrate on estimating the robot’s motion from a rich sensor such as LIDAR, and building the map is accomplished as a side effect. In the latter, we truly optimize for both the location of the vehicle and the location of a observed landmarks, which leads to a sparse map of the environment. Before investigating these two SLAM algorithms, we review the math of vehicle poses in 2D, and discuss ICP, a seminal algorithm for aligning two point clouds, and which we use as a building block in PoseSLAM.</p>
 <section id="poses-in-2d-and-3d">
 <h2><span class="section-number">6.4.1. </span>Poses in 2D and 3D<a class="headerlink" href="#poses-in-2d-and-3d" title="Link to this heading">#</a></h2>
 <blockquote>
@@ -420,11 +420,10 @@
 <p>In both SLAM variants we need to optimize over the pose of a vehicle.
 To keep things simple, we will concentrate on poses in the plane for now.
 Recall from Section 6.1 that a 2D pose
-<span class="math notranslate nohighlight">\(T\doteq(x,y,\theta)\)</span> is an element of the Special Euclidean group <span class="math notranslate nohighlight">\(SE(2)\)</span>,
-and
-can be represented by a <span class="math notranslate nohighlight">\(3\times3\)</span> matrix of the form</p>
-<div class="amsmath math notranslate nohighlight" id="equation-f44b5003-dd2a-4daa-a474-d80926b0630d">
-<span class="eqno">(6.35)<a class="headerlink" href="#equation-f44b5003-dd2a-4daa-a474-d80926b0630d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<span class="math notranslate nohighlight">\(T\)</span> is an element of the Special Euclidean group <span class="math notranslate nohighlight">\(SE(2)\)</span>,
+and can be represented by a <span class="math notranslate nohighlight">\(3\times3\)</span> matrix of the form</p>
+<div class="amsmath math notranslate nohighlight" id="equation-0031b62a-69ed-4122-a9c6-74ced7cb3090">
+<span class="eqno">(6.35)<a class="headerlink" href="#equation-0031b62a-69ed-4122-a9c6-74ced7cb3090" title="Permalink to this equation">#</a></span>\[\begin{equation}
 T=\left[\begin{array}{cc|c}
 \cos\theta &amp; -\sin\theta &amp; x\\
 \sin\theta &amp; \cos\theta &amp; y\\
@@ -437,26 +436,27 @@ R &amp; t\\
 <p>with the <span class="math notranslate nohighlight">\(2\times1\)</span> vector <span class="math notranslate nohighlight">\(t\)</span>
 representing the position of the vehicle, and <span class="math notranslate nohighlight">\(R\)</span> the <span class="math notranslate nohighlight">\(2\times2\)</span>
 rotation matrix representing the vehicle’s orientation in the plane.</p>
-<p>Below it is important to understand what coordinate frames are involved, and hence we insist on always annotating the transformation matrices with indices indicating the reference frame as superscript and the frame under consideration using subscript. This convention also
-provides a reminder to how points in one frame are transformed into the other.
-As an example, the following illustrates how points in the frame <span class="math notranslate nohighlight">\(b\)</span> are transformed into the reference frame <span class="math notranslate nohighlight">\(a\)</span> by referring to the pose <span class="math notranslate nohighlight">\(T^a_b\)</span> of frame <span class="math notranslate nohighlight">\(b\)</span> in <span class="math notranslate nohighlight">\(a\)</span>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-7b1f7a96-0c3c-4fbc-b504-5a1d019c75e4">
-<span class="eqno">(6.36)<a class="headerlink" href="#equation-7b1f7a96-0c3c-4fbc-b504-5a1d019c75e4" title="Permalink to this equation">#</a></span>\[\begin{equation}
-P^a = \left[\begin{array}{cc}
+<p id="index-3">Below it is important to understand what coordinate frames are involved, and hence we insist on always annotating the transformation matrices with indices indicating the reference frame as superscript and the frame under consideration using subscript.
+This convention also provides a reminder of how points in one frame are transformed into the other.
+As an example, the following illustrates how points in the frame <span class="math notranslate nohighlight">\(b\)</span> are transformed into the reference frame <span class="math notranslate nohighlight">\(a\)</span> by referring to the pose <span class="math notranslate nohighlight">\(T^a_b\)</span> of frame <span class="math notranslate nohighlight">\(b\)</span> in <span class="math notranslate nohighlight">\(a\)</span>,</p>
+<div class="amsmath math notranslate nohighlight" id="equation-969ac152-cd03-41b5-9ec4-77b0314c43f7">
+<span class="eqno">(6.36)<a class="headerlink" href="#equation-969ac152-cd03-41b5-9ec4-77b0314c43f7" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\tilde P^a = \left[\begin{array}{cc}
 R^a_b &amp; t^a_b\\
 0 &amp; 1
-\end{array}\right] P^b = T^a_b P^b 
+\end{array}\right] \tilde P^b = T^a_b \tilde P^b 
 \end{equation}\]</div>
-<p>A good rule to keep in mind, illustrated above, is that the superscript <span class="math notranslate nohighlight">\(b\)</span> of the point <span class="math notranslate nohighlight">\(P^b\)</span> on the right-hand side is “canceled” by the subscript <span class="math notranslate nohighlight">\(b\)</span> in the pose <span class="math notranslate nohighlight">\(T^a_b\)</span>, and so the left-hand side <span class="math notranslate nohighlight">\(P^a\)</span> only retains the superscript <span class="math notranslate nohighlight">\(a\)</span>, indicating it now lives in the reference frame <span class="math notranslate nohighlight">\(a\)</span>. This rule is quite useful when implementing these types of transformations in code, as well. Also, keep in mind that we are talking about the <em>same</em> point <span class="math notranslate nohighlight">\(P\)</span> in both cases: it is simply the <em>coordinates</em> that change by expressing them in a different frame.</p>
+<p>where as before <span class="math notranslate nohighlight">\(\tilde P\)</span> denotes the <em>homogeneous coordinates</em> of the point <span class="math notranslate nohighlight">\(P\)</span>.
+A good rule to keep in mind, illustrated above, is that the superscript <span class="math notranslate nohighlight">\(b\)</span> of the point <span class="math notranslate nohighlight">\(\tilde P^b\)</span> on the right-hand side is “canceled” by the subscript <span class="math notranslate nohighlight">\(b\)</span> in the pose <span class="math notranslate nohighlight">\(T^a_b\)</span>, and so the left-hand side <span class="math notranslate nohighlight">\(\tilde P^a\)</span> only retains the superscript <span class="math notranslate nohighlight">\(a\)</span>, indicating it now lives in the reference frame <span class="math notranslate nohighlight">\(a\)</span>. This rule is quite useful when implementing these types of transformations in code, as well. Also, keep in mind that we are talking about the <em>same</em> point <span class="math notranslate nohighlight">\(P\)</span> in both cases: it is simply the <em>coordinates</em> that change by expressing them in a different frame.</p>
 <p>Note that this representation generalizes easily to three dimensions,
 but of course <span class="math notranslate nohighlight">\(t^a_b\)</span> will be a three-vector, and <span class="math notranslate nohighlight">\(R^a_b\)</span> will be a <span class="math notranslate nohighlight">\(3\times3\)</span>
-rotation matrix representing the 3DOF orientation of the vehicle. The
+rotation matrix representing the 3D orientation of the vehicle. The
 latter can be decomposed into roll, pitch, and yaw, if so desired,
 but we will not need that until the next chapter.</p>
 </section>
 <section id="the-iterative-closest-points-algorithm">
-<span id="index-2"></span><h2><span class="section-number">6.4.2. </span>The Iterative Closest Points Algorithm<a class="headerlink" href="#the-iterative-closest-points-algorithm" title="Link to this heading">#</a></h2>
-<blockquote>
+<h2><span class="section-number">6.4.2. </span>The Iterative Closest Points Algorithm<a class="headerlink" href="#the-iterative-closest-points-algorithm" title="Link to this heading">#</a></h2>
+<blockquote id="index-4">
 <div><p>ICP is a seminal method to align two point clouds.</p>
 </div></blockquote>
 <p><strong>Iterative closest points</strong> or <strong>ICP</strong> is a method to align two point clouds, e.g., two successive LIDAR scans, and it is a crucial component in the PoseSLAM algorithm we will discuss next. Leaning into the notation re-introduced above, we use superscripts <span class="math notranslate nohighlight">\(a\)</span> and <span class="math notranslate nohighlight">\(b\)</span> to distinguish the two point clouds, and the points therein. Under the assumption that we have a good initial estimate <span class="math notranslate nohighlight">\(\hat{T^a_b}\)</span> for the relative pose <span class="math notranslate nohighlight">\(T^a_b\)</span> between the two point clouds, ICP iterates between two steps:</p>
@@ -464,71 +464,71 @@ but we will not need that until the next chapter.</p>
 <li><p>Find closest point correspondences between the two clouds.</p></li>
 <li><p>Use these point correspondences to re-estimate the relative pose <span class="math notranslate nohighlight">\(\hat{T^a_b}\)</span> between the two point clouds.</p></li>
 </ol>
-<p>These two steps are iterated until convergence, hence the name <em>iterated</em> closest points. Below we  explain both steps in more detail.</p>
+<p>These two steps are iterated until convergence, hence the name <em>iterative</em> closest points. Below we  explain both steps in more detail.</p>
 <section id="finding-closest-points">
-<span id="index-3"></span><h3><span class="section-number">6.4.2.1. </span>Finding Closest Points<a class="headerlink" href="#finding-closest-points" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">6.4.2.1. </span>Finding Closest Points<a class="headerlink" href="#finding-closest-points" title="Link to this heading">#</a></h3>
 <p>The first step is the easiest: for each point <span class="math notranslate nohighlight">\(P^a_j\)</span> in the first point cloud, we define <span class="math notranslate nohighlight">\(P^b_j\)</span> to be its closest point in the second point cloud. Stated formally, for each point <span class="math notranslate nohighlight">\(P^a_j\)</span>, we solve the following minimization problem:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-142ba4f9-4eba-49d3-a912-5c3f4ed5f8a1">
-<span class="eqno">(6.37)<a class="headerlink" href="#equation-142ba4f9-4eba-49d3-a912-5c3f4ed5f8a1" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-6e4c4ce8-2367-4c13-9c96-eed58a1ee5ab">
+<span class="eqno">(6.37)<a class="headerlink" href="#equation-6e4c4ce8-2367-4c13-9c96-eed58a1ee5ab" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P^b_j = \arg \min_{P^b_k} \| P^b_k - P^a_j\|^2
 \end{equation}\]</div>
 <p>We prefer using indices <span class="math notranslate nohighlight">\(j\)</span> for points as we use <span class="math notranslate nohighlight">\(i\)</span> for poses below, making it easier to associate notation with geometric concepts. Two things about the above minimization are worth noting:
 (a) it can be solved using a linear search over all points <span class="math notranslate nohighlight">\(P^b\)</span>,
 and (b) rather than computing the distance we can save the computation of a square root by minimizing the square, which is just as good as they are monotonically related.</p>
-<p>The linear search problem above is known as the <strong>nearest neighbor</strong> problem, and solving this problem for all points is the <strong>all nearest neighbors</strong> problem.
-Iterating over all points in the second cloud can be quite slow, and indeed finding all nearest neighbors that way has quadratic complexity. However, very fast <em>approximate</em> nearest neighbor algorithms are available. Many of these use specialized data structures, such as “KD-trees” or “Oct-trees” (in 3D). While the details are beyond the scope of this book,
+<p id="index-5">The linear search problem above is known as the <strong>nearest neighbor</strong> problem, and solving this problem for all points is the <strong>all nearest neighbors</strong> problem.
+Iterating over all points in the second cloud can be quite slow, and indeed finding all nearest neighbors that way has quadratic complexity. However, very fast <em>approximate</em> nearest neighbor algorithms are available. Many of these use specialized data structures, such as <em>KD-trees</em> in 2D or Octrees in 3D. While the details are beyond the scope of this book,
 intuitively these data structures  recursively divide up the point clouds into sub-clouds, such that sub-clouds unlikely to contain the nearest neighbor can be quickly excluded. We build this data structure once for the second cloud, and then use it for all nearest neighbor searches, leading to complexity which is approximately <span class="math notranslate nohighlight">\(O(N \log N\)</span>),
 for point clouds of size <span class="math notranslate nohighlight">\(N\)</span>.</p>
 </section>
 <section id="estimating-the-pairwise-transform">
-<span id="index-4"></span><h3><span class="section-number">6.4.2.2. </span>Estimating the Pairwise Transform<a class="headerlink" href="#estimating-the-pairwise-transform" title="Link to this heading">#</a></h3>
-<p>The second step is the more interesting one: given a set of closest point pairs <span class="math notranslate nohighlight">\(\{(P^a_j, P^b_j)\}\)</span>, how can we estimate the relative pose <span class="math notranslate nohighlight">\(\widehat{T^a_b}\)</span> between the two point clouds? This is known as the <strong>pose alignment</strong> problem.</p>
-<p>Let us first assume that the two point clouds only differ by a rotation <span class="math notranslate nohighlight">\(R^a_b\)</span>. When this is the case, and assuming we have corresponding points <span class="math notranslate nohighlight">\(P^a\)</span> and <span class="math notranslate nohighlight">\(P^b\)</span>, then each point <span class="math notranslate nohighlight">\(P^a\)</span> in the first cloud can be expressed as a function of a point <span class="math notranslate nohighlight">\(P^b\)</span> in the second cloud:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a44f25e3-53b8-440a-b261-1704afe45fb1">
-<span class="eqno">(6.38)<a class="headerlink" href="#equation-a44f25e3-53b8-440a-b261-1704afe45fb1" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<h3><span class="section-number">6.4.2.2. </span>Estimating the Pairwise Transform<a class="headerlink" href="#estimating-the-pairwise-transform" title="Link to this heading">#</a></h3>
+<p id="index-6">The second step is the more interesting one: given a set of closest point pairs <span class="math notranslate nohighlight">\(\{(P^a_j, P^b_j)\}\)</span>, how can we estimate the relative pose <span class="math notranslate nohighlight">\(\widehat{T^a_b}\)</span> between the two point clouds? This is known as the <strong>pose alignment</strong> problem.</p>
+<p id="index-7">Let us first assume that the two point clouds only differ by a rotation <span class="math notranslate nohighlight">\(R^a_b\)</span>. When this is the case, and assuming we have corresponding points <span class="math notranslate nohighlight">\(P^a\)</span> and <span class="math notranslate nohighlight">\(P^b\)</span>, then each point <span class="math notranslate nohighlight">\(P^a\)</span> in the first cloud can be expressed as a function of a point <span class="math notranslate nohighlight">\(P^b\)</span> in the second cloud:</p>
+<div class="amsmath math notranslate nohighlight" id="equation-81e3a28f-2f26-409d-bcec-03f051d32564">
+<span class="eqno">(6.38)<a class="headerlink" href="#equation-81e3a28f-2f26-409d-bcec-03f051d32564" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P^a = R^a_b P^b
 \end{equation}\]</div>
 <p>One might be tempted to think that therefore</p>
-<div class="amsmath math notranslate nohighlight" id="equation-53d5c6b0-07ca-4af2-a07f-4a18ab7041dc">
-<span class="eqno">(6.39)<a class="headerlink" href="#equation-53d5c6b0-07ca-4af2-a07f-4a18ab7041dc" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-4bbd515f-ee1f-4696-b40c-7919740a7c33">
+<span class="eqno">(6.39)<a class="headerlink" href="#equation-4bbd515f-ee1f-4696-b40c-7919740a7c33" title="Permalink to this equation">#</a></span>\[\begin{equation}
 R^a_b = P^a (P^b)^{-1}
 \end{equation}\]</div>
-<p>but, of course, there since <span class="math notranslate nohighlight">\(P^b\)</span> is a vector, it does not have an inverse. So this would not work.
+<p>but, of course, since <span class="math notranslate nohighlight">\(P^b\)</span> is a vector, it does not have an inverse. So this would not work.
 Interestingly, though, if we form the matrix</p>
-<div class="amsmath math notranslate nohighlight" id="equation-52b2b1d4-4fc9-4e86-8937-5b8d0eb97773">
-<span class="eqno">(6.40)<a class="headerlink" href="#equation-52b2b1d4-4fc9-4e86-8937-5b8d0eb97773" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-6691c0a2-2677-4fd0-aa5b-e382f0418086">
+<span class="eqno">(6.40)<a class="headerlink" href="#equation-6691c0a2-2677-4fd0-aa5b-e382f0418086" title="Permalink to this equation">#</a></span>\[\begin{equation}
 H = \sum_j P^a_j (P^b_j)^T
 \end{equation}\]</div>
-<p>by summing over at least 3 point pairs <span class="math notranslate nohighlight">\((P^a_j, P^b_j)\)</span>, it turns out that the rotation matrix <span class="math notranslate nohighlight">\(\widehat{R^a_b}\)</span> closest to <span class="math notranslate nohighlight">\(H\)</span> in the least squares sense <em>is</em> the best possible estimate for the unknown rotation <span class="math notranslate nohighlight">\(R^a_b\)</span>. In addition, using the <em>singular value decomposition</em> from linear algebra, it is <em>very</em> easy to compute.
-The singular value decomposition of the matrix <span class="math notranslate nohighlight">\(H\)</span> is defined by <span class="math notranslate nohighlight">\(H=U\Lambda V^T\)</span>, in which <span class="math notranslate nohighlight">\(\Lambda\)</span> is a diagonal
+<p>by summing over at least 3 point pairs <span class="math notranslate nohighlight">\((P^a_j, P^b_j)\)</span>, it turns out that the rotation matrix <span class="math notranslate nohighlight">\(\widehat{R^a_b}\)</span> closest to <span class="math notranslate nohighlight">\(H\)</span> in the least squares sense <em>is</em> the best possible estimate for the unknown rotation <span class="math notranslate nohighlight">\(R^a_b\)</span>. In addition, using the <em>singular value decomposition</em> from linear algebra, it is <em>very</em> easy to compute.</p>
+<p id="index-8">The <strong>singular value decomposition</strong> of the matrix <span class="math notranslate nohighlight">\(H\)</span> is defined by <span class="math notranslate nohighlight">\(H=U\Lambda V^T\)</span>, in which <span class="math notranslate nohighlight">\(\Lambda\)</span> is a diagonal
 matrix of singular values, and both <span class="math notranslate nohighlight">\(U\)</span> and <span class="math notranslate nohighlight">\(V\)</span> are orthogonal matrices.
 The optimal estimate for the rotation matrix is given by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-d666fc14-8c73-42d8-81e4-6ad1c920d864">
-<span class="eqno">(6.41)<a class="headerlink" href="#equation-d666fc14-8c73-42d8-81e4-6ad1c920d864" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-b0c4db18-494a-4f44-a1c6-071679d2ff74">
+<span class="eqno">(6.41)<a class="headerlink" href="#equation-b0c4db18-494a-4f44-a1c6-071679d2ff74" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \widehat{R^a_b} = U V^T
 \end{equation}\]</div>
-<p>Interesting aside: this problem is known as the <em>orthogonal Procrustes problem</em> and its solution via SVD has been known since 1966, from a 1966 paper by Peter Schönemann <span id="id1">[<a class="reference internal" href="bibliography.html#id25" title="Peter Schoenemann. A generalized solution of the orthogonal procrustes problem. Psychometrika, 31(1):1-10, March 1966. doi:10.1007/BF02289451.">Schoenemann, 1966</a>]</span>. Procrustes was a mythological greek villain who either stretched or cut his victims to size to fit their bed, analogous to how we make the rotation matrix above fit the data.</p>
+<p>Interesting aside: this problem is known as the <em>orthogonal Procrustes problem</em> and its solution via SVD has been known since 1966, from a 1966 paper by Peter Schönemann <span id="id1">[<a class="reference internal" href="bibliography.html#id47" title="Peter Schoenemann. A generalized solution of the orthogonal procrustes problem. Psychometrika, 31(1):1-10, mar 1966. doi:10.1007/BF02289451.">Schoenemann, 1966</a>]</span>. Procrustes was a mythological greek villain who either stretched or cut his victims to size to fit their bed, analogous to how we make the rotation matrix above fit the data.</p>
 <p>The above solves the problem when there is only rotation, but we must also consider relative translation between the two point clouds.
 Fortunately, it turns out that the best possible translation estimate will always align the <em>centroids</em> of the two point clouds. Hence, when there is translation present, we simply compute the matrix <span class="math notranslate nohighlight">\(H\)</span> from the <em>centered</em> points,</p>
-<div class="amsmath math notranslate nohighlight" id="equation-03434c4e-8fa8-4d87-b54c-cc1f84197d8d">
-<span class="eqno">(6.42)<a class="headerlink" href="#equation-03434c4e-8fa8-4d87-b54c-cc1f84197d8d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-4ab363d0-2c89-4f9c-8d61-433297730905">
+<span class="eqno">(6.42)<a class="headerlink" href="#equation-4ab363d0-2c89-4f9c-8d61-433297730905" title="Permalink to this equation">#</a></span>\[\begin{equation}
 H = \sum_j (P^a_j-C^a) (P^b_j-C^b)^T
 \end{equation}\]</div>
 <p>where the point cloud centroids <span class="math notranslate nohighlight">\(C^a\)</span> and <span class="math notranslate nohighlight">\(C^b\)</span> are computed as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-465eb327-50e9-4136-b7b2-54bc2fe30340">
-<span class="eqno">(6.43)<a class="headerlink" href="#equation-465eb327-50e9-4136-b7b2-54bc2fe30340" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-6c53d2a5-a19e-422b-b1ee-9f1b1fb01abb">
+<span class="eqno">(6.43)<a class="headerlink" href="#equation-6c53d2a5-a19e-422b-b1ee-9f1b1fb01abb" title="Permalink to this equation">#</a></span>\[\begin{equation}
 C^a = \frac{1}{N} \sum_j P^a_j\text{    and    }C^b = \frac{1}{N} \sum_j P^b_j.
 \end{equation}\]</div>
 <p>Given the estimated rotation <span class="math notranslate nohighlight">\(\widehat{R^a_b}\)</span>, the translation estimate <span class="math notranslate nohighlight">\(\widehat{t^a_b}\)</span> can then be estimated from</p>
-<div class="amsmath math notranslate nohighlight" id="equation-564a3024-d39b-4748-bc3e-2e1201f4bafc">
-<span class="eqno">(6.44)<a class="headerlink" href="#equation-564a3024-d39b-4748-bc3e-2e1201f4bafc" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-bf609855-38f8-475c-a023-1c25fcc382b1">
+<span class="eqno">(6.44)<a class="headerlink" href="#equation-bf609855-38f8-475c-a023-1c25fcc382b1" title="Permalink to this equation">#</a></span>\[\begin{equation}
 C^a = \widehat{R^a_b} C^b + \widehat{t^a_b},
 \end{equation}\]</div>
 <p>and the final relative pose estimate is given by <span class="math notranslate nohighlight">\(\widehat{T^a_b} =(\widehat{R^a_b}, \widehat{t^a_b})\)</span>. By the way, all of the above math is identical for both the 2D and 3D case.</p>
 </section>
 </section>
 <section id="poseslam">
-<span id="index-5"></span><h2><span class="section-number">6.4.3. </span>PoseSLAM<a class="headerlink" href="#poseslam" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">6.4.3. </span>PoseSLAM<a class="headerlink" href="#poseslam" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>PoseSLAM is SLAM with pose priors and relative pose constraints only. We can derive those from Iterative Closest Points (ICP).</p>
 </div></blockquote>
@@ -539,7 +539,7 @@ using Markov localization, Monte Carlo localization, and the Kalman filter.
 The additional wrinkle in SLAM is that we do
 <em>not</em> know the map a priori, and hence we have to infer the unknown map
 while simultaneously estimating the robot’s location with respect to the evolving map.</p>
-<p><strong>PoseSLAM</strong> is a variant of SLAM that uses pose constraints (using an algorithm such as ICP) as a
+<p id="index-9"><strong>PoseSLAM</strong> is a variant of SLAM that uses pose constraints (using an algorithm such as ICP) as a
 basic building block when optimizing over the unknown vehicle
 poses.
 In PoseSLAM we do <em>not</em> explicitly optimize over a map.
@@ -567,12 +567,12 @@ optimized poses <span class="math notranslate nohighlight">\(T_{i}^{*}\)</span>.
 <blockquote>
 <div><p>Factor graphs expose the sparse set of constraints tying absolute poses together.</p>
 </div></blockquote>
-<p>In our factor-graph-based view of the world, a pose constraint is
+<p>In our factor-graph view of the world, a pose constraint is
 represented as a factor. As before, the factor graph represent the
 posterior distribution over the unknown pose variables
 <span class="math notranslate nohighlight">\(\mathcal{T}=\{X_{1}\dots X_{5}\}\)</span> given the known measurements:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-d20d63aa-8111-4b75-9ec3-fc17bc2d66db">
-<span class="eqno">(6.45)<a class="headerlink" href="#equation-d20d63aa-8111-4b75-9ec3-fc17bc2d66db" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-cf905d11-a1b2-4c97-bb96-1c00b80cd221">
+<span class="eqno">(6.45)<a class="headerlink" href="#equation-cf905d11-a1b2-4c97-bb96-1c00b80cd221" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \phi(\mathcal{T})=\prod_{i}\phi_{i}(\mathcal{T}_{i}),
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\mathcal{T}_{i}\)</span> is the set of poses involved with factor <span class="math notranslate nohighlight">\(\phi_i\)</span>.
@@ -581,13 +581,11 @@ exposing the sparsity pattern of the corresponding estimation problem.</p>
 <figure id="fig:PoseSLAMFG">
 <img src="https://github.com/gtbook/robotics/blob/main/Figures6/PoseSLAM-FG.png?raw=1" style="width:60.0%" /><figcaption>PoseSLAM factor graph example.</figcaption>
 </figure>
-<p>An example is shown in Figure
-<a href="#fig:PoseSLAMFG" data-reference-type="ref" data-reference="fig:PoseSLAMFG">1</a>.
-The example represents a vehicle driving around, and taking LIDAR scans
+<p>An example is shown in Figure <a class="reference internal" href="#fig:PoseSLAMFG"><span class="xref myst">1</span></a>. The example represents a vehicle driving around, and taking LIDAR scans
 at 5 different world poses, represented by <span class="math notranslate nohighlight">\(T_{1}\)</span> to <span class="math notranslate nohighlight">\(T_{5}\)</span>.
 The factors <span class="math notranslate nohighlight">\(f_{1}\)</span> to <span class="math notranslate nohighlight">\(f_{4}\)</span> are binary factors representing the pose
 constraints obtained by matching successive LIDAR scans using ICP.</p>
-<p id="index-6">The factor
+<p id="index-10">The factor
 <span class="math notranslate nohighlight">\(f_{5}(T_{5},T_{2})\)</span> is a so-called <strong>loop closure</strong> constraint:
 rather than derived from two successive scans, this one is derived from
 matching the scan taken at <span class="math notranslate nohighlight">\(T_{5}\)</span> with the one at <span class="math notranslate nohighlight">\(T_{2}\)</span>.
@@ -598,7 +596,7 @@ way to anchor the solution is to add unary factors at every time-step,
 derived from GPS.</p>
 </section>
 <section id="map-inference-via-least-squares">
-<h2><span class="section-number">6.4.5. </span>MAP Inference via Least-Squares<a class="headerlink" href="#map-inference-via-least-squares" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">6.4.5. </span>MAP Inference via Least Squares<a class="headerlink" href="#map-inference-via-least-squares" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>Linear problems with zero-mean Gaussian noise lead to least-squares problems.</p>
 </div></blockquote>
@@ -608,39 +606,37 @@ least-squares optimization.
 Earlier in this book we have discussed MAP inference for discrete
 variables, and we have discussed probability distributions for
 continuous variables, but we have never put the two together.</p>
-<p id="index-7">In the case of linear measurements corrupted by zero-mean Gaussian noise, we can
+<p id="index-11">In the case of linear measurements corrupted by zero-mean Gaussian noise, we can
 recover the MAP solution by minimizing a sum of squared differences.
 Recall that a univariate Gaussian density with <strong>mean</strong> <span class="math notranslate nohighlight">\(\mu\)</span> and <strong>variance</strong> <span class="math notranslate nohighlight">\(\sigma^{2}\)</span> is
 given by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-5cf4715a-1382-4021-a6fd-7fe796c33977">
-<span class="eqno">(6.46)<a class="headerlink" href="#equation-5cf4715a-1382-4021-a6fd-7fe796c33977" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-c441fb1a-627c-40bc-931d-bc802ad76f5f">
+<span class="eqno">(6.46)<a class="headerlink" href="#equation-c441fb1a-627c-40bc-931d-bc802ad76f5f" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathcal{N} (x; \mu, \sigma^2) =\frac{1}{\sqrt{2\pi\sigma^{2}}}\exp\left\{ -\frac{1}{2}\left(\frac{x-\mu}{\sigma}\right)^{2}\right\} .
 \end{equation}\]</div>
 <p>An example can help explain this more clearly.
-In particular, if we focus our attention in PoseSLAM on <em>just the x coordinates</em>, then we
-predict relative measurements <span class="math notranslate nohighlight">\(\tilde{x}_{ij}\)</span> by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-e58f51bf-6fa0-4554-a90b-66742e24ea02">
-<span class="eqno">(6.47)<a class="headerlink" href="#equation-e58f51bf-6fa0-4554-a90b-66742e24ea02" title="Permalink to this equation">#</a></span>\[\begin{equation}
+In particular, if we focus our attention in PoseSLAM on <em>just the x coordinates</em>.
+Let us denote the <em>relative measurements</em> <span class="math notranslate nohighlight">\(\tilde{x}_{ij}\)</span>, predicted by</p>
+<div class="amsmath math notranslate nohighlight" id="equation-0665cce7-e191-4b88-b8ec-2969f26899f8">
+<span class="eqno">(6.47)<a class="headerlink" href="#equation-0665cce7-e191-4b88-b8ec-2969f26899f8" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \tilde{x}_{ij}\approx h(x_{i,}x_{j})=x_{j}-x_{i}
 \end{equation}\]</div>
-<p>and, taking <span class="math notranslate nohighlight">\(\sigma=1\)</span> for now, each factor in
-Figure
-<a href="#fig:PoseSLAMFG" data-reference-type="ref" data-reference="fig:PoseSLAMFG">1</a>
-could be written as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a02d7c2c-f71b-4180-ab90-03ee299a8ab9">
-<span class="eqno">(6.48)<a class="headerlink" href="#equation-a02d7c2c-f71b-4180-ab90-03ee299a8ab9" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<p>and, taking <span class="math notranslate nohighlight">\(\sigma=1\)</span> for now, each factor in Figure <a class="reference internal" href="#fig:PoseSLAMFG"><span class="xref myst">1</span></a> could be written as</p>
+<div class="amsmath math notranslate nohighlight" id="equation-ea1bc2c8-ced8-4ad3-988f-b15fadbfa487">
+<span class="eqno">(6.48)<a class="headerlink" href="#equation-ea1bc2c8-ced8-4ad3-988f-b15fadbfa487" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \phi(x_{i},x_{j})=\frac{1}{\sqrt{2\pi}}\exp\left\{ -\frac{1}{2}\left(x_{j}-x_{i}-\tilde{x}_{ij}\right)^{2}\right\} ,
 \end{equation}\]</div>
 <p>By taking the negative log,
 maximizing the posterior corresponds to minimizing the following sum of
-squares, where them sum ranges over all <span class="math notranslate nohighlight">\((i,j)\)</span> pairs for which we have a
+squares, where the sum ranges over all <span class="math notranslate nohighlight">\((i,j)\)</span> pairs for which we have a
 pairwise measurement:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-24670e48-8c87-4d1b-9cd4-3459618a83bb">
-<span class="eqno">(6.49)<a class="headerlink" href="#equation-24670e48-8c87-4d1b-9cd4-3459618a83bb" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-134921dc-e8e5-4f89-af5f-e34b53ca7f59">
+<span class="eqno">(6.49)<a class="headerlink" href="#equation-134921dc-e8e5-4f89-af5f-e34b53ca7f59" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathcal{X}^{*}=\arg\min_{\mathcal{X}}\sum_{k}\frac{1}{2}\left(h(x_{i},x_{j})-\tilde{x}_{ij}\right)^{2}=\arg\min_{\mathcal{X}}\sum_{k}\frac{1}{2}\left(x_{j}-x_{i}-\tilde{x}_{ij}\right)^{2}.
 \end{equation}\]</div>
-<p>Linear least squares problems like these are easily solved by numerical
-computing packages like MATLAB or numpy.</p>
+<p>The minimization is over the set of all unknown poses <span class="math notranslate nohighlight">\(\mathcal{X}\doteq\{x_i\}\)</span> and yields the MAP estimate <span class="math notranslate nohighlight">\(\mathcal{X}^{*}\)</span> for the poses.
+Linear least-squares problems like these are easily solved by numerical
+computing packages like MATLAB or <code class="docutils literal notranslate"><span class="pre">numpy</span></code>.</p>
 </section>
 <section id="poseslam-is-nonlinear">
 <h2><span class="section-number">6.4.6. </span>PoseSLAM is Nonlinear !<a class="headerlink" href="#poseslam-is-nonlinear" title="Link to this heading">#</a></h2>
@@ -652,22 +648,21 @@ because poses are not simply vectors, and the measurements are not
 simply linear functions of the poses. Indeed, in PoseSLAM both the
 prediction <span class="math notranslate nohighlight">\(h(T_{i},T_{j})\)</span> and the measurement <span class="math notranslate nohighlight">\(\tilde{T}_{ij}\)</span>
 are relative poses. The measurement prediction function <span class="math notranslate nohighlight">\(h(\cdot)\)</span> is given
-by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-377bc8ea-c5df-472e-8bcd-a6f9ec28ac13">
-<span class="eqno">(6.50)<a class="headerlink" href="#equation-377bc8ea-c5df-472e-8bcd-a6f9ec28ac13" title="Permalink to this equation">#</a></span>\[\begin{equation}
-h(T_{i},T_{j})=T_{i}^{-1}T_{j}
+by the <em>relative transformation</em> <span class="math notranslate nohighlight">\(T_ij \doteq T_{i}^{-1}T_{j}\)</span>:</p>
+<div class="amsmath math notranslate nohighlight" id="equation-3917f73e-3fb1-42a5-859f-99659bd9100e">
+<span class="eqno">(6.50)<a class="headerlink" href="#equation-3917f73e-3fb1-42a5-859f-99659bd9100e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+h(T_{i},T_{j})=T_{i}^{-1}T_{j}.
 \end{equation}\]</div>
-<p>and the
-measurement error to be minimized is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-52809f19-666b-428e-afe2-9e23351e1a38">
-<span class="eqno">(6.51)<a class="headerlink" href="#equation-52809f19-666b-428e-afe2-9e23351e1a38" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<p>Hence, the measurement error to be minimized is</p>
+<div class="amsmath math notranslate nohighlight" id="equation-d27d3b4f-043d-4138-9848-3a162dc0aab1">
+<span class="eqno">(6.51)<a class="headerlink" href="#equation-d27d3b4f-043d-4138-9848-3a162dc0aab1" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \frac{1}{2}\left\Vert \log\left(\tilde{T}_{ij}^{-1}T_{i}^{-1}T_{j}\right)\right\Vert ^{2}
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\log:SE(2)\rightarrow\mathbb{R}^3\)</span> is a variation of the logarithm function
 that maps a pose in <span class="math notranslate nohighlight">\(SE(2)\)</span> to a
-three-dimensional local coordinate vector <span class="math notranslate nohighlight">\(\xi\)</span>;
-we will describe this in more detail below.</p>
-<p id="index-8">There are two ways to deal with this nonlinear problem. The first is to
+three-dimensional local coordinate vector <span class="math notranslate nohighlight">\(\xi\)</span>.
+We will describe this in more detail below.</p>
+<p id="index-12">There are two ways to deal with this nonlinear problem. The first is to
 realize that the only nonlinearities stem from the <span class="math notranslate nohighlight">\(\sin\)</span> and <span class="math notranslate nohighlight">\(\cos\)</span>
 that are associated with the unknown orientations
 <span class="math notranslate nohighlight">\(\theta_{i}\)</span>.
@@ -691,20 +686,19 @@ nonlinear optimization problem: simply use your favorite nonlinear optimizer, e.
 an initial estimate provided using the method in the previous section.
 This approach might well succeed in finding matrices <span class="math notranslate nohighlight">\(T_i\)</span> that minimize the error,
 but, unfortunately, there is no guarantee that <span class="math notranslate nohighlight">\(T_i \in SE(2)\)</span>, since
-this approach does not ensure that the upper right submatrix is a valid rotation matrix.</p>
+this approach does not ensure that the upper left submatrix is a valid rotation matrix.</p>
 <p>Instead, we will locally linearize the problem and solve
-the corresponding linear problem using least-squares, and iterate this
+the corresponding linear problem using least squares, and iterate this
 until convergence. We do this by, at each iteration, parameterizing a
 pose <span class="math notranslate nohighlight">\(T\)</span> by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c9c84906-599a-47ef-af3e-cf4bc30afcec">
-<span class="eqno">(6.52)<a class="headerlink" href="#equation-c9c84906-599a-47ef-af3e-cf4bc30afcec" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-1934ab34-922c-4bff-9a34-d7b2ba9f75b9">
+<span class="eqno">(6.52)<a class="headerlink" href="#equation-1934ab34-922c-4bff-9a34-d7b2ba9f75b9" title="Permalink to this equation">#</a></span>\[\begin{equation}
 T\approx\bar{T}\Delta(\xi)
 \end{equation}\]</div>
-<p>where <span class="math notranslate nohighlight">\(\xi\)</span> are local coordinates
-<span class="math notranslate nohighlight">\(\xi\doteq(\delta x,\delta y,\delta\theta)\)</span> and the incremental pose
-<span class="math notranslate nohighlight">\(\Delta(\xi)\in SE(2)\)</span> is defined as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-8c88e7af-0ba1-46a5-a3a9-ef7474d03e6e">
-<span class="eqno">(6.53)<a class="headerlink" href="#equation-8c88e7af-0ba1-46a5-a3a9-ef7474d03e6e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<p>where <span class="math notranslate nohighlight">\(\xi \doteq (\delta x,\delta y,\delta\theta)\)</span> is a 3-vector of local coordinates,
+and the incremental pose <span class="math notranslate nohighlight">\(\Delta(\xi)\in SE(2)\)</span> is defined as</p>
+<div class="amsmath math notranslate nohighlight" id="equation-fa649e18-ebf3-4ef0-b02b-40be3f6c352a">
+<span class="eqno">(6.53)<a class="headerlink" href="#equation-fa649e18-ebf3-4ef0-b02b-40be3f6c352a" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \Delta(\xi)=\left[\begin{array}{cc|c}
 1 &amp; -\delta\theta &amp; \delta x\\
 \delta\theta &amp; 1 &amp; \delta y\\
@@ -712,45 +706,51 @@ T\approx\bar{T}\Delta(\xi)
 \end{array}\right]
 \end{equation}\]</div>
 <p>which you can recognize as a small angle
-approximation of the <span class="math notranslate nohighlight">\(SE(2)\)</span> matrix.
-In 3D the local coordinates <span class="math notranslate nohighlight">\(\xi\)</span> are 6-dimensional, and the small angle
+approximation of the <span class="math notranslate nohighlight">\(SE(2)\)</span> matrix, since <span class="math notranslate nohighlight">\(\cos \theta \approx 1\)</span> and <span class="math notranslate nohighlight">\(\sin \theta \approx \theta\)</span> for small <span class="math notranslate nohighlight">\(\theta\)</span>.</p>
+<p id="index-13">In 3D the local coordinate vector <span class="math notranslate nohighlight">\(\xi\)</span> is <em>6-dimensional</em>, and the small angle
 approximation is defined as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-69afe0e6-55ac-42ab-bd9b-89a78925c6d6">
-<span class="eqno">(6.54)<a class="headerlink" href="#equation-69afe0e6-55ac-42ab-bd9b-89a78925c6d6" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="math notranslate nohighlight" id="equation-eq-delta3d">
+<span class="eqno">(6.54)<a class="headerlink" href="#equation-eq-delta3d" title="Link to this equation">#</a></span>\[\begin{split}\begin{equation}
 \Delta(\xi)=\left[\begin{array}{ccc|c}
 1 &amp; -\delta\theta_{z} &amp; \delta\theta_{y} &amp; \delta x\\
 \delta\theta_{z} &amp; 1 &amp; -\delta\theta_{x} &amp; \delta y\\
 -\delta\theta_{y} &amp; \delta\theta_{x} &amp; 1 &amp; \delta z\\
 \hline 0 &amp; 0 &amp; 0 &amp; 1
 \end{array}\right]
-\end{equation}\]</div>
-<p>With this new notation, we can approximate the
-nonlinear error by a linear approximation:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-3b057161-7912-4a5e-92e8-0ffa3a4e76fc">
-<span class="eqno">(6.55)<a class="headerlink" href="#equation-3b057161-7912-4a5e-92e8-0ffa3a4e76fc" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\end{equation}\end{split}\]</div>
+<p>with <span class="math notranslate nohighlight">\(\xi \doteq (\theta_{x},\theta_{y},\theta_{z},\delta x,\delta y,\delta z)\)</span>.
+It is well known that in this case we can also approximate the
+nonlinear error by the following linear approximation:</p>
+<div class="amsmath math notranslate nohighlight" id="equation-0a814a72-7b89-409e-8dbe-05c7e74ff11e">
+<span class="eqno">(6.55)<a class="headerlink" href="#equation-0a814a72-7b89-409e-8dbe-05c7e74ff11e" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \frac{1}{2}\left\Vert \log\left(\tilde{T}_{ij}^{-1}T_{i}^{-1}T_{j}\right)\right\Vert ^{2}\approx\frac{1}{2}\left\Vert A_{i}\xi_{i}+A_{j}\xi_{j}-b\right\Vert ^{2}.
 \end{equation}\]</div>
-<p>For <span class="math notranslate nohighlight">\(SE(2)\)</span> the matrices <span class="math notranslate nohighlight">\(A_{i}\)</span> and <span class="math notranslate nohighlight">\(A_{j}\)</span> are the <span class="math notranslate nohighlight">\(3\times3\)</span> <strong>or
-Jacobian matrices</strong> and <span class="math notranslate nohighlight">\(b\)</span> is a <span class="math notranslate nohighlight">\(3\times1\)</span> bias term. The above
+<p>For <span class="math notranslate nohighlight">\(SE(2)\)</span> the matrices <span class="math notranslate nohighlight">\(A_{i}\)</span> and <span class="math notranslate nohighlight">\(A_{j}\)</span> are the <span class="math notranslate nohighlight">\(3\times3\)</span>
+<strong>Jacobian matrices</strong> and <span class="math notranslate nohighlight">\(b\)</span> is a <span class="math notranslate nohighlight">\(3\times1\)</span> bias term. The above
 provides a linear approximation of the term within the norm as a
 function of the incremental local coordinates <span class="math notranslate nohighlight">\(\xi_{i}\)</span> and <span class="math notranslate nohighlight">\(\xi_{j}\)</span>.
 Deriving the detailed expressions for these Jacobians is beyond the
-scope of this document, but suffice to say that they exist and not too
+scope of this book, but suffice to say that they exist and are not too
 expensive to compute. In three dimensions, the Jacobian matrices are
 <span class="math notranslate nohighlight">\(6\times6\)</span> and <span class="math notranslate nohighlight">\(16\times6\)</span>, respectively.</p>
 <p>The final optimization will—in each iteration—minimize over the local
-coordinates of all poses by summing over all pose constraints. If we
-index those constraints by <span class="math notranslate nohighlight">\(k\)</span>, we have the following least squares
+coordinates of all poses by summing over all pose constraints.
+If we index those constraints by <span class="math notranslate nohighlight">\(k\)</span>, we have the following least-squares
 problem:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-bd737bb1-5c4b-42e0-afa5-ed805c060d6e">
-<span class="eqno">(6.56)<a class="headerlink" href="#equation-bd737bb1-5c4b-42e0-afa5-ed805c060d6e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-68262c67-06fd-4df8-983b-fab0f050d5eb">
+<span class="eqno">(6.56)<a class="headerlink" href="#equation-68262c67-06fd-4df8-983b-fab0f050d5eb" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \Xi^{*}=\arg\min_{\Xi}\sum_{k}\frac{1}{2}\Vert A_{ki}\xi_{i}+A_{kj}\xi_{j}-b_{k}\Vert ^{2}
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\Xi\doteq \{  \xi_{i}\}\)</span>, the set
-of all incremental pose coordinates.</p>
-<p>After solving for the incremental updates <span class="math notranslate nohighlight">\(\Xi\)</span>, we update all poses
-using the update equation above and check for convergence.
-If the error does not decrease significantly
+of all incremental pose coordinates.
+After solving for the incremental updates <span class="math notranslate nohighlight">\(\Xi\)</span>, we update all poses
+using</p>
+<div class="amsmath math notranslate nohighlight" id="equation-d102fff4-5048-4ff1-a584-7202ebe2bf05">
+<span class="eqno">(6.57)<a class="headerlink" href="#equation-d102fff4-5048-4ff1-a584-7202ebe2bf05" title="Permalink to this equation">#</a></span>\[\begin{equation}
+T_i\approx\bar{T}_i\Delta(\xi_i),
+\end{equation}\]</div>
+<p>with <span class="math notranslate nohighlight">\(\Delta(\xi_i)\)</span> defined as in <a class="reference internal" href="#equation-eq-delta3d">(6.54)</a>.</p>
+<p>We then check for convergence: if the error does not decrease significantly
 we terminate, otherwise we linearize and solve again, until the error
 converges. While this is not guaranteed to converge to a global minimum,
 in practice it does so if there are enough relative measurements and a
@@ -766,14 +766,12 @@ is absolutely necessary in production environments.</p>
 <ol class="arabic simple">
 <li><p>Linearize the factors
 <span class="math notranslate nohighlight">\(\frac{1}{2}\Vert \log(\tilde{T}_{ij}^{-1}T_{i}^{-1}T_{j})\Vert ^{2}\approx\frac{1}{2}\Vert A_{i}\xi_{i}+A_{j}\xi_{j}-b\Vert ^{2}\)</span></p></li>
-<li><p>Solve the least squares problem
+<li><p>Solve the least-squares problem
 <span class="math notranslate nohighlight">\(\Xi^{*}=\arg\min_{\Xi}\sum_{k}\frac{1}{2}\Vert A_{ki}\xi_{i}+A_{kj}\xi_{j}-b_{k}\Vert ^{2}\)</span></p></li>
 <li><p>Update <span class="math notranslate nohighlight">\(X_{i}^{t+1}\leftarrow X_{j}^{t}\Delta(\xi_{i})\)</span></p></li>
 </ol>
 </li>
-<li><p>Until the nonlinear error
-<span class="math notranslate nohighlight">\(J(\mathcal{T})\doteq\sum_{k}\frac{1}{2}\Vert \log(\tilde{T}_{ij}^{-1}T_{i}^{-1}T_{j})\Vert ^{2}\)</span>
-converges.</p></li>
+<li><p>Until the nonlinear error <span class="math notranslate nohighlight">\(\sum_{k}\frac{1}{2}\Vert \log(\tilde{T}_{ij}^{-1}T_{i}^{-1}T_{j})\Vert ^{2}\)</span> converges.</p></li>
 </ul>
 </section>
 <section id="optimization-with-gtsam">
@@ -791,13 +789,23 @@ sparsely connected. This is exploited by the algorithms implemented in
 GTSAM to reduce computational complexity. Even when graphs are too dense
 to be handled efficiently by direct methods, GTSAM provides iterative
 methods that are quite efficient.</p>
-<p>The following code, included in GTSAM as an example, creates the
-factor graph from Figure
-<a href="#fig:PoseSLAMFG" data-reference-type="ref" data-reference="fig:PoseSLAMFG">1</a>
-in code:</p>
+<p id="index-14">The code in Figure <a class="reference internal" href="#fig:createPoseSLAMFG"><span class="xref myst">2</span></a>, included in GTSAM as an example, creates the factor graph from Figure <a class="reference internal" href="#fig:PoseSLAMFG"><span class="xref myst">1</span></a>.
+The first block of code creates a nonlinear factor graph and adds the unary factor
+<span class="math notranslate nohighlight">\(f_{0}(T_{1})\)</span>.
+As the vehicle travels through the world, it adds
+binary factors <span class="math notranslate nohighlight">\(f_{t}(T_{t},T_{t+1})\)</span> corresponding to odometry measurements.
+Note that the final line of code models a different event: a <strong>loop closure</strong>.
+For example,
+the vehicle might recognize the same location using vision or a laser
+range finder, and calculate the geometric pose constraint to when it
+first visited this location. This is illustrated for poses <span class="math notranslate nohighlight">\(T_{5}\)</span>
+and <span class="math notranslate nohighlight">\(T_{2}\)</span>, and generates the (red) loop closing factor
+<span class="math notranslate nohighlight">\(f_{5}(T_{5},T_{2})\)</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">graph</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">NonlinearFactorGraph</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Code to re-create the factor graph from Figure [1](#fig:PoseSLAMFG).</span>
+<span class="c1">#| label: fig:createPoseSLAMFG</span>
+<span class="n">graph</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">NonlinearFactorGraph</span><span class="p">()</span>
 <span class="n">prior_model</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">noiseModel</span><span class="o">.</span><span class="n">Diagonal</span><span class="o">.</span><span class="n">Sigmas</span><span class="p">((</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">))</span>
 <span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">gtsam</span><span class="o">.</span><span class="n">PriorFactorPose2</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">prior_model</span><span class="p">))</span>
 
@@ -815,21 +823,11 @@ in code:</p>
 </div>
 </div>
 </div>
-<p id="index-9">The first block of code creates a nonlinear factor graph and adds the unary factor
-<span class="math notranslate nohighlight">\(f_{0}(T_{1})\)</span>.
-As the vehicle travels through the world, it adds
-binary factors <span class="math notranslate nohighlight">\(f_{t}(T_{t},T_{t+1})\)</span> corresponding to odometry measurements.
-Note that the final line of code models a different event: a <strong>loop closure</strong>.
-For example,
-the vehicle might recognize the same location using vision or a laser
-range finder, and calculate the geometric pose constraint to when it
-first visited this location. This is illustrated for poses <span class="math notranslate nohighlight">\(T_{5}\)</span>
-and <span class="math notranslate nohighlight">\(T_{2}\)</span>, and generates the (red) loop closing factor
-<span class="math notranslate nohighlight">\(f_{5}(T_{5},T_{2})\)</span>.</p>
-<p>Before we can optimize, we need to create an initial estimate. In GTSAM, this is done via the <code class="docutils literal notranslate"><span class="pre">Values</span></code> type:</p>
+<p>Before we can optimize, we need to create an initial estimate. In GTSAM, this is done via the <code class="docutils literal notranslate"><span class="pre">Values</span></code> type, as shown in Figure <a class="reference internal" href="#fig:create-initial-estimate"><span class="xref myst">3</span></a>. We can use this initial estimate to <code class="docutils literal notranslate"><span class="pre">show</span></code> the factor graph in Figure <a class="reference internal" href="#fig:factor_graph_with_loop_closure"><span class="xref myst">4</span></a>. It does not look as pretty as the hand-crafted figure, but it has the advantage that it can be programmatically generated.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create the initial estimate</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Create the initial estimate.</span>
+<span class="c1">#| label: fig:create-initial-estimate</span>
 <span class="n">initial_estimate</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Values</span><span class="p">()</span>
 <span class="n">initial_estimate</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">))</span>
 <span class="n">initial_estimate</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="mf">2.3</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2</span><span class="p">))</span>
@@ -860,7 +858,6 @@ Value 5: (gtsam::Pose2)
 </div>
 </div>
 </div>
-<p>We can use this initial estimate to show the factor graph below:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Factor graph with odometry and loop closure constraints.</span>
@@ -873,10 +870,11 @@ Value 5: (gtsam::Pose2)
 <img alt="_images/044b7b36dcfac1599b08e424dda7391a20433dd52fef0b779bd83d75e029f31e.svg" src="_images/044b7b36dcfac1599b08e424dda7391a20433dd52fef0b779bd83d75e029f31e.svg" />
 </div>
 </div>
-<p>Optimization is done using non-linear minimization, as explained above. In GTSAM, this is done via a <code class="docutils literal notranslate"><span class="pre">NonlinearOptimizer</span></code> class. The specific optimizer we use below is <code class="docutils literal notranslate"><span class="pre">GaussNewtonOptimizer</span></code>, which exactly implements the pseudo-code given above, but exploiting sparsity in the factor graph to do this very efficiently. The optimizer only needs a graph and an initial estimate, both of which we already created, and hence the code below is quite simple:</p>
+<p>Optimization is done using nonlinear minimization, as explained above. In GTSAM, this is done via a <code class="docutils literal notranslate"><span class="pre">NonlinearOptimizer</span></code> class. The specific optimizer we use below is <code class="docutils literal notranslate"><span class="pre">GaussNewtonOptimizer</span></code>, which exactly implements the pseudocode given above, but exploiting sparsity in the factor graph to do this very efficiently. The optimizer only needs a graph and an initial estimate, both of which we already created. Hence the code, shown in Figure <a class="reference internal" href="#fig:optimize-graph"><span class="xref myst">5</span></a> is quite simple; the final optimized result is shown there as well, albeit as plain text.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Optimize the initial values using a Gauss-Newton nonlinear optimizer</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Optimize the initial values using a Gauss-Newton nonlinear optimizer.</span>
+<span class="c1">#| label: fig:optimize-graph</span>
 <span class="n">optimizer</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">GaussNewtonOptimizer</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">initial_estimate</span><span class="p">)</span>
 <span class="n">result</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">optimize</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Final Result:</span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
@@ -904,8 +902,7 @@ Value 5: (gtsam::Pose2)
 </div>
 </div>
 </div>
-<p id="index-10">We can also inspect the result graphically. Looking at the result as printed above only gets us so far, and more importantly, it only shows us the maximum a posteriori (MAP) solution, but not the uncertainty around it. Luckily, GTSAM can also compute the <strong>posterior marginals</strong>, which show the uncertainty on each recovered pose as a Gaussian density <span class="math notranslate nohighlight">\(P(T_i|Z)\)</span>, taking into account all the measurements <span class="math notranslate nohighlight">\(Z\)</span>.</p>
-<p>In code, we do this via the <code class="docutils literal notranslate"><span class="pre">Marginals</span></code> object, and we can plot marginals with a special function <code class="docutils literal notranslate"><span class="pre">plot_pose2</span></code>:</p>
+<p id="index-15">We can also inspect the result graphically. Looking at the result as printed above only gets us so far, and more importantly, it only shows us the maximum a posteriori (MAP) solution, but not the uncertainty around it. Luckily, GTSAM can also compute the <strong>posterior marginals</strong>, which show the uncertainty on each recovered pose as a conditional Gaussian density <span class="math notranslate nohighlight">\(P(T_i|Z)\)</span>, taking into account all the measurements <span class="math notranslate nohighlight">\(Z\)</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: The optimized trajectory with the estimated covariances.</span>
@@ -922,9 +919,7 @@ Value 5: (gtsam::Pose2)
 <img alt="_images/927fd6e77cae6f06b71e6b167e26e45ebccee79aa500280673c588b466e27df8.png" src="_images/927fd6e77cae6f06b71e6b167e26e45ebccee79aa500280673c588b466e27df8.png" />
 </div>
 </div>
-<p>The result is shown graphically in Figure
-<a href="#fig:optimized_trajectory_with_covariances" data-reference-type="ref" data-reference="fig:optimized_trajectory_with_covariances">2</a>,
-along with covariance ellipses. These covariance ellipses
+<p>In code, we do this via the <code class="docutils literal notranslate"><span class="pre">Marginals</span></code> object, and we can plot marginals with a special function <code class="docutils literal notranslate"><span class="pre">plot_pose2</span></code>, as shown in Figure <a class="reference internal" href="#fig:optimized_trajectory_with_covariances"><span class="xref myst">6</span></a>, which also shows the result graphically along with covariance ellipses. These covariance ellipses
 in 2D indicate the marginal over position, <em>over all possible
 orientations</em>, and show the area that contains 99% of the probability
 mass (in 1D this would correspond to three standard deviations). The graph
@@ -935,12 +930,12 @@ the unary constraint <span class="math notranslate nohighlight">\(f_{0}(T_{1})\)
 the graph to a global coordinate frame.</p>
 </section>
 <section id="slam-with-landmarks">
-<span id="index-11"></span><h2><span class="section-number">6.4.9. </span>SLAM with Landmarks<a class="headerlink" href="#slam-with-landmarks" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">6.4.9. </span>SLAM with Landmarks<a class="headerlink" href="#slam-with-landmarks" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>Take PoseSLAM, add landmarks.</p>
 </div></blockquote>
 <p>So far we optimized over one type of variable, but often we build a landmark map <em>simultaneously</em> with the trajectory, i.e., this is <em>true</em> SLAM. In the next chapter, we will more thoroughly examine the full 3D case, whereas here we will model landmarks with 2D points in the plane. That does not mean that they cannot represent real 3D entities in the environment: they can be the location of trees, poles, building corners, the sides of windows, the location of a stop sign in traffic, even moving pedestrians in more advanced applications.</p>
-<p>How do we measure such landmarks? The most typical <em>type</em> of measurements are either <strong>range</strong> measurements, <strong>bearing</strong> measurements, or <strong>bearing-range</strong> measurements. The details on how to obtain them are typically application-dependent, and below we will abstract away the sensor preprocessing details. For example, in the case of a LIDAR sensor,
+<p id="index-16">How do we measure such landmarks? The most typical <em>type</em> of measurements are either <strong>range</strong> measurements, <strong>bearing</strong> measurements, or <strong>bearing-range</strong> measurements. The details on how to obtain them are typically application-dependent, and below we will abstract away the sensor preprocessing details. For example, in the case of a LIDAR sensor,
 bearing-range measurements can be obtained by preprocessing every LIDAR scan, detecting prominent vertical structures for example. A real-life example that we will discuss below involves detecting and measuring the bearing-range to trees.
 Radar is another often-used sensor for autonomous driving, and it can often be modeled or idealized to give
 bearing-range measurements as well.</p>
@@ -968,23 +963,17 @@ bearing-range measurements as well.</p>
 </div>
 </div>
 </div>
-<p>When we have an initial estimate, we can look at the structure of this factor graph:</p>
+<p>When we have an initial estimate, we can look at the structure of this factor graph. We create the initial estimate and show the resulting factor graph in Figure <a class="reference internal" href="#fig:factor_graph_with_range_bearing"><span class="xref myst">7</span></a>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">slam_initial</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Values</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Factor graph with odometry and range-bearing constraints.</span>
+<span class="c1">#| label: fig:factor_graph_with_range_bearing</span>
+<span class="n">slam_initial</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Values</span><span class="p">()</span>
 <span class="n">slam_initial</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="o">-</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.20</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">))</span>
 <span class="n">slam_initial</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="mf">2.30</span><span class="p">,</span> <span class="mf">0.10</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.20</span><span class="p">))</span>
 <span class="n">slam_initial</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="mf">4.10</span><span class="p">,</span> <span class="mf">0.10</span><span class="p">,</span> <span class="mf">0.10</span><span class="p">))</span>
 <span class="n">slam_initial</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Point2</span><span class="p">(</span><span class="mf">1.80</span><span class="p">,</span> <span class="mf">2.10</span><span class="p">))</span>
 <span class="n">slam_initial</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">l</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Point2</span><span class="p">(</span><span class="mf">4.10</span><span class="p">,</span> <span class="mf">1.80</span><span class="p">))</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Factor graph with odometry and range-bearing constraints.</span>
-<span class="c1">#| label: fig:factor_graph_with_range_bearing</span>
 <span class="n">show</span><span class="p">(</span><span class="n">slam_graph</span><span class="p">,</span> <span class="n">slam_initial</span><span class="p">,</span> <span class="n">binary_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -993,19 +982,13 @@ bearing-range measurements as well.</p>
 <img alt="_images/657680c90ec7576950c5b39b31aad07654d5533ca1aa0eb51eab65ef6c157f1f.svg" src="_images/657680c90ec7576950c5b39b31aad07654d5533ca1aa0eb51eab65ef6c157f1f.svg" />
 </div>
 </div>
-<p>We optimize again using Levenberg Marquardt, and show the marginals on both robot position and landmarks, as before:</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">LevenbergMarquardtOptimizer</span><span class="p">(</span><span class="n">slam_graph</span><span class="p">,</span> <span class="n">slam_initial</span><span class="p">)</span>
-<span class="n">slam_result</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">optimize</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-</div>
+<p>We optimize again using Levenberg Marquardt, and show the marginals on both robot position and landmarks, as before, in Figure <a class="reference internal" href="#fig:fig:optimized_trajectory_with_covariances_and_landmarks_br"><span class="xref myst">8</span></a>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: The optimized trajectory with the estimated covariances, with bearing-range measurements to landmarks.</span>
 <span class="c1">#| label: fig:optimized_trajectory_with_covariances_and_landmarks_br</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">LevenbergMarquardtOptimizer</span><span class="p">(</span><span class="n">slam_graph</span><span class="p">,</span> <span class="n">slam_initial</span><span class="p">)</span>
+<span class="n">slam_result</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">optimize</span><span class="p">()</span>
 <span class="n">marginals</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Marginals</span><span class="p">(</span><span class="n">slam_graph</span><span class="p">,</span> <span class="n">slam_result</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]:</span>
     <span class="n">gtsam_plot</span><span class="o">.</span><span class="n">plot_pose2</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">slam_result</span><span class="o">.</span><span class="n">atPose2</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">marginals</span><span class="o">.</span><span class="n">marginalCovariance</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
@@ -1022,20 +1005,14 @@ bearing-range measurements as well.</p>
 </section>
 <section id="a-larger-slam-example">
 <h2><span class="section-number">6.4.10. </span>A Larger SLAM Example<a class="headerlink" href="#a-larger-slam-example" title="Link to this heading">#</a></h2>
-<p>Below we optimize a piece of the (old) <a class="reference external" href="http://www-personal.acfr.usyd.edu.au/nebot/victoria_park.htm">Victoria park dataset</a>, which involves a truck driving through a park in Sydney, extracting the position of trees in the park from LIDAR scans, just as we discussed above. The factor graph for this example is created from file and shown below:</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">datafile</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">findExampleDataFile</span><span class="p">(</span><span class="s1">&#39;example.graph&#39;</span><span class="p">)</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">noiseModel</span><span class="o">.</span><span class="n">Diagonal</span><span class="o">.</span><span class="n">Sigmas</span><span class="p">([</span><span class="mf">0.05</span><span class="p">,</span><span class="mf">0.05</span><span class="p">,</span><span class="mi">2</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span><span class="p">])</span>
-<span class="p">[</span><span class="n">graph</span><span class="p">,</span><span class="n">initial</span><span class="p">]</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">load2D</span><span class="p">(</span><span class="n">datafile</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
+<p>Below we optimize a piece of the (old) <a class="reference external" href="http://www-personal.acfr.usyd.edu.au/nebot/victoria_park.htm">Victoria park dataset</a>, which involves a truck driving through a park in Sydney, extracting the position of trees in the park from LIDAR scans, just as we discussed above. The factor graph for this example is created from a file and shown in Figure <a class="reference internal" href="#fig:factor_graph_real_world"><span class="xref myst">9</span></a>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Factor graph for a more realistic example, derived from a real-world dataset.</span>
 <span class="c1">#| label: fig:factor_graph_real_world</span>
+<span class="n">datafile</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">findExampleDataFile</span><span class="p">(</span><span class="s1">&#39;example.graph&#39;</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">noiseModel</span><span class="o">.</span><span class="n">Diagonal</span><span class="o">.</span><span class="n">Sigmas</span><span class="p">([</span><span class="mf">0.05</span><span class="p">,</span><span class="mf">0.05</span><span class="p">,</span><span class="mi">2</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span><span class="p">])</span>
+<span class="p">[</span><span class="n">graph</span><span class="p">,</span><span class="n">initial</span><span class="p">]</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">load2D</span><span class="p">(</span><span class="n">datafile</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
 <span class="n">show</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span><span class="n">initial</span><span class="p">,</span> <span class="n">binary_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1050,7 +1027,8 @@ bearing-range measurements as well.</p>
 <li><p>There are about 20 landmarks, some of which are seen briefly, while others are seen for longer periods of time.</p></li>
 <li><p>The graph is very sparsely connected, and hence optimization will still be quite fast.</p></li>
 </ul>
-<p>Optimizing with <code class="docutils literal notranslate"><span class="pre">LevenbergMarquardtOptimizer</span></code>, again…</p>
+<p>
+Optimizing with <code class="docutils literal notranslate"><span class="pre">LevenbergMarquardtOptimizer</span></code>, again:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">initial_poses</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">utilities</span><span class="o">.</span><span class="n">extractPose2</span><span class="p">(</span><span class="n">initial</span><span class="p">)</span>
@@ -1062,29 +1040,23 @@ bearing-range measurements as well.</p>
 </div>
 </div>
 </div>
-<p>Below we plot both the initial estimate, which was created by adding random noise on top of the ground truth, and the optimized trajectory:</p>
+<p>In Figure <a class="reference internal" href="#fig:initial_and_optimized_trajectories"><span class="xref myst">10</span></a> we plot both the initial estimate, which was created by adding random noise on top of the ground truth, and the optimized trajectory.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">initial_poses</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">utilities</span><span class="o">.</span><span class="n">extractPose2</span><span class="p">(</span><span class="n">initial</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Initial and optimized trajectories for a more realistic example.</span>
+<span class="c1">#| label: fig:initial_and_optimized_trajectories</span>
+<span class="n">initial_poses</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">utilities</span><span class="o">.</span><span class="n">extractPose2</span><span class="p">(</span><span class="n">initial</span><span class="p">)</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">()</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">add_scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">initial_poses</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="n">initial_poses</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;initial&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">))</span>
 <span class="n">final_poses</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">utilities</span><span class="o">.</span><span class="n">extractPose2</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">add_scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">final_poses</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="n">final_poses</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;optimized&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">))</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">update_yaxes</span><span class="p">(</span><span class="n">scaleanchor</span> <span class="o">=</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span><span class="n">scaleratio</span> <span class="o">=</span> <span class="mi">1</span><span class="p">);</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Initial and optimized trajectories for a more realistic example.</span>
-<span class="c1">#| label: fig:initial_and_optimized_trajectories</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/5612cca8f3f97e5896d0fe57de8eddfafdd99a3d48a072ebaeb826487f31b36f.png" src="_images/5612cca8f3f97e5896d0fe57de8eddfafdd99a3d48a072ebaeb826487f31b36f.png" />
+<img alt="_images/3780ca6d4277ceb36ff376eff3ebeb4123da60a2ed125578b8e34d9d87373a5e.png" src="_images/3780ca6d4277ceb36ff376eff3ebeb4123da60a2ed125578b8e34d9d87373a5e.png" />
 </div>
 </div>
 </section>
@@ -1134,7 +1106,7 @@ bearing-range measurements as well.</p>
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title"><span class="section-number">6.5. </span>Planning for Autonomous Driving.</p>
+        <p class="prev-next-title"><span class="section-number">6.5. </span>Planning for Autonomous Driving</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -1163,7 +1135,7 @@ bearing-range measurements as well.</p>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#poseslam">6.4.3. PoseSLAM</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-poseslam-factor-graph">6.4.4. The PoseSLAM Factor Graph</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#map-inference-via-least-squares">6.4.5. MAP Inference via Least-Squares</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#map-inference-via-least-squares">6.4.5. MAP Inference via Least Squares</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#poseslam-is-nonlinear">6.4.6. PoseSLAM is Nonlinear !</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nonlinear-optimization-for-poseslam">6.4.7. Nonlinear Optimization for PoseSLAM</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optimization-with-gtsam">6.4.8. Optimization with GTSAM</a></li>

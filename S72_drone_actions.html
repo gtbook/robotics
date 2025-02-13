@@ -216,7 +216,7 @@
 <li class="toctree-l2"><a class="reference internal" href="S62_driving_actions.html">6.2. Kinematics for Driving</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S63_driving_sensing.html">6.3. Sensing for Autonomous Vehicles</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S64_driving_perception.html">6.4. SLAM</a></li>
-<li class="toctree-l2"><a class="reference internal" href="S65_driving_planning.html">6.5. Planning for Autonomous Driving.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S65_driving_planning.html">6.5. Planning for Autonomous Driving</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S66_driving_DRL.html">6.6. Deep Reinforcement Learning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S67_driving_summary.html">6.7. Chapter Summary</a></li>
 </ul>
@@ -467,8 +467,8 @@ If the drone is level (i.e., the body <span class="math notranslate nohighlight"
 <li><p><span class="math notranslate nohighlight">\(f_i=5N\)</span> for <span class="math notranslate nohighlight">\(i\in{1..4}\)</span>: upwards acceleration at <span class="math notranslate nohighlight">\(10\frac{m}{s^2}\)</span>.</p></li>
 </ul>
 <p>In general, the total force <span class="math notranslate nohighlight">\(F^b \in \mathbb{R}^3\)</span> delivered by the rotors is aligned with the body Z-axis and is equal to</p>
-<div class="amsmath math notranslate nohighlight" id="equation-57a539ea-1038-44c5-894d-349d2445cbc5">
-<span class="eqno">(7.19)<a class="headerlink" href="#equation-57a539ea-1038-44c5-894d-349d2445cbc5" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-7fd1134f-cccd-4ecb-8e8b-f1595e2509d7">
+<span class="eqno">(7.19)<a class="headerlink" href="#equation-7fd1134f-cccd-4ecb-8e8b-f1595e2509d7" title="Permalink to this equation">#</a></span>\[\begin{equation}
 F^b
 =
 \begin{bmatrix}0 \\ 0 \\ F^b_z\end{bmatrix}
@@ -482,30 +482,30 @@ F^b
 For example, when the quadrotor <em>tilts</em> forward, some of the thrust delivered by the rotors
 will be directed toward generating horizontal acceleration.
 To get a handle on this, we need to calculate the thrust in the <em>navigation</em> frame <span class="math notranslate nohighlight">\(Nn\)</span>. This is accomplished by multiplying the 3D force <span class="math notranslate nohighlight">\(F^b\)</span> in the body frame with the rotation matrix <span class="math notranslate nohighlight">\(R^n_b\)</span>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-47374a26-b152-46ac-87dd-4d49e49f2d75">
-<span class="eqno">(7.20)<a class="headerlink" href="#equation-47374a26-b152-46ac-87dd-4d49e49f2d75" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-29000f53-a7cd-4951-befe-39bb4cac1132">
+<span class="eqno">(7.20)<a class="headerlink" href="#equation-29000f53-a7cd-4951-befe-39bb4cac1132" title="Permalink to this equation">#</a></span>\[\begin{equation}
 F^n = R^n_b \begin{bmatrix}0 \\ 0 \\ F^b_z\end{bmatrix} = \hat{z}^n_b F^b_z.
 \end{equation}\]</div>
 <p>Above <span class="math notranslate nohighlight">\(\hat{z}^n_b\)</span> is the third column of <span class="math notranslate nohighlight">\(R^n_b\)</span>, i.e., this is simply the <span class="math notranslate nohighlight">\(z\)</span>-axis of the body frame expressed in the navigation frame.</p>
 <p>As an example, let us assume that the Forward/<span class="math notranslate nohighlight">\(x\)</span>-axis of the FLU body frame is currently oriented along the
 North/<span class="math notranslate nohighlight">\(y\)</span>-axis of the ENU navigation frame, i.e., we are flying north. Then, if we tilt the body’s Up/<span class="math notranslate nohighlight">\(z\)</span>-axis forward by an angle of <span class="math notranslate nohighlight">\(\theta\)</span> with respect to vertical, the body <span class="math notranslate nohighlight">\(z\)</span>-axis will have a <span class="math notranslate nohighlight">\(\sin \theta\)</span> contribution towards the north (ENU <span class="math notranslate nohighlight">\(y\)</span>-axis), and a <span class="math notranslate nohighlight">\(\cos \theta\)</span> up (ENU <span class="math notranslate nohighlight">\(z\)</span>-axis):</p>
-<div class="amsmath math notranslate nohighlight" id="equation-adbf44bc-7b1b-4579-9bf3-8f95b91cfeb0">
-<span class="eqno">(7.21)<a class="headerlink" href="#equation-adbf44bc-7b1b-4579-9bf3-8f95b91cfeb0" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-43be3575-8e23-449a-a51d-eddaae38f572">
+<span class="eqno">(7.21)<a class="headerlink" href="#equation-43be3575-8e23-449a-a51d-eddaae38f572" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \hat{z}^n_b = \begin{bmatrix}0 \\ \sin \theta \\ \cos \theta\end{bmatrix}.
 \end{equation}\]</div>
 <p>The thrust <em>vector</em> <span class="math notranslate nohighlight">\(F^n\)</span> in the navigation frame is then obtained by multiplying with the total force <span class="math notranslate nohighlight">\(F^b_z\)</span>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-4caa9010-d19b-42fd-a748-26a2eec852ce">
-<span class="eqno">(7.22)<a class="headerlink" href="#equation-4caa9010-d19b-42fd-a748-26a2eec852ce" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-2ffaa793-2dcd-4fda-9f98-c595b168c302">
+<span class="eqno">(7.22)<a class="headerlink" href="#equation-2ffaa793-2dcd-4fda-9f98-c595b168c302" title="Permalink to this equation">#</a></span>\[\begin{equation}
 F^n = \begin{bmatrix}0 \\ \sin \theta \\ \cos \theta\end{bmatrix} F^b_z.
 \end{equation}\]</div>
 <p>The fact that <span class="math notranslate nohighlight">\(\cos \theta&lt;1\)</span> is potentially problematic: if we want to maintain level flight (not fall out of the sky!) we need to compensate for gravity by maintaining the constraint</p>
-<div class="amsmath math notranslate nohighlight" id="equation-d7956ee9-244d-4c6d-8705-5c6a1a3ab34d">
-<span class="eqno">(7.23)<a class="headerlink" href="#equation-d7956ee9-244d-4c6d-8705-5c6a1a3ab34d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-65d49f27-dbc5-471a-98d5-ab5e8512d537">
+<span class="eqno">(7.23)<a class="headerlink" href="#equation-65d49f27-dbc5-471a-98d5-ab5e8512d537" title="Permalink to this equation">#</a></span>\[\begin{equation}
 F^b_z \cos \theta  = 10.
 \end{equation}\]</div>
 <p>That in turn means that the forward trust (along the navigation Y-axis) will be</p>
-<div class="amsmath math notranslate nohighlight" id="equation-45186229-66a1-41d3-ba2c-a79d1c472e70">
-<span class="eqno">(7.24)<a class="headerlink" href="#equation-45186229-66a1-41d3-ba2c-a79d1c472e70" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-09305c70-fb3f-4bba-b25b-7e1650278f80">
+<span class="eqno">(7.24)<a class="headerlink" href="#equation-09305c70-fb3f-4bba-b25b-7e1650278f80" title="Permalink to this equation">#</a></span>\[\begin{equation}
 F^n_y = F^b_z  \sin \theta = \frac{10}{\cos \theta} \sin \theta  = 10 \tan \theta  
 \end{equation}\]</div>
 <p>This point bears repeating: if we tilt the drone to fly in a particular direction, the upward component of the thrust vector decreases, so we will have to <em>increase</em> total thrust, or we will lose altitude.</p>
@@ -513,18 +513,18 @@ F^n_y = F^b_z  \sin \theta = \frac{10}{\cos \theta} \sin \theta  = 10 \tan \thet
 <section id="maximum-tilt-and-thrust">
 <h3><span class="section-number">7.2.1.3. </span>Maximum Tilt and Thrust<a class="headerlink" href="#maximum-tilt-and-thrust" title="Link to this heading">#</a></h3>
 <p>We can expand on this example to calculate what our maximum tilt angle would be, given bounded thrust. We are constrained by the maximum thrust <span class="math notranslate nohighlight">\(F^b_z\)</span> we can deliver, which we assumed to be 20N above. Imposing this constraint in turn yields a constraint on <span class="math notranslate nohighlight">\(\cos \theta\)</span>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-62aa868d-8cde-4080-a833-351a83e15d3e">
-<span class="eqno">(7.25)<a class="headerlink" href="#equation-62aa868d-8cde-4080-a833-351a83e15d3e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-4ca49df3-b75a-43ac-a3da-0ecfe8fad836">
+<span class="eqno">(7.25)<a class="headerlink" href="#equation-4ca49df3-b75a-43ac-a3da-0ecfe8fad836" title="Permalink to this equation">#</a></span>\[\begin{equation}
 F^b_z = \frac{10N}{\cos \theta} \leq 20N \rightarrow \cos \theta \geq 0.5
 \end{equation}\]</div>
 <p>From that we can deduce that the maximum tilt angle <span class="math notranslate nohighlight">\(\theta\)</span> is 60 degrees:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-01dd7d5a-92d1-4190-bf0b-da1daea3ca27">
-<span class="eqno">(7.26)<a class="headerlink" href="#equation-01dd7d5a-92d1-4190-bf0b-da1daea3ca27" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-0e06d619-6e78-49be-af8f-5ae195a08fbf">
+<span class="eqno">(7.26)<a class="headerlink" href="#equation-0e06d619-6e78-49be-af8f-5ae195a08fbf" title="Permalink to this equation">#</a></span>\[\begin{equation}
 -60^\circ \leq \theta \leq 60^\circ
 \end{equation}\]</div>
 <p>At that maximum tilt angle, we have</p>
-<div class="amsmath math notranslate nohighlight" id="equation-ce524ca4-685c-4c77-8d20-8062c8006cf6">
-<span class="eqno">(7.27)<a class="headerlink" href="#equation-ce524ca4-685c-4c77-8d20-8062c8006cf6" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-3f7a91e0-7b03-44fa-8057-4de236852b03">
+<span class="eqno">(7.27)<a class="headerlink" href="#equation-3f7a91e0-7b03-44fa-8057-4de236852b03" title="Permalink to this equation">#</a></span>\[\begin{equation}
 F^n_y = 10 \tan \theta_{\max} \approx 17
 \end{equation}\]</div>
 <p>So, we are limited to <span class="math notranslate nohighlight">\(17N\)</span> of forward thrust, and this when tilting very aggressively at 60 degrees. If we tilt more, we can improve thrust even more (up to 20N) but the drone will quickly lose altitude.</p>
@@ -540,28 +540,28 @@ For air vehicles, the <strong>drag coefficient</strong>, which we denote by <spa
 relates the vehicle speed to this resistive force.
 From physics we know that drag increases <em>quadratically</em> with velocity.
 Indeed, the drag force <span class="math notranslate nohighlight">\(k_d v_{top}^2\)</span> at the top speed will exactly balance the maximum forward thrust of 17N:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-f0bb2ed6-da80-4888-9acd-221efc61500b">
-<span class="eqno">(7.28)<a class="headerlink" href="#equation-f0bb2ed6-da80-4888-9acd-221efc61500b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-2c75bf3f-d0fc-4fe6-a806-d459c4d125c7">
+<span class="eqno">(7.28)<a class="headerlink" href="#equation-2c75bf3f-d0fc-4fe6-a806-d459c4d125c7" title="Permalink to this equation">#</a></span>\[\begin{equation}
 k_d v_{top}^2 = 17
 \end{equation}\]</div>
 <p>If we assume the top speed of <span class="math notranslate nohighlight">\(20m/s\)</span> is correct, we can estimate the drag coefficient <span class="math notranslate nohighlight">\(k_d\)</span>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-ef734b87-7a63-4986-acb5-85d18c6edb7e">
-<span class="eqno">(7.29)<a class="headerlink" href="#equation-ef734b87-7a63-4986-acb5-85d18c6edb7e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-8c4bc338-b707-45dc-a698-3ab8c8e8657f">
+<span class="eqno">(7.29)<a class="headerlink" href="#equation-8c4bc338-b707-45dc-a698-3ab8c8e8657f" title="Permalink to this equation">#</a></span>\[\begin{equation}
 k_d 20^2= 17 \rightarrow k_d = 0.0425
 \end{equation}\]</div>
 <p>Given the drag coefficient <span class="math notranslate nohighlight">\(k_d\)</span>, we can calculate a simple mapping from tilt angle <span class="math notranslate nohighlight">\(\theta\)</span> to the terminal forward velocity. For a given tilt angle <span class="math notranslate nohighlight">\(\theta\)</span> we first calculate the forward thrust <span class="math notranslate nohighlight">\(F^n_y\)</span> in the navigation frame:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b37db5a1-76d8-496a-b60d-2c54ef397c3f">
-<span class="eqno">(7.30)<a class="headerlink" href="#equation-b37db5a1-76d8-496a-b60d-2c54ef397c3f" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-9437199a-2bb8-465f-9151-a74c57fd07d6">
+<span class="eqno">(7.30)<a class="headerlink" href="#equation-9437199a-2bb8-465f-9151-a74c57fd07d6" title="Permalink to this equation">#</a></span>\[\begin{equation}
 F^n_y = \tan \theta \cdot 10N
 \end{equation}\]</div>
 <p>after which the velocity can be obtained by equating that to the drag force <span class="math notranslate nohighlight">\(k_d v^2\)</span>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-8586055a-66c1-4bec-9577-72c0d0187a54">
-<span class="eqno">(7.31)<a class="headerlink" href="#equation-8586055a-66c1-4bec-9577-72c0d0187a54" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-c97b4898-3b29-44cd-a711-6a342d5e949f">
+<span class="eqno">(7.31)<a class="headerlink" href="#equation-c97b4898-3b29-44cd-a711-6a342d5e949f" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \tan \theta \cdot 10N = k_d v^2 \rightarrow v = \sqrt{\frac{\tan \theta \cdot 10}{k_d}}
 \end{equation}\]</div>
 <p>Plugging in the estimated value of <span class="math notranslate nohighlight">\(k_d\)</span> we obtain</p>
-<div class="amsmath math notranslate nohighlight" id="equation-cef5c79a-9f77-4369-a7d8-2d7844db3be4">
-<span class="eqno">(7.32)<a class="headerlink" href="#equation-cef5c79a-9f77-4369-a7d8-2d7844db3be4" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-e6df7e77-f4fc-4275-8099-3735f4b9d61f">
+<span class="eqno">(7.32)<a class="headerlink" href="#equation-e6df7e77-f4fc-4275-8099-3735f4b9d61f" title="Permalink to this equation">#</a></span>\[\begin{equation}
 v \approx 15 \sqrt{\tan \theta}
 \end{equation}\]</div>
 <p>With a smidgen of code we can build a lookup table <code class="docutils literal notranslate"><span class="pre">vmap</span></code> …</p>
@@ -597,8 +597,8 @@ v \approx 15 \sqrt{\tan \theta}
 <section id="positional-kinematics">
 <h3><span class="section-number">7.2.2.1. </span>Positional Kinematics<a class="headerlink" href="#positional-kinematics" title="Link to this heading">#</a></h3>
 <p>For position, the vehicle’s kinematics are straightforward. The time derivative <span class="math notranslate nohighlight">\(\dot{r}^{n}\)</span> of position <span class="math notranslate nohighlight">\(r^n\)</span> in the navigation frame <span class="math notranslate nohighlight">\(N\)</span> is equal to the <strong>linear velocity</strong> <span class="math notranslate nohighlight">\(v^n\)</span>, also in the navigation frame:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-812348d6-61fa-4aa2-a579-3e19d28abd0d">
-<span class="eqno">(7.33)<a class="headerlink" href="#equation-812348d6-61fa-4aa2-a579-3e19d28abd0d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-b2d1ebc4-14ba-4378-8519-ed363bd36b15">
+<span class="eqno">(7.33)<a class="headerlink" href="#equation-b2d1ebc4-14ba-4378-8519-ed363bd36b15" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \dot{r}^{n}	= v^n.
 \end{equation}\]</div>
 </section>
@@ -609,8 +609,8 @@ which is typically given <em>in the body frame</em> as <span class="math notrans
 In this case, the components of <span class="math notranslate nohighlight">\(\omega^b\)</span> correspond to angular velocities around the respective body axes.
 This angular velocity vector has a very intuitive interpretation as an angle-axis interpretation: the vector can be viewed as a rotation axis in 3D, centered at the body coordinate frame, and its norm <span class="math notranslate nohighlight">\(\|\omega^b\|\)</span> is the instantaneous angular speed around that axis.</p>
 <p>For example, the drone steadily pitching downward by 10 degrees/second corresponds to a positive rotation around the body <span class="math notranslate nohighlight">\(y\)</span>-axis and the corresponding angular velocity is given by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-212b8e22-8d9a-4598-8ab3-f4611b418aa4">
-<span class="eqno">(7.34)<a class="headerlink" href="#equation-212b8e22-8d9a-4598-8ab3-f4611b418aa4" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-a50a533c-5a92-4741-823c-d90d8abf669e">
+<span class="eqno">(7.34)<a class="headerlink" href="#equation-a50a533c-5a92-4741-823c-d90d8abf669e" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \omega^b = \begin{bmatrix}0 \\ 1 \\ 0\end{bmatrix} 10 .
 \end{equation}\]</div>
 <p>We use the <em>right hand rule</em>,
@@ -634,18 +634,18 @@ Remember that in our FLU convention the <span class="math notranslate nohighligh
 In Section 7.1 we have seen that <span class="math notranslate nohighlight">\(\omega^b\)</span> denotes the angular velocity of the body frame
 expressed in the coordinates relative to the body frame.
 Therefore, using the results from Section 7.1, we have</p>
-<div class="amsmath math notranslate nohighlight" id="equation-2f6d3858-5404-4b48-828e-20ce8074168a">
-<span class="eqno">(7.35)<a class="headerlink" href="#equation-2f6d3858-5404-4b48-828e-20ce8074168a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d4a07384-40c6-4f89-b7f3-af98614f07d8">
+<span class="eqno">(7.35)<a class="headerlink" href="#equation-d4a07384-40c6-4f89-b7f3-af98614f07d8" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \dot{R}^n_b	= \hat{\omega}^n R^n_b
 \end{equation}\]</div>
 <p>and</p>
-<div class="amsmath math notranslate nohighlight" id="equation-acaaff2a-e082-4eab-b1f9-31c210ea56f7">
-<span class="eqno">(7.36)<a class="headerlink" href="#equation-acaaff2a-e082-4eab-b1f9-31c210ea56f7" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-53356e99-cd2b-498b-8401-c1fde7ed2d07">
+<span class="eqno">(7.36)<a class="headerlink" href="#equation-53356e99-cd2b-498b-8401-c1fde7ed2d07" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \hat{\omega}^b = \left( R^n_b \right)^T \hat{\omega}^n
 \end{equation}\]</div>
 <p>The quantity <span class="math notranslate nohighlight">\(\hat{\omega}^b\)</span> is a <span class="math notranslate nohighlight">\(3\times 3\)</span> skew-symmetric matrix, related to the angular velocity <span class="math notranslate nohighlight">\(\omega^b\)</span> as follows:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a6ae4172-6b06-4e0c-a809-67d5ccb471d0">
-<span class="eqno">(7.37)<a class="headerlink" href="#equation-a6ae4172-6b06-4e0c-a809-67d5ccb471d0" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-9bf34c2c-90f8-4eee-b6ac-989eba528e5d">
+<span class="eqno">(7.37)<a class="headerlink" href="#equation-9bf34c2c-90f8-4eee-b6ac-989eba528e5d" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \hat{\omega}^b\doteq\begin{bmatrix}
 0 &amp; -\omega^b_{z} &amp; \omega^b_{y}\\
 \omega^b_{z} &amp;  0&amp; -\omega^b_{x}\\
@@ -662,8 +662,8 @@ In the next section we show how to integrate it over time to simulate or calcula
 <section id="simulation-aka-forward-integrating">
 <h2><span class="section-number">7.2.3. </span>Simulation aka Forward Integrating<a class="headerlink" href="#simulation-aka-forward-integrating" title="Link to this heading">#</a></h2>
 <p>Assuming we know the drone’s velocity, we can calculate its position over time. More formally, if time histories <span class="math notranslate nohighlight">\(v^n(t)\)</span> and <span class="math notranslate nohighlight">\(\omega^b(t)\)</span> for the linear and angular velocities are available, the vehicle’s position <span class="math notranslate nohighlight">\(r^{n}(t)\)</span> and attitude <span class="math notranslate nohighlight">\(R^n_b(t)\)</span> can be integrated forward using the following two equations:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-78c36c9d-3f33-4069-8e0c-61ad16e0675e">
-<span class="eqno">(7.38)<a class="headerlink" href="#equation-78c36c9d-3f33-4069-8e0c-61ad16e0675e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-61000a07-cdad-415c-ab52-72a57684ea83">
+<span class="eqno">(7.38)<a class="headerlink" href="#equation-61000a07-cdad-415c-ab52-72a57684ea83" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{aligned}
 r^n_{k+1} &amp;= r^n_{k} + d^k_{k+1}(v^n(t), \Delta t)\\
 R^n_{b,k+1} &amp;= R^n_{b,k} R^k_{k+1}(\omega^b(t), \Delta t)
@@ -678,8 +678,8 @@ R^n_{b,k+1} &amp;= R^n_{b,k} R^k_{k+1}(\omega^b(t), \Delta t)
 <section id="integrating-position">
 <span id="index-5"></span><h3><span class="section-number">7.2.3.1. </span>Integrating Position<a class="headerlink" href="#integrating-position" title="Link to this heading">#</a></h3>
 <p>The above is exact, but when implementing this in code we need to use a numerical integration scheme. For position, the simplest integration scheme is the <strong>forward Euler method</strong></p>
-<div class="amsmath math notranslate nohighlight" id="equation-5c29efda-3653-4939-b987-3e4be2de4ec8">
-<span class="eqno">(7.39)<a class="headerlink" href="#equation-5c29efda-3653-4939-b987-3e4be2de4ec8" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d7d15fb7-135b-4d21-9116-e5e7ddf1dbb0">
+<span class="eqno">(7.39)<a class="headerlink" href="#equation-d7d15fb7-135b-4d21-9116-e5e7ddf1dbb0" title="Permalink to this equation">#</a></span>\[\begin{equation}
 d^k_{k+1}(v^n(t), \Delta t) \approx v^n(t_k) \Delta t
 \end{equation}\]</div>
 <p>which approximates velocity <span class="math notranslate nohighlight">\(v^n(t)\)</span> over the interval <span class="math notranslate nohighlight">\((t_k,t_{k+1}]\)</span> as constant with value <span class="math notranslate nohighlight">\(v^n(t_k)\)</span>. Of course, this is just an approximation, and its quality depends both on the time step <span class="math notranslate nohighlight">\(\Delta t\)</span> (smaller is better) and on the nature of the trajectory (smoother is better).</p>
@@ -690,8 +690,8 @@ d^k_{k+1}(v^n(t), \Delta t) \approx v^n(t_k) \Delta t
 <p>For the attitude part, it turns out that the equivalent forward Euler method can be implemented <em>in closed form</em> using <strong>Rodrigues’ rotation formula</strong>, which states that the rotation matrix
 corresponding to a rotation by angle <span class="math notranslate nohighlight">\(\theta\)</span> about a unit vector <span class="math notranslate nohighlight">\(K\)</span> is given
 by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-9f08db7c-d78b-4569-a612-ce762d72798a">
-<span class="eqno">(7.40)<a class="headerlink" href="#equation-9f08db7c-d78b-4569-a612-ce762d72798a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-9e967041-6307-4aa6-b87d-e45c991e7d60">
+<span class="eqno">(7.40)<a class="headerlink" href="#equation-9e967041-6307-4aa6-b87d-e45c991e7d60" title="Permalink to this equation">#</a></span>\[\begin{equation}
 R =  I + \sin\theta \hat{K} + (1-\cos\theta) \hat{K}^2
 \end{equation}\]</div>
 <p>To apply this to our problem of integrating angular velocity at time <span class="math notranslate nohighlight">\(k\)</span>
@@ -699,14 +699,14 @@ we define <span class="math notranslate nohighlight">\(K\)</span> to be the unit
 This is equivalent to approximating the total rotation during the interval <span class="math notranslate nohighlight">\(\Delta t\)</span>
 by the constant angle <span class="math notranslate nohighlight">\(\theta\)</span>,
 and leads to the following approximation for the corresponding rotation matrix:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-fedf9aca-4a5b-47a5-85c1-ec4ecf0f4e8e">
-<span class="eqno">(7.41)<a class="headerlink" href="#equation-fedf9aca-4a5b-47a5-85c1-ec4ecf0f4e8e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-a8bf6602-6188-4c04-ad7a-0273652808e5">
+<span class="eqno">(7.41)<a class="headerlink" href="#equation-a8bf6602-6188-4c04-ad7a-0273652808e5" title="Permalink to this equation">#</a></span>\[\begin{equation}
 R^k_{k+1}(\omega^b(t), \Delta t) \approx I + \sin\theta \hat{K} + (1-\cos\theta) \hat{K}^2
 \end{equation}\]</div>
 <p>Again, note that this only an approximation because it is after all an Euler step: it is only exact if the time-varying angular velocity <span class="math notranslate nohighlight">\(\omega^b(t)\)</span> is actually constant over the interval.</p>
 <p>The last term in Rodrigues’ formula is typically small for small sample times <span class="math notranslate nohighlight">\(\Delta t\)</span> because (a) <span class="math notranslate nohighlight">\((1-\cos\theta)\)</span> is small for small <span class="math notranslate nohighlight">\(\theta\)</span>, and (b) the matrix <span class="math notranslate nohighlight">\(\hat{K}^2\)</span> contains squares of numbers smaller than 1. Hence, an often-used first-order approximation for Euler’s method in rotation spaces is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-154e1d2e-d77a-4ae9-a32e-1e8d16f2dc4d">
-<span class="eqno">(7.42)<a class="headerlink" href="#equation-154e1d2e-d77a-4ae9-a32e-1e8d16f2dc4d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-597b8232-018b-439c-9bc6-6eb88a7b6188">
+<span class="eqno">(7.42)<a class="headerlink" href="#equation-597b8232-018b-439c-9bc6-6eb88a7b6188" title="Permalink to this equation">#</a></span>\[\begin{equation}
 R^k_{k+1}(\omega^b(t), \Delta t) \approx I + \sin\theta \hat{K} \approx I + \hat{\omega}^b_k \Delta t =
 \begin{bmatrix}
 1 &amp; -\omega^b_{z}\Delta t  &amp; \omega^b_{y}\Delta t \\
@@ -717,8 +717,8 @@ R^k_{k+1}(\omega^b(t), \Delta t) \approx I + \sin\theta \hat{K} \approx I + \hat
 <p>where we also used the small angle approximation <span class="math notranslate nohighlight">\(\sin \theta \approx \theta\)</span>.
 Note that strictly speaking this approximation (unlike Rodrigues’ formula) departs the rotation manifold and we need to re-normalize to ensure that the attitude <span class="math notranslate nohighlight">\(R^n_b\)</span> remains a proper orthonormal rotation matrix, i.e., <span class="math notranslate nohighlight">\(R^n_b\in SO(3)\)</span>.</p>
 <p>So, finally, we have a simple to implement approximation of the attitude integration step:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-ac6f6cb8-3447-4e32-85b3-574930547194">
-<span class="eqno">(7.43)<a class="headerlink" href="#equation-ac6f6cb8-3447-4e32-85b3-574930547194" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-58fc0440-b2ac-45bf-9213-394bd90cb19d">
+<span class="eqno">(7.43)<a class="headerlink" href="#equation-58fc0440-b2ac-45bf-9213-394bd90cb19d" title="Permalink to this equation">#</a></span>\[\begin{equation}
 R^n_{b,k+1} = R^n_{b,k} R^k_{k+1}(\omega^b(t), \Delta t) 
 \approx R^n_{b,k} 
 \begin{bmatrix}
@@ -757,8 +757,8 @@ R^n_{b,k+1} = R^n_{b,k} R^k_{k+1}(\omega^b(t), \Delta t)
 </div>
 <p>Above, the <code class="docutils literal notranslate"><span class="pre">Rot3.Expmap</span></code>, for “exponential map”, implements Rodrigues’ formula exactly.
 The approach is based on the exponential form of Rodrigues’ formula:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-ae493913-29b6-4bb2-9fe6-296433098149">
-<span class="eqno">(7.44)<a class="headerlink" href="#equation-ae493913-29b6-4bb2-9fe6-296433098149" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-8a993f01-78be-41fb-8ab3-f2c304637f97">
+<span class="eqno">(7.44)<a class="headerlink" href="#equation-8a993f01-78be-41fb-8ab3-f2c304637f97" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \exp ( \theta \hat{K}) \doteq I + \sin\theta \hat{K} + (1-\cos\theta) \hat{K}^2
 \end{equation}\]</div>
 <p>which relies on the <em>exponential map</em> from <span class="math notranslate nohighlight">\(\mathfrak{so}(3)\)</span>
@@ -834,8 +834,8 @@ Above we have discussed the forces that are applied by the rotors.
 We now extend this idea to include <strong>torque</strong>, which is the rotational version of force.
 The combination of forces and torques yield corresponding linear and angular accelerations.</p>
 <p>Let us start with Newton’s second law, with the acceleration <span class="math notranslate nohighlight">\(a\)</span> written suggestively as <span class="math notranslate nohighlight">\(\dot{v}^n\)</span>, and immediately thinking in terms of force and velocity <em>vectors</em> in the navigation frame:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-8f7629eb-0d01-4cc4-a789-13966e8b2bcf">
-<span class="eqno">(7.45)<a class="headerlink" href="#equation-8f7629eb-0d01-4cc4-a789-13966e8b2bcf" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-73b2963c-0bfb-4b05-8c90-96101bd212bb">
+<span class="eqno">(7.45)<a class="headerlink" href="#equation-73b2963c-0bfb-4b05-8c90-96101bd212bb" title="Permalink to this equation">#</a></span>\[\begin{equation}
 F^n = m \dot{v}^n
 \end{equation}\]</div>
 <p>The <strong>mass</strong> <span class="math notranslate nohighlight">\(m\)</span> can be seen as a scalar that <em>resists</em> motion: the higher the mass, the higher the force needed to produce an acceleration in any direction. Note that we could consider <span class="math notranslate nohighlight">\(m\)</span> to be a diagonal matrix with the mass on the diagonal: acceleration is resisted the same way in all three axes, in whatever coordinate frame we choose.</p>
@@ -843,8 +843,8 @@ F^n = m \dot{v}^n
 If we write the torques on the quadrotor with respect to the body frame,
 if the angular velocity is given by <span class="math notranslate nohighlight">\(\omega^b\)</span>,
 the corresponding body torque is approximately given by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-cf772783-e0c5-452b-84c9-1784df38e59b">
-<span class="eqno">(7.46)<a class="headerlink" href="#equation-cf772783-e0c5-452b-84c9-1784df38e59b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-6292686b-a6b5-4ea2-a972-515f45b549a6">
+<span class="eqno">(7.46)<a class="headerlink" href="#equation-6292686b-a6b5-4ea2-a972-515f45b549a6" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \tau^b \approx I \dot{\omega}^b
 \end{equation}\]</div>
 <p>This is only an approximation, because it ignores gyroscopic forces, but it is reasonable for small angular velocities <span class="math notranslate nohighlight">\(\omega^b\)</span>.</p>
@@ -852,13 +852,13 @@ the corresponding body torque is approximately given by</p>
 Expressed in an FLU body coordinate frame, the inertia matrix <span class="math notranslate nohighlight">\(I\)</span> is typically approximated by a diagonal matrix with “small-small-big” diagonal elements, as the motor masses are further away from the <span class="math notranslate nohighlight">\(z\)</span>-axis than from the <span class="math notranslate nohighlight">\(x\)</span>- and
 <span class="math notranslate nohighlight">\(y\)</span>-axes, and hence resist acceleration around the <span class="math notranslate nohighlight">\(z\)</span>-axis more.</p>
 <p>Let us calculate the moments of inertia assuming that each motor is 150 grams, and neglecting the body’s mass for now. All four motors contribute to the moment of inertia <span class="math notranslate nohighlight">\(I_{xx}\)</span> around the X-axis. Each motor, at a distance of <span class="math notranslate nohighlight">\(r = 0.1\)</span> meters from the <span class="math notranslate nohighlight">\(x\)</span>-axis, contributes <span class="math notranslate nohighlight">\(m \times r^2\)</span> to the moment of inertia, which gives:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-6ebe4337-282b-44cc-8899-b4747181ac9d">
-<span class="eqno">(7.47)<a class="headerlink" href="#equation-6ebe4337-282b-44cc-8899-b4747181ac9d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-7b309d22-985e-4d4c-aecb-92a6aab68e76">
+<span class="eqno">(7.47)<a class="headerlink" href="#equation-7b309d22-985e-4d4c-aecb-92a6aab68e76" title="Permalink to this equation">#</a></span>\[\begin{equation}
 I_{xx} = 4 \times 0.15 \times 0.1^2 = 0.006 \, \text{kg} \cdot \text{m}^2
 \end{equation}\]</div>
 <p>Because of symmetry, <span class="math notranslate nohighlight">\(I_{yy}\)</span> has the same value. For the moment of inertia <span class="math notranslate nohighlight">\(I_{zz}\)</span> about the z-axis what counts is the distance of each motor from the z-axis, which is <span class="math notranslate nohighlight">\(\sqrt{0.1^2 + 0.1^2}\)</span> for each motor. Hence</p>
-<div class="amsmath math notranslate nohighlight" id="equation-f5ff9eab-b5d6-47c9-bf6d-a7f529fd10fe">
-<span class="eqno">(7.48)<a class="headerlink" href="#equation-f5ff9eab-b5d6-47c9-bf6d-a7f529fd10fe" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-49700af7-0c84-44fd-a852-db334a085df6">
+<span class="eqno">(7.48)<a class="headerlink" href="#equation-49700af7-0c84-44fd-a852-db334a085df6" title="Permalink to this equation">#</a></span>\[\begin{equation}
 I_{zz} = 4 \times 0.15 \times (0.1^2 + 0.1^2) = 0.012 \, \text{kg} \cdot \text{m}^2
 \end{equation}\]</div>
 <p>As you can see, because the motors are farther away from the <span class="math notranslate nohighlight">\(z\)</span>-axis than from the <span class="math notranslate nohighlight">\(x\)</span>- or <span class="math notranslate nohighlight">\(y\)</span>-axes, it takes twice the torque around the <span class="math notranslate nohighlight">\(z\)</span>-axis to get the same angular acceleration.</p>
@@ -869,8 +869,8 @@ I_{zz} = 4 \times 0.15 \times (0.1^2 + 0.1^2) = 0.012 \, \text{kg} \cdot \text{m
 </div></blockquote>
 <p>If a quadrotor undergoes large angular velocities, we cannot ignore gyroscopic effects.
 In this case, the (exact) rotational dynamics equation is given by:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-123dfb0d-b764-4106-84e3-be45c0166f1f">
-<span class="eqno">(7.49)<a class="headerlink" href="#equation-123dfb0d-b764-4106-84e3-be45c0166f1f" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-b050ea65-512e-4305-8857-6d96d8eb9b6e">
+<span class="eqno">(7.49)<a class="headerlink" href="#equation-b050ea65-512e-4305-8857-6d96d8eb9b6e" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \tau^b = I \dot{\omega}^b + \omega^b \times I \omega^b,
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\times\)</span> is the vector cross-product. The second term is a set of quadratic components in the angular velocity <span class="math notranslate nohighlight">\(\omega^b\)</span> and that is why for small angular velocities they can be ignored. In fact, in many cases the orientation of a quadrotor is <em>actively controlled</em> to stay constant during hovering or in fast forward flight, and it is only in complicated maneuvers that large angular velocities occur.</p>
@@ -878,22 +878,22 @@ In this case, the (exact) rotational dynamics equation is given by:</p>
 <section id="generating-force-and-torque">
 <h3><span class="section-number">7.2.5.2. </span>Generating Force and Torque<a class="headerlink" href="#generating-force-and-torque" title="Link to this heading">#</a></h3>
 <p>What is still missing is how to translate from forces at the rotors to a force and torque on the <em>body</em>. In the body coordinate frame, the force equation is easy and we have seen it before:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-7fc6c933-3186-420d-a42d-bffe31c41e15">
-<span class="eqno">(7.50)<a class="headerlink" href="#equation-7fc6c933-3186-420d-a42d-bffe31c41e15" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-36f0e89c-63cf-4934-9fd1-7925fef407ce">
+<span class="eqno">(7.50)<a class="headerlink" href="#equation-36f0e89c-63cf-4934-9fd1-7925fef407ce" title="Permalink to this equation">#</a></span>\[\begin{equation}
 F^b_z = f \doteq \sum_i f_i.
 \end{equation}\]</div>
 <p>Above the forces <span class="math notranslate nohighlight">\(f_i\)</span> at the rotors are all oriented along the body <span class="math notranslate nohighlight">\(z\)</span>-coordinate axis (up!) and hence when we sum them we get a single force component <span class="math notranslate nohighlight">\(F^b_z\)</span> along the body <span class="math notranslate nohighlight">\(z\)</span>-axis.</p>
 <p>We also need to include the effect of gravity, which acts along the negative <span class="math notranslate nohighlight">\(z\)</span>-axis of the navigation frame.
 If we denote by <span class="math notranslate nohighlight">\(F_\mathrm{{tot}}\)</span> the total force, which includes both the effects of the rotor thrusts and of gravity,
 we have have:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-0d65bf62-952b-4edb-9ac2-2618b00cc2e3">
-<span class="eqno">(7.51)<a class="headerlink" href="#equation-0d65bf62-952b-4edb-9ac2-2618b00cc2e3" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-4147669c-8219-46e9-863b-8eb34f738289">
+<span class="eqno">(7.51)<a class="headerlink" href="#equation-4147669c-8219-46e9-863b-8eb34f738289" title="Permalink to this equation">#</a></span>\[\begin{equation}
 F_\mathrm{tot}^n = R^n_b F^b + m g^n
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(F^b \doteq [0,0,f]^T\)</span> is the 3D thrust vector in the body frame, and <span class="math notranslate nohighlight">\(g^n \doteq [0,0,-g]^T\)</span> is the gravity vector, expressed in the navigation frame.</p>
 <p>The torque <span class="math notranslate nohighlight">\(\tau^b\)</span> in the body frame is a bit more involved, and is a function of the force vector <span class="math notranslate nohighlight">\(f\)</span>. The exact formula depends on the geometry of the rotors. For example, for a 4-motor “X” configuration with motor 1 forward left and numbered clockwise, we obtain</p>
-<div class="amsmath math notranslate nohighlight" id="equation-899bcae1-0dcf-4ce2-b449-9569a26c689d">
-<span class="eqno">(7.52)<a class="headerlink" href="#equation-899bcae1-0dcf-4ce2-b449-9569a26c689d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-846df393-eda6-4f01-96f1-59c92b6c178c">
+<span class="eqno">(7.52)<a class="headerlink" href="#equation-846df393-eda6-4f01-96f1-59c92b6c178c" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \tau^b = \begin{bmatrix}
 l(f_{1}-f_{2}-f_{3}+f_{4})\\
 l(f_{1}+f_{2}-f_{3}-f_{4})\\
@@ -917,8 +917,8 @@ From this equation you can see that a quadrotor is like a differential-drive rob
 <div><p>Kinematics and dynamics make motion.</p>
 </div></blockquote>
 <p>Kinematics governs how states are moved by velocities, and dynamics governs how accelerations are changed by forces and moments. Putting things together, the full equations of motion for the drone then read:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-8ed90689-5085-485c-bb08-b9365879f553">
-<span class="eqno">(7.53)<a class="headerlink" href="#equation-8ed90689-5085-485c-bb08-b9365879f553" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-23da6ad9-57b1-4eae-8fb5-6e09cafb7507">
+<span class="eqno">(7.53)<a class="headerlink" href="#equation-23da6ad9-57b1-4eae-8fb5-6e09cafb7507" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{align}
 \dot r^n &amp;= v^n \\
 \dot{R}^n_b	&amp;=  \hat{\omega}^n R^n_b \\

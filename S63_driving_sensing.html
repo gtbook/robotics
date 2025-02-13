@@ -216,7 +216,7 @@
 <li class="toctree-l2"><a class="reference internal" href="S62_driving_actions.html">6.2. Kinematics for Driving</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">6.3. Sensing for Autonomous Vehicles</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S64_driving_perception.html">6.4. SLAM</a></li>
-<li class="toctree-l2"><a class="reference internal" href="S65_driving_planning.html">6.5. Planning for Autonomous Driving.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S65_driving_planning.html">6.5. Planning for Autonomous Driving</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S66_driving_DRL.html">6.6. Deep Reinforcement Learning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S67_driving_summary.html">6.7. Chapter Summary</a></li>
 </ul>
@@ -409,46 +409,46 @@
 </div></blockquote>
 <a class="reference internal image-reference" href="_images/S63-Autonomous_Vehicle_with_LIDAR_and_cameras-07.jpg"><img alt="Splash image with steampunk autonomous car" class="align-center" src="_images/S63-Autonomous_Vehicle_with_LIDAR_and_cameras-07.jpg" style="width: 40%;" /></a>
 <section id="lidar">
-<span id="index-1"></span><h2><span class="section-number">6.3.1. </span>LIDAR<a class="headerlink" href="#lidar" title="Link to this heading">#</a></h2>
-<p>LIDAR (LIght raDAR) is a technology that measures distance to an object by using laser light and the <strong>Time of Flight</strong> or <strong>ToF</strong> principle. There are several variants in use, and the simplest to explain is the <strong>direct ToF</strong> sensor, which sends out a short pulse and measures the elapsed time <span class="math notranslate nohighlight">\(\Delta t\)</span> for the light to bounce off an object and return to a detector collocated with the laser pulse emitter. If the object is situated at a distance <span class="math notranslate nohighlight">\(d\)</span> from the emitter-detector pair, we have</p>
-<div class="amsmath math notranslate nohighlight" id="equation-915bb911-7d32-4052-9160-c5b226a3a0f9">
-<span class="eqno">(6.26)<a class="headerlink" href="#equation-915bb911-7d32-4052-9160-c5b226a3a0f9" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<h2><span class="section-number">6.3.1. </span>LIDAR<a class="headerlink" href="#lidar" title="Link to this heading">#</a></h2>
+<p id="index-2"><span id="index-1"></span>LIDAR (LIght raDAR) is a technology that measures distance to an object by using laser light and the <strong>Time of Flight</strong> or <strong>ToF</strong> principle. There are several variants in use, and the simplest to explain is the <strong>direct ToF</strong> sensor, which sends out a short pulse and measures the elapsed time <span class="math notranslate nohighlight">\(\Delta t\)</span> for the light to bounce off an object and return to a detector collocated with the laser pulse emitter. If the object is situated at a distance <span class="math notranslate nohighlight">\(d\)</span> from the emitter-detector pair, we have</p>
+<div class="amsmath math notranslate nohighlight" id="equation-93fa4f65-8afd-4263-b075-55e515801bfd">
+<span class="eqno">(6.26)<a class="headerlink" href="#equation-93fa4f65-8afd-4263-b075-55e515801bfd" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \Delta t = \frac{2 d}{c} 
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(c\approx300,000km/s\)</span> is the speed of light. For example, for an object at 15m, we have</p>
-<div class="amsmath math notranslate nohighlight" id="equation-2c8cfaad-4509-4af7-b3d1-f6026733a49c">
-<span class="eqno">(6.27)<a class="headerlink" href="#equation-2c8cfaad-4509-4af7-b3d1-f6026733a49c" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ae3388b0-1b53-42a9-9d1a-c82040b74599">
+<span class="eqno">(6.27)<a class="headerlink" href="#equation-ae3388b0-1b53-42a9-9d1a-c82040b74599" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \Delta t \approx \frac{2 \times 0.015}{300,000} = 0.1\mu s
 \end{equation}\]</div>
 <p>Assuming we can measure <span class="math notranslate nohighlight">\(\Delta t\)</span> accurately, we can then easily compute the distance:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-3e2831d1-a04f-4bf2-81dd-a4471d065306">
-<span class="eqno">(6.28)<a class="headerlink" href="#equation-3e2831d1-a04f-4bf2-81dd-a4471d065306" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-11550723-29e7-4e65-9647-62da207f5e73">
+<span class="eqno">(6.28)<a class="headerlink" href="#equation-11550723-29e7-4e65-9647-62da207f5e73" title="Permalink to this equation">#</a></span>\[\begin{equation}
 d= c\frac{\Delta t}{2}
 \end{equation}\]</div>
 <p>In a <em>scanning LIDAR</em>, there is typically one detector, whereas in a <em>flash LIDAR</em> a single pulse is emitted in a wide field of view, and an <em>array</em> of detectors, akin to a CCD sensor, is used to detect the returning light pulses in multiple directions at once.</p>
 <p>In practice, <em>indirect</em> time of flight sensors are more prevalent in robotics and autonomous driving applications than direct ToF sensors. There are multiple reasons for this: measuring elapsed times at the nano-second scale is difficult and expensive, and the amount of light energy that needs to be emitted for direct ToF can also be a problem from an eye-safety perspective.
-<strong>Indirect ToF</strong> is an attractive alternative, where the light is emitted with a waveform, e.g., a sine wave, and the returned light is correlated with the amplitude of the emitted light to calculate a phase shift. The elapsed time <span class="math notranslate nohighlight">\(\Delta t\)</span> and distance <span class="math notranslate nohighlight">\(d\)</span> can then be calculated from the phase shift.</p>
-<p>Two common scanning LIDAR technologies are in use for robotics: <strong>2D LIDAR</strong>, which consists of a single laser beam that is rotated around a fixed axis, and <strong>3D LIDAR</strong>, which has multiple laser/detector pairs rotated at different inclinations. 2D LIDARs are also often deployed on aircraft to create highly detailed digital elevation maps, where the third dimension is provided by the aircraft’s forward motion. LIDAR altimeters are even deployed from satellites in orbit around Earth or <a class="reference external" href="https://pgda.gsfc.nasa.gov/products/62">other planets</a>.</p>
+<strong>Indirect ToF</strong> is an attractive alternative, where the light is emitted as a waveform, e.g., a sine wave, and the returned light is correlated with the amplitude of the emitted light to calculate a phase shift. The elapsed time <span class="math notranslate nohighlight">\(\Delta t\)</span> and distance <span class="math notranslate nohighlight">\(d\)</span> can then be calculated from the phase shift.</p>
+<p id="index-3">Two common scanning LIDAR technologies are in use for robotics: <strong>2D LIDAR</strong>, which consists of a single laser beam that is rotated around a fixed axis, and <strong>3D LIDAR</strong>, which has multiple laser/detector pairs rotated at different inclinations. 2D LIDAR is also often deployed on aircraft to create highly detailed digital elevation maps, where the third dimension is provided by the aircraft’s forward motion. LIDAR altimeters are even deployed from satellites in orbit around Earth or <a class="reference external" href="https://pgda.gsfc.nasa.gov/products/62">other planets</a>.</p>
 </section>
 <section id="ray-intersection">
-<span id="index-2"></span><h2><span class="section-number">6.3.2. </span>Ray Intersection<a class="headerlink" href="#ray-intersection" title="Link to this heading">#</a></h2>
+<span id="index-4"></span><h2><span class="section-number">6.3.2. </span>Ray Intersection<a class="headerlink" href="#ray-intersection" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>Intersecting rays is as easy as computing a dot product.</p>
 </div></blockquote>
-<p>To perform inference about the environment with LIDAR, we have to model how LIDAR beams interact with it, which in the case of polygonal objects comes down to line-line or line-plane intersections.</p>
+<p>To perform inference about the environment using LIDAR, we have to model how LIDAR beams interact with the environment, which in the case of polygonal objects comes down to line-line or line-plane intersections.</p>
 <p>We examine the 2D line-line intersection case first. Assume we have a line in 2D with equation <span class="math notranslate nohighlight">\(\hat{n} \cdot p = d\)</span>, where <span class="math notranslate nohighlight">\(\hat{n}\)</span> is a normal vector and <span class="math notranslate nohighlight">\(d&gt;0\)</span> is the distance of the line to the origin. The hat notation signifies that the normal vector <span class="math notranslate nohighlight">\(\hat{n}\)</span> is normalized to length 1. Then if we have a ray of points <span class="math notranslate nohighlight">\(p = \hat{r} s\)</span> where <span class="math notranslate nohighlight">\(\hat{r}\)</span> is the <strong>ray direction</strong> and <span class="math notranslate nohighlight">\(s&gt;0\)</span> is a scalar, we can find the intersection by plugging the ray equation into the line equation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-ad41fc9d-ab84-4324-a677-1e58af59e5b3">
-<span class="eqno">(6.29)<a class="headerlink" href="#equation-ad41fc9d-ab84-4324-a677-1e58af59e5b3" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-456137dc-e1d3-4069-85d7-38e7b33bca6d">
+<span class="eqno">(6.29)<a class="headerlink" href="#equation-456137dc-e1d3-4069-85d7-38e7b33bca6d" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \hat{n} \cdot (\hat{r} s) = d,
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(a \cdot b \doteq a^T b = b^T a\)</span> is the standard vector dot product. We find the range <span class="math notranslate nohighlight">\(s\)</span> to the object as:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-f684a744-debe-482a-8b88-279b71a57d50">
-<span class="eqno">(6.30)<a class="headerlink" href="#equation-f684a744-debe-482a-8b88-279b71a57d50" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-c8d1304a-2155-4242-8d4d-cf713a8c6146">
+<span class="eqno">(6.30)<a class="headerlink" href="#equation-c8d1304a-2155-4242-8d4d-cf713a8c6146" title="Permalink to this equation">#</a></span>\[\begin{equation}
 s = \frac{d}{\hat{n} \cdot \hat{r}}.
 \end{equation}\]</div>
 <p>We can ensure that <span class="math notranslate nohighlight">\(s&gt;0\)</span> and avoid a division by zero by checking the dot product before doing the division:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a283cf54-e055-4d13-bbe9-84e2dab704d0">
-<span class="eqno">(6.31)<a class="headerlink" href="#equation-a283cf54-e055-4d13-bbe9-84e2dab704d0" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-1ca04200-826d-4789-9d2b-e8d9e041a7a1">
+<span class="eqno">(6.31)<a class="headerlink" href="#equation-1ca04200-826d-4789-9d2b-e8d9e041a7a1" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \hat{n} \cdot \hat{r} &gt; 0
 \end{equation}\]</div>
 <p>The following code implements this:</p>
@@ -464,7 +464,8 @@ s = \frac{d}{\hat{n} \cdot \hat{r}}.
 </div>
 </div>
 </div>
-<p>The story above generalizes <em>completely</em> to 3D, where with <span class="math notranslate nohighlight">\(\hat{n}\in\mathbb{R}^3\)</span> and <span class="math notranslate nohighlight">\(p\in\mathbb{R}^3\)</span>.
+<p>
+The story above generalizes <em>completely</em> to 3D, where with <span class="math notranslate nohighlight">\(\hat{n}\in\mathbb{R}^3\)</span> and <span class="math notranslate nohighlight">\(p\in\mathbb{R}^3\)</span>.
 In this case, the equation <span class="math notranslate nohighlight">\(\hat{n} \cdot p = d\)</span> defines a <em>plane</em> in 3D:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -490,10 +491,11 @@ In this case, the equation <span class="math notranslate nohighlight">\(\hat{n} 
 </div>
 </div>
 </div>
-<p>Then we simply create 200 rays, ranging from -100 degrees to 100 degrees, with 0 facing due east:</p>
+<p>
+Then, in Figure <a class="reference internal" href="#fig:lidar_rays_200"><span class="xref myst">1</span></a> we simply create 200 rays, ranging from -100 degrees to 100 degrees, with 0 facing due east.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: 200 &quot;LIDAR&quot; rays at different angles</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: 200 LIDAR &quot;rays&quot; at different angles</span>
 <span class="c1">#| label: fig:lidar_rays_200</span>
 <span class="n">angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
 <span class="n">rays</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">gtsam</span><span class="o">.</span><span class="n">Rot2</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">angle</span><span class="p">))</span><span class="o">.</span><span class="n">matrix</span><span class="p">()[</span><span class="mi">0</span><span class="p">,:]</span> <span class="k">for</span> <span class="n">angle</span> <span class="ow">in</span> <span class="n">angles</span><span class="p">])</span>
@@ -506,23 +508,17 @@ In this case, the equation <span class="math notranslate nohighlight">\(\hat{n} 
 <img alt="_images/a0a4378da1db6309ab6f07b097b3eb5bab60f4bbc20cc9deb57b906acce4e7ab.png" src="_images/a0a4378da1db6309ab6f07b097b3eb5bab60f4bbc20cc9deb57b906acce4e7ab.png" />
 </div>
 </div>
-<p>Finally, we do the intersection:</p>
+<p>Finally, we compute the intersection with the environment in Figure <a class="reference internal" href="#fig:lidar_scan_200"><span class="xref myst">2</span></a>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scan</span> <span class="o">=</span> <span class="p">[]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: A simulated scan by intersecting 200 rays with the environment.</span>
+<span class="c1">#| label: fig:lidar_scan_200</span>
+<span class="n">scan</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rays</span><span class="p">:</span>
     <span class="n">ranges</span> <span class="o">=</span> <span class="p">[</span><span class="n">intersect</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="p">[</span><span class="n">north</span><span class="p">,</span> <span class="n">east</span><span class="p">,</span> <span class="n">south</span><span class="p">]]</span>
     <span class="n">_range</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">ranges</span><span class="p">)</span>
     <span class="n">intersection</span> <span class="o">=</span> <span class="n">_range</span> <span class="o">*</span> <span class="n">r</span>
     <span class="n">scan</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">intersection</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: A simulated scan by intersecting 200 rays with the environment.</span>
-<span class="c1">#| label: fig:lidar_scan_200</span>
 <span class="n">scan_x</span><span class="p">,</span> <span class="n">scan_y</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">scan</span><span class="p">)</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">scan_x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">scan_y</span><span class="p">)</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">update_yaxes</span><span class="p">(</span><span class="n">scaleanchor</span> <span class="o">=</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">scaleratio</span> <span class="o">=</span> <span class="mi">1</span><span class="p">);</span> <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -537,9 +533,10 @@ In this case, the equation <span class="math notranslate nohighlight">\(\hat{n} 
 </section>
 <section id="geometry-of-a-moving-lidar">
 <h2><span class="section-number">6.3.4. </span>Geometry of a Moving LIDAR<a class="headerlink" href="#geometry-of-a-moving-lidar" title="Link to this heading">#</a></h2>
-<p>Above we assumed that the ray is situated at the <em>world</em> origin, but we can also generalize to the case where the rays are defined in a <em>body coordinate frame</em> <span class="math notranslate nohighlight">\((R^w_b,t^w_b)\)</span>. In this case, it is convenient to transform the plane to the body frame. We can do this by expressing a point <span class="math notranslate nohighlight">\(p^w\)</span> in world coordinates as a function of a point in body coordinates: <span class="math notranslate nohighlight">\(p^w = R^w_b p^b + t^w_b\)</span> and plugging that into the plane equation:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-1863b8d2-ef5d-40f4-b47a-b2926aaded15">
-<span class="eqno">(6.32)<a class="headerlink" href="#equation-1863b8d2-ef5d-40f4-b47a-b2926aaded15" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<p>Above we assumed that the ray is situated at the <em>world</em> origin, but we can also generalize to the case where the rays are defined in a <em>body coordinate frame</em> <span class="math notranslate nohighlight">\((R^w_b,t^w_b)\)</span>.
+In this case, it is convenient to transform the plane to the body frame. We can do this by expressing a point <span class="math notranslate nohighlight">\(p^w\)</span> in world coordinates as a function of a point in body coordinates, <span class="math notranslate nohighlight">\(p^w = R^w_b p^b + t^w_b\)</span>, and plugging that into the plane equation:</p>
+<div class="amsmath math notranslate nohighlight" id="equation-aab37ff7-1814-4c32-880f-2c410d27c638">
+<span class="eqno">(6.32)<a class="headerlink" href="#equation-aab37ff7-1814-4c32-880f-2c410d27c638" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{aligned}
 \hat{n}^w \cdot p^w &amp;= d^w \\
 \hat{n}^w \cdot \{ R^w_b p^b + t^w_b \} &amp;= d^w \\
@@ -547,12 +544,12 @@ In this case, the equation <span class="math notranslate nohighlight">\(\hat{n} 
 \end{aligned}
 \end{equation}\]</div>
 <p>Hence, we obtain a new plane equation in the body frame as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-4b886abd-b878-45bc-aecd-406eb6f7bc48">
-<span class="eqno">(6.33)<a class="headerlink" href="#equation-4b886abd-b878-45bc-aecd-406eb6f7bc48" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-b91b5d31-4326-41d6-b42d-7528e7ec5f71">
+<span class="eqno">(6.33)<a class="headerlink" href="#equation-b91b5d31-4326-41d6-b42d-7528e7ec5f71" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \hat{n}^b \cdot p^b = d^b
 \end{equation}\]</div>
 <p>with transformed plane parameters <span class="math notranslate nohighlight">\(\hat{n}^b \doteq (R^w_b)^T \hat{n}^w\)</span> and <span class="math notranslate nohighlight">\(d^b \doteq d^w - \hat{n}^w \cdot t^w_b\)</span>.</p>
-<p>We can use a  <code class="docutils literal notranslate"><span class="pre">Pose2</span></code> or <code class="docutils literal notranslate"><span class="pre">Pose3</span></code> object to specify the body frame, respectively in 2D or 3D, and then use it to transform plane coordinates:</p>
+<p>We can use a <code class="docutils literal notranslate"><span class="pre">Pose2</span></code> or <code class="docutils literal notranslate"><span class="pre">Pose3</span></code> object to specify the body frame, respectively in 2D or 3D, and then use it to transform plane coordinates:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">transform_to</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">wTb</span><span class="p">):</span>
@@ -564,7 +561,8 @@ In this case, the equation <span class="math notranslate nohighlight">\(\hat{n} 
 </div>
 </div>
 </div>
-<p>We can do this for lines in 2D</p>
+<p>
+We can do this for lines in 2D</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">wTb</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="n">gtsam</span><span class="o">.</span><span class="n">Rot2</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">20</span><span class="p">)),</span> <span class="n">t</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
@@ -578,7 +576,8 @@ In this case, the equation <span class="math notranslate nohighlight">\(\hat{n} 
 </div>
 </div>
 </div>
-<p>and for planes in 3D:</p>
+<p>
+and for planes in 3D:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">wTb3</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose3</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="n">gtsam</span><span class="o">.</span><span class="n">Rot3</span><span class="o">.</span><span class="n">Yaw</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">45</span><span class="p">)),</span> <span class="n">t</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
@@ -592,24 +591,18 @@ In this case, the equation <span class="math notranslate nohighlight">\(\hat{n} 
 </div>
 </div>
 </div>
-<p>With this new functionality we can transform the world model and predict what the scan will look like, in body coordinates.</p>
+<p>With this new functionality we can transform the world model and predict what the scan will look like, in body coordinates, as shown in Figure <a class="reference internal" href="#fig:lidar_scan_200_2"><span class="xref myst">3</span></a>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scan2</span> <span class="o">=</span> <span class="p">[]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Simulated scan from a different location in the same environment.</span>
+<span class="c1">#| label: fig:lidar_scan_200_2</span>
+<span class="n">scan2</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">transformed</span> <span class="o">=</span> <span class="p">[</span><span class="n">transform_to</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">wTb</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="p">[</span><span class="n">north</span><span class="p">,</span> <span class="n">east</span><span class="p">,</span> <span class="n">south</span><span class="p">]]</span>
 <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rays</span><span class="p">:</span>
     <span class="n">ranges</span> <span class="o">=</span> <span class="p">[</span><span class="n">intersect</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">transformed</span><span class="p">]</span>
     <span class="n">_range</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">ranges</span><span class="p">)</span>
     <span class="n">intersection</span> <span class="o">=</span> <span class="n">_range</span> <span class="o">*</span> <span class="n">r</span>
     <span class="n">scan2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">intersection</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Simulated scan from a different location in the same environment.</span>
-<span class="c1">#| label: fig:lidar_scan_200_2</span>
 <span class="n">scan2_x</span><span class="p">,</span> <span class="n">scan2_y</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">scan2</span><span class="p">)</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">scan2_x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">scan2_y</span><span class="p">)</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">update_yaxes</span><span class="p">(</span><span class="n">scaleanchor</span> <span class="o">=</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">scaleratio</span> <span class="o">=</span> <span class="mi">1</span><span class="p">);</span> <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -620,15 +613,15 @@ In this case, the equation <span class="math notranslate nohighlight">\(\hat{n} 
 <img alt="_images/7abca95b3afd20139112898b14453f75b831a35df9f0bd0657ea99b7be14cb24.png" src="_images/7abca95b3afd20139112898b14453f75b831a35df9f0bd0657ea99b7be14cb24.png" />
 </div>
 </div>
-<p>As you can see above, when the robot rotates 20 degrees <em>counter-clockwise</em>, the resulting scan in body coordinates seems to be rotated 20 degrees in the <em>opposite</em> direction. This makes sense! The forward direction for the robot is along the horizontal X-axis, and as you can see in the scan, the robot seems to be “looking” at the correct (upper-right) corner of our little hallway example. This perhaps counter-intuitive behavior is something to always keep in mind when looking at animations of LIDAR scans.</p>
+<p>As you can see above, when the robot rotates 20 degrees <em>counter-clockwise</em>, the resulting scan in body coordinates seems to be rotated 20 degrees in the <em>opposite</em> direction. This makes sense! The forward direction for the robot is along the horizontal x-axis, and as you can see in the scan, the robot seems to be “looking” at the correct (upper-right) corner of our little hallway example. This perhaps counter-intuitive behavior is something to always keep in mind when looking at animations of LIDAR scans.</p>
 </section>
 <section id="real-lidar-scans">
 <h2><span class="section-number">6.3.5. </span>Real LIDAR Scans<a class="headerlink" href="#real-lidar-scans" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>From theory to practice.</p>
 </div></blockquote>
-<p>3D LIDAR sensors have been used in many autonomous driving efforts, e.g., by Waymo, Cruise, Argo, etc. Below we explore some real scans from the <a class="reference external" href="https://www.argoverse.org/av2.html">Argoverse 2 Lidar Dataset</a>.</p>
-<p>First, let us look at a single scan, which was acquired using a <a class="reference external" href="https://velodynelidar.com/products/ultra-puck/">Velodyne</a> VLP-32C LIDAR sensor.
+<p>3D LIDAR sensors have been used in many autonomous driving efforts, e.g., by Waymo, Cruise, Argo, etc. Below we explore some real scans from the <a class="reference external" href="https://www.argoverse.org/av2.html">Argoverse 2 Lidar Dataset</a> <span id="id1">[<a class="reference internal" href="bibliography.html#id61" title="Benjamin Wilson, William Qi, Tanmay Agarwal, John Lambert, Jagjeet Singh, Siddhesh Khandelwal, Bowen Pan, Ratnesh Kumar, Andrew Hartnett, Jhony Kaesemodel Pontes, Deva Ramanan, Peter Carr, and James Hays. Argoverse 2: Next Generation Datasets for Self-driving Perception and Forecasting. In Proceedings of the Neural Information Processing Systems Track on Datasets and Benchmarks (NeurIPS Datasets and Benchmarks 2021). 2021.">Wilson <em>et al.</em>, 2021</a>]</span>.</p>
+<p>First, let us look at a single scan, shown in Figure <a class="reference internal" href="#fig:lidar_scan_real"><span class="xref myst">4</span></a>, which was acquired using a <a class="reference external" href="https://velodynelidar.com/products/ultra-puck/">Velodyne</a> VLP-32C LIDAR sensor.
 The <code class="docutils literal notranslate"><span class="pre">32</span></code> in the model name reflects the fact that, for this particular sensor, there are 32 separate laser beams at different inclinations, that spin around for a full 360 degree field of view. In this case, the inclination angles are uniformly sampled between -25 and +15 degrees with respect to horizontal, but of course this depends on the application/sensor model.</p>
 <p>Several things worth noting when looking at the single scan below, taken when the Argo test car is turning at an intersection:</p>
 <ul class="simple">
@@ -639,7 +632,7 @@ The <code class="docutils literal notranslate"><span class="pre">32</span></code
 </ul>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: An actual 3D Velodyne LIDAR scan from an autonomous vehicle</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: An actual 3D Velodyne LIDAR scan from an autonomous vehicle.</span>
 <span class="c1">#| label: fig:lidar_scan_real</span>
 <span class="n">real_scans</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span><span class="n">driving</span><span class="o">.</span><span class="n">read_lidar_points</span><span class="p">(</span><span class="s1">&#39;Figures6/lidar/PC_315967795019746000.ply&#39;</span><span class="p">)}</span>
 <span class="n">driving</span><span class="o">.</span><span class="n">visualize_cloud</span><span class="p">(</span><span class="n">real_scans</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">show_grid_lines</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -650,8 +643,9 @@ The <code class="docutils literal notranslate"><span class="pre">32</span></code
 <img alt="_images/b108d0643426475cd233d0dec985216a80cdcacc90d911932b6b61fc5bc91f20.png" src="_images/b108d0643426475cd233d0dec985216a80cdcacc90d911932b6b61fc5bc91f20.png" />
 </div>
 </div>
-<p>We can also learn some things from looking at two successive scans below.
-The scans are slightly rotated and translated from each other, and this will be exactly how we can infer the ego-motion of the car in the next section.</p>
+<p>We can also learn some things from looking at two successive scans in Figure <a class="reference internal" href="#fig:lidar_scan_real_2"><span class="xref myst">5</span></a>.
+The scans are slightly rotated and translated from each other,
+and this will be exactly how we can infer the motion of the car in the next section.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Two successive LIDAR scans from an autonomous vehicle.</span>
@@ -662,10 +656,10 @@ The scans are slightly rotated and translated from each other, and this will be 
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/7cac28e060daa038df656b7cf85149c5a3e050abd8c51d9fb539f13abbe3aab7.png" src="_images/7cac28e060daa038df656b7cf85149c5a3e050abd8c51d9fb539f13abbe3aab7.png" />
+<img alt="_images/2c04ec6a60466042567de17497b7f94a0c6f957b2137d6cb1147780e7b3ff39b.png" src="_images/2c04ec6a60466042567de17497b7f94a0c6f957b2137d6cb1147780e7b3ff39b.png" />
 </div>
 </div>
-<p>Finally, let us look at scans that are taken a bit further apart, in this case there are 8 scans that we skipped:</p>
+<p>Finally, let us look - in Figure <a class="reference internal" href="#fig:lidar_scan_real_8"><span class="xref myst">6</span></a> - at scans that are taken a bit further apart, in this case there are 8 scans that we skipped.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Two LIDAR scans from an autonomous vehicle that are eight frames apart.</span>
@@ -676,19 +670,19 @@ The scans are slightly rotated and translated from each other, and this will be 
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/3fb0ed5bb2c9c959d0efd7d29c2068254143f42ab3d15bafb6262ca156668bb4.png" src="_images/3fb0ed5bb2c9c959d0efd7d29c2068254143f42ab3d15bafb6262ca156668bb4.png" />
+<img alt="_images/452dfb7225f7ecc4013e0dd412795b0bd1052237660d153d53be1eb6f1a555bb.png" src="_images/452dfb7225f7ecc4013e0dd412795b0bd1052237660d153d53be1eb6f1a555bb.png" />
 </div>
 </div>
 <p>By inspecting (you can do this interactively using the <a class="reference external" href="https://gtbook.github.io/gtbook/driving.html">gtbook website</a>) you can see that the car is <em>still</em> turning, but as the two scans are further apart the “mis-alginment” is more pronounced.</p>
 </section>
 <section id="creating-3d-maps">
-<span id="index-3"></span><h2><span class="section-number">6.3.6. </span>Creating 3D Maps<a class="headerlink" href="#creating-3d-maps" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">6.3.6. </span>Creating 3D Maps<a class="headerlink" href="#creating-3d-maps" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>Point clouds can be used to represent the 3D world.</p>
 </div></blockquote>
-<p>If we know the exact pose at which a LIDAR scan was taken, we can transform the points in the scan into absolute coordinates, and create an extended <strong>point cloud map</strong> of the environment. In math, suppose we <em>know</em> that a scan was taken at <span class="math notranslate nohighlight">\(T^w_b\)</span>, then we can transform all LIDAR points <span class="math notranslate nohighlight">\(P^b\)</span>, which are given in body coordinates, to world coordinates:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-5e7a66f0-b6aa-42ac-83d1-fb384976af94">
-<span class="eqno">(6.34)<a class="headerlink" href="#equation-5e7a66f0-b6aa-42ac-83d1-fb384976af94" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<p id="index-5">If we know the exact pose at which a LIDAR scan was taken, we can transform the points in the scan into absolute coordinates, and create an extended <strong>point cloud map</strong> of the environment. In math, suppose we <em>know</em> that a scan was taken at <span class="math notranslate nohighlight">\(T^w_b\)</span>, then we can transform all LIDAR points <span class="math notranslate nohighlight">\(P^b\)</span>, which are given in body coordinates, to world coordinates:</p>
+<div class="amsmath math notranslate nohighlight" id="equation-a246497a-0358-471c-9f4c-fe5b73fd0460">
+<span class="eqno">(6.34)<a class="headerlink" href="#equation-a246497a-0358-471c-9f4c-fe5b73fd0460" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P^w = \phi(T^w_b, P^b)
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\phi\)</span> the the action of <span class="math notranslate nohighlight">\(SE(3)\)</span> on points in <span class="math notranslate nohighlight">\(\mathbb{R}^3\)</span>. Earlier in this chapter we saw this can be done by matrix multiplication, but GTSAM actually implements <span class="math notranslate nohighlight">\(\phi\)</span> directly as <code class="docutils literal notranslate"><span class="pre">Pose3::transformFrom</span></code>. This method can be applied to a single <code class="docutils literal notranslate"><span class="pre">Point3</span></code> (just a <span class="math notranslate nohighlight">\(3\times 1\)</span> vector, really) or on many points simultaneously, by passing in a <span class="math notranslate nohighlight">\(3\times N\)</span> matrix:</p>
@@ -770,7 +764,7 @@ P^w = \phi(T^w_b, P^b)
 </div>
 </div>
 </div>
-<p>While there are various methods to create 3D rotation matrices (use help!), above we only use the named constructor <code class="docutils literal notranslate"><span class="pre">Yaw</span></code> , which is a rotation around the Z-axis. Below is an example, which you can compare with the 2D rotation example above…</p>
+<p>While there are various methods to create 3D rotation matrices (use help!), above we only use the named constructor <code class="docutils literal notranslate"><span class="pre">Yaw</span></code> , which is a rotation around the z-axis. Below is an example, which you can compare with the 2D rotation example above.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">R3</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Rot3</span><span class="o">.</span><span class="n">Yaw</span><span class="p">(</span><span class="mi">20</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span> <span class="c1"># 20 degrees rotation around Z</span>
@@ -795,60 +789,7 @@ P^w = \phi(T^w_b, P^b)
 </section>
 <section id="reading-and-visualizing-lidar-clouds">
 <h3><span class="section-number">6.3.7.3. </span>Reading and Visualizing LIDAR clouds<a class="headerlink" href="#reading-and-visualizing-lidar-clouds" title="Link to this heading">#</a></h3>
-<p>The utility functions <code class="docutils literal notranslate"><span class="pre">read_lidar_points</span></code> and <code class="docutils literal notranslate"><span class="pre">visualize_clouds</span></code> are not part of GTSAM, but are part of the gtbook library that accompanies this book. On the <a class="reference external" href="https://gtbook.github.io/gtbook/driving.html">gtbook website</a> you can find much more detailed documentation as well as the source code, but <code class="docutils literal notranslate"><span class="pre">help</span></code> is very comprehensive for those functions:</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="n">driving</span><span class="o">.</span><span class="n">read_lidar_points</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Help on function read_lidar_points in module gtbook.driving:
-
-read_lidar_points(filename: str)
-    Read 3D points in LIDAR scan stored as a binary_little_endian .ply file.
-    
-    Parameters:
-        filename: of ply file
-    
-    Returns:
-        A tuple (3,N) numpy array.
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="n">driving</span><span class="o">.</span><span class="n">visualize_clouds</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Help on function visualize_clouds in module gtbook.driving:
-
-visualize_clouds(clouds: list, show_grid_lines: bool = False, cloud_colors=None, marker_size: int = 1, do_subsampling: bool = True)
-    Visualizes cloud(s) in a iterative 3D plot.
-        Adapted from code by 3630 TAs Binit Shah and Jerred Chen
-    
-    Due to browser limitations, rendering above 5 frames requires
-    subsampling of the point clouds, which is done automatically.
-    
-    Example input of arg:
-    clouds = [clouda, cloudb, cloudc]
-    where each cloud is a numpy array of shape (3, num_points).
-    cloud[0] are the x coordinates, cloud[1] is y, and cloud[2] is z.
-    
-    Args:
-        clouds (list):          ordered series of point clouds
-        show_grid_lines (bool): plots gridlines
-        cloud_colors (list):    colors for each cloud in the visualization
-        marker_size (int):      size of each marker
-        do_subsampling (bool):  whether or not subsampling occurs
-</pre></div>
-</div>
-</div>
-</div>
-<p>While the visualization code is statically rendered in the book, when you open the Colab things should be rendered as interactive plotly scatter plots. Try it!</p>
+<p>The utility functions <code class="docutils literal notranslate"><span class="pre">read_lidar_points</span></code> and <code class="docutils literal notranslate"><span class="pre">visualize_clouds</span></code> are not part of GTSAM, but are part of the gtbook library that accompanies this book. On the <a class="reference external" href="https://gtbook.github.io/gtbook/driving.html">gtbook website</a> <span id="id2">[<a class="reference internal" href="bibliography.html#id24" title="Frank Dellaert. gtbook: an nbdev powered toolbox for Frank and Seth’s robotics book. 2024. URL: https://gtbook.github.io/gtbook/.">Dellaert, 2024</a>]</span> you can find much more detailed documentation as well as the source code, but <code class="docutils literal notranslate"><span class="pre">help</span></code> is very comprehensive for those functions. While the visualization code is statically rendered in the book, when you open the Colab things should be rendered as interactive <code class="docutils literal notranslate"><span class="pre">plotly</span></code> scatter plots. Try it!</p>
 </section>
 </section>
 </section>

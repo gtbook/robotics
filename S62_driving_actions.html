@@ -216,7 +216,7 @@
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">6.2. Kinematics for Driving</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S63_driving_sensing.html">6.3. Sensing for Autonomous Vehicles</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S64_driving_perception.html">6.4. SLAM</a></li>
-<li class="toctree-l2"><a class="reference internal" href="S65_driving_planning.html">6.5. Planning for Autonomous Driving.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S65_driving_planning.html">6.5. Planning for Autonomous Driving</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S66_driving_DRL.html">6.6. Deep Reinforcement Learning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S67_driving_summary.html">6.7. Chapter Summary</a></li>
 </ul>
@@ -407,42 +407,44 @@ forward speed and turning rate are the inputs.
 Unless the car is traveling at high speed, or experiencing large accelerations, this model is
 accurate enough for most purposes.</p>
 <section id="car-kinematics">
-<span id="index-1"></span><h2><span class="section-number">6.2.1. </span>Car kinematics<a class="headerlink" href="#car-kinematics" title="Link to this heading">#</a></h2>
-<p>We will assume that our car has front-wheel steering, and that forward velocity is achieved by actuation
-of the rear wheels.
-We assign a body-attached frame to the car with origin at the midpoint of the rear axle and <span class="math notranslate nohighlight">\(x\)</span>-axis pointing forward,
-as shown in the figure below.
-If the tires roll without slipping, the instantaneous velocity of the car is always in the direction of
-the body-attached <span class="math notranslate nohighlight">\(x\)</span>-axis.
-We denote the forward speed by <span class="math notranslate nohighlight">\(v_\mathrm{car}\)</span> (note that <span class="math notranslate nohighlight">\(v_\mathrm{car}\)</span> denotes the <em>scalar</em> speed of the car,
-and not the car velocity, which is a <em>vector</em> quantity).</p>
+<h2><span class="section-number">6.2.1. </span>Car kinematics<a class="headerlink" href="#car-kinematics" title="Link to this heading">#</a></h2>
 <figure id="fig:TransformComposition2">
 <img src="https://github.com/gtbook/robotics/blob/main/Figures6/car1.png?raw=1" style="width:8cm" alt="">
 <figcaption>Coordinate frame for a car-like vehicle. </figcaption>
 </figure>
-<p>At first glance, it may appear that the two front wheels have the same orientation w.r.t. the car frame.
+<p>We will assume that our car has front-wheel steering, and that forward velocity is achieved by actuation
+of the rear wheels.
+We assign a body-attached frame to the car with origin at the midpoint of the rear axle and <span class="math notranslate nohighlight">\(x\)</span>-axis pointing forward,
+as shown in Figure <a class="reference internal" href="#fig:TransformComposition2"><span class="xref myst">1</span></a>.
+If the tires roll without slipping, the instantaneous velocity of the car is always in the direction of
+the body-attached <span class="math notranslate nohighlight">\(x\)</span>-axis.
+We denote the forward speed by <span class="math notranslate nohighlight">\(v_\mathrm{car}\)</span> (note that <span class="math notranslate nohighlight">\(v_\mathrm{car}\)</span> denotes the <em>scalar</em> speed of the car,
+and not the car velocity, which is a <em>vector</em> quantity).</p>
+<p id="index-1">At first glance, it may appear that the two front wheels have the same orientation with respect to the car frame.
 This is not the case, however.
 As the origin of the car frame traces out a curve in the plane, in order for all wheels to roll without
 slipping, their instantaneous velocities must be tangent to a set of circles that share a common origin,
-called the center of the turning circle.
-For the rear wheels, because they share a common axle and maintain a fixed orientation w.r.t. the car frame,
+called the center of the <strong>turning circle</strong>.
+For the rear wheels, because they share a common axle and maintain a fixed orientation with respect to the car frame,
 the axle coincides with the radius of concentric circles,
 and each of the rear wheels has instantaneous velocity that is perpendicular to this radius.
 For the front wheels, the inner wheel follows a circle with smaller radius than the outside wheel.</p>
 <figure id="fig:AckermannSteering1">
 <img src="https://github.com/gtbook/robotics/blob/main/Figures6/ackermann1.PNG?raw=1"  style="width:8cm" alt="">
 <figcaption>Ackermann steering.</figcaption>
-</figure><p id="index-2">This kind of steering for the front wheels is called <strong>Ackermann steering</strong>, as illustrated in the figure above.
+</figure>
+<p id="index-2">This kind of steering for the front wheels is called <strong>Ackermann steering</strong>, as illustrated in Figure <a class="reference internal" href="#fig:AckermannSteering1"><span class="xref myst">2</span></a>.
 The physical mechanism required to implement Ackermann steering is slightly complex,
 but happily we can model the system by using a single <em>virtual wheel</em> placed
 at the midpoint between the two front wheels, rolling in a direction perpendicular to the line from
 the center of the turning circle to this midpoint.
 We denote by <span class="math notranslate nohighlight">\(\phi\)</span> the angle from the car <span class="math notranslate nohighlight">\(x\)</span>-axis to the forward direction of this virtual wheel,
-as shown in the figure below.</p>
+as shown in Figure <a class="reference internal" href="#fig:AckermannSteering2"><span class="xref myst">3</span></a>.</p>
 <figure id="fig:AckermannSteering2">
 <img src="https://github.com/gtbook/robotics/blob/main/Figures6/car2.png?raw=1" style="width:8cm" alt="">
 <figcaption>Virtual wheel used to model Ackermann steering.</figcaption>
-</figure><p>The configuration of the car can be represented as <span class="math notranslate nohighlight">\(q = (x,y,\theta, \phi)\)</span>, in which <span class="math notranslate nohighlight">\(x,y\)</span> denotes the position
+</figure><p>The configuration of the car, shown in Figure <a class="reference internal" href="#fig:CarConfigurationParams"><span class="xref myst">4</span></a>,
+can be represented as <span class="math notranslate nohighlight">\(q = (x,y,\theta, \phi)\)</span>, in which <span class="math notranslate nohighlight">\(x,y\)</span> denotes the position
 of the origin of the car frame, <span class="math notranslate nohighlight">\(\theta\)</span> denotes the orientation of car frame (the angle from the world <span class="math notranslate nohighlight">\(x\)</span>-axis
 to the car frame <span class="math notranslate nohighlight">\(x\)</span>-axis), and <span class="math notranslate nohighlight">\(\phi\)</span> denotes the steering angle.
 The inputs to the car are</p>
@@ -460,48 +462,48 @@ The inputs to the car are</p>
 <span class="math notranslate nohighlight">\(\dot{q} = f(q, u_1, u_2)\)</span>.
 The first two components, <span class="math notranslate nohighlight">\(\dot{x}\)</span> and <span class="math notranslate nohighlight">\(\dot{y}\)</span> are straightforward functions
 of  <span class="math notranslate nohighlight">\(v_\mathrm{car}\)</span> and <span class="math notranslate nohighlight">\(\theta\)</span></p>
-<div class="amsmath math notranslate nohighlight" id="equation-90061556-07f3-4145-af12-e273038359b2">
-<span class="eqno">(6.20)<a class="headerlink" href="#equation-90061556-07f3-4145-af12-e273038359b2" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-e939f40d-4067-4eec-bb85-c3e1b6b52da2">
+<span class="eqno">(6.20)<a class="headerlink" href="#equation-e939f40d-4067-4eec-bb85-c3e1b6b52da2" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{aligned}
 \dot{x} &amp;=  v_\mathrm{car} \cos \theta = u_1 \cos \theta \\
 \dot{y} &amp;=  v_\mathrm{car} \sin \theta = u_1 \sin \theta 
 \end{aligned}
 \end{equation}\]</div>
 <p>The steering angle is also straightforward:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-63d4b3c1-40d5-47eb-a283-7ac29e753a84">
-<span class="eqno">(6.21)<a class="headerlink" href="#equation-63d4b3c1-40d5-47eb-a283-7ac29e753a84" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-24ba2482-14f8-4b8e-91ee-54cdf7a37d09">
+<span class="eqno">(6.21)<a class="headerlink" href="#equation-24ba2482-14f8-4b8e-91ee-54cdf7a37d09" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \dot{\phi} = u_2
 \end{equation}\]</div>
 <p>Note that using this model, we cannot directly control the car’s orientation <span class="math notranslate nohighlight">\(\theta\)</span>.
 We cannot even directly choose the steering angle <span class="math notranslate nohighlight">\(\phi\)</span>.
 We have direct control only over <span class="math notranslate nohighlight">\(\dot{\phi}\)</span>.</p>
 <p>The equation for <span class="math notranslate nohighlight">\(\dot{\theta}\)</span> is slightly more complex.
-From the figure below, we observe the following</p>
-<div class="amsmath math notranslate nohighlight" id="equation-85109527-3aee-4690-9621-06df8b7b99f9">
-<span class="eqno">(6.22)<a class="headerlink" href="#equation-85109527-3aee-4690-9621-06df8b7b99f9" title="Permalink to this equation">#</a></span>\[\begin{equation}
+From the Figure <a class="reference internal" href="#fig:CarRelevantVelocities"><span class="xref myst">5</span></a>, we observe the following</p>
+<div class="amsmath math notranslate nohighlight" id="equation-faf6ca06-d677-44b9-978e-f6db2f65f8a2">
+<span class="eqno">(6.22)<a class="headerlink" href="#equation-faf6ca06-d677-44b9-978e-f6db2f65f8a2" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{aligned}
 v_\mathrm{wheel} \cos \phi &amp;=  v_\mathrm{car}  \\
 v_\mathrm{wheel} \sin \phi &amp;=  v_\mathrm{tangent}  \\
 \end{aligned}
 \end{equation}\]</div>
 <p>Combining these to eliminate <span class="math notranslate nohighlight">\(v_\mathrm{wheel}\)</span> we obtain</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c88a093f-103c-49f7-81aa-cb9db5ebce28">
-<span class="eqno">(6.23)<a class="headerlink" href="#equation-c88a093f-103c-49f7-81aa-cb9db5ebce28" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-f5b04b21-1fa9-4a55-9c3e-bbc1dcd98053">
+<span class="eqno">(6.23)<a class="headerlink" href="#equation-f5b04b21-1fa9-4a55-9c3e-bbc1dcd98053" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \frac{v_\mathrm{car}}{\cos \phi} \sin \phi = v_\mathrm{car} \tan \phi = v_\mathrm{tangent}
 \end{equation}\]</div>
 <p>Now, using <span class="math notranslate nohighlight">\(L \dot{\theta} = v_\mathrm{tangent}\)</span> (where <span class="math notranslate nohighlight">\(L\)</span> is the baseline distance between front and rear axles),
 we obtain</p>
-<div class="amsmath math notranslate nohighlight" id="equation-16fd34a4-8039-4315-afc8-59ac9f10ad2e">
-<span class="eqno">(6.24)<a class="headerlink" href="#equation-16fd34a4-8039-4315-afc8-59ac9f10ad2e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-402ca56d-29e7-4ae5-8034-308174702e23">
+<span class="eqno">(6.24)<a class="headerlink" href="#equation-402ca56d-29e7-4ae5-8034-308174702e23" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \dot{\theta} = v_\mathrm{car} \frac{1}{L} \tan \phi = u_1 \frac{1}{L} \tan \phi
 \end{equation}\]</div>
 <figure id="fig:CarRelevantVelocities">
 <img src="https://github.com/gtbook/robotics/blob/main/Figures6/car4.png?raw=1" style="width:12cm" alt="">
-<figcaption>Relevant velocities for computing the differential kinamatics of the car.</figcaption>
+<figcaption>Relevant velocities for computing the differential kinematics of the car.</figcaption>
 </figure><p>Collecting these terms together, we can write the differential kinematics
 in matrix form as:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-27fb04ea-7c61-4657-b57e-f7c4862dfc65">
-<span class="eqno">(6.25)<a class="headerlink" href="#equation-27fb04ea-7c61-4657-b57e-f7c4862dfc65" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-392bed4d-fc0e-4d1f-8b43-35b69feb9318">
+<span class="eqno">(6.25)<a class="headerlink" href="#equation-392bed4d-fc0e-4d1f-8b43-35b69feb9318" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{bmatrix}
 \dot{x}\\
 \dot{y}\\

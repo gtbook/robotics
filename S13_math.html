@@ -216,7 +216,7 @@
 <li class="toctree-l2"><a class="reference internal" href="S62_driving_actions.html">6.2. Kinematics for Driving</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S63_driving_sensing.html">6.3. Sensing for Autonomous Vehicles</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S64_driving_perception.html">6.4. SLAM</a></li>
-<li class="toctree-l2"><a class="reference internal" href="S65_driving_planning.html">6.5. Planning for Autonomous Driving.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S65_driving_planning.html">6.5. Planning for Autonomous Driving</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S66_driving_DRL.html">6.6. Deep Reinforcement Learning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S67_driving_summary.html">6.7. Chapter Summary</a></li>
 </ul>
@@ -441,31 +441,31 @@ Given the ability to generate random samples from arbitrary distributions, it is
 <p>Many of the computational problems in robotics are either intractable (i.e., have high computational complexity) or cannot be solved in closed form (e.g., determining the exact form for probability distributions).  In both cases, roboticists have worked to develop efficient and accurate computational methods to solve these problems. In this book, there are two main computational approaches: sampling-based approaches, which we discussed above, and optimization methods.</p>
 <p id="index-17"><em>Optimization</em> is the process of finding extremal values of performance criteria, all of which, in this book, will be expressed as scalar-valued functions of a finite number of inputs. In some cases, we search for the single, scalar input that will minimize a cost function, such as when choosing the best action for a trash sorting robot in Chapter 2. In other cases, we might search for a sequence of input commands that will yield an ideal system trajectory, such as for drone flight in Chapter 7. We will often resort to factor graphs as a way to represent the problem space and objective function (defined below). We will use the open source library GTSAM, a powerful software system that facilitates computationally efficient solutions for a wide range of optimization problems that can be described by factor graphs. In still other cases, we might try to find millions of weights for a neural network to minimize recognition error of our computer vision system, such as the Convolutional Neural Nets (CNNs) of Chapter 5.</p>
 <p id="index-18">In general, we can express such problems as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-668c5c91-fd77-4089-8be5-2c39c4deb2ab">
-<span class="eqno">(1.6)<a class="headerlink" href="#equation-668c5c91-fd77-4089-8be5-2c39c4deb2ab" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-c7218b1a-4c0f-47d1-8154-543a539726a6">
+<span class="eqno">(1.6)<a class="headerlink" href="#equation-c7218b1a-4c0f-47d1-8154-543a539726a6" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \max_x f(x)
 \end{equation}\]</div>
 <p>in which <span class="math notranslate nohighlight">\(x\)</span> is called the optimization variable (or variables in the case where <span class="math notranslate nohighlight">\(x\)</span> is a vector) and <span class="math notranslate nohighlight">\(f(\cdot)\)</span> is called the objective function. For this formulation, when maximizing, <span class="math notranslate nohighlight">\(f(\cdot)\)</span> can be thought of as a reward. We could have framed the problem as a minimization, <span class="math notranslate nohighlight">\(\min_x f(x)\)</span>, in which case <span class="math notranslate nohighlight">\(f(\cdot)\)</span> should be thought of as a cost to be minimized. It is easy to convert between these two forms (e.g., simply multiply the objective function by <span class="math notranslate nohighlight">\(-1\)</span>), but it is often helpful to express problems specifically as either minimizing cost or maximizing reward, based on the semantics of the problem.</p>
 <p id="index-19">Many optimization problems can be solved using the method of gradient descent.  Such methods construct a sequence of estimates, <span class="math notranslate nohighlight">\(x^1, x^2, \dots\)</span> until a minimal value of cost is found. The incremental update rule for the estimates is given by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-e8e1daa2-8bdc-4287-ae88-5cb7e68610a1">
-<span class="eqno">(1.7)<a class="headerlink" href="#equation-e8e1daa2-8bdc-4287-ae88-5cb7e68610a1" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-653e93e0-4c01-41bb-8b30-6b6112cc4075">
+<span class="eqno">(1.7)<a class="headerlink" href="#equation-653e93e0-4c01-41bb-8b30-6b6112cc4075" title="Permalink to this equation">#</a></span>\[\begin{equation}
 x^{k+1} = x^k - \alpha \nabla f(x)
 \end{equation}\]</div>
 <p>in which <span class="math notranslate nohighlight">\(\alpha\)</span> is a step-size parameter.
 In some cases, the gradient <span class="math notranslate nohighlight">\(\nabla f(x) \)</span> can be computed in closed form, while for more complex functions it may be necessary to use numerical approximations of the gradient.</p>
 <p>When working with neural networks, the cost function can be written as a sum</p>
-<div class="amsmath math notranslate nohighlight" id="equation-1b4fd82e-d79a-42bd-9dd7-ed9d61bbf8ee">
-<span class="eqno">(1.8)<a class="headerlink" href="#equation-1b4fd82e-d79a-42bd-9dd7-ed9d61bbf8ee" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d43eadb5-5939-48b0-a343-6e73e62743e0">
+<span class="eqno">(1.8)<a class="headerlink" href="#equation-d43eadb5-5939-48b0-a343-6e73e62743e0" title="Permalink to this equation">#</a></span>\[\begin{equation}
 f(x,S) = \sum_{s\in S} f_k(x; s)
 \end{equation}\]</div>
 <p>in which <span class="math notranslate nohighlight">\(x\)</span> denotes the weights assigned to the connections in the network, and <span class="math notranslate nohighlight">\(s\)</span> denotes a specific example in the data set <span class="math notranslate nohighlight">\(S\)</span>. Since differentiation is linear, the gradient of this function can be expressed as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-e940a164-0839-4ba5-855d-d5a31611f2f9">
-<span class="eqno">(1.9)<a class="headerlink" href="#equation-e940a164-0839-4ba5-855d-d5a31611f2f9" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-8ba03359-8e6e-402e-8974-b63ed68b0e60">
+<span class="eqno">(1.9)<a class="headerlink" href="#equation-8ba03359-8e6e-402e-8974-b63ed68b0e60" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \nabla_x f(x,S) = \sum_{s\in S} \nabla_x f_k(x; s)
 \end{equation}\]</div>
 <p id="index-20">If the data set is very large, computing <span class="math notranslate nohighlight">\(|S|\)</span> gradients will be prohibitive. The method of stochastic gradient descent (SGD) deals with this problem by randomly selecting a few samples from the data set, <span class="math notranslate nohighlight">\(S' \subset S\)</span>, and using the approximation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-20220374-f90c-4231-9328-71dd453e6c9f">
-<span class="eqno">(1.10)<a class="headerlink" href="#equation-20220374-f90c-4231-9328-71dd453e6c9f" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ee793f31-2e35-47b2-bb5e-5a5e8cc38f46">
+<span class="eqno">(1.10)<a class="headerlink" href="#equation-ee793f31-2e35-47b2-bb5e-5a5e8cc38f46" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \nabla_x f(x,S) \approx \sum_{s \in S'} \nabla_x f_k(x; s)
 \end{equation}\]</div>
 <p>We use stochastic gradient descent in chapter 5 to optimize the weights in a deep neural network.</p>

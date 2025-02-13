@@ -216,7 +216,7 @@
 <li class="toctree-l2"><a class="reference internal" href="S62_driving_actions.html">6.2. Kinematics for Driving</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S63_driving_sensing.html">6.3. Sensing for Autonomous Vehicles</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S64_driving_perception.html">6.4. SLAM</a></li>
-<li class="toctree-l2"><a class="reference internal" href="S65_driving_planning.html">6.5. Planning for Autonomous Driving.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S65_driving_planning.html">6.5. Planning for Autonomous Driving</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S66_driving_DRL.html">6.6. Deep Reinforcement Learning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S67_driving_summary.html">6.7. Chapter Summary</a></li>
 </ul>
@@ -382,7 +382,7 @@
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-special-orthogonal-group-of-order-2-aka-so-2">6.1.2. The Special Orthogonal Group of Order 2, aka SO(2)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#coordinate-transformations-for-pure-rotations">6.1.3. Coordinate Transformations for Pure Rotations</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-group-so-2-in-gtsam">6.1.4. The Group <span class="math notranslate nohighlight">\(SO(2)\)</span> in GTSAM</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#d-rigid-transforms-aka-se-2">6.1.5. 2D Rigid Transforms aka SE(2)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#d-rigid-transforms-aka-se-2">6.1.5. 2D Rigid Transforms, aka SE(2)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#composition-of-homogeneous-transformations">6.1.6. Composition of Homogeneous Transformations</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-group-se-2-in-gtsam">6.1.7. The Group <span class="math notranslate nohighlight">\(SE(2)\)</span> in GTSAM</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lie-groups">6.1.8. Lie Groups*</a></li>
@@ -425,23 +425,23 @@ sample points along a continuous trajectory in <span class="math notranslate noh
 <blockquote>
 <div><p>Rotation in the plane can be represented using <span class="math notranslate nohighlight">\(2\times 2\)</span> rotation matrices.</p>
 </div></blockquote>
-<p>In the previous chapter, we represented the orientation of the robot simply by <span class="math notranslate nohighlight">\(\theta \in [0,2\pi)\)</span>.
+<p id="index-1">In the previous chapter, we represented the orientation of the robot simply by <span class="math notranslate nohighlight">\(\theta \in [0,2\pi)\)</span>.
 There are two main drawbacks to this choice.
 First, the mapping from the robot’s orientation to the parameter <span class="math notranslate nohighlight">\(\theta\)</span> is not continuous.
 If the robot’s orientation is <span class="math notranslate nohighlight">\(\theta = 2\pi - \epsilon\)</span>, for example, and we rotate the robot counterclockwise
 (decreasing <span class="math notranslate nohighlight">\(\epsilon\)</span> to zero), we will encounter a discontinuity when <span class="math notranslate nohighlight">\(\theta\)</span> goes from very nearly <span class="math notranslate nohighlight">\(2\pi\)</span> to zero.  This will occur regardless of the initial
 value we choose for <span class="math notranslate nohighlight">\(\epsilon\)</span>: when <span class="math notranslate nohighlight">\(\epsilon\)</span> reaches zero, there will be a jump in the value of <span class="math notranslate nohighlight">\(\theta\)</span>.
-We call this jump a <span class="math notranslate nohighlight">\(singularity\)</span>.
+We call this jump a <strong>singularity</strong>.
 The second drawback is that parameterizing orientation by a single angle <span class="math notranslate nohighlight">\(\theta\)</span> does not generalize in a straightforward way to representing orientation in 3D.
 Further, even if we go to the effort to make this generalization work, the problems with singularities
-are complex for 3-dimensional rotations, and can cause serious problems if not handled properly.</p>
+are complex in 3D and can cause serious problems if not handled properly.</p>
 <figure id="fig:2drotation">
 <img src="https://github.com/gtbook/robotics/blob/main/Figures6/2D-rotation.PNG?raw=1" style="width:10cm" alt="">
 <figcaption>Two coordinate frames that share a common origin.</figcaption>
 </figure><p>Both difficulties above stem from the use of a minimal representation of orientation.
-To solve these problems, we’ll introduce a somewhat redundant representation that explicity
+To solve these problems, we’ll introduce a somewhat redundant representation that explicitly
 encodes the orientation of the axes of a target coordinate frame relative to a reference coordinate frame.
-Consider the two coordinate frames shown in the figure above.
+Consider the two coordinate frames shown in figure <a class="reference internal" href="#fig:2drotation"><span class="xref myst">1</span></a>.
 These two frames share a common origin, and Frame 1 is obtained by rotating by an angle <span class="math notranslate nohighlight">\(\theta\)</span> w.r.t.
 frame 0.
 We can express the <span class="math notranslate nohighlight">\(x\)</span>-axis of Frame 1 in coordinates relative to Frame 0
@@ -451,8 +451,8 @@ we can express the <span class="math notranslate nohighlight">\(y\)</span>-axis 
 by projecting <span class="math notranslate nohighlight">\(y_1\)</span> onto <span class="math notranslate nohighlight">\(x_0\)</span> and <span class="math notranslate nohighlight">\(y_0\)</span>.
 Because all of these vectors are unit vectors,
 the projections can be achieved using the dot product:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-dee655bb-81f7-4b9c-ae66-40da7ab381c8">
-<span class="eqno">(6.1)<a class="headerlink" href="#equation-dee655bb-81f7-4b9c-ae66-40da7ab381c8" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-34c2972f-ea32-490d-850a-9bc8e0421bc0">
+<span class="eqno">(6.1)<a class="headerlink" href="#equation-34c2972f-ea32-490d-850a-9bc8e0421bc0" title="Permalink to this equation">#</a></span>\[\begin{align}
 x_{1}^{0} &amp;=
 \begin{bmatrix}
 x_0 \cdot x_1 \\
@@ -476,9 +476,9 @@ y_0 \cdot y_1
 <p>Above, we adopt the notational convention that a subscript indicates the target
 frame, and the superscript indicates the reference frame.
 Thus, <span class="math notranslate nohighlight">\(x_1^0\)</span> denotes the <span class="math notranslate nohighlight">\(x\)</span>-axis of Frame 1, expressed in coordinates relative to Frame 0.</p>
-<p id="index-1">We can group these two vectors into a <strong>rotation matrix</strong></p>
-<div class="amsmath math notranslate nohighlight" id="equation-cea6df9c-2eb5-4af8-9041-a9b5c7bb7339">
-<span class="eqno">(6.2)<a class="headerlink" href="#equation-cea6df9c-2eb5-4af8-9041-a9b5c7bb7339" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<p id="index-2">We can group these two vectors into a <strong>rotation matrix</strong></p>
+<div class="amsmath math notranslate nohighlight" id="equation-89f54f02-1e07-4b46-b4b4-1d1c47539f88">
+<span class="eqno">(6.2)<a class="headerlink" href="#equation-89f54f02-1e07-4b46-b4b4-1d1c47539f88" title="Permalink to this equation">#</a></span>\[\begin{equation}
 R_{1}^{0}
 =\begin{bmatrix}
 x_0 \cdot x_1 &amp;  x_0 \cdot y_1\\
@@ -494,11 +494,11 @@ Using the notational convention defined above, <span class="math notranslate noh
 as the superscript (Frame 0) and the target frame as the subscript (Frame 1).</p>
 </section>
 <section id="the-special-orthogonal-group-of-order-2-aka-so-2">
-<span id="index-2"></span><h2><span class="section-number">6.1.2. </span>The Special Orthogonal Group of Order 2, aka SO(2)<a class="headerlink" href="#the-special-orthogonal-group-of-order-2-aka-so-2" title="Link to this heading">#</a></h2>
-<blockquote>
+<h2><span class="section-number">6.1.2. </span>The Special Orthogonal Group of Order 2, aka SO(2)<a class="headerlink" href="#the-special-orthogonal-group-of-order-2-aka-so-2" title="Link to this heading">#</a></h2>
+<blockquote id="index-3">
 <div><p>Rotation matrices form a group.</p>
 </div></blockquote>
-<p>The set of <span class="math notranslate nohighlight">\(2\times2\)</span> rotation matrices, together with matrix multiplication as the
+<p id="index-4">The set of <span class="math notranslate nohighlight">\(2\times2\)</span> rotation matrices, together with matrix multiplication as the
 composition operator, form a <em>group</em> called the <strong>special orthogonal group of order 2</strong>,
 denoted by <span class="math notranslate nohighlight">\(SO(2)\)</span>.
 All matrices <span class="math notranslate nohighlight">\(R \in SO(2)\)</span> have the following properties:</p>
@@ -530,18 +530,18 @@ of rotations in 3D, and the corresponding group of 3D rotation matrices, <span c
 </section>
 <section id="coordinate-transformations-for-pure-rotations">
 <h2><span class="section-number">6.1.3. </span>Coordinate Transformations for Pure Rotations<a class="headerlink" href="#coordinate-transformations-for-pure-rotations" title="Link to this heading">#</a></h2>
-<blockquote>
-<div><p>The rotation group acts on 2D points.</p>
+<blockquote id="index-5">
+<div><p>The rotation group <em>acts</em> on 2D points.</p>
 </div></blockquote>
 <figure id="fig:2drotation-trans">
 <img src="https://github.com/gtbook/robotics/blob/main/Figures6/2d-rotation-transformation.png?raw=1" style="width:10cm" alt="">
 <figcaption>Coordinate transformation under pure rotation.</figcaption>
 </figure>
 <p>We can use rotation matrices to perform coordinate transformations under pure rotation.
-Consider a point <span class="math notranslate nohighlight">\(P\)</span> that is rigidly attached to Frame 1 and, as illustrated in the Figures above, whose coordinates w.r.t. Frame 1
-are given by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c676747f-0e45-421a-a80e-1d8e9a058df3">
-<span class="eqno">(6.3)<a class="headerlink" href="#equation-c676747f-0e45-421a-a80e-1d8e9a058df3" title="Permalink to this equation">#</a></span>\[\begin{equation}
+Consider a point <span class="math notranslate nohighlight">\(P\)</span> that is rigidly attached to Frame 1 and, as illustrated in Figures <a class="reference internal" href="#fig:2drotation-trans"><span class="xref myst">2</span></a>,
+whose coordinates w.r.t. Frame 1 are given by</p>
+<div class="amsmath math notranslate nohighlight" id="equation-fb71b051-dce3-4792-a241-6ee958c71217">
+<span class="eqno">(6.3)<a class="headerlink" href="#equation-fb71b051-dce3-4792-a241-6ee958c71217" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P_{}^{1}=\begin{bmatrix}
 p_x \\
 p_y
@@ -549,16 +549,16 @@ p_y
 \end{equation}\]</div>
 <p>Using the definition of coordinates, we can describe the point <span class="math notranslate nohighlight">\(P\)</span>
 using the equation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b2a2c1cb-c2d4-4fa8-a2b3-92df532ec217">
-<span class="eqno">(6.4)<a class="headerlink" href="#equation-b2a2c1cb-c2d4-4fa8-a2b3-92df532ec217" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-67cfbc06-0db5-4de8-9239-6b848941e8d4">
+<span class="eqno">(6.4)<a class="headerlink" href="#equation-67cfbc06-0db5-4de8-9239-6b848941e8d4" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P = p_x x_1 + p_y y_1
 \end{equation}\]</div>
 <p>in which <span class="math notranslate nohighlight">\(x_1\)</span> and <span class="math notranslate nohighlight">\(y_1\)</span> are the vectors defining the coordinate axes of Frame 1.</p>
-<p>To compute the coordinates <span class="math notranslate nohighlight">\(P^0\)</span> of <span class="math notranslate nohighlight">\(P\)</span> w.r.t. Frame 0, we merely project <span class="math notranslate nohighlight">\(P\)</span> onto the <span class="math notranslate nohighlight">\(x\)</span>- and <span class="math notranslate nohighlight">\(y\)</span>- axes
+<p>To compute the coordinates <span class="math notranslate nohighlight">\(P^0\)</span> of <span class="math notranslate nohighlight">\(P\)</span> w.r.t. Frame 0, we merely project <span class="math notranslate nohighlight">\(P\)</span> onto the <span class="math notranslate nohighlight">\(x\)</span>- and <span class="math notranslate nohighlight">\(y\)</span>-axes
 of Frame 0. Since the vectors <span class="math notranslate nohighlight">\(x_0\)</span> and <span class="math notranslate nohighlight">\(y_0\)</span> are unit vectors, this projection can again be accomplished
 using a the dot product:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-29cd24b1-e75a-4c9e-8be4-d37f3d3262a9">
-<span class="eqno">(6.5)<a class="headerlink" href="#equation-29cd24b1-e75a-4c9e-8be4-d37f3d3262a9" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ce6219ac-c220-4042-9ee0-1f355d39db73">
+<span class="eqno">(6.5)<a class="headerlink" href="#equation-ce6219ac-c220-4042-9ee0-1f355d39db73" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P^0 = 
 \begin{bmatrix}
 x_0 \cdot P \\
@@ -586,21 +586,21 @@ p_y
 = R^0_1 P^1
 \end{equation}\]</div>
 <p>Summarizing the above, we have</p>
-<div class="amsmath math notranslate nohighlight" id="equation-49fe777f-5b08-4f47-8eec-dc3b511b9262">
-<span class="eqno">(6.6)<a class="headerlink" href="#equation-49fe777f-5b08-4f47-8eec-dc3b511b9262" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-be073dcd-d820-4784-b097-0214b1e6e334">
+<span class="eqno">(6.6)<a class="headerlink" href="#equation-be073dcd-d820-4784-b097-0214b1e6e334" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P^0 =  R^0_1 P^1
 \end{equation}\]</div>
 <p>which is how a rotation <span class="math notranslate nohighlight">\(R^0_1\)</span> <em>acts</em> on a point <span class="math notranslate nohighlight">\(P^1\)</span>.</p>
 </section>
 <section id="the-group-so-2-in-gtsam">
-<span id="index-3"></span><h2><span class="section-number">6.1.4. </span>The Group <span class="math notranslate nohighlight">\(SO(2)\)</span> in GTSAM<a class="headerlink" href="#the-group-so-2-in-gtsam" title="Link to this heading">#</a></h2>
+<span id="index-6"></span><h2><span class="section-number">6.1.4. </span>The Group <span class="math notranslate nohighlight">\(SO(2)\)</span> in GTSAM<a class="headerlink" href="#the-group-so-2-in-gtsam" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p><code class="docutils literal notranslate"><span class="pre">Rot2</span></code> is a group, and acts on <code class="docutils literal notranslate"><span class="pre">Point2</span></code>.</p>
 </div></blockquote>
-<p><span class="math notranslate nohighlight">\(SO(2)\)</span> is a <em>group</em>, in the mathematical sense.
-A <strong>group</strong> consists of a set (in our case, a set of 2D rotations) along
-with a group operator (in our case, composition).
-All groups posses certain properties, sometimes called the <em>group axioms</em>.
+<p><span class="math notranslate nohighlight">\(SO(2)\)</span> is a <strong>group</strong>, in the mathematical sense.
+A group consists of a set (in our case, a set of 2D rotations) along
+with a group operator (in our case, composition, implemented as matrix multiplication).
+All groups posses certain properties, sometimes called the <strong>group axioms</strong>.
 For the group, <span class="math notranslate nohighlight">\(SO(2)\)</span> these properties are as follows:</p>
 <ol class="arabic simple">
 <li><p><em>Closure</em>: For all rotations <span class="math notranslate nohighlight">\(R, R' \in SO(2)\)</span>, their product is also in <span class="math notranslate nohighlight">\(SO(2)\)</span>, i.e., <span class="math notranslate nohighlight">\(RR' \in SO(2)\)</span>.</p></li>
@@ -609,11 +609,14 @@ all <span class="math notranslate nohighlight">\(R\in SO(2)\)</span> we have <sp
 <li><p><em>Inverse</em>: For every <span class="math notranslate nohighlight">\(R \in SO(2)\)</span> there exists <span class="math notranslate nohighlight">\(R^{-1} \in SO(2)\)</span> such that <span class="math notranslate nohighlight">\(R^{-1}R = RR^{-1} = I\)</span>.</p></li>
 <li><p><em>Associativity</em>: For all <span class="math notranslate nohighlight">\(R_1, R_2, R_3 \in SO(2)\)</span>, <span class="math notranslate nohighlight">\((R_1 R_2) R_3 = R_1 (R_2 R_3)\)</span>.</p></li>
 </ol>
-<p>In addition (only in 2D!) rotations in <span class="math notranslate nohighlight">\(SO(2)\)</span> <em>commute</em>:</p>
+<p>
+In addition (only in 2D!) rotations in <span class="math notranslate nohighlight">\(SO(2)\)</span> <em>commute</em>:</p>
 <ol class="arabic simple" start="5">
 <li><p><em>Commutativity</em>: For all <span class="math notranslate nohighlight">\(R_1, R_2 \in SO(2)\)</span>, <span class="math notranslate nohighlight">\(R_1 R_2 = R_2 R_1\)</span>.</p></li>
 </ol>
-<p>It will not surprise anyone by now that all of this is built into GTSAM. In particular, the 2D rotations are represented by the type <code class="docutils literal notranslate"><span class="pre">Rot2</span></code>:</p>
+<p>
+It will not surprise anyone by now that all of this is built into GTSAM.
+In particular, the 2D rotations are represented by the type <code class="docutils literal notranslate"><span class="pre">Rot2</span></code>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">theta</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
@@ -629,7 +632,8 @@ all <span class="math notranslate nohighlight">\(R\in SO(2)\)</span> we have <sp
 </div>
 </div>
 </div>
-<p>Rotations in 2D form a <em>commutative</em> group, as demonstrated here in code:</p>
+<p id="index-7">
+Rotations in 2D form a <strong>commutative group</strong>, as demonstrated here in code:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">R</span> <span class="o">*</span> <span class="n">R</span><span class="p">,</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Rot2</span><span class="p">))</span> <span class="c1"># closure</span>
@@ -652,7 +656,8 @@ True
 </div>
 </div>
 </div>
-<p>Finally, rotations can act on points, which we can do using matrix multiplication, or using the <code class="docutils literal notranslate"><span class="pre">Rot2.rotate</span></code> method:</p>
+<p>
+Finally, rotations can act on 2D points, which we can do using matrix multiplication, or using the <code class="docutils literal notranslate"><span class="pre">Rot2.rotate</span></code> method:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">R01</span> <span class="o">=</span>  <span class="n">gtsam</span><span class="o">.</span><span class="n">Rot2</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>
@@ -671,11 +676,11 @@ P0 = [2.73271005 4.18715844]
 </div>
 </section>
 <section id="d-rigid-transforms-aka-se-2">
-<span id="index-4"></span><h2><span class="section-number">6.1.5. </span>2D Rigid Transforms aka SE(2)<a class="headerlink" href="#d-rigid-transforms-aka-se-2" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">6.1.5. </span>2D Rigid Transforms, aka SE(2)<a class="headerlink" href="#d-rigid-transforms-aka-se-2" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>From <span class="math notranslate nohighlight">\(SO(2)\)</span> to <span class="math notranslate nohighlight">\(SE(2)\)</span>.</p>
 </div></blockquote>
-<p><strong>2D rigid transforms</strong> combine rotation with translation, and are used in two <em>different</em> ways in robotics:</p>
+<p id="index-8"><strong>2D rigid transformations</strong> combine rotation with translation, and are used in two <em>different</em> ways in robotics:</p>
 <ul class="simple">
 <li><p>to specify the <strong>pose</strong> of a robot, which consists of a translation and an orientation</p></li>
 <li><p>to talk about relative pose or the <strong>transformation</strong> between two different robot poses</p></li>
@@ -687,18 +692,18 @@ P0 = [2.73271005 4.18715844]
 </figure>
 <p>Let us start by assuming as before that the point <span class="math notranslate nohighlight">\(P\)</span> is rigidly attached to a frame that is rotated
 by angle <span class="math notranslate nohighlight">\(\theta\)</span> w.r.t. Frame 0.
-If we now translate that frame according to a vector <span class="math notranslate nohighlight">\(d\)</span>, as shown in the figure above, the point <span class="math notranslate nohighlight">\(P\)</span> undergoes
-the same translation as the frame.
+If we now translate that frame according to a vector <span class="math notranslate nohighlight">\(d\)</span>, as shown in figure <a class="reference internal" href="#fig:2drotation-trans2"><span class="xref myst">3</span></a>,
+the point <span class="math notranslate nohighlight">\(P\)</span> undergoes the same translation as the frame.
 To calculate the coordinates of <span class="math notranslate nohighlight">\(P\)</span> relative to Frame 0, we merely
-perform the rotational coordinate transformation as above,
+perform the rotational coordinate transformation as in the figure,
 and then add the translation from the origin of Frame 0 to the origin of Frame 1:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-aa5cf277-fdac-4fa9-9d3f-ddb65c07c2d5">
-<span class="eqno">(6.7)<a class="headerlink" href="#equation-aa5cf277-fdac-4fa9-9d3f-ddb65c07c2d5" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-10cd8c7a-51f9-423c-a0a0-2d799df037bd">
+<span class="eqno">(6.7)<a class="headerlink" href="#equation-10cd8c7a-51f9-423c-a0a0-2d799df037bd" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P^0 =  R^0_1 P^1 + d^0_1
 \end{equation}\]</div>
-<p id="index-5">We can write the above coordinate transformation as a matrix equation:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-33e20f0b-d2a2-42a7-bcc5-3c4d23769944">
-<span class="eqno">(6.8)<a class="headerlink" href="#equation-33e20f0b-d2a2-42a7-bcc5-3c4d23769944" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<p id="index-10"><span id="index-9"></span>We can write the above coordinate transformation as a matrix equation:</p>
+<div class="amsmath math notranslate nohighlight" id="equation-54ea34b7-3d22-4774-b732-cd6fd3eb09f1">
+<span class="eqno">(6.8)<a class="headerlink" href="#equation-54ea34b7-3d22-4774-b732-cd6fd3eb09f1" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{bmatrix}
 P^0 \\ 1
 \end{bmatrix}
@@ -713,29 +718,29 @@ P^1 \\ 1
 \end{equation}\]</div>
 <p>in which <span class="math notranslate nohighlight">\(0_2\)</span> denotes the row vector <span class="math notranslate nohighlight">\([0~ 0]\)</span>.
 Note that the bottom row of this matrix equation is merely the equation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c77c8910-3124-4a7f-9520-5a06da4401e7">
-<span class="eqno">(6.9)<a class="headerlink" href="#equation-c77c8910-3124-4a7f-9520-5a06da4401e7" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d7a27724-1ada-4291-a088-e8253cc7b3e5">
+<span class="eqno">(6.9)<a class="headerlink" href="#equation-d7a27724-1ada-4291-a088-e8253cc7b3e5" title="Permalink to this equation">#</a></span>\[\begin{equation}
 1 = \begin{bmatrix} 0 &amp; 0 &amp; 1 \end{bmatrix} 
 \begin{bmatrix} p_x \\ p_y \\ 1 \end{bmatrix}
 \end{equation}\]</div>
-<p>which holds for any <span class="math notranslate nohighlight">\(p_x, p_y\)</span>.</p>
-<p>It is convenient to define the 3-vector <span class="math notranslate nohighlight">\(\tilde{P}\)</span> as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-f1fc5e91-e127-4e7a-99d7-d0fc0b60381b">
-<span class="eqno">(6.10)<a class="headerlink" href="#equation-f1fc5e91-e127-4e7a-99d7-d0fc0b60381b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<p>which holds for any <span class="math notranslate nohighlight">\(p_x, p_y\)</span>.
+It is convenient to define the 3-vector <span class="math notranslate nohighlight">\(\tilde{P}\)</span> as</p>
+<div class="amsmath math notranslate nohighlight" id="equation-769e33a4-f712-4251-b0fe-61a8b8630b44">
+<span class="eqno">(6.10)<a class="headerlink" href="#equation-769e33a4-f712-4251-b0fe-61a8b8630b44" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \tilde{P} =
 \begin{bmatrix}
 P \\ 1
 \end{bmatrix}
 \end{equation}\]</div>
-<p>which we call the homogeneous coordinates of the point <span class="math notranslate nohighlight">\(P\)</span>.
+<p>which we call the <strong>homogeneous coordinates</strong> of the point <span class="math notranslate nohighlight">\(P\)</span>.
 Using this convention, we can write the <em>homogeneous coordinate transformation</em> as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-6a9883c4-fc6e-4acf-88a2-316c95c86926">
-<span class="eqno">(6.11)<a class="headerlink" href="#equation-6a9883c4-fc6e-4acf-88a2-316c95c86926" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-05059b22-a918-4406-a257-f4b7e4bbc3a0">
+<span class="eqno">(6.11)<a class="headerlink" href="#equation-05059b22-a918-4406-a257-f4b7e4bbc3a0" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \tilde{P}^0 = T^0_1 \tilde{P}^1
 \end{equation}\]</div>
 <p>The set of matrices of the form</p>
-<div class="amsmath math notranslate nohighlight" id="equation-0c90accc-d218-4192-9435-a5a5abaa16ca">
-<span class="eqno">(6.12)<a class="headerlink" href="#equation-0c90accc-d218-4192-9435-a5a5abaa16ca" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-3cbc9eb2-b812-424d-bfd2-b7b4470479f0">
+<span class="eqno">(6.12)<a class="headerlink" href="#equation-3cbc9eb2-b812-424d-bfd2-b7b4470479f0" title="Permalink to this equation">#</a></span>\[\begin{equation}
 T =
 \begin{bmatrix}
 R &amp; d\\
@@ -756,35 +761,35 @@ the <strong>special Euclidean group of order 2</strong>, denoted by SE(2).</p>
 </figure>
 <p>Consider a mobile robot that begins at some initial configuration, moves to a new location, reorients itself and then moves to another location. How can we determine the final configuration of the robot if we are given
 only the individual motions in the sequence?
-The answer is suprisingly simple.
-Suppose the point <span class="math notranslate nohighlight">\(P\)</span> is rigidly attached to the robot.
+The answer is surprisingly simple.
+Suppose the point <span class="math notranslate nohighlight">\(P\)</span> is rigidly attached to the robot, and the situation is as sketched in Figure <a class="reference internal" href="#fig:TransformComposition"><span class="xref myst">4</span></a>.
 Using the coordinate transformation equation <span class="math notranslate nohighlight">\(\tilde{P}^i = T^i_j \tilde{P}^j\)</span>, we have the following:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-78e1a8ff-f01d-4eb2-8e69-993aed6d29cd">
-<span class="eqno">(6.13)<a class="headerlink" href="#equation-78e1a8ff-f01d-4eb2-8e69-993aed6d29cd" title="Permalink to this equation">#</a></span>\[\begin{equation}
-\tilde{P}^0 = T^0_1 \tilde{P}^1, ~~~~~ \tilde{P}^1 = T^1_2 \tilde{P}^2, ~~~~~ \tilde{P}^0 = T^0_2 \tilde{P}^2
+<div class="amsmath math notranslate nohighlight" id="equation-901e4c1f-f9d2-4bde-bd81-875417a73ebc">
+<span class="eqno">(6.13)<a class="headerlink" href="#equation-901e4c1f-f9d2-4bde-bd81-875417a73ebc" title="Permalink to this equation">#</a></span>\[\begin{equation}
+\tilde{P}^0 = T^0_1 \tilde{P}^1, \,\,\,\,\, \tilde{P}^1 = T^1_2 \tilde{P}^2, \,\,\,\,\, \tilde{P}^0 = T^0_2 \tilde{P}^2
 \end{equation} \]</div>
 <p>Combining the first two of these gives</p>
-<div class="amsmath math notranslate nohighlight" id="equation-28d38971-3c4b-41c4-8156-89ffa7878e48">
-<span class="eqno">(6.14)<a class="headerlink" href="#equation-28d38971-3c4b-41c4-8156-89ffa7878e48" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-e3d9b75f-89a1-4eba-99b3-6521547384b1">
+<span class="eqno">(6.14)<a class="headerlink" href="#equation-e3d9b75f-89a1-4eba-99b3-6521547384b1" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \tilde{P}^0 = T^0_1 T^1_2 \tilde{P}^2
 \end{equation}\]</div>
 <p>and since this equation holds for every possible <span class="math notranslate nohighlight">\(\tilde{P}^2\)</span> we have</p>
-<div class="amsmath math notranslate nohighlight" id="equation-73000e17-875e-4a51-b4b6-050d0b7a727e">
-<span class="eqno">(6.15)<a class="headerlink" href="#equation-73000e17-875e-4a51-b4b6-050d0b7a727e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-eb9de970-5efb-454f-9364-394dcacc2ab3">
+<span class="eqno">(6.15)<a class="headerlink" href="#equation-eb9de970-5efb-454f-9364-394dcacc2ab3" title="Permalink to this equation">#</a></span>\[\begin{equation}
 T^0_2 = T^0_1 T^1_2 
 \end{equation}\]</div>
 <p>It is easy to show (by induction) that this result extends to an arbitarily long sequence of transformations.
 Therefore, if we have a sequence of robot configurations <span class="math notranslate nohighlight">\(T^{i-1}_i\)</span>, for <span class="math notranslate nohighlight">\(i = 1, \dots , n\)</span> we can compute
 the composite transformation <span class="math notranslate nohighlight">\(T^0_n\)</span> using</p>
-<div class="amsmath math notranslate nohighlight" id="equation-42c7586c-001f-4099-b17c-ecaa9c0003c2">
-<span class="eqno">(6.16)<a class="headerlink" href="#equation-42c7586c-001f-4099-b17c-ecaa9c0003c2" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d5ea86cf-96f5-40d0-b725-0c1846fe4069">
+<span class="eqno">(6.16)<a class="headerlink" href="#equation-d5ea86cf-96f5-40d0-b725-0c1846fe4069" title="Permalink to this equation">#</a></span>\[\begin{equation}
 T^0_n = T^0_1 \dots T^{n-1}_n 
 \end{equation}\]</div>
 </section>
 <section id="the-group-se-2-in-gtsam">
 <h2><span class="section-number">6.1.7. </span>The Group <span class="math notranslate nohighlight">\(SE(2)\)</span> in GTSAM<a class="headerlink" href="#the-group-se-2-in-gtsam" title="Link to this heading">#</a></h2>
-<blockquote>
-<div><p><code class="docutils literal notranslate"><span class="pre">Pose2</span></code> is a <em>non-commutative</em> group, and also acts on <code class="docutils literal notranslate"><span class="pre">Point2</span></code>.</p>
+<blockquote id="index-11">
+<div><p><code class="docutils literal notranslate"><span class="pre">Pose2</span></code> is a <em>noncommutative</em> group, and also acts on <code class="docutils literal notranslate"><span class="pre">Point2</span></code>.</p>
 </div></blockquote>
 <p>Unsurprisingly, <span class="math notranslate nohighlight">\(SE(2)\)</span> is also a group, as the following properties all hold:</p>
 <ol class="arabic simple">
@@ -795,8 +800,8 @@ all <span class="math notranslate nohighlight">\(T \in SE(2)\)</span> we have <s
 <li><p><em>Associativity</em>: For all <span class="math notranslate nohighlight">\(T_1, T_2, T_3 \in SE(2)\)</span>, <span class="math notranslate nohighlight">\((T_1 T_2) T_3 = T_1 (T_2 T_3)\)</span>.</p></li>
 </ol>
 <p>However, in contrast to 2D rotations, 2D rigid transforms do <em>not</em> commute. Also, The inverse <span class="math notranslate nohighlight">\(T^{-1}\)</span> is not just the transpose; instead, we have:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-3474a275-33be-4989-8e0b-a5b2f04a4728">
-<span class="eqno">(6.17)<a class="headerlink" href="#equation-3474a275-33be-4989-8e0b-a5b2f04a4728" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-c8ff8c29-3377-452d-b916-1da528a9827d">
+<span class="eqno">(6.17)<a class="headerlink" href="#equation-c8ff8c29-3377-452d-b916-1da528a9827d" title="Permalink to this equation">#</a></span>\[\begin{equation}
 T^{-1} = \begin{bmatrix}R &amp; d\\0_2 &amp; 1\end{bmatrix}^{-1}
  = \begin{bmatrix}R^T &amp; -R^T d\\0_2 &amp; 1\end{bmatrix}
 \end{equation}\]</div>
@@ -820,7 +825,8 @@ corresponding to transformation matrix:
 </div>
 </div>
 </div>
-<p>2D transforms form a <em>non-commutative</em> group, as demonstrated here in code:</p>
+<p>
+2D transforms form a <em>non-commutative</em> group, as demonstrated here in code:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">T</span> <span class="o">*</span> <span class="n">T</span><span class="p">,</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">))</span> <span class="c1"># closure</span>
@@ -843,7 +849,8 @@ False
 </div>
 </div>
 </div>
-<p>Finally, 2D transforms can act on points, which we can do using matrix multiplication, or using the <code class="docutils literal notranslate"><span class="pre">Pose2.transformFrom</span></code> method:</p>
+<p>
+Finally, 2D transforms can act on points, which we can do using matrix multiplication, or using the <code class="docutils literal notranslate"><span class="pre">Pose2.transformFrom</span></code> method:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">T01</span> <span class="o">=</span>  <span class="n">gtsam</span><span class="o">.</span><span class="n">Pose2</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>
@@ -862,8 +869,8 @@ P0 = [3.73271005 6.18715844]
 </div>
 </section>
 <section id="lie-groups">
-<span id="index-6"></span><h2><span class="section-number">6.1.8. </span>Lie Groups*<a class="headerlink" href="#lie-groups" title="Link to this heading">#</a></h2>
-<p>Groups can be either discrete or continuous.
+<h2><span class="section-number">6.1.8. </span>Lie Groups*<a class="headerlink" href="#lie-groups" title="Link to this heading">#</a></h2>
+<p id="index-12">Groups can be either discrete or continuous.
 For example, the set of integers along with addition as the group operation and zero as the identity forms a discrete
 group.
 In contrast, both <span class="math notranslate nohighlight">\(SO(2)\)</span> and <span class="math notranslate nohighlight">\(SE(2)\)</span> are continuous groups.
@@ -880,7 +887,7 @@ and a second for when <span class="math notranslate nohighlight">\(\theta\)</spa
 <p>For the case of <span class="math notranslate nohighlight">\(SE(2)\)</span>, we merely use the two parameterizations <span class="math notranslate nohighlight">\((x,y,\theta) \in \mathbb{R}^2 \times [0,2\pi) \subset \mathbb{R}^3\)</span>
 and <span class="math notranslate nohighlight">\((x,y,\theta) \in \mathbb{R}^2 \times [-\pi,\pi) \subset \mathbb{R}^3\)</span>,
 which demonstrates that <em>locally</em> <span class="math notranslate nohighlight">\(SE(2)\)</span> is like <span class="math notranslate nohighlight">\(\mathbb{R}^3\)</span>.</p>
-<p id="index-7">In addition to being manifolds, both <span class="math notranslate nohighlight">\(SO(2)\)</span> and <span class="math notranslate nohighlight">\(SE(2)\)</span> posses the additional property of being differentiable.
+<p id="index-13">In addition to being manifolds, both <span class="math notranslate nohighlight">\(SO(2)\)</span> and <span class="math notranslate nohighlight">\(SE(2)\)</span> posses the additional property of being <em>differentiable</em>.
 Such groups are known as <strong>Lie groups</strong> (pronounced “Lee groups”).
 While again beyond the scope of this book,
 we can understand this by considering the parameterizations for <span class="math notranslate nohighlight">\(SO(2)\)</span> and <span class="math notranslate nohighlight">\(SE(2)\)</span> described above.
@@ -895,8 +902,10 @@ the inputs to the system.</p>
 <div><p>A deeper dive in the GTSAM concepts used above.</p>
 </div></blockquote>
 <p>The types <code class="docutils literal notranslate"><span class="pre">Point2</span></code> and <code class="docutils literal notranslate"><span class="pre">Rot2</span></code> are used for 2D position and rotation.
-While <code class="docutils literal notranslate"><span class="pre">Point2</span></code> is really just an alias for a 3-dimensional numpy array, the <code class="docutils literal notranslate"><span class="pre">Rot2</span></code> type is a wrapper around a c++ GTSAM type that represents <span class="math notranslate nohighlight">\(SO(2)\)</span> using just a cosine and sine value, i.e., a point on the unit circle.</p>
-<p>Using a 2D position and a 2D rotation we can create a 2D pose, represented by a <code class="docutils literal notranslate"><span class="pre">Pose2</span></code>.As always, you can execute <code class="docutils literal notranslate"><span class="pre">help(gtsam.Pose2)</span></code> to get the full documentation of a class. Below is an excerpt with some useful methods. We have several constructors:</p>
+While <code class="docutils literal notranslate"><span class="pre">Point2</span></code> is really just an alias for a two-dimensional <code class="docutils literal notranslate"><span class="pre">numpy</span></code> array, the <code class="docutils literal notranslate"><span class="pre">Rot2</span></code> type is a wrapper around a C++ GTSAM type that represents <span class="math notranslate nohighlight">\(SO(2)\)</span> using just a cosine and sine value, i.e., a point on the unit circle.</p>
+<p>Using a 2D position and a 2D rotation we can create a 2D pose, represented by a <code class="docutils literal notranslate"><span class="pre">Pose2</span></code>.
+As always, you can execute <code class="docutils literal notranslate"><span class="pre">help(gtsam.Pose2)</span></code> to get the full documentation of a class.
+Below is an excerpt with some useful methods. We have several constructors:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="fm">__init__</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
     <span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="n">Overloaded</span> <span class="n">function</span><span class="o">.</span>
@@ -914,7 +923,8 @@ While <code class="docutils literal notranslate"><span class="pre">Point2</span>
     <span class="mf">6.</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">Pose2</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">[</span><span class="n">m</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </pre></div>
 </div>
-<p>where <code class="docutils literal notranslate"><span class="pre">t</span></code> above is just a <code class="docutils literal notranslate"><span class="pre">Point2</span></code>, and <code class="docutils literal notranslate"><span class="pre">v</span></code> is supposed to be a 3-vector with x, y, and <span class="math notranslate nohighlight">\(\theta\)</span>, in that order. We also have <code class="docutils literal notranslate"><span class="pre">Pose2.transformFrom</span></code> and <code class="docutils literal notranslate"><span class="pre">Pose2.transformTo</span></code> methods, which act on 2D points:</p>
+<p>
+where <code class="docutils literal notranslate"><span class="pre">t</span></code> above is just a <code class="docutils literal notranslate"><span class="pre">Point2</span></code>, and <code class="docutils literal notranslate"><span class="pre">v</span></code> is a 3-vector with x, y, and <span class="math notranslate nohighlight">\(\theta\)</span>, in that order. We also have <code class="docutils literal notranslate"><span class="pre">Pose2.transformFrom</span></code> and <code class="docutils literal notranslate"><span class="pre">Pose2.transformTo</span></code> methods, which act on 2D points:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span> <span class="n">transformFrom</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
      <span class="n">transformFrom</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
      <span class="n">Overloaded</span> <span class="n">function</span><span class="o">.</span>
@@ -930,14 +940,16 @@ While <code class="docutils literal notranslate"><span class="pre">Point2</span>
      <span class="o">....</span>
 </pre></div>
 </div>
-<p>Both have them have three overloads, but we show only the most commonly used one above. When using code, it is often a good idea to use indices to keep the different coordinate frames apart. For example, for a pose <span class="math notranslate nohighlight">\(T^a_b\)</span> the method <code class="docutils literal notranslate"><span class="pre">transformFrom</span></code> implements the following</p>
-<div class="amsmath math notranslate nohighlight" id="equation-db0100c2-70e6-419e-a24b-b8830ad9f74f">
-<span class="eqno">(6.18)<a class="headerlink" href="#equation-db0100c2-70e6-419e-a24b-b8830ad9f74f" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<p>Both these methods have three overloads, but we show only the most commonly used one above.</p>
+<p>When using code, it is often a good idea to use indices to keep the different coordinate frames apart.
+For example, for a pose <span class="math notranslate nohighlight">\(T^a_b\)</span> the method <code class="docutils literal notranslate"><span class="pre">transformFrom</span></code> implements the following</p>
+<div class="amsmath math notranslate nohighlight" id="equation-039c3a0b-6d1c-4675-aad9-49db374210a6">
+<span class="eqno">(6.18)<a class="headerlink" href="#equation-039c3a0b-6d1c-4675-aad9-49db374210a6" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P^a = T^a_b P^b
 \end{equation}\]</div>
 <p>i.e., it transforms <em>from</em> frame B to frame A. The other method, <code class="docutils literal notranslate"><span class="pre">transformTo</span></code> transforms <em>to</em> frame B and hence implements</p>
-<div class="amsmath math notranslate nohighlight" id="equation-230ff990-9d2f-49a9-a4e0-e4f9b9efeb7a">
-<span class="eqno">(6.19)<a class="headerlink" href="#equation-230ff990-9d2f-49a9-a4e0-e4f9b9efeb7a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-fea5a59b-c41b-4d05-9f11-b5de84cc9235">
+<span class="eqno">(6.19)<a class="headerlink" href="#equation-fea5a59b-c41b-4d05-9f11-b5de84cc9235" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P^b = (T^a_b)^{-1} P^a
 \end{equation}\]</div>
 </section>
@@ -1012,7 +1024,7 @@ P^b = (T^a_b)^{-1} P^a
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-special-orthogonal-group-of-order-2-aka-so-2">6.1.2. The Special Orthogonal Group of Order 2, aka SO(2)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#coordinate-transformations-for-pure-rotations">6.1.3. Coordinate Transformations for Pure Rotations</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-group-so-2-in-gtsam">6.1.4. The Group <span class="math notranslate nohighlight">\(SO(2)\)</span> in GTSAM</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#d-rigid-transforms-aka-se-2">6.1.5. 2D Rigid Transforms aka SE(2)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#d-rigid-transforms-aka-se-2">6.1.5. 2D Rigid Transforms, aka SE(2)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#composition-of-homogeneous-transformations">6.1.6. Composition of Homogeneous Transformations</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-group-se-2-in-gtsam">6.1.7. The Group <span class="math notranslate nohighlight">\(SE(2)\)</span> in GTSAM</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lie-groups">6.1.8. Lie Groups*</a></li>

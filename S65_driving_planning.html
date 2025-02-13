@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>6.5. Planning for Autonomous Driving. &#8212; Introduction to Robotics and Perception</title>
+    <title>6.5. Planning for Autonomous Driving &#8212; Introduction to Robotics and Perception</title>
   
   
   
@@ -216,7 +216,7 @@
 <li class="toctree-l2"><a class="reference internal" href="S62_driving_actions.html">6.2. Kinematics for Driving</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S63_driving_sensing.html">6.3. Sensing for Autonomous Vehicles</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S64_driving_perception.html">6.4. SLAM</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">6.5. Planning for Autonomous Driving.</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">6.5. Planning for Autonomous Driving</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S66_driving_DRL.html">6.6. Deep Reinforcement Learning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S67_driving_summary.html">6.7. Chapter Summary</a></li>
 </ul>
@@ -368,7 +368,7 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Planning for Autonomous Driving.</h1>
+    <h1>Planning for Autonomous Driving</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -395,7 +395,7 @@
                 <article class="bd-article">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="planning-for-autonomous-driving">
-<h1><span class="section-number">6.5. </span>Planning for Autonomous Driving.<a class="headerlink" href="#planning-for-autonomous-driving" title="Link to this heading">#</a></h1>
+<h1><span class="section-number">6.5. </span>Planning for Autonomous Driving<a class="headerlink" href="#planning-for-autonomous-driving" title="Link to this heading">#</a></h1>
 <p><a href="https://colab.research.google.com/github/gtbook/robotics/blob/main/S65_driving_planning.ipynb" target="_parent"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg" /></a></p>
 <blockquote id="index-0">
 <div><p>Motion primitives provide a computationally efficient tool for fast, local motion planning.</p>
@@ -429,11 +429,11 @@ These conditions are exactly those confronted by self-driving cars,
 and for this reason, in this chapter we introduce a new approach,
 one that exploits motion primitives for motion planning.</p>
 <section id="motion-primitives">
-<span id="index-1"></span><h2><span class="section-number">6.5.1. </span>Motion Primitives<a class="headerlink" href="#motion-primitives" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">6.5.1. </span>Motion Primitives<a class="headerlink" href="#motion-primitives" title="Link to this heading">#</a></h2>
 <p>Consider a car traveling in reverse that wishes to suddenly change its orientation
 by completing a rapid 180-degree turn (a favorite maneuver for drivers like James Bond and Steve McQueen).
 How would we go about implementing this type of maneuver in an autonomous vehicle?</p>
-<p>This two approaches we have considered before can be very inefficient for planning trajectories that have such well-defined
+<p>The two approaches we have considered before can be very inefficient for planning trajectories that have such well-defined
 characteristics.
 For all of our probabilistic methods, we used a discrete time formulation and considered
 the effects of executing an action (e.g., move forward, move left) for a small duration of time, <span class="math notranslate nohighlight">\(\Delta t\)</span>.
@@ -442,22 +442,21 @@ use short straight-line paths in the configuration space to connect configuratio
 steps for potential fields, and steering toward <span class="math notranslate nohighlight">\(q_\mathrm{rand}\)</span> for RRTs).
 In each case, the language of path segments is very simple, and in each case,
 a full plan will consist of many sequential steps.</p>
-<p>Instead, the U-turn maneuver could be achieved by a predefined
+<p id="index-1">Instead, the U-turn maneuver could be achieved by a predefined
 sequence of steps: after achieving a reasonable speed, remove your foot from the gas pedal;
 turn left sharply and hit the breaks; at the perfect moment, release the breaks
 and straighten the wheel.
 When stunt drivers execute this maneuver, they do not plan step-by-step what to do.
 Rather, they have pre-compiled this sequence of steps into a basic action that can be executed
 with little reasoning.  This is the basic idea of <strong>motion primitives</strong>.</p>
-<p>This idea is illustrated in the figure below, which shows four motion primitives
-for a car.
+<p>This idea is illustrated in the Figure <a class="reference internal" href="#fig:MotionPrimitives"><span class="xref myst">1</span></a>, which shows four motion primitives for a car.
 The primitive <span class="math notranslate nohighlight">\(P_1\)</span> corresponds to driving forward, while motion primitives <span class="math notranslate nohighlight">\(P_2\)</span>, <span class="math notranslate nohighlight">\(P_3\)</span>, and <span class="math notranslate nohighlight">\(P_4\)</span> correspond to veering
 to the left at increasingly sharp angles.</p>
 <figure id="fig:MotionPrimitives">
 <img src="https://github.com/gtbook/robotics/blob/main/Figures6/motion-primitives.png?raw=1" style="width:18cm" alt="">
 <figcaption>Four motion primitives for a car veering to its left. </figcaption>
 </figure>
-<p>Motion primitives can be defined in numerous ways.
+<p id="index-2">Motion primitives can be defined in numerous ways.
 The figure above illustrates four fixed motion primitives, but it would not be difficult to generalize each of these
 to a class of motions by using parametric descriptions.
 We could specify a geometric curve without consideration of time or dynamics.
@@ -496,7 +495,7 @@ cars in adjacent lanes.</p>
 </section>
 <section id="polynomial-trajectories">
 <h2><span class="section-number">6.5.3. </span>Polynomial Trajectories<a class="headerlink" href="#polynomial-trajectories" title="Link to this heading">#</a></h2>
-<p>Let’s begin with the simple problem of changing lanes along a straight stretch of highway. The situation is illustrated in the figure below.</p>
+<p>Let’s begin with the simple problem of changing lanes along a straight stretch of highway. The situation is illustrated in Figure <a class="reference internal" href="#fig:LaneChange"><span class="xref myst">2</span></a>.</p>
 <figure id="fig:LaneChange">
 <img src="https://github.com/gtbook/robotics/blob/main/Figures6/lane-change.png?raw=1" style="width:18cm" alt="">
 <figcaption>Initial and final configuration for a lane change maneuver. </figcaption>
@@ -508,13 +507,13 @@ Below, we will generalize further by defining <span class="math notranslate nohi
 <p>For now, let us assume that the lane change maneuver begins at <span class="math notranslate nohighlight">\(s=0\)</span>, <span class="math notranslate nohighlight">\(d=0\)</span>, and that the desired ending configuration is <span class="math notranslate nohighlight">\( s = s_\mathrm{g}, d= d_\mathrm{g}\)</span>, i.e., at the end of the maneuver (at <span class="math notranslate nohighlight">\( s = s_\mathrm{g}\)</span>),
 the car will have reached the center of the left lane (i.e., <span class="math notranslate nohighlight">\( d = d_\mathrm{g}\)</span>).</p>
 <p>At first glance, it might seem that this could be accomplished by a simple linear trajectory of the form</p>
-<div class="amsmath math notranslate nohighlight" id="equation-aee8b488-7264-4d14-b4b0-744ad9805ec7">
-<span class="eqno">(6.57)<a class="headerlink" href="#equation-aee8b488-7264-4d14-b4b0-744ad9805ec7" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-96488a9f-9c31-4a7f-9ac6-c044a4f5e33a">
+<span class="eqno">(6.58)<a class="headerlink" href="#equation-96488a9f-9c31-4a7f-9ac6-c044a4f5e33a" title="Permalink to this equation">#</a></span>\[\begin{equation}
  d(x) = \frac{ d_\mathrm{g}}{s_\mathrm{g} } s 
 \end{equation}\]</div>
 <p>At the start of the maneuver, <span class="math notranslate nohighlight">\(s=0\)</span>, which matches the initial condition <span class="math notranslate nohighlight">\(d(0)=0\)</span>, and at <span class="math notranslate nohighlight">\( s = s_\mathrm{g}\)</span>
 we match the end condition <span class="math notranslate nohighlight">\(d(s_\mathrm{g}) = d_\mathrm{g}\)</span>.
-This trajectory is illustrated in the figure below.</p>
+This trajectory is illustrated in Figure <a class="reference internal" href="#fig:LinearLaneChange"><span class="xref myst">3</span></a>.</p>
 <figure id="fig:LinearLaneChange">
 <img src="https://github.com/gtbook/robotics/blob/main/Figures6/linear-lane-change.png?raw=1" style="width:18cm" alt="">
 <figcaption>Linear trajectory that attempts to achieve a lane change. </figcaption>
@@ -522,8 +521,8 @@ This trajectory is illustrated in the figure below.</p>
 <span class="math notranslate nohighlight">\(\frac{ d_\mathrm{g}}{s_\mathrm{g} }\)</span> at <span class="math notranslate nohighlight">\(s=0^+\)</span>. Cars, of course, are not capable of executing maneuvers with velocity discontinuities (under normal driving conditions), so this trajectory could not be executed by a normal car.
 However, it is not difficult to generalize this approach to solve this problem.</p>
 <p>Consider the <span class="math notranslate nohighlight">\(m^{th}\)</span> order polynomial</p>
-<div class="amsmath math notranslate nohighlight" id="equation-8ebc917d-b480-4f93-8a20-edb44e44176d">
-<span class="eqno">(6.58)<a class="headerlink" href="#equation-8ebc917d-b480-4f93-8a20-edb44e44176d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-6091edb3-0455-4cee-8411-089fb79a9865">
+<span class="eqno">(6.59)<a class="headerlink" href="#equation-6091edb3-0455-4cee-8411-089fb79a9865" title="Permalink to this equation">#</a></span>\[\begin{equation}
  d(s) = \sum_{i=0}^m \alpha_i s^i 
 \end{equation}\]</div>
 <p>For <span class="math notranslate nohighlight">\(m=1\)</span>, we obtain the linear trajectory above by setting
@@ -540,8 +539,8 @@ we would require a cubic polynomial, and if we wished to also satisfy lateral ac
 The lateral velocity and acceleration for the trajectory are given by the first and second derivatives of <span class="math notranslate nohighlight">\(d\)</span>,
 which we denote by <span class="math notranslate nohighlight">\(d'\)</span> and <span class="math notranslate nohighlight">\(d''\)</span>, respectively.
 For a fifth order polynomial, we have</p>
-<div class="amsmath math notranslate nohighlight" id="equation-9c3838d5-25cc-43fe-a0e5-278882a5cc60">
-<span class="eqno">(6.59)<a class="headerlink" href="#equation-9c3838d5-25cc-43fe-a0e5-278882a5cc60" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-632f4869-543f-410f-8c6a-e3d9a2ae16dc">
+<span class="eqno">(6.60)<a class="headerlink" href="#equation-632f4869-543f-410f-8c6a-e3d9a2ae16dc" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{aligned}
 d(s) &amp;=&amp; \alpha_0 + \alpha_1 s + \alpha_2 s^2 + \alpha_3 s^3 + \alpha_4 s^4 + \alpha_5 s^5\\
 d'(s) &amp;=&amp; \alpha_1 + 2 \alpha_2 s + 3 \alpha_3 s^2 + 4 \alpha_4 s^3 + 5 \alpha_5 s^4\\
@@ -549,8 +548,8 @@ d''(s) &amp;=&amp;  2 \alpha_2  +6 \alpha_3  s + 12 \alpha_4 s^2 + 20 \alpha_5 s
 \end{aligned}
 \end{equation}\]</div>
 <p>For a simple lane change, it is typically desirable to have zero lateral velocity and zero lateral acceleration at the initial and final positions. This leads to the following system of equations:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-ddfa2e60-990d-4185-8492-db377b57b52c">
-<span class="eqno">(6.60)<a class="headerlink" href="#equation-ddfa2e60-990d-4185-8492-db377b57b52c" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-3523e60a-805e-4718-b715-e0f852e301e7">
+<span class="eqno">(6.61)<a class="headerlink" href="#equation-3523e60a-805e-4718-b715-e0f852e301e7" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{aligned}
 y(0) = 0&amp; =&amp; \alpha_0 \\
 y'(0) = 0 &amp; =&amp; \alpha_1 \\
@@ -564,19 +563,19 @@ y''(x_\mathrm{g}) =  0 &amp;=&amp;
 \end{aligned}
 \end{equation}\]</div>
 <p>Note that these six equations are all linear in the parameters <span class="math notranslate nohighlight">\(\alpha_i\)</span>, so it is a simple matter to solve
-these.</p>
+them.</p>
 </section>
 <section id="splines">
 <span id="index-3"></span><h2><span class="section-number">6.5.4. </span>Splines<a class="headerlink" href="#splines" title="Link to this heading">#</a></h2>
 <p>While the derivation above produced a single polynomial trajectory,
 it is a simple matter to extend this formalism to construct trajectories
 that are composed of multiple consecutive polynomial segments.
-Such trajectores belong to the more general class of <strong>splines</strong>.
+Such trajectories belong to the more general class of <strong>splines</strong>.
 In general, a spline is a continuous, piecewise polynomial curve, and we are not
 necessarily given the specific values for the transition points between adjacent
 segments.</p>
-<p>In fact, we have actually done exactly this in the above derviation,
-if we consider that for <span class="math notranslate nohighlight">\(s &lt; 0\)</span> and for <span class="math notranslate nohighlight">\(s  &gt; s_\mathrm{g}\)</span> the trajectory <span class="math notranslate nohighlight">\(d(s)\)</span> is linear and pararallel to the <span class="math notranslate nohighlight">\(s\)</span>-axis,
+<p>In fact, we have actually done exactly this in the above derivation,
+if we consider that for <span class="math notranslate nohighlight">\(s &lt; 0\)</span> and for <span class="math notranslate nohighlight">\(s  &gt; s_\mathrm{g}\)</span> the trajectory <span class="math notranslate nohighlight">\(d(s)\)</span> is linear and parallel to the <span class="math notranslate nohighlight">\(s\)</span>-axis,
 i.e., we have solved for a special case of three polynomial segments with two of those
 segments being linear and one quintic.</p>
 <p>Suppose that we wish to construct a piecewise polynomial trajectory that
@@ -585,8 +584,8 @@ sequence of couples <span class="math notranslate nohighlight">\((s_0,d_0) \dots
 and we want to ensure that the lateral position of the car is given by <span class="math notranslate nohighlight">\(d_i\)</span> at longitudinal
 position <span class="math notranslate nohighlight">\(s_i\)</span>.
 We can build the trajectory <span class="math notranslate nohighlight">\(d\)</span> from a sequence of polynomials <span class="math notranslate nohighlight">\(P_k\)</span> as follows</p>
-<div class="amsmath math notranslate nohighlight" id="equation-2c09b9b2-34bf-4ee3-b111-bc69d0746f45">
-<span class="eqno">(6.61)<a class="headerlink" href="#equation-2c09b9b2-34bf-4ee3-b111-bc69d0746f45" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ee30002a-64d0-491d-9bb8-65a428680a6f">
+<span class="eqno">(6.62)<a class="headerlink" href="#equation-ee30002a-64d0-491d-9bb8-65a428680a6f" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{align}
 d(s) &amp;= P_k(s)  \;\;\;\;\;\ s_k \leq s &lt; s_{k+1},\;\; 0 \leq k &lt; n\\
 P_k(s)  &amp;= \sum_{i=0}^{d} \alpha_{ki} (s-s_k)^i \\
@@ -595,8 +594,8 @@ P_k(s)  &amp;= \sum_{i=0}^{d} \alpha_{ki} (s-s_k)^i \\
 <p>The coefficients <span class="math notranslate nohighlight">\(\alpha_{ki}\)</span> are chosen to ensure the desired continuity and smoothness properties.
 For example, if we want to ensure that position, velocity, and accelerations are continuous
 throughout the trajectory, we must enforce</p>
-<div class="amsmath math notranslate nohighlight" id="equation-12363ff4-56cc-4ad7-bca8-80fd42424081">
-<span class="eqno">(6.62)<a class="headerlink" href="#equation-12363ff4-56cc-4ad7-bca8-80fd42424081" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d4376f25-3b30-48ba-8145-308affbb00a4">
+<span class="eqno">(6.63)<a class="headerlink" href="#equation-d4376f25-3b30-48ba-8145-308affbb00a4" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{align}
 d_k = &amp;P_{k-1}(s_k) = P_{k}(s_k), \;\;\; k = 1, \dots n-1 \\
 &amp;P'_{k-1}(s_k) = P'_{k}(s_k), \;\;\; k = 1, \dots n-1 \\
@@ -606,8 +605,8 @@ d_k = &amp;P_{k-1}(s_k) = P_{k}(s_k), \;\;\; k = 1, \dots n-1 \\
 <p>Note that the first set of constraints also ensure that <span class="math notranslate nohighlight">\(d(s_k) = d_k\)</span> for each transition point.
 In order to satisfy the boundary conditions for the start and end of the trajectory, we
 must enforce</p>
-<div class="amsmath math notranslate nohighlight" id="equation-6ea6653a-1f3f-421c-b72a-fe7625a286cf">
-<span class="eqno">(6.63)<a class="headerlink" href="#equation-6ea6653a-1f3f-421c-b72a-fe7625a286cf" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-19f5ca88-8342-40d6-81c9-65737a026a4f">
+<span class="eqno">(6.64)<a class="headerlink" href="#equation-19f5ca88-8342-40d6-81c9-65737a026a4f" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{align}
 d_0 = &amp;P_{0}(s_0)  \\
 d_n = &amp;P_{n}(s_n)  \\
@@ -641,11 +640,11 @@ coming to a stop at an intersection, or making a turn at an intersection.
 In these cases, following the desired trajectory, rather than computing the desired
 trajectory, becomes an important problem. In this section, we address the problem
 of following such a trajectory.</p>
-<p>The figure below illustrates the situation.
-We denote by <span class="math notranslate nohighlight">\(\gamma(s)\)</span> the desired trjactory of the car, where <span class="math notranslate nohighlight">\(s\)</span>, an arc length
+<p>Figure <a class="reference internal" href="#fig:FrenetFrame"><span class="xref myst">4</span></a> illustrates the situation.
+We denote by <span class="math notranslate nohighlight">\(\gamma(s)\)</span> the desired trajectory of the car, where <span class="math notranslate nohighlight">\(s\)</span>, an arc length
 parameter, is a function of time, and therefore the instantaneous desired speed of
 the car is <span class="math notranslate nohighlight">\(\dot{s}(t)\)</span>.
-Since the goal is to keep the car on the deisred trajectory, it is convenient
+Since the goal is to keep the car on the desired trajectory, it is convenient
 to represent the state of the car in a coordinate frame that is local to the trajectory.
 To do so, for each point along <span class="math notranslate nohighlight">\(\gamma\)</span>, we define a frame with origin <span class="math notranslate nohighlight">\(\gamma(s)\)</span>,
 with axes <span class="math notranslate nohighlight">\(t_\gamma(s)\)</span> and <span class="math notranslate nohighlight">\(n_\gamma(s)\)</span>, the tangent and normal vectors
@@ -656,8 +655,8 @@ This is essentially a Frenet frame for planar curves (the binormal being orthogo
 <figcaption>Local coordinate frame relative to a given desired trajectory. </figcaption>
 </figure>
 <p>Using this convention, at time <span class="math notranslate nohighlight">\(t\)</span> we can denote the position of the car as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-efc0fc79-9765-45bb-8ba8-2b8e284fe3a5">
-<span class="eqno">(6.64)<a class="headerlink" href="#equation-efc0fc79-9765-45bb-8ba8-2b8e284fe3a5" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-a7c22f14-c40a-4956-80b2-d7f4dccb0d68">
+<span class="eqno">(6.65)<a class="headerlink" href="#equation-a7c22f14-c40a-4956-80b2-d7f4dccb0d68" title="Permalink to this equation">#</a></span>\[\begin{equation}
 x(t) = x(s,d) = \gamma(s(t)) + d(t) n_\gamma(s(t))
 \end{equation}\]</div>
 <p>A simple way to bring the car into coincidence with the desired trajectory is to choose a target point
@@ -675,8 +674,8 @@ to the desired trajectory).
 Thus, at time <span class="math notranslate nohighlight">\(T\)</span>, we need to satisfy <span class="math notranslate nohighlight">\(d(T) = \dot{d}(T) = \ddot{d}(T) = 0\)</span>.
 As we have seen above, these six constraints uniquely determine a quintic polynomial trajectory for <span class="math notranslate nohighlight">\(d\)</span>.</p>
 <p>Given <span class="math notranslate nohighlight">\(d(t)\)</span>, the trajectory for the car is simply given by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-21eb2257-d5ba-4861-a2f7-8d25d18a7334">
-<span class="eqno">(6.65)<a class="headerlink" href="#equation-21eb2257-d5ba-4861-a2f7-8d25d18a7334" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-92a767bb-bc08-4771-b5bc-5d4c8a3c4879">
+<span class="eqno">(6.66)<a class="headerlink" href="#equation-92a767bb-bc08-4771-b5bc-5d4c8a3c4879" title="Permalink to this equation">#</a></span>\[\begin{equation}
 x(t) = \gamma(s(t)) + d(t) n_\gamma(s(t))
 \end{equation}\]</div>
 <p>which brings the car onto the desired trajectory, with desired velocity, at time <span class="math notranslate nohighlight">\(t = T\)</span>.</p>
@@ -689,16 +688,16 @@ with a cost functional that takes into account both the duration of the maneuver
 want the maneuver to take too long), and the comfort of the human passenger.
 As mentioned above, humans are sensitive to acceleration changes in the lateral direction,
 therefore, we might wish to minimize the overall effect of such changes.
-Mathematically, the instantaneous change in lateral cceleration is given by the third
+Mathematically, the instantaneous change in lateral acceleration is given by the third
 derivative of <span class="math notranslate nohighlight">\(d\)</span>, which is known as the <strong>jerk</strong>.
 For a given trajectory <span class="math notranslate nohighlight">\(d(t)\)</span>, defined on the interval <span class="math notranslate nohighlight">\([0,T]\)</span>, the following
-cost functional penalizes aggregate jerk and total exectution time</p>
-<div class="amsmath math notranslate nohighlight" id="equation-09c81798-c579-4911-b254-ad16d792eeba">
-<span class="eqno">(6.66)<a class="headerlink" href="#equation-09c81798-c579-4911-b254-ad16d792eeba" title="Permalink to this equation">#</a></span>\[\begin{equation}
+cost functional penalizes aggregate jerk and total execution time</p>
+<div class="amsmath math notranslate nohighlight" id="equation-c5982db2-96e9-4fc2-881f-e6bc843ed023">
+<span class="eqno">(6.67)<a class="headerlink" href="#equation-c5982db2-96e9-4fc2-881f-e6bc843ed023" title="Permalink to this equation">#</a></span>\[\begin{equation}
 J(d) = \int_0^T \left(\frac{d}{dt}\ddot{d}(\tau)\right)^2  d\tau + \beta T
 \end{equation}\]</div>
 <p>In general, it may not be possible to solve this optimization problem in real time.
-In such cases, rather than using <span class="math notranslate nohighlight">\(J\)</span> to solve find the optimal <span class="math notranslate nohighlight">\(d\)</span>, we
+In such cases, rather than using <span class="math notranslate nohighlight">\(J\)</span> to find the optimal <span class="math notranslate nohighlight">\(d\)</span>, we
 can use a generate-and-test approach.
 With such an approach, several values of <span class="math notranslate nohighlight">\(T\)</span> are proposed, and the corresponding quintic trajectories
 are computed for each of these. It is then a simple matter to evaluate the cost of each of

@@ -216,7 +216,7 @@
 <li class="toctree-l2"><a class="reference internal" href="S62_driving_actions.html">6.2. Kinematics for Driving</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S63_driving_sensing.html">6.3. Sensing for Autonomous Vehicles</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S64_driving_perception.html">6.4. SLAM</a></li>
-<li class="toctree-l2"><a class="reference internal" href="S65_driving_planning.html">6.5. Planning for Autonomous Driving.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S65_driving_planning.html">6.5. Planning for Autonomous Driving</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S66_driving_DRL.html">6.6. Deep Reinforcement Learning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="S67_driving_summary.html">6.7. Chapter Summary</a></li>
 </ul>
@@ -423,8 +423,8 @@
 <img src="https://raw.githubusercontent.com/gtbook/robotics/main/Figures7/NeRF-setup.png?raw=1" style="width:16cm" alt="">
 <figcaption>Figure 1: A NeRF stores a volumetric scene representation as the weights of an MLP, trained on many images with known pose.</figcaption>
 </figure>
-<p>The original 2020 NeRF paper by Mildenhall et al. <span id="id1">[<a class="reference internal" href="bibliography.html#id23" title="Ben Mildenhall, Pratul P. Srinivasan, Matthew Tancik, Jonathan T. Barron, Ravi Ramamoorthi, and Ren Ng. Nerf: representing scenes as neural radiance fields for view synthesis. Commun. ACM, 65(1):99–106, dec 2021. doi:10.1145/3503250.">Mildenhall <em>et al.</em>, 2021</a>]</span> does an excellent job at explaining the basics.
-Figure <a href="#fig:NeRF-setup" data-reference-type="ref" data-reference="fig:NeRF-setup">1</a>, from that paper, describes the setup: given a set of input images, with <em>known</em> camera pose and intrinsics calibration, a scene representation is learned that encodes the scene.
+<p>The original 2020 NeRF paper by Mildenhall et al. <span id="id1">[<a class="reference internal" href="bibliography.html#id42" title="Ben Mildenhall, Pratul P. Srinivasan, Matthew Tancik, Jonathan T. Barron, Ravi Ramamoorthi, and Ren Ng. NeRF: representing scenes as neural radiance fields for view synthesis. Commun. ACM, 65(1):99–106, dec 2021. doi:10.1145/3503250.">Mildenhall <em>et al.</em>, 2021</a>]</span> does an excellent job at explaining the basics.
+Figure <a class="reference internal" href="#fig:NeRF-setup"><span class="xref myst">1</span></a>, from that paper, describes the setup: given a set of input images, with <em>known</em> camera pose and intrinsics calibration, a scene representation is learned that encodes the scene.
 The original NeRF paper defines a large neural network that can be trained to predict the value of every pixel in every image. By doing so, the neural network can then also <em>generate</em> new images that are not in the original training set. What is more, the neural network can also be used to predict the 3D structure of the underlying scene, making it possible to do much more than simply view synthesis.</p>
 <p>The original NeRF work has introduced a new way on how to infer 3D scenes from images, and became very popular because:</p>
 <ul class="simple">
@@ -443,13 +443,13 @@ In particular, below we extend the 1D interpolation example from Chapter 5, exte
 <figure id="fig:NeRF-pipeline"> 
 <img src="https://raw.githubusercontent.com/gtbook/robotics/main/Figures7/NeRF-pipeline.png?raw=1" style="width:16cm" alt="">
 <figcaption>Figure 2: New views are rendered by integrating the density and color at regular intervals along each viewing ray.</figcaption>
-</figure><p>Figure <a href="#fig:NeRF-pipeline" data-reference-type="ref" data-reference="fig:NeRF-pipeline">2</a> sketches out how volume rendering works. On the left, for <em>every</em> pixel you want to render, a ray is projected into the 3D volume of interest (here represented by a cube) and sampled 3D point locations are defined along this ray. For every sample, the neural network <span class="math notranslate nohighlight">\(F_\Theta\)</span> is queried for both a local <em>density</em> <span class="math notranslate nohighlight">\(\delta\)</span> and a <em>color</em> <span class="math notranslate nohighlight">\(c\)</span>. The colors are then integrated along the ray, with local color contributions weighted by the local density, to yield a final pixel color.</p>
+</figure><p>Figure <a class="reference internal" href="#fig:NeRF-pipeline"><span class="xref myst">2</span></a> sketches out how volume rendering works. On the left, for <em>every</em> pixel you want to render, a ray is projected into the 3D volume of interest (here represented by a cube) and sampled 3D point locations are defined along this ray. For every sample, the neural network <span class="math notranslate nohighlight">\(F_\Theta\)</span> is queried for both a local <em>density</em> <span class="math notranslate nohighlight">\(\delta\)</span> and a <em>color</em> <span class="math notranslate nohighlight">\(c\)</span>. The colors are then integrated along the ray, with local color contributions weighted by the local density, to yield a final pixel color.</p>
 <p>To get some intuition, think about where high density regions will exist for the simple example scene shown. Here, we expect the density to be high on the <em>surface</em> of the object - the lego excavator toy in this example. If that is the only high-density area on the ray, the pixel corresponding to that ray will just use the color from that high-density surface. However, the integration scheme, which we implement below, is also able to account for occlusions or even semi-transparency.</p>
 <section id="sampling-from-rays">
 <h3><span class="section-number">7.6.2.1. </span>Sampling from Rays<a class="headerlink" href="#sampling-from-rays" title="Link to this heading">#</a></h3>
 <p>The first part of a volume renderer is to evenly sample points on rays, emanating from the optical center of a camera. When we are given the <code class="docutils literal notranslate"><span class="pre">origin</span></code> and the <code class="docutils literal notranslate"><span class="pre">direction</span></code> of a ray (as a unit-vector) sampling is simple enough: a point <span class="math notranslate nohighlight">\(P\)</span> on the ray at a distance <span class="math notranslate nohighlight">\(t\)</span> from the origin <span class="math notranslate nohighlight">\(O\)</span>, in the direction <span class="math notranslate nohighlight">\(D\)</span> is given as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-23af6976-e5a2-480a-8cf9-b6653b1d0a98">
-<span class="eqno">(7.67)<a class="headerlink" href="#equation-23af6976-e5a2-480a-8cf9-b6653b1d0a98" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-8ad04ba6-1106-44e5-9bc6-a1fcf4fe550b">
+<span class="eqno">(7.67)<a class="headerlink" href="#equation-8ad04ba6-1106-44e5-9bc6-a1fcf4fe550b" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P(t,O,D) = O + t  D
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(t\)</span> is a random depth along the ray. Hence, we only need to sample many <span class="math notranslate nohighlight">\(t\)</span> values evenly and we are done.</p>
@@ -498,13 +498,13 @@ As a case in point, our first function <code class="docutils literal notranslate
 <section id="integration-along-rays">
 <span id="index-3"></span><h3><span class="section-number">7.6.2.2. </span>Integration along Rays<a class="headerlink" href="#integration-along-rays" title="Link to this heading">#</a></h3>
 <p>The second part of the volume rendering story is where the magic happens. Let us assume that we are given the densities <span class="math notranslate nohighlight">\(\sigma_i\)</span> and colors <span class="math notranslate nohighlight">\(c_i\)</span> at <span class="math notranslate nohighlight">\(N\)</span> sampled points <span class="math notranslate nohighlight">\(P_i\)</span> on a ray corresponding to a given pixel. We can then calculate the color <span class="math notranslate nohighlight">\(C\)</span> for the pixel using the equation below,</p>
-<div class="amsmath math notranslate nohighlight" id="equation-064d277e-9d58-4c5d-a324-deb4f4284c61">
-<span class="eqno">(7.68)<a class="headerlink" href="#equation-064d277e-9d58-4c5d-a324-deb4f4284c61" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-14759303-c253-4662-9ba3-81c159f7221f">
+<span class="eqno">(7.68)<a class="headerlink" href="#equation-14759303-c253-4662-9ba3-81c159f7221f" title="Permalink to this equation">#</a></span>\[\begin{equation}
 C = \sum_{i=1}^N \alpha_i T_i c_i
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\alpha_i\)</span> is the <strong>opacity</strong> and <span class="math notranslate nohighlight">\(T_i\)</span> is the <strong>transmittance</strong> at <span class="math notranslate nohighlight">\(P_i\)</span>, both defined below:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-9b3bfad8-4bf0-447e-9f22-6870b377db95">
-<span class="eqno">(7.69)<a class="headerlink" href="#equation-9b3bfad8-4bf0-447e-9f22-6870b377db95" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-36b55089-3364-408a-83be-979198c2fe54">
+<span class="eqno">(7.69)<a class="headerlink" href="#equation-36b55089-3364-408a-83be-979198c2fe54" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{align}
 \alpha_i &amp;\doteq 1 - \exp(-\sigma_i) \\
 T_i &amp;\doteq \exp ( - \sum_{j=1}^{i-1} \sigma_j).
@@ -543,8 +543,8 @@ T_i &amp;\doteq \exp ( - \sum_{j=1}^{i-1} \sigma_j).
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[0.6501109  0.45190173 0.5472394 ]
- [0.41600367 0.49136955 0.33161977]]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[0.7954953  0.5611622  0.5830051 ]
+ [0.3854808  0.46464798 0.84558284]]
 </pre></div>
 </div>
 </div>
@@ -558,8 +558,8 @@ T_i &amp;\doteq \exp ( - \sum_{j=1}^{i-1} \sigma_j).
 <div><p>A voxel grid of density or color.</p>
 </div></blockquote>
 <p>A key decision in the NeRF architecture is how to represent the function <span class="math notranslate nohighlight">\(F_\Theta\)</span> so it can be queried for a density and a color at every point. In short, we need:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-dc5a2a6c-4e0b-4938-9f58-10abb5929ec3">
-<span class="eqno">(7.70)<a class="headerlink" href="#equation-dc5a2a6c-4e0b-4938-9f58-10abb5929ec3" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-5c8ede97-c35f-4a17-9b48-2b45d18ba044">
+<span class="eqno">(7.70)<a class="headerlink" href="#equation-5c8ede97-c35f-4a17-9b48-2b45d18ba044" title="Permalink to this equation">#</a></span>\[\begin{equation}
 (\sigma, c) = F_\Theta(P)
 \end{equation}\]</div>
 <p>with <span class="math notranslate nohighlight">\(P\in R^3\)</span>, <span class="math notranslate nohighlight">\(\sigma\in R\)</span>, and <span class="math notranslate nohighlight">\(c\in[0...255]^3\)</span>. Note that in computer vision, neural networks typically take high-dimensional inputs, e.g., entire images, so having such a low-dimensional input (3) is highly unusual. This “coordinate-based” approach is one of the breakthroughs of NeRF-style representations.</p>
@@ -627,7 +627,7 @@ The code below implements trilinear interpolation: the values on the <em>eight</
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Interpolated Output: 0.41736
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Interpolated Output: 0.45334
 </pre></div>
 </div>
 </div>
@@ -661,7 +661,7 @@ Interpolated Output:
 </section>
 <section id="dvgo">
 <h2><span class="section-number">7.6.4. </span>DVGO<a class="headerlink" href="#dvgo" title="Link to this heading">#</a></h2>
-<p>We can now define a simple DVGO (Direct Voxel Grid Optimization by <span id="id2">Sun <em>et al.</em> [<a class="reference internal" href="bibliography.html#id28" title="Cheng Sun, Min Sun, and Hwann-Tzong Chen. Direct voxel grid optimization: super-fast convergence for radiance fields reconstruction. In 2022 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR), 5449-5459. 2022. doi:10.1109/CVPR52688.2022.00538.">2022</a>]</span>) class that combines:</p>
+<p>We can now define a simple DVGO (Direct Voxel Grid Optimization by <span id="id2">Sun <em>et al.</em> [<a class="reference internal" href="bibliography.html#id54" title="Cheng Sun, Min Sun, and Hwann-Tzong Chen. Direct Voxel Grid Optimization: Super-fast Convergence for Radiance Fields Reconstruction. In 2022 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR), 5449-5459. 2022. doi:10.1109/CVPR52688.2022.00538.">2022</a>]</span>) class that combines:</p>
 <ul class="simple">
 <li><p>sampling points <span class="math notranslate nohighlight">\(P\)</span> along each ray;</p></li>
 <li><p>converting from scene coordinates into grid coordinates;</p></li>
@@ -825,28 +825,28 @@ Interpolated Output:
 </ul>
 <p>Acquiring all this information for an arbitrary image sequence taken with some unknown, uncalibrated camera can be complicated. Cameras come in a variety of sizes and with very different lenses, and effects like radial distortion make the modeling process non-trivial. In addition, recovering the actual position and attitude of the camera in a scene is typically done through structure from motion, which can be time-consuming and tricky.</p>
 <p id="index-6">In the following, we will assume that all this hard work has been done for us, and/or the images have been simulated with exactly known camera parameters, both intrinsic and extrinsic. One popular way to accomplish this is by providing undistorted images accompanied by a <span class="math notranslate nohighlight">\(3 \times 4\)</span> <strong>camera matrix</strong> <span class="math notranslate nohighlight">\(M\)</span>. Recall that a 3D point <span class="math notranslate nohighlight">\(P\)</span> can be projected into an image via</p>
-<div class="amsmath math notranslate nohighlight" id="equation-784ed7a1-afc2-44dc-bcbe-add4053ff27e">
-<span class="eqno">(7.71)<a class="headerlink" href="#equation-784ed7a1-afc2-44dc-bcbe-add4053ff27e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-fba54891-0491-4303-aeed-cbcdf34112bd">
+<span class="eqno">(7.71)<a class="headerlink" href="#equation-fba54891-0491-4303-aeed-cbcdf34112bd" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \tilde{p} = K R^T (P - t)
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\tilde{p}\)</span> are <em>homogeneous</em> 2D image coordinates. We can re-write this as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-61a97a7b-2980-4c34-b90b-ab5f709e0987">
-<span class="eqno">(7.72)<a class="headerlink" href="#equation-61a97a7b-2980-4c34-b90b-ab5f709e0987" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-b636dacb-82a8-4e9c-a1dd-36b58887ca1e">
+<span class="eqno">(7.72)<a class="headerlink" href="#equation-b636dacb-82a8-4e9c-a1dd-36b58887ca1e" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \tilde{p} = M\tilde{P}
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\tilde{P} = \begin{bmatrix}P \\1 \end{bmatrix}\)</span> and the camera matrix <span class="math notranslate nohighlight">\(M\)</span> is given by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-cafbbb3a-123e-4ee8-a3e1-24393aeb5c80">
-<span class="eqno">(7.73)<a class="headerlink" href="#equation-cafbbb3a-123e-4ee8-a3e1-24393aeb5c80" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d2c56b39-6f04-4342-8313-3d0dde4bbee7">
+<span class="eqno">(7.73)<a class="headerlink" href="#equation-d2c56b39-6f04-4342-8313-3d0dde4bbee7" title="Permalink to this equation">#</a></span>\[\begin{equation}
 M = [A|a] = [K R^T | - K R^T t]
 \end{equation}\]</div>
 <p>That means that if we are <em>given</em> the camera matrix <span class="math notranslate nohighlight">\(M\)</span> we can always recover the ray origins as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-578b4e36-b0f0-45e2-8711-9e6d46ec5f6e">
-<span class="eqno">(7.74)<a class="headerlink" href="#equation-578b4e36-b0f0-45e2-8711-9e6d46ec5f6e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-3b764e1b-382a-4b45-bca2-2b60e0f4fb85">
+<span class="eqno">(7.74)<a class="headerlink" href="#equation-3b764e1b-382a-4b45-bca2-2b60e0f4fb85" title="Permalink to this equation">#</a></span>\[\begin{equation}
 t = -A^{-1} a
 \end{equation}\]</div>
 <p>and a random 3D point <span class="math notranslate nohighlight">\(P\)</span> on the ray corresponding to <span class="math notranslate nohighlight">\(\tilde{p}\)</span> as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-8f654310-7730-4363-a24c-a6304ce85f27">
-<span class="eqno">(7.75)<a class="headerlink" href="#equation-8f654310-7730-4363-a24c-a6304ce85f27" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-1c4fc363-6245-4239-a8f1-066f2fac6231">
+<span class="eqno">(7.75)<a class="headerlink" href="#equation-1c4fc363-6245-4239-a8f1-066f2fac6231" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P = A^{-1}(\tilde{p} - a)
 \end{equation}\]</div>
 <p>since <span class="math notranslate nohighlight">\(\tilde{p} = AP + a\)</span>. We will illustrate this below with the Stonehenge dataset.</p>
@@ -985,7 +985,7 @@ P = A^{-1}(\tilde{p} - a)
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/988099b269c05ac6deb77492fbda86db8988685f7413074d1c6f204e012a3dd7.png" src="_images/988099b269c05ac6deb77492fbda86db8988685f7413074d1c6f204e012a3dd7.png" />
+<img alt="_images/c669fa14cccff7be02289b7835c614fe80ad799023f827a3226efad417257350.png" src="_images/c669fa14cccff7be02289b7835c614fe80ad799023f827a3226efad417257350.png" />
 </div>
 </div>
 <p>Let us recall the training code from Chapter 5. We previously used this code to train for the parameters of a 1D interpolation grid, minimizing a Mean-Squared Error (MSE) loss function, i.e., the squared difference between the predicted values and the training data values. This is the standard loss function for continuous <em>regression</em> problems.</p>
@@ -1037,7 +1037,7 @@ P = A^{-1}(\tilde{p} - a)
 </div>
 </div>
 </div>
-<p>Now we could train, with the code shown below. However, training takes a bit of time, so if you execute this code in colab it could mean waiting quite a bit, depending on the compute you have available. To avoid this, we pre-trained a model for you on colab for 5 epochs, which took around 18 minutes with the compute available at the time. The checkpoint is uploaded to Zenodo <span id="id3">[<a class="reference internal" href="bibliography.html#id52" title="Frank Dellaert. DVGO checkpoint after 5 epochs. 2023. URL: https://zenodo.org/records/10767234/files/simple_dvgo-5-epochs.pt.">Dellaert, 2023</a>]</span>, and is loaded into memory below. If you want to train with your own parameters or simply re-do the training, you can open this file in colab and set <code class="docutils literal notranslate"><span class="pre">use_pretrained</span></code> to False below.</p>
+<p>Now we could train, with the code shown below. However, training takes a bit of time, so if you execute this code in colab it could mean waiting quite a bit, depending on the compute you have available. To avoid this, we pre-trained a model for you on colab for 5 epochs, which took around 18 minutes with the compute available at the time. The checkpoint is uploaded to Zenodo <span id="id3">[<a class="reference internal" href="bibliography.html#id16" title="Frank Dellaert. DVGO checkpoint after 5 epochs. 2023. URL: https://zenodo.org/records/10767234/files/simple_dvgo-5-epochs.pt.">Dellaert, 2023</a>]</span>, and is loaded into memory below. If you want to train with your own parameters or simply re-do the training, you can open this file in colab and set <code class="docutils literal notranslate"><span class="pre">use_pretrained</span></code> to False below.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># if True, use the pre-trained model, else train a new model</span>
@@ -1071,7 +1071,7 @@ P = A^{-1}(\tilde{p} - a)
 <img src="https://raw.githubusercontent.com/gtbook/robotics/main/Figures7/loss-5-epochs.png?raw=1" style="width:90%" alt="">
 <figcaption>Training loss for SimpleDVGO training run over 5 epochs.</figcaption>
 </figure>
-<p>The training loss curve is shown in Figure <a href="#fig:NeRF-loss" data-reference-type="ref" data-reference="fig:NeRF-loss">4</a>. Note that, since we used 199 images and down-sampled the images by a factor of 4, each epoch corresponds to <span class="math notranslate nohighlight">\(200x200x199\approx 8M\)</span> rays. Given that the batch size used was 1024, this corresponds to approximately 7,800 iterations per epoch, or 39,000 iterations in total for 5 epochs. The loss drops dramatically in the first few iterations, but even after 5 epochs the loss is still slowly but steadily declining.</p>
+<p>The training loss curve is shown in Figure <a class="reference internal" href="#fig:NeRF-loss"><span class="xref myst">4</span></a>. Note that, since we used 199 images and down-sampled the images by a factor of 4, each epoch corresponds to <span class="math notranslate nohighlight">\(200x200x199\approx 8M\)</span> rays. Given that the batch size used was 1024, this corresponds to approximately 7,800 iterations per epoch, or 39,000 iterations in total for 5 epochs. The loss drops dramatically in the first few iterations, but even after 5 epochs the loss is still slowly but steadily declining.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Comparison between training image and rendered image.</span>
@@ -1115,7 +1115,7 @@ P = A^{-1}(\tilde{p} - a)
 <blockquote>
 <div><p>We can take this one step further…</p>
 </div></blockquote>
-<p>The above shows how neural radiance fields represent a radical new way to learn scene representations, using a <em>differentiable</em> volume rendering scheme. One can take this one step further and use the underlying density fields, combined with the motion planning techniques from the previous section, to enable unmanned aerial vehicles to navigate autonomously in new environments. If you want to see how this is done, you can read the 2022 Stanford paper by <span id="id4">Adamkiewicz <em>et al.</em> [<a class="reference internal" href="bibliography.html#id2" title="Michal Adamkiewicz, Timothy Chen, Adam Caccavale, Rachel Gardner, Preston Culbertson, Jeannette Bohg, and Mac Schwager. Vision-only robot navigation in a neural radiance world. IEEE Robotics and Automation Letters, 7(2):4606-4613, 2022. doi:10.1109/LRA.2022.3150497.">2022</a>]</span> that inspired this section. And to see it in action, you can visit their <a class="reference external" href="https://mikh3x4.github.io/nerf-navigation/">project page</a> with videos and simulations.</p>
+<p>The above shows how neural radiance fields represent a radical new way to learn scene representations, using a <em>differentiable</em> volume rendering scheme. One can take this one step further and use the underlying density fields, combined with the motion planning techniques from the previous section, to enable unmanned aerial vehicles to navigate autonomously in new environments. If you want to see how this is done, you can read the 2022 Stanford paper by <span id="id4">Adamkiewicz <em>et al.</em> [<a class="reference internal" href="bibliography.html#id2" title="Michal Adamkiewicz, Timothy Chen, Adam Caccavale, Rachel Gardner, Preston Culbertson, Jeannette Bohg, and Mac Schwager. Vision-Only Robot Navigation in a Neural Radiance World. IEEE Robotics and Automation Letters, 7(2):4606-4613, 2022. doi:10.1109/LRA.2022.3150497.">2022</a>]</span> that inspired this section. And to see it in action, you can visit their <a class="reference external" href="https://mikh3x4.github.io/nerf-navigation/">project page</a> with videos and simulations.</p>
 </section>
 </section>
 
