@@ -385,15 +385,14 @@
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-differentiable-voxel-grid">7.6.3. A Differentiable Voxel Grid</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dvgo">7.6.4. DVGO</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-simulated-dataset">7.6.4.1. A simulated dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dvgo">7.6.4. DVGO</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-simulated-dataset">7.6.5. A simulated dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#training-a-nerf">7.6.6. Training a NeRF</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-rays">7.6.6.1. Creating Rays</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#training-loop">7.6.6.2. Training Loop</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#training-a-nerf">7.6.5. Training a NeRF</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-rays">7.6.5.1. Creating Rays</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#radiance-fields-for-visual-navigation">7.6.6. Radiance Fields for Visual Navigation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#radiance-fields-for-visual-navigation">7.6.7. Radiance Fields for Visual Navigation</a></li>
 </ul>
             </nav>
         </div>
@@ -413,46 +412,46 @@
 </div></blockquote>
 <a class="reference internal image-reference" href="_images/S76-Autonomous_camera_drone-06.jpg"><img alt="Splash image with a drone-like robot, steampunk style" class="align-center" src="_images/S76-Autonomous_camera_drone-06.jpg" style="width: 40%;" /></a>
 <section id="what-is-a-nerf">
-<span id="index-1"></span><h2><span class="section-number">7.6.1. </span>What is a NeRF?<a class="headerlink" href="#what-is-a-nerf" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">7.6.1. </span>What is a NeRF?<a class="headerlink" href="#what-is-a-nerf" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>NeRFs represent 3D scenes to render new views.</p>
 </div></blockquote>
 <p>In this section we will examine how to learn 3D representations from image data. In the previous section we have seen how a cost function derived from an occupancy map can assist in planning drone trajectories while avoiding obstacles. This begs the question what to do when flying into a new environment. We have previously, in Section 7.4, discussed sparse Structure from Motion (SfM), but this does not yield a dense representation that can be used for planning. In this section we take a deeper look at a recent learning-based method to do just that.</p>
-<p>A <strong>neural radiance field</strong> or “NeRF” is a neural representation of a 3D scene which is useful for drones to help with motion planning, obstacle avoidance, or even simply simulation of drone flights. NeRFs are a novel, data-driven solution to the long-standing problem in computer graphics of the realistic rendering of virtual worlds. They were introduced in the field of computer vision in 2020 by a team of researchers from Berkeley and Google, and have since seen an explosion of interest, including in the field of robotics. The field is evolving rapidly, and this section necessarily presents a snapshot in time, but we discuss some of the core ideas that will hopefully stand the test of time.</p>
+<p id="index-1">A <strong>neural radiance field</strong> or “NeRF” is a neural representation of a 3D scene which is useful for drones to help with motion planning, obstacle avoidance, or even simply simulation of drone flights. NeRFs are a novel, data-driven solution to the long-standing problem in computer graphics of the realistic rendering of virtual worlds. They were introduced in the field of computer vision in 2020 by a team of researchers from Berkeley and Google, and have since seen an explosion of interest, including in the field of robotics. The field is evolving rapidly, and this section necessarily presents a snapshot in time, but we discuss some of the core ideas that will hopefully stand the test of time.</p>
 <figure id="fig:NeRF-setup"> 
 <img src="https://raw.githubusercontent.com/gtbook/robotics/main/Figures7/NeRF-setup.png?raw=1" style="width:16cm" alt="">
-<figcaption>Figure 1: A NeRF stores a volumetric scene representation as the weights of an MLP, trained on many images with known pose.</figcaption>
+<figcaption>A NeRF stores a volumetric scene representation as the weights of a neural network, trained on many images with known pose.</figcaption>
 </figure>
-<p>The original 2020 NeRF paper by Mildenhall et al. <span id="id1">[<a class="reference internal" href="bibliography.html#id42" title="Ben Mildenhall, Pratul P. Srinivasan, Matthew Tancik, Jonathan T. Barron, Ravi Ramamoorthi, and Ren Ng. NeRF: representing scenes as neural radiance fields for view synthesis. Commun. ACM, 65(1):99–106, dec 2021. doi:10.1145/3503250.">Mildenhall <em>et al.</em>, 2021</a>]</span> does an excellent job at explaining the basics.
-Figure <a class="reference internal" href="#fig:NeRF-setup"><span class="xref myst">1</span></a>, from that paper, describes the setup: given a set of input images, with <em>known</em> camera pose and intrinsics calibration, a scene representation is learned that encodes the scene.
-The original NeRF paper defines a large neural network that can be trained to predict the value of every pixel in every image. By doing so, the neural network can then also <em>generate</em> new images that are not in the original training set. What is more, the neural network can also be used to predict the 3D structure of the underlying scene, making it possible to do much more than simply view synthesis.</p>
-<p>The original NeRF work has introduced a new way on how to infer 3D scenes from images, and became very popular because:</p>
+<p>The original 2020 NeRF paper by Mildenhall et al. <span id="id1">[<a class="reference internal" href="bibliography.html#id42" title="Ben Mildenhall, Pratul P. Srinivasan, Matthew Tancik, Jonathan T. Barron, Ravi Ramamoorthi, and Ren Ng. NeRF: representing scenes as neural radiance fields for view synthesis. Commun. ACM, 65(1):99–106, dec 2021. doi:10.1145/3503250.">Mildenhall <em>et al.</em>, 2021</a>]</span> does an excellent job of explaining the basics.
+Figure <a class="reference internal" href="#fig:NeRF-setup"><span class="xref myst">1</span></a>, from that paper, describes the setup: given a set of input images, with <em>known</em> camera pose and intrinsics calibration, a representation is learned that encodes the scene.
+The original NeRF paper defines a large neural network that can be trained to predict the value of every pixel in any image that could be acquired by a camera viewing the scene. By doing so, the neural network can then also <em>generate</em> new images that are not in the original training set. What is more, the neural network can also be used to predict the 3D structure of the underlying scene, making it possible to do much more than simply view synthesis.</p>
+<p>The original NeRF work has introduced a new way to infer 3D scenes from images, and is influential because:</p>
 <ul class="simple">
 <li><p>the proposed scheme of learning a neural representation of the 3D scene was very simple;</p></li>
 <li><p>the resulting NeRFs were capable of generating very realistic “renderings” of the learned scene.</p></li>
 </ul>
 <p>While the original NeRF paper was rather slow because of the large neural network, since then faster <em>voxel-based</em> versions have been developed. We work with those variants, making it possible to train your own NeRF-like representation within a notebook.
-In particular, below we extend the 1D interpolation example from Chapter 5, extend it to interpolating in 3D voxel space, and show that this can be used to create a neural <em>radiance</em> field. However, we first need to talk about volume rendering, the basic math underlying all of this.</p>
+In particular, below we extend the 1D interpolation example from Chapter 5 to interpolating in 3D voxel space, and show that this can be used to create a neural <em>radiance</em> field. However, we first need to talk about volume rendering, the basic math underlying all of this.</p>
 </section>
 <section id="volume-rendering">
-<span id="index-2"></span><h2><span class="section-number">7.6.2. </span>Volume Rendering<a class="headerlink" href="#volume-rendering" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">7.6.2. </span>Volume Rendering<a class="headerlink" href="#volume-rendering" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>Integrating color over a volume, weighted by density.</p>
 </div></blockquote>
-<p>The key technique in NeRF is <strong>volume rendering</strong>, a class of methods that generate images by tracing a ray into the scene and taking an integral of some sort over the length of the ray. In the original NeRF, a multi-layer perceptron is used to encode a function from the 3D coordinates on the ray to quantities like density and color, which are integrated to yield an image.</p>
+<p id="index-2">The key technique in NeRF is <strong>volume rendering</strong>, a class of methods that generate images by tracing a ray into the scene and taking an integral of some sort over the length of the ray. In the original NeRF, a multi-layer perceptron is used to encode a function from the 3D coordinates on the ray to quantities like density and color, which are integrated to yield an image.</p>
 <figure id="fig:NeRF-pipeline"> 
 <img src="https://raw.githubusercontent.com/gtbook/robotics/main/Figures7/NeRF-pipeline.png?raw=1" style="width:16cm" alt="">
-<figcaption>Figure 2: New views are rendered by integrating the density and color at regular intervals along each viewing ray.</figcaption>
+<figcaption>New views are rendered by integrating the density and color at regular intervals along each viewing ray.</figcaption>
 </figure><p>Figure <a class="reference internal" href="#fig:NeRF-pipeline"><span class="xref myst">2</span></a> sketches out how volume rendering works. On the left, for <em>every</em> pixel you want to render, a ray is projected into the 3D volume of interest (here represented by a cube) and sampled 3D point locations are defined along this ray. For every sample, the neural network <span class="math notranslate nohighlight">\(F_\Theta\)</span> is queried for both a local <em>density</em> <span class="math notranslate nohighlight">\(\delta\)</span> and a <em>color</em> <span class="math notranslate nohighlight">\(c\)</span>. The colors are then integrated along the ray, with local color contributions weighted by the local density, to yield a final pixel color.</p>
 <p>To get some intuition, think about where high density regions will exist for the simple example scene shown. Here, we expect the density to be high on the <em>surface</em> of the object - the lego excavator toy in this example. If that is the only high-density area on the ray, the pixel corresponding to that ray will just use the color from that high-density surface. However, the integration scheme, which we implement below, is also able to account for occlusions or even semi-transparency.</p>
 <section id="sampling-from-rays">
 <h3><span class="section-number">7.6.2.1. </span>Sampling from Rays<a class="headerlink" href="#sampling-from-rays" title="Link to this heading">#</a></h3>
-<p>The first part of a volume renderer is to evenly sample points on rays, emanating from the optical center of a camera. When we are given the <code class="docutils literal notranslate"><span class="pre">origin</span></code> and the <code class="docutils literal notranslate"><span class="pre">direction</span></code> of a ray (as a unit-vector) sampling is simple enough: a point <span class="math notranslate nohighlight">\(P\)</span> on the ray at a distance <span class="math notranslate nohighlight">\(t\)</span> from the origin <span class="math notranslate nohighlight">\(O\)</span>, in the direction <span class="math notranslate nohighlight">\(D\)</span> is given as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-8ad04ba6-1106-44e5-9bc6-a1fcf4fe550b">
-<span class="eqno">(7.67)<a class="headerlink" href="#equation-8ad04ba6-1106-44e5-9bc6-a1fcf4fe550b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<p>The first part of a volume renderer is to evenly sample points on rays that emanate from the optical center of a camera. When we are given the origin and the direction of a ray (as a unit vector) sampling is simple enough: a point <span class="math notranslate nohighlight">\(P\)</span> on the ray at a distance <span class="math notranslate nohighlight">\(t\)</span> from the origin <span class="math notranslate nohighlight">\(O\)</span>, in the direction <span class="math notranslate nohighlight">\(D\)</span> is given as</p>
+<div class="amsmath math notranslate nohighlight" id="equation-57faf8f4-5c93-4da0-9bee-56d57ac6dd66">
+<span class="eqno">(7.65)<a class="headerlink" href="#equation-57faf8f4-5c93-4da0-9bee-56d57ac6dd66" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P(t,O,D) = O + t  D
 \end{equation}\]</div>
-<p>where <span class="math notranslate nohighlight">\(t\)</span> is a random depth along the ray. Hence, we only need to sample many <span class="math notranslate nohighlight">\(t\)</span> values evenly and we are done.</p>
+<p>where <span class="math notranslate nohighlight">\(t\)</span> is the along the ray. Hence, we only need to sample many <span class="math notranslate nohighlight">\(t\)</span> values evenly and we are done.</p>
 <p>We will be implementing volume rendering by making use of the Pytorch library, to ensure we can efficiently handle many thousands of rays in parallel. A lot of the parallel processing that happens on the GPU is handled transparently, which is a key driver behind the deep learning revolution.
 As a case in point, our first function <code class="docutils literal notranslate"><span class="pre">sample_along_ray</span></code> below takes a set of t_values and produces the corresponding sampled points <span class="math notranslate nohighlight">\(P\)</span>:</p>
 <div class="cell docutils container">
@@ -478,8 +477,9 @@ As a case in point, our first function <code class="docutils literal notranslate
 </div>
 </div>
 </div>
-<p>The last line above asserts that we sampled 2 rays for 25 different <span class="math notranslate nohighlight">\(t\)</span>-values, for a total of 50 three-dimensional points. We can also plot them, projected onto the xy-plane, to show visually what happened:</p>
-<div class="cell docutils container">
+<p>The last line above asserts that we sampled 2 rays for 25 different <span class="math notranslate nohighlight">\(t\)</span>-values, for a total of 50 three-dimensional points. We can also plot them projected onto the xy-plane, as we do in Figure <a class="reference internal" href="#fig:2-rays-regular-samples"><span class="xref myst">3</span></a>, to show visually what happened.
+The figure shows the 25 regularly sampled points, up to a distance of 1.0 units, in two different directions.</p>
+<!-- The rays share a common origin, but in NeRF we often mix rays from different viewpoints in which this is not the case. Below we train with batches of 1024 rays at a time, using the same code, which is still quite efficient on modern GPUs. --><div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Regular samples along 2 rays in 3D-space, projected on x-y plane.</span>
 <span class="c1">#| label: fig:2-rays-regular-samples</span>
@@ -493,25 +493,24 @@ As a case in point, our first function <code class="docutils literal notranslate
 <img alt="_images/695e98fbf56a0e51eddaf4ad63a5789ac22ebe8608793d5b11d77523a0ecd63c.png" src="_images/695e98fbf56a0e51eddaf4ad63a5789ac22ebe8608793d5b11d77523a0ecd63c.png" />
 </div>
 </div>
-<p>The figure shows the 25 regularly sampled points, up to a distance of 1.0 units, in two different directions. The rays share a common origin, but in NeRF we often mix rays from different viewpoints in which this is not the case. Below we train with batches of 1024 rays at a time, using the same code, which is still quite efficient on modern GPUs.</p>
 </section>
 <section id="integration-along-rays">
-<span id="index-3"></span><h3><span class="section-number">7.6.2.2. </span>Integration along Rays<a class="headerlink" href="#integration-along-rays" title="Link to this heading">#</a></h3>
-<p>The second part of the volume rendering story is where the magic happens. Let us assume that we are given the densities <span class="math notranslate nohighlight">\(\sigma_i\)</span> and colors <span class="math notranslate nohighlight">\(c_i\)</span> at <span class="math notranslate nohighlight">\(N\)</span> sampled points <span class="math notranslate nohighlight">\(P_i\)</span> on a ray corresponding to a given pixel. We can then calculate the color <span class="math notranslate nohighlight">\(C\)</span> for the pixel using the equation below,</p>
-<div class="amsmath math notranslate nohighlight" id="equation-14759303-c253-4662-9ba3-81c159f7221f">
-<span class="eqno">(7.68)<a class="headerlink" href="#equation-14759303-c253-4662-9ba3-81c159f7221f" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<h3><span class="section-number">7.6.2.2. </span>Integration along Rays<a class="headerlink" href="#integration-along-rays" title="Link to this heading">#</a></h3>
+<p id="index-3">The second part of the volume rendering story is where the magic happens. Let us assume that we are given the above densities <span class="math notranslate nohighlight">\(\sigma_i\)</span> and colors <span class="math notranslate nohighlight">\(c_i\)</span> at <span class="math notranslate nohighlight">\(N\)</span> sampled points <span class="math notranslate nohighlight">\(P_i\)</span> on a ray corresponding to a given pixel. We can then calculate the color <span class="math notranslate nohighlight">\(C\)</span> for the pixel using the equation below,</p>
+<div class="amsmath math notranslate nohighlight" id="equation-e0bcf866-52fe-4a42-86b4-788661f1ff03">
+<span class="eqno">(7.66)<a class="headerlink" href="#equation-e0bcf866-52fe-4a42-86b4-788661f1ff03" title="Permalink to this equation">#</a></span>\[\begin{equation}
 C = \sum_{i=1}^N \alpha_i T_i c_i
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\alpha_i\)</span> is the <strong>opacity</strong> and <span class="math notranslate nohighlight">\(T_i\)</span> is the <strong>transmittance</strong> at <span class="math notranslate nohighlight">\(P_i\)</span>, both defined below:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-36b55089-3364-408a-83be-979198c2fe54">
-<span class="eqno">(7.69)<a class="headerlink" href="#equation-36b55089-3364-408a-83be-979198c2fe54" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ac54cfae-3c8c-44bf-8cff-783266744378">
+<span class="eqno">(7.67)<a class="headerlink" href="#equation-ac54cfae-3c8c-44bf-8cff-783266744378" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{align}
 \alpha_i &amp;\doteq 1 - \exp(-\sigma_i) \\
 T_i &amp;\doteq \exp ( - \sum_{j=1}^{i-1} \sigma_j).
 \end{align}
 \end{equation}\]</div>
-<p>The quantity <span class="math notranslate nohighlight">\(\alpha_i\)</span> is the easier of the two to understand: a density <span class="math notranslate nohighlight">\(\sigma=0\)</span> corresponds to an alpha value <span class="math notranslate nohighlight">\(\alpha=0\)</span>, signifying full transparency. Conversely, a high density <span class="math notranslate nohighlight">\(\sigma &gt;&gt; 0\)</span> will yield an alpha value close to <span class="math notranslate nohighlight">\(\alpha=1\)</span>, i.e., fully opaque. The transmittance <span class="math notranslate nohighlight">\(T_i\)</span>, on the other hand, is computed over all samples up to the current sample <span class="math notranslate nohighlight">\(P_i\)</span>, and measures the <em>lack</em> of occlusion in the space between the <span class="math notranslate nohighlight">\(i^th\)</span> sample and the ray origin.</p>
-<p>The calculation of <span class="math notranslate nohighlight">\(C\)</span> above simulates how light is absorbed as it travels through a medium, and can even deal with semi-transparency such as smoke, flames, frosted windows, etc. It is a simplified version of the calculation in the original NeRF paper as we do not bother to deal with non-uniform sampling. The color <span class="math notranslate nohighlight">\(c_i\)</span> at the <span class="math notranslate nohighlight">\(i^th\)</span> sample will contribute a lot if there is not a lot of “stuff” between it and the origin (transmittance <span class="math notranslate nohighlight">\(T_i\)</span> is high), <em>and</em> the local opacity <span class="math notranslate nohighlight">\(\alpha_i\)</span> is high. Conversely, if either visibility from the origin is occluded (transmittance <span class="math notranslate nohighlight">\(T_i\)</span> is low) <em>or</em> there is really nothing there (opacity <span class="math notranslate nohighlight">\(\alpha_i\)</span> is low) then the sample will not contribute much to the pixel color <span class="math notranslate nohighlight">\(C\)</span>.</p>
+<p>The quantity <span class="math notranslate nohighlight">\(\alpha_i\)</span> is the easier of the two to understand: a density <span class="math notranslate nohighlight">\(\sigma=0\)</span> corresponds to an alpha value <span class="math notranslate nohighlight">\(\alpha=0\)</span>, signifying full transparency. Conversely, a high density <span class="math notranslate nohighlight">\(\sigma &gt;&gt; 0\)</span> will yield an alpha value close to <span class="math notranslate nohighlight">\(\alpha=1\)</span>, i.e., fully opaque. The transmittance <span class="math notranslate nohighlight">\(T_i\)</span>, on the other hand, is computed over all samples up to the current sample <span class="math notranslate nohighlight">\(P_i\)</span>, and measures the <em>lack</em> of occlusion in the space between the <span class="math notranslate nohighlight">\(i^{th}\)</span> sample and the ray origin.</p>
+<p>The calculation of <span class="math notranslate nohighlight">\(C\)</span> above simulates how light is absorbed as it travels through a medium, and can even deal with semi-transparency such as smoke, flames, frosted windows, etc. It is a simplified version of the calculation in the original NeRF paper as we do not bother to deal with non-uniform sampling. The color <span class="math notranslate nohighlight">\(c_i\)</span> at the <span class="math notranslate nohighlight">\(i^{th}\)</span> sample will contribute a lot if there is not a lot of “stuff” between it and the origin (transmittance <span class="math notranslate nohighlight">\(T_i\)</span> is high), <em>and</em> the local opacity <span class="math notranslate nohighlight">\(\alpha_i\)</span> is high. Conversely, if either visibility from the origin is occluded (transmittance <span class="math notranslate nohighlight">\(T_i\)</span> is low) <em>or</em> there is really nothing there (opacity <span class="math notranslate nohighlight">\(\alpha_i\)</span> is low) then the sample will not contribute much to the pixel color <span class="math notranslate nohighlight">\(C\)</span>.</p>
 <p>The function <code class="docutils literal notranslate"><span class="pre">render_along_ray</span></code> below implements this equation, again taking care that arbitrary batch dimensions are correctly handled. It also allows for specifying a background color that is composited with the rendered color in case the ray does not hit anything in the scene. We defined the default color <code class="docutils literal notranslate"><span class="pre">WHITE</span></code> in the preamble.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -543,8 +542,8 @@ T_i &amp;\doteq \exp ( - \sum_{j=1}^{i-1} \sigma_j).
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[0.7954953  0.5611622  0.5830051 ]
- [0.3854808  0.46464798 0.84558284]]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[0.6647172  0.57115155 0.29345107]
+ [0.47569558 0.67142427 0.7857715 ]]
 </pre></div>
 </div>
 </div>
@@ -553,22 +552,24 @@ T_i &amp;\doteq \exp ( - \sum_{j=1}^{i-1} \sigma_j).
 </section>
 </section>
 <section id="a-differentiable-voxel-grid">
-<span id="index-4"></span><h2><span class="section-number">7.6.3. </span>A Differentiable Voxel Grid<a class="headerlink" href="#a-differentiable-voxel-grid" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">7.6.3. </span>A Differentiable Voxel Grid<a class="headerlink" href="#a-differentiable-voxel-grid" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>A voxel grid of density or color.</p>
 </div></blockquote>
 <p>A key decision in the NeRF architecture is how to represent the function <span class="math notranslate nohighlight">\(F_\Theta\)</span> so it can be queried for a density and a color at every point. In short, we need:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-5c8ede97-c35f-4a17-9b48-2b45d18ba044">
-<span class="eqno">(7.70)<a class="headerlink" href="#equation-5c8ede97-c35f-4a17-9b48-2b45d18ba044" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-9ee94e20-0bde-406d-b809-2e2ca8c47e0b">
+<span class="eqno">(7.68)<a class="headerlink" href="#equation-9ee94e20-0bde-406d-b809-2e2ca8c47e0b" title="Permalink to this equation">#</a></span>\[\begin{equation}
 (\sigma, c) = F_\Theta(P)
 \end{equation}\]</div>
 <p>with <span class="math notranslate nohighlight">\(P\in R^3\)</span>, <span class="math notranslate nohighlight">\(\sigma\in R\)</span>, and <span class="math notranslate nohighlight">\(c\in[0...255]^3\)</span>. Note that in computer vision, neural networks typically take high-dimensional inputs, e.g., entire images, so having such a low-dimensional input (3) is highly unusual. This “coordinate-based” approach is one of the breakthroughs of NeRF-style representations.</p>
-<p>We will use a <strong>voxel grid</strong> to represent <span class="math notranslate nohighlight">\(F_\Theta\)</span>. In the original NeRF paper, the authors used a fully connected neural network, also called a multi-layer perceptron (MLP) that takes a 3D coordinate as input, and in some variants also a ray direction. In DVGO, a later and much faster method, the color and density are instead stored in a voxel grid, which is the approach we adopt. The key is to create a <em>differentiable</em> 3D interpolation scheme, that we can then <em>train</em> by asking it to predict the colors in the input images.</p>
-<p id="index-5">We can build upon the 1D interpolation example that we introduced in Section 5.6. However, to represent 3D scenes we need to generalize it to 3D. In particular, the interpolation function has to be changed from simple linear interpolation over an interval, to <strong>trilinear interpolation</strong> on voxels.
-The code below implements trilinear interpolation: the values on the <em>eight</em> corners of each voxel are combined using three blending weights, which depend on where the queried point lies within the voxel:</p>
+<p id="index-5"><span id="index-4"></span>We will use a <strong>voxel grid</strong> to represent <span class="math notranslate nohighlight">\(F_\Theta\)</span>. The original NeRF paper used a fully connected neural network, also called a multi-layer perceptron (MLP) that takes a 3D coordinate as input, and in some variants also a ray direction. In DVGO, a later and much faster method, the color and density are instead stored in a voxel grid, which is the approach we adopt. The key is to create a <em>differentiable</em> 3D interpolation scheme, that we can then <em>train</em> by asking it to predict the colors in the input images.</p>
+<p id="index-6">We can build upon the 1D interpolation example that we introduced in Section 5.6. However, to represent 3D scenes we need to generalize it to 3D. In particular, the interpolation function has to be changed from simple linear interpolation over an interval, to <strong>trilinear interpolation</strong> on voxels.
+The code in Figure <a class="reference internal" href="#fig:rendering-along-ray"><span class="xref myst">4</span></a> implements trilinear interpolation in the <code class="docutils literal notranslate"><span class="pre">Voxelgrid</span></code> class. The values on the <em>eight</em> corners of each voxel are combined using three blending weights, which depend on where the queried point lies within the voxel.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">bracket</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Rendering along a ray with random density and colors.</span>
+<span class="c1">#| label: fig:rendering-along-ray</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">bracket</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the indices of the nearest grid points to x, as well as weights.&quot;&quot;&quot;</span>
     <span class="c1"># Check device of x and n:</span>
     <span class="n">x0</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">long</span><span class="p">()</span>
@@ -616,7 +617,7 @@ The code below implements trilinear interpolation: the values on the <em>eight</
 </div>
 </div>
 </div>
-<p>The VoxelGrid effectively defines a parameterized function in 3D. When we query it, we need to provide 3D coordinates. For example, the code below initializes a VoxelGrid with random values, and then evaluates the a scalar function at a 3D point:</p>
+<p>A <code class="docutils literal notranslate"><span class="pre">VoxelGrid</span></code> instance effectively defines a parameterized function in 3D. When we query it, we need to provide 3D coordinates. For example, the code below initializes a voxel grid with random values, and then evaluates the a scalar function at a 3D point:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">voxel_grid_module</span> <span class="o">=</span> <span class="n">VoxelGrid</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">d</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
@@ -627,12 +628,13 @@ The code below implements trilinear interpolation: the values on the <em>eight</
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Interpolated Output: 0.45334
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Interpolated Output: 0.63080
 </pre></div>
 </div>
 </div>
 </div>
-<p>Again the code is carefully written so it can handle both arbitrary batches inputs and multi-dimensional outputs. As an example, below we create a grid that interpolates a three-dimensional function (<code class="docutils literal notranslate"><span class="pre">d=3</span></code>), like color, and evaluate it at a 2x2 batch <code class="docutils literal notranslate"><span class="pre">x</span></code> of 3D points:</p>
+<p>The code is carefully written so it can handle both arbitrary batches of inputs and multi-dimensional outputs.
+As an example, below we create a grid that interpolates a three-dimensional function (<code class="docutils literal notranslate"><span class="pre">d=3</span></code>), like color, and evaluate it at a 2x2 batch <code class="docutils literal notranslate"><span class="pre">x</span></code> of 3D points:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">voxel_grid_module</span> <span class="o">=</span> <span class="n">VoxelGrid</span><span class="p">(</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">d</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="n">BLUE</span><span class="p">)</span>
@@ -657,11 +659,13 @@ Interpolated Output:
 </div>
 </div>
 </div>
-<p>Note we used a variant of the constructor that fills the grid with an initial value, here the color <code class="docutils literal notranslate"><span class="pre">BLUE</span></code> defined in the preamble. Being able to handle large batches of points is crucial when training with stochastic gradient descent, as we saw before. But when training a NeRF, we will also use the ability to have arbitrary input shapes for other purposes.</p>
+<p>Note we used a variant of the constructor that fills the grid with an initial value, here the color <code class="docutils literal notranslate"><span class="pre">BLUE</span></code> defined in the preamble.
+Being able to handle large batches of points is crucial when training with stochastic gradient descent, as we saw before.
+But when training a NeRF, we will also use the ability to have arbitrary input shapes for other purposes.</p>
 </section>
 <section id="dvgo">
 <h2><span class="section-number">7.6.4. </span>DVGO<a class="headerlink" href="#dvgo" title="Link to this heading">#</a></h2>
-<p>We can now define a simple DVGO (Direct Voxel Grid Optimization by <span id="id2">Sun <em>et al.</em> [<a class="reference internal" href="bibliography.html#id54" title="Cheng Sun, Min Sun, and Hwann-Tzong Chen. Direct Voxel Grid Optimization: Super-fast Convergence for Radiance Fields Reconstruction. In 2022 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR), 5449-5459. 2022. doi:10.1109/CVPR52688.2022.00538.">2022</a>]</span>) class that combines:</p>
+<p id="index-7">We can now define a simple DVGO (Direct Voxel Grid Optimization by <span id="id2">Sun <em>et al.</em> [<a class="reference internal" href="bibliography.html#id54" title="Cheng Sun, Min Sun, and Hwann-Tzong Chen. Direct Voxel Grid Optimization: Super-fast Convergence for Radiance Fields Reconstruction. In 2022 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR), 5449-5459. 2022. doi:10.1109/CVPR52688.2022.00538.">2022</a>]</span>) class that combines:</p>
 <ul class="simple">
 <li><p>sampling points <span class="math notranslate nohighlight">\(P\)</span> along each ray;</p></li>
 <li><p>converting from scene coordinates into grid coordinates;</p></li>
@@ -684,20 +688,19 @@ Interpolated Output:
 </div>
 </div>
 </div>
-<p>The DVGO class below first pre-computes a number of things in the constructor, and then just has a fully differentiable <code class="docutils literal notranslate"><span class="pre">forward</span></code> method. Beyond beyond sampling rays and volume rendering, which we discussed before, there are three new pieces:</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">SimpleDVGO</span></code> in Figure <a class="reference internal" href="#code:simple-dvgo"><span class="xref myst">5</span></a> first pre-computes a number of things in the constructor, and then just has a fully differentiable <code class="docutils literal notranslate"><span class="pre">forward</span></code> method.
+Beyond sampling rays and volume rendering, which we discussed before, there are three new pieces:</p>
 <ul class="simple">
 <li><p>there is a rescaling step to go from scene to grid coordinates</p></li>
-<li><p>the output from the density voxel grid is put through a softplus nonlinearity.</p></li>
-<li><p>the color from the density voxel grid is put through a sigmoid nonlinearity.</p></li>
+<li><p>the output from the density voxel grid is put through a <code class="docutils literal notranslate"><span class="pre">relu</span></code> nonlinearity.</p></li>
+<li><p>the color is put through a <code class="docutils literal notranslate"><span class="pre">clamp</span></code> nonlinearity.</p></li>
 </ul>
-<p>The latter two steps are a differentiable way to ensure the output samples remain within their expected ranges. Note also that training a NeRF can take a long time, so we are careful to use <code class="docutils literal notranslate"><span class="pre">float32</span></code> everywhere.</p>
+<p>The latter two steps, which you can look up in pytorch’s documentation, are a differentiable way to ensure the output samples remain within their expected ranges. Note also that training a NeRF can take a long time, so we are careful to use <code class="docutils literal notranslate"><span class="pre">float32</span></code> everywhere, which takes less GPU resources.</p>
+<p>We also need a <code class="docutils literal notranslate"><span class="pre">sample_rays</span></code> function that is used to sample points along the rays according to provided <code class="docutils literal notranslate"><span class="pre">t_values</span></code>. During training, it adds a small random scalar to the t_values to prevent overfitting to the discrete sampling locations.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">sample_rays</span><span class="p">(</span><span class="n">t_values</span><span class="p">,</span> <span class="n">rays</span><span class="p">,</span> <span class="n">training</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sample points along the rays, using the t_values defined in the constructor.</span>
-<span class="sd">        During training, add a small random scalar to t_values to prevent overfitting to the</span>
-<span class="sd">        discrete sampling locations.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sample points along the rays. &quot;&quot;&quot;</span>
     <span class="c1"># Extract ray origins and directions from rays</span>
     <span class="n">origins</span> <span class="o">=</span> <span class="n">rays</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
     <span class="n">directions</span> <span class="o">=</span> <span class="n">rays</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">3</span><span class="p">:]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
@@ -719,7 +722,9 @@ Interpolated Output:
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">SimpleDVGO</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: A simplified DVGO algorithm for differentiable volume rendering.</span>
+<span class="c1">#| label: code:simple-dvgo</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SimpleDVGO</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize voxel grids and bounding box corners.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>  <span class="c1"># Calling the superclass&#39;s __init__ method</span>
@@ -759,11 +764,6 @@ Interpolated Output:
 
         <span class="c1"># Render</span>
         <span class="k">return</span> <span class="n">render_along_ray</span><span class="p">(</span><span class="n">density</span><span class="p">,</span> <span class="n">rgb</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">background</span><span class="p">)</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">alpha</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;return the alpha for the density voxel grid&quot;&quot;&quot;</span>
-        <span class="n">density</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">density_voxel_grid</span><span class="o">.</span><span class="n">grid</span><span class="p">)</span>
-        <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">density</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -788,13 +788,14 @@ Interpolated Output:
 </div>
 </div>
 </div>
+</section>
 <section id="a-simulated-dataset">
-<h3><span class="section-number">7.6.4.1. </span>A simulated dataset<a class="headerlink" href="#a-simulated-dataset" title="Link to this heading">#</a></h3>
-<figure id="fig:stonehenge">
+<h2><span class="section-number">7.6.5. </span>A simulated dataset<a class="headerlink" href="#a-simulated-dataset" title="Link to this heading">#</a></h2>
+<!-- <figure id="fig:stonehenge">
 <img src="https://github.com/gtbook/robotics/blob/main/stonehenge/train/render47.png?raw=1" style="width:14cm" alt="">
 <figcaption>One of the synthetically generated images from the stonehenge dataset.</figcaption>
-</figure>
-<p>We will use a dataset generated by Stanford researchers using Blender, using a simple 3D model of the Stonehenge monument in England. The dataset was originally published as part of the <a class="reference external" href="https://mikh3x4.github.io/nerf-navigation/">Stanford NeRF Navigation project</a>, and consists of 500 images, split into 200 images for training, and then validation and tests sets of 150 images each. One of the training images is shown above. The code below illustrates how to read the image into memory (using a function from the <code class="docutils literal notranslate"><span class="pre">stonehenge</span></code> module) and display it:</p>
+</figure> -->
+<p>We will use a dataset generated by Stanford researchers <span id="id3">[<a class="reference internal" href="bibliography.html#id2" title="Michal Adamkiewicz, Timothy Chen, Adam Caccavale, Rachel Gardner, Preston Culbertson, Jeannette Bohg, and Mac Schwager. Vision-Only Robot Navigation in a Neural Radiance World. IEEE Robotics and Automation Letters, 7(2):4606-4613, 2022. doi:10.1109/LRA.2022.3150497.">Adamkiewicz <em>et al.</em>, 2022</a>]</span> using Blender, using a simple 3D model of the Stonehenge monument in England. The dataset was originally published as part of the <a class="reference external" href="https://mikh3x4.github.io/nerf-navigation/">Stanford NeRF Navigation project</a>, and consists of 500 images, split into 200 images for training, and then validation and tests sets of 150 images each. Figure <a class="reference internal" href="#fig:training-image"><span class="xref myst">6</span></a> illustrates how to read the image into memory (using a function from the <code class="docutils literal notranslate"><span class="pre">stonehenge</span></code> module) and display it.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: An image from the training set.</span>
@@ -810,48 +811,48 @@ Interpolated Output:
 </div>
 <p>Feel free to modify the index above and examine any of the other 198 images in the training set.</p>
 </section>
-</section>
 <section id="training-a-nerf">
-<h2><span class="section-number">7.6.5. </span>Training a NeRF<a class="headerlink" href="#training-a-nerf" title="Link to this heading">#</a></h2>
-<p>Now that we built the basic infrastructure to render a NeRF and regress it from data, let us apply it to real images. To do this, we will need two distinct pieces of information:</p>
+<h2><span class="section-number">7.6.6. </span>Training a NeRF<a class="headerlink" href="#training-a-nerf" title="Link to this heading">#</a></h2>
+<p>Now that we have built the basic infrastructure to render a NeRF and regress it from data, let us apply it to real images. To do this, we will need two distinct pieces of information:</p>
 <ul class="simple">
-<li><p>the actual images themselves</p></li>
-<li><p>accurate geometry from where the images were taken</p></li>
+<li><p>the actual images themselves,</p></li>
+<li><p>accurate geometry from where the images were taken.</p></li>
 </ul>
-<p>The latter is important because, as we saw above, a NeRF is trained with a set of <em>rays</em>. For a given image, every pixel in the image corresponds to a ray, and the <em>origin</em> of the ray is exactly the optical center of the camera. To calculate the <em>direction</em> of the ray need two pieces of information for ech image:</p>
+<p>The latter is important because, as we saw above, a NeRF is trained with a set of <em>rays</em>. For a given image, every pixel in the image corresponds to a ray, and the <em>origin</em> of the ray is exactly the optical center of the camera. To calculate the <em>direction</em> of the ray need two pieces of information for each image:</p>
 <ul class="simple">
-<li><p>the <em>intrinsic</em> calibration of the camera, most importantly the focal length, tells us how to convert pixel coordinates into a direction in the camera coordinate frame.</p></li>
-<li><p>the <em>extrinsic</em> calibration, position and orientation with which the image was taken, is needed to transform directions in the camera frame into the scene coordinate frame.</p></li>
+<li><p>The <em>intrinsic</em> calibration of the camera, most importantly the focal length, tells us how to convert pixel coordinates into a direction in the camera coordinate frame.</p></li>
+<li><p>The <em>extrinsic</em> calibration, position and orientation from which the image was taken, is needed to transform directions in the camera frame into the scene coordinate frame.</p></li>
 </ul>
-<p>Acquiring all this information for an arbitrary image sequence taken with some unknown, uncalibrated camera can be complicated. Cameras come in a variety of sizes and with very different lenses, and effects like radial distortion make the modeling process non-trivial. In addition, recovering the actual position and attitude of the camera in a scene is typically done through structure from motion, which can be time-consuming and tricky.</p>
-<p id="index-6">In the following, we will assume that all this hard work has been done for us, and/or the images have been simulated with exactly known camera parameters, both intrinsic and extrinsic. One popular way to accomplish this is by providing undistorted images accompanied by a <span class="math notranslate nohighlight">\(3 \times 4\)</span> <strong>camera matrix</strong> <span class="math notranslate nohighlight">\(M\)</span>. Recall that a 3D point <span class="math notranslate nohighlight">\(P\)</span> can be projected into an image via</p>
-<div class="amsmath math notranslate nohighlight" id="equation-fba54891-0491-4303-aeed-cbcdf34112bd">
-<span class="eqno">(7.71)<a class="headerlink" href="#equation-fba54891-0491-4303-aeed-cbcdf34112bd" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<p>Acquiring all this information for an arbitrary image sequence taken with some unknown, uncalibrated camera can be complicated. Cameras come in a variety of sizes and with very different lenses, and effects like radial distortion make the modeling process nontrivial. In addition, recovering the actual position and attitude of the camera in a scene is typically done through structure from motion, which can be time-consuming and tricky.</p>
+<p id="index-8">In the following, we will assume that all this hard work has been done for us, and/or the images have been simulated with exactly known camera parameters, both intrinsic and extrinsic. One popular way to accomplish this is by providing undistorted images accompanied by a <span class="math notranslate nohighlight">\(3 \times 4\)</span> <strong>camera matrix</strong> <span class="math notranslate nohighlight">\(M\)</span>.
+Recall from Section 5.3 that a 3D point <span class="math notranslate nohighlight">\(P\)</span> can be projected into an image via</p>
+<div class="amsmath math notranslate nohighlight" id="equation-04f35679-8164-42f3-8102-541566d8de2b">
+<span class="eqno">(7.69)<a class="headerlink" href="#equation-04f35679-8164-42f3-8102-541566d8de2b" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \tilde{p} = K R^T (P - t)
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\tilde{p}\)</span> are <em>homogeneous</em> 2D image coordinates. We can re-write this as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b636dacb-82a8-4e9c-a1dd-36b58887ca1e">
-<span class="eqno">(7.72)<a class="headerlink" href="#equation-b636dacb-82a8-4e9c-a1dd-36b58887ca1e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-5df13729-b85e-4e1d-8964-640500ea512a">
+<span class="eqno">(7.70)<a class="headerlink" href="#equation-5df13729-b85e-4e1d-8964-640500ea512a" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \tilde{p} = M\tilde{P}
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\tilde{P} = \begin{bmatrix}P \\1 \end{bmatrix}\)</span> and the camera matrix <span class="math notranslate nohighlight">\(M\)</span> is given by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-d2c56b39-6f04-4342-8313-3d0dde4bbee7">
-<span class="eqno">(7.73)<a class="headerlink" href="#equation-d2c56b39-6f04-4342-8313-3d0dde4bbee7" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-4e9644a3-0f6a-454f-91ca-ebef4280c7e3">
+<span class="eqno">(7.71)<a class="headerlink" href="#equation-4e9644a3-0f6a-454f-91ca-ebef4280c7e3" title="Permalink to this equation">#</a></span>\[\begin{equation}
 M = [A|a] = [K R^T | - K R^T t]
 \end{equation}\]</div>
 <p>That means that if we are <em>given</em> the camera matrix <span class="math notranslate nohighlight">\(M\)</span> we can always recover the ray origins as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-3b764e1b-382a-4b45-bca2-2b60e0f4fb85">
-<span class="eqno">(7.74)<a class="headerlink" href="#equation-3b764e1b-382a-4b45-bca2-2b60e0f4fb85" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-cb40fab2-79eb-4d8e-8376-631588b5e063">
+<span class="eqno">(7.72)<a class="headerlink" href="#equation-cb40fab2-79eb-4d8e-8376-631588b5e063" title="Permalink to this equation">#</a></span>\[\begin{equation}
 t = -A^{-1} a
 \end{equation}\]</div>
 <p>and a random 3D point <span class="math notranslate nohighlight">\(P\)</span> on the ray corresponding to <span class="math notranslate nohighlight">\(\tilde{p}\)</span> as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-1c4fc363-6245-4239-a8f1-066f2fac6231">
-<span class="eqno">(7.75)<a class="headerlink" href="#equation-1c4fc363-6245-4239-a8f1-066f2fac6231" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-84f9218e-56fc-4eaa-9c24-81fd1a9fc1ff">
+<span class="eqno">(7.73)<a class="headerlink" href="#equation-84f9218e-56fc-4eaa-9c24-81fd1a9fc1ff" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P = A^{-1}(\tilde{p} - a)
 \end{equation}\]</div>
 <p>since <span class="math notranslate nohighlight">\(\tilde{p} = AP + a\)</span>. We will illustrate this below with the Stonehenge dataset.</p>
 <section id="creating-rays">
-<h3><span class="section-number">7.6.5.1. </span>Creating Rays<a class="headerlink" href="#creating-rays" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">7.6.6.1. </span>Creating Rays<a class="headerlink" href="#creating-rays" title="Link to this heading">#</a></h3>
 <p>The Stonehenge dataset came with its camera matrices: they were all written in a json file, which we can parse into a python dictionary:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -869,7 +870,7 @@ P = A^{-1}(\tilde{p} - a)
 </div>
 </div>
 </div>
-<p>The camera matrix associated with the image below can then be extracted by converting to numpy:</p>
+<p>The camera matrix associated with the image below can then be extracted by converting to <code class="docutils literal notranslate"><span class="pre">numpy</span></code>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">M</span> <span class="o">=</span> <span class="n">stonehenge</span><span class="o">.</span><span class="n">extract_camera_matrix</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">47</span><span class="p">,</span> <span class="p">(</span><span class="mi">200</span><span class="p">,</span><span class="mi">200</span><span class="p">))</span>
@@ -910,18 +911,7 @@ P = A^{-1}(\tilde{p} - a)
 </div>
 </div>
 </div>
-<p>Let us show what a batch of 300 rays looks like, with the rendering volume shown as well:</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">data_iter</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">data_loader</span><span class="p">)</span>
-<span class="n">x_batch</span><span class="p">,</span> <span class="n">y_batch</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">data_iter</span><span class="p">)</span>
-<span class="k">assert</span> <span class="n">x_batch</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">torch</span><span class="o">.</span><span class="n">Size</span><span class="p">([</span><span class="mi">300</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
-<span class="k">assert</span> <span class="n">y_batch</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">torch</span><span class="o">.</span><span class="n">Size</span><span class="p">([</span><span class="mi">300</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
-</pre></div>
-</div>
-</div>
-</div>
+<p>In Figure <a class="reference internal" href="#fig:300-rays"><span class="xref myst">7</span></a> we show what a batch of 300 rays looks like, with the rendering volume shown as well.</p>
 <div class="cell tag_hide-input docutils container">
 <details class="hide above-input">
 <summary aria-label="Toggle hidden content">
@@ -929,7 +919,14 @@ P = A^{-1}(\tilde{p} - a)
 <span class="expanded">Hide code cell source</span>
 </summary>
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: 300 rays from 199 cameras, along with the rendering volume.</span>
+<span class="c1">#| label: fig:300-rays</span>
+<span class="n">data_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">data_iter</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">data_loader</span><span class="p">)</span>
+<span class="n">x_batch</span><span class="p">,</span> <span class="n">y_batch</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">data_iter</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">x_batch</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">torch</span><span class="o">.</span><span class="n">Size</span><span class="p">([</span><span class="mi">300</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+<span class="k">assert</span> <span class="n">y_batch</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">torch</span><span class="o">.</span><span class="n">Size</span><span class="p">([</span><span class="mi">300</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">()</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">300</span><span class="p">):</span>
     <span class="n">T</span> <span class="o">=</span> <span class="n">x_batch</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="mi">3</span><span class="p">]</span>
     <span class="n">D</span> <span class="o">=</span> <span class="n">x_batch</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">3</span><span class="p">:]</span>
@@ -971,23 +968,18 @@ P = A^{-1}(\tilde{p} - a)
 <span class="p">)</span>
 
 <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">0</span><span class="p">));</span>
-</pre></div>
-</div>
-</div>
-</details>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: 300 rays from 199 cameras, along with the rendering volume.</span>
-<span class="c1">#| label: fig:300-rays</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
+</details>
 <div class="cell_output docutils container">
-<img alt="_images/c669fa14cccff7be02289b7835c614fe80ad799023f827a3226efad417257350.png" src="_images/c669fa14cccff7be02289b7835c614fe80ad799023f827a3226efad417257350.png" />
+<img alt="_images/2e9659e836f10d1220bd342b1557a7dbd3f8e356c6b658d76e5da3f6dd0ca44f.png" src="_images/2e9659e836f10d1220bd342b1557a7dbd3f8e356c6b658d76e5da3f6dd0ca44f.png" />
 </div>
 </div>
+</section>
+<section id="training-loop">
+<h3><span class="section-number">7.6.6.2. </span>Training Loop<a class="headerlink" href="#training-loop" title="Link to this heading">#</a></h3>
 <p>Let us recall the training code from Chapter 5. We previously used this code to train for the parameters of a 1D interpolation grid, minimizing a Mean-Squared Error (MSE) loss function, i.e., the squared difference between the predicted values and the training data values. This is the standard loss function for continuous <em>regression</em> problems.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1037,7 +1029,7 @@ P = A^{-1}(\tilde{p} - a)
 </div>
 </div>
 </div>
-<p>Now we could train, with the code shown below. However, training takes a bit of time, so if you execute this code in colab it could mean waiting quite a bit, depending on the compute you have available. To avoid this, we pre-trained a model for you on colab for 5 epochs, which took around 18 minutes with the compute available at the time. The checkpoint is uploaded to Zenodo <span id="id3">[<a class="reference internal" href="bibliography.html#id16" title="Frank Dellaert. DVGO checkpoint after 5 epochs. 2023. URL: https://zenodo.org/records/10767234/files/simple_dvgo-5-epochs.pt.">Dellaert, 2023</a>]</span>, and is loaded into memory below. If you want to train with your own parameters or simply re-do the training, you can open this file in colab and set <code class="docutils literal notranslate"><span class="pre">use_pretrained</span></code> to False below.</p>
+<p>Now we could train, with the code shown below. However, training takes a bit of time, so if you execute this code in colab it could mean waiting quite a bit, depending on the compute you have available. To avoid this, we pre-trained a model for you for 5 epochs, which took around 18 minutes with the compute available at the time. We uploaded a checkpoint to the file-sharing site Zenodo <span id="id4">[<a class="reference internal" href="bibliography.html#id16" title="Frank Dellaert. DVGO checkpoint after 5 epochs. 2023. URL: https://zenodo.org/records/10767234/files/simple_dvgo-5-epochs.pt.">Dellaert, 2023</a>]</span>, and we load it into memory below. If you want to train with your own parameters or simply re-do the training, you can open the notebook and set <code class="docutils literal notranslate"><span class="pre">use_pretrained</span></code> to False below.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># if True, use the pre-trained model, else train a new model</span>
@@ -1071,7 +1063,7 @@ P = A^{-1}(\tilde{p} - a)
 <img src="https://raw.githubusercontent.com/gtbook/robotics/main/Figures7/loss-5-epochs.png?raw=1" style="width:90%" alt="">
 <figcaption>Training loss for SimpleDVGO training run over 5 epochs.</figcaption>
 </figure>
-<p>The training loss curve is shown in Figure <a class="reference internal" href="#fig:NeRF-loss"><span class="xref myst">4</span></a>. Note that, since we used 199 images and down-sampled the images by a factor of 4, each epoch corresponds to <span class="math notranslate nohighlight">\(200x200x199\approx 8M\)</span> rays. Given that the batch size used was 1024, this corresponds to approximately 7,800 iterations per epoch, or 39,000 iterations in total for 5 epochs. The loss drops dramatically in the first few iterations, but even after 5 epochs the loss is still slowly but steadily declining.</p>
+<p>The training loss curve is shown in Figure <a class="reference internal" href="#fig:NeRF-loss"><span class="xref myst">8</span></a>. Note that, since we used 199 images and down-sampled the images by a factor of 4, each epoch corresponds to <span class="math notranslate nohighlight">\(200\times 200\times 199\approx 8M\)</span> rays. Given that the batch size used was 1024, this corresponds to approximately 7,800 iterations per epoch, or 39,000 iterations in total for 5 epochs. The loss drops dramatically in the first few iterations, but even after 5 epochs the loss is slowly but steadily declining.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Comparison between training image and rendered image.</span>
@@ -1089,8 +1081,8 @@ P = A^{-1}(\tilde{p} - a)
 <img alt="_images/7f01588c2f758446e3e6fb30d723ec47798fb174f272d5e33748608a02ae404b.png" src="_images/7f01588c2f758446e3e6fb30d723ec47798fb174f272d5e33748608a02ae404b.png" />
 </div>
 </div>
-<p>A rendering from the model is compared with a ground truth image in the figure above. The predicted image is still quite blurry compared to the ground truth image, because our voxel grid is fairly coarse. In addition, in an effort to keep the code simple, we did not include many improvements to the ray sampling and rendering equations that have appeared in the literature, which would also improve results. But the figure illustrates that even this basic code works quite well.</p>
-<p>Below we rendered the predictions for 20 of the 199 training images for further comparison.</p>
+<p>A rendering from the model is compared with a ground truth image in Figure <a class="reference internal" href="#fig:training-vs-rendered"><span class="xref myst">9</span></a>. The predicted image is still quite blurry compared to the ground truth image, because our voxel grid is fairly coarse. In addition, in an effort to keep the code simple, we did not include many improvements to the ray sampling and rendering equations that have appeared in the literature, which would also improve results. But the figure illustrates that even this basic code works quite well.</p>
+<p>In figure <a class="reference internal" href="#fig:20-predicted"><span class="xref myst">10</span></a> we rendered the predictions for 20 of the 199 training images for further comparison.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: every 10th image in a 5x4 grid.</span>
@@ -1111,12 +1103,12 @@ P = A^{-1}(\tilde{p} - a)
 </section>
 </section>
 <section id="radiance-fields-for-visual-navigation">
-<h2><span class="section-number">7.6.6. </span>Radiance Fields for Visual Navigation<a class="headerlink" href="#radiance-fields-for-visual-navigation" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">7.6.7. </span>Radiance Fields for Visual Navigation<a class="headerlink" href="#radiance-fields-for-visual-navigation" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>We can take this one step further…</p>
 </div></blockquote>
-<p>The above shows how neural radiance fields represent a radical new way to learn scene representations, using a <em>differentiable</em> volume rendering scheme. One can take this one step further and use the underlying density fields, combined with the motion planning techniques from the previous section, to enable unmanned aerial vehicles to navigate autonomously in new environments. If you want to see how this is done, you can read the 2022 Stanford paper by <span id="id4">Adamkiewicz <em>et al.</em> [<a class="reference internal" href="bibliography.html#id2" title="Michal Adamkiewicz, Timothy Chen, Adam Caccavale, Rachel Gardner, Preston Culbertson, Jeannette Bohg, and Mac Schwager. Vision-Only Robot Navigation in a Neural Radiance World. IEEE Robotics and Automation Letters, 7(2):4606-4613, 2022. doi:10.1109/LRA.2022.3150497.">2022</a>]</span> that inspired this section. And to see it in action, you can visit their <a class="reference external" href="https://mikh3x4.github.io/nerf-navigation/">project page</a> with videos and simulations.</p>
-</section>
+<p>The above shows how neural radiance fields represent a radical new way to learn scene representations, using a <em>differentiable</em> volume rendering scheme. One can take this one step further and use the underlying density fields, combined with the motion planning techniques from the previous section, to enable unmanned aerial vehicles to navigate autonomously in new environments. If you want to see how this is done, you can read the 2022 Stanford paper by <span id="id5">Adamkiewicz <em>et al.</em> [<a class="reference internal" href="bibliography.html#id2" title="Michal Adamkiewicz, Timothy Chen, Adam Caccavale, Rachel Gardner, Preston Culbertson, Jeannette Bohg, and Mac Schwager. Vision-Only Robot Navigation in a Neural Radiance World. IEEE Robotics and Automation Letters, 7(2):4606-4613, 2022. doi:10.1109/LRA.2022.3150497.">2022</a>]</span> that inspired this section.</p>
+<!-- And to see it in action, you can visit their [project page](https://mikh3x4.github.io/nerf-navigation/) with videos and simulations. --></section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -1191,15 +1183,14 @@ P = A^{-1}(\tilde{p} - a)
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-differentiable-voxel-grid">7.6.3. A Differentiable Voxel Grid</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dvgo">7.6.4. DVGO</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-simulated-dataset">7.6.4.1. A simulated dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dvgo">7.6.4. DVGO</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-simulated-dataset">7.6.5. A simulated dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#training-a-nerf">7.6.6. Training a NeRF</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-rays">7.6.6.1. Creating Rays</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#training-loop">7.6.6.2. Training Loop</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#training-a-nerf">7.6.5. Training a NeRF</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-rays">7.6.5.1. Creating Rays</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#radiance-fields-for-visual-navigation">7.6.6. Radiance Fields for Visual Navigation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#radiance-fields-for-visual-navigation">7.6.7. Radiance Fields for Visual Navigation</a></li>
 </ul>
   </nav></div>
 

@@ -406,25 +406,25 @@
 </div></blockquote>
 <a class="reference internal image-reference" href="_images/S73-Autonomous_camera_drone-01.jpg"><img alt="Splash image with steampunk drone sporting an oversized IMU" class="align-center" src="_images/S73-Autonomous_camera_drone-01.jpg" style="width: 40%;" /></a>
 <section id="inertial-measurement-units">
-<span id="index-1"></span><span id="index-0"></span><h2><span class="section-number">7.3.1. </span>Inertial Measurement Units<a class="headerlink" href="#inertial-measurement-units" title="Link to this heading">#</a></h2>
-<p>An <strong>inertial measurement unit</strong> or <strong>IMU</strong> measures how a rigid body moves through space. The technological development of IMUs has undergone revolutionary transformations since their invention. Whereas they were initially developed for military and later civilian navigation purposes, miniaturized (MEMS) versions of them are now built into most of the mobile computing devices people use every day. IMUs often bundle the following three sensors: gyroscopes, accelerometers, and magnetometers, which we discuss in turn below.</p>
+<h2><span class="section-number">7.3.1. </span>Inertial Measurement Units<a class="headerlink" href="#inertial-measurement-units" title="Link to this heading">#</a></h2>
+<p id="index-1"><span id="index-0"></span>An <strong>inertial measurement unit</strong> or <strong>IMU</strong> measures how a rigid body moves through space. The technological development of IMUs has undergone revolutionary transformations since their invention. Whereas they were initially developed for military and later civilian navigation purposes, miniaturized (MEMS) versions of them are now built into most of the mobile computing devices people use every day. IMUs often bundle the following three sensors: gyroscopes, accelerometers, and magnetometers, which we discuss in turn below.</p>
 <section id="gyroscopes">
-<span id="index-2"></span><h3><span class="section-number">7.3.1.1. </span>Gyroscopes<a class="headerlink" href="#gyroscopes" title="Link to this heading">#</a></h3>
-<p>A <strong>gyroscope</strong> measures <em>changes</em> in orientation around three orthogonal axes, i.e., an angular velocity <span class="math notranslate nohighlight">\(\omega\)</span>.
+<h3><span class="section-number">7.3.1.1. </span>Gyroscopes<a class="headerlink" href="#gyroscopes" title="Link to this heading">#</a></h3>
+<p id="index-2">A <strong>gyroscope</strong> measures <em>changes</em> in orientation around three orthogonal axes, i.e., an angular velocity <span class="math notranslate nohighlight">\(\omega\)</span>.
 This is useful for drones, as they fly in 3D space and have to carefully control and hence measure their attitude <span class="math notranslate nohighlight">\(R^n_b\)</span>. Gyroscopes do not directly measure attitude however, only the <em>rate of change</em> in orientation, and hence we need to integrate the angular velocity <span class="math notranslate nohighlight">\(\omega(t)\)</span> over time:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-46200795-8bbe-4fc9-8c0c-d3d00b165550">
-<span class="eqno">(7.54)<a class="headerlink" href="#equation-46200795-8bbe-4fc9-8c0c-d3d00b165550" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-b4274a34-7f76-48e6-89d1-cfa3af105b28">
+<span class="eqno">(7.52)<a class="headerlink" href="#equation-b4274a34-7f76-48e6-89d1-cfa3af105b28" title="Permalink to this equation">#</a></span>\[\begin{equation}
 R^n_b(t) = R^n_b(0) \int_{\tau=0}^t \exp \hat{\omega}(\tau) d\tau
 \end{equation}\]</div>
 <p>Above, the exponential map <span class="math notranslate nohighlight">\(\exp \hat{\omega}(\tau)\)</span> is as defined in the previous section, where we have also shown how to numerically integrate forward in rotation space.</p>
-<p>Unfortunately, when the gyroscope measurements are corrupted by random noise, this noise is also integrated over time. In addition, gyroscopes also suffer from <strong>bias</strong>, a non-zero offset of the measurements that changes slowly over time. If we know this bias, e.g., by estimating it, then we can subtract it first. However, if we do <em>not</em> know the bias, the resulting error grows linearly over time when it is integrated.</p>
+<p id="index-3">Unfortunately, when the gyroscope measurements are corrupted by random noise, this noise is also integrated over time. In addition, gyroscopes also suffer from <strong>bias</strong>, a non-zero offset of the measurements that changes slowly over time. If we know this bias, e.g., by estimating it, then we can subtract it first. However, if we do <em>not</em> know the bias, the resulting error grows linearly over time when it is integrated.</p>
 <p>Both effects mean that we will gradually lose track of the correct attitude <span class="math notranslate nohighlight">\(R^n_b(t)\)</span>, a process known as <em>drift</em>.
 Good (expensive) gyroscopes are able to track the attitude for a long time, whereas cheaper (MEMS) gyroscopes,
 such as those found in many drones (and phones), can drift away from a usable attitude estimate in 100’s or even 10’s of seconds.</p>
 </section>
 <section id="accelerometers">
-<span id="index-3"></span><h3><span class="section-number">7.3.1.2. </span>Accelerometers<a class="headerlink" href="#accelerometers" title="Link to this heading">#</a></h3>
-<p>An <strong>accelerometer</strong> measures linear acceleration in 3D. While GPS can provide a measurement of the absolute position <span class="math notranslate nohighlight">\(r^n(t)\)</span> of a drone, provided one is outdoors and in an open area, the errors associated with GPS are often large. Accelerometers are much more precise, but unfortunately do not provide absolute position: because they measure <em>forces</em> exerted upon them, any measurement they provide is essentially an acceleration, i.e., the second derivative of position. Hence, of course, the name “accelerometer”.</p>
+<h3><span class="section-number">7.3.1.2. </span>Accelerometers<a class="headerlink" href="#accelerometers" title="Link to this heading">#</a></h3>
+<p id="index-4">An <strong>accelerometer</strong> measures linear acceleration in 3D. While GPS can provide a measurement of the absolute position <span class="math notranslate nohighlight">\(r^n(t)\)</span> of a drone, provided one is outdoors and in an open area, the errors associated with GPS are often large. Accelerometers are much more precise, but unfortunately do not provide absolute position: because they measure <em>forces</em> exerted upon them, any measurement they provide is essentially an acceleration, i.e., the second derivative of position. Hence, of course, the name “accelerometer”.</p>
 <p>In theory, we can <em>doubly</em> integrate the measured acceleration to obtain the position <span class="math notranslate nohighlight">\(r^n(t)\)</span>
 (velocity is the integral of acceleration, and position is the integral of velocity).
 However, because of the double integration, the effect of random noise and bias error is doubly compounded, making the use of an accelerometer for estimating a drone’s position rather tricky. It can be done, but it requires great care and careful estimation of the biases. In fact, aircraft equipped with <em>inertial navigation systems</em> typically have an “INS alignment procedure” where the aircraft remains stationary on the taxi-way for a short period prior to take-off. Even then, unless the accelerometer can be augmented with absolute sources of position, such as GPS, an INS is bound to diverge sooner or later.</p>
@@ -434,15 +434,15 @@ Because gravity is such a strong signal it often dwarfs the accelerations due to
 </section>
 <section id="magnetometers">
 <h3><span class="section-number">7.3.1.3. </span>Magnetometers<a class="headerlink" href="#magnetometers" title="Link to this heading">#</a></h3>
-<p>A magnetometer measures a 3D vector that points along Earth’s local magnetic field.
-The magnetic field roughly points to the magnetic north, although it really is 3-dimensional, and magnetometers measure the strength of these field in all three axes. For drones, it is often a noisy and rather unreliable sensor, especially indoors or in the presence of metal structures, including electrical wiring etc. One drone application is inspecting bridges, and one can see that in such cases a magnetometer’s usefulness will be rather limited.</p>
+<p id="index-5">A <strong>magnetometer</strong> measures a 3D vector that points along Earth’s local magnetic field.
+The magnetic field roughly points to the magnetic north, although it really is 3-dimensional, and magnetometers measure the strength of this field in all three axes. For drones, it is often a noisy and rather unreliable sensor, especially indoors or in the presence of metal structures, including electrical wiring etc. One drone application is inspecting bridges, and one can see that in such cases a magnetometer’s usefulness will be rather limited.</p>
 <p>Still, as a magnetometer functions like a sophisticated compass, its main use is to “aid” the gyroscope, providing a measurement on the absolute heading, i.e., the last remaining degree of freedom. While noisy, over time it can provide enough signal to recover and maintain the heading of the drone.</p>
 </section>
 </section>
 <section id="cameras">
-<span id="index-5"></span><span id="index-4"></span><h2><span class="section-number">7.3.2. </span>Cameras<a class="headerlink" href="#cameras" title="Link to this heading">#</a></h2>
-<p>The second frequently used sensor for drones is a camera, or multiple cameras. Cameras are light-weight, cheap, and they provide some amazing capabilities, which we will discuss below and in the next section. They are also <em>passive</em>, in that unlike LIDAR sensors, they do not send out energy into the environment. This has obvious benefits in terms of stealth, important in some applications, but also is less power-hungry. In drones, battery autonomy is one of the key design constraints, and cameras are a very popular sensor for that reason alone.</p>
-<p>By tracking features in the image(s) over time, cameras can provide relative motion measurements, i.e., <strong>visual odometry</strong>. Given a preexisting map of the environment, a camera can be used to perform <em>localization</em>, providing absolute orientation and position even without an IMU. <em>If</em> an IMU is available it can be used to track the high frequency <em>relative</em> motion of the drone, while the visual information provides a lower frequency but <em>absolute</em> measurement of the drone’s pose. In that way, IMU and camera measurements are perfectly complementary. In addition, if no map is available, cameras can be used to build a 3D map of the environment in real time, using a paradigm called <strong>visual SLAM</strong>, which we will discuss below.</p>
+<h2><span class="section-number">7.3.2. </span>Cameras<a class="headerlink" href="#cameras" title="Link to this heading">#</a></h2>
+<p id="index-6">The second frequently used sensor for drones is a camera, or multiple cameras. Cameras are light-weight, cheap, and they provide some amazing capabilities, which we will discuss below and in the next section. They are also <em>passive</em>, in that unlike LIDAR sensors, they do not send out energy into the environment. This has obvious benefits in terms of stealth, important in some applications, but also is less power-hungry. In drones, battery autonomy is one of the key design constraints, and cameras are a very popular sensor for that reason alone.</p>
+<p id="index-7">By tracking features in the image(s) over time, cameras can provide relative motion measurements, i.e., <strong>visual odometry</strong>. Given a preexisting map of the environment, a camera can be used to perform <em>localization</em>, providing absolute orientation and position even without an IMU. <em>If</em> an IMU is available it can be used to track the high frequency <em>relative</em> motion of the drone, while the visual information provides a lower frequency but <em>absolute</em> measurement of the drone’s pose. In that way, IMU and camera measurements are perfectly complementary. In addition, if no map is available, cameras can be used to build a 3D map of the environment in real time, using a paradigm called <strong>visual SLAM</strong>, which we will discuss below.</p>
 <p>In this section, about the raw sensing, we will concentrate on the <strong>extrinsic calibration</strong> of cameras and camera rigs.
 We have already discussed cameras as sensors in section 5.2, including their <em>intrinsic</em> calibration parameters such as focal length, image center, etc.
 However, when using cameras on a drone, it is important to know the relative position and orientation of the camera with respect to the drone’s body frame, the so called <em>extrinsic calibration parameters</em>, consisting of a position <span class="math notranslate nohighlight">\(t^b_c\)</span> and orientation <span class="math notranslate nohighlight">\(R^b_c\)</span> of the camera in the body frame.</p>
@@ -458,7 +458,7 @@ a camera towards the front of the drone will have a positive <span class="math n
 </div>
 </div>
 </div>
-<p>We can visualize the camera placement in the drone’s FLU body frame using plotly:</p>
+<p>We can visualize the camera placement in the drone’s FLU body frame using <code class="docutils literal notranslate"><span class="pre">plotly</span></code>, as shown in Figure <a class="reference internal" href="#fig:camera-locations"><span class="xref myst">1</span></a>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: The three camera pinhole locations in the FLU frame.</span>
@@ -485,8 +485,9 @@ a camera towards the front of the drone will have a positive <span class="math n
 </div>
 </div>
 </div>
-<p>Try to understand the code above, which made camera 1 and 2 look forward (<span class="math notranslate nohighlight">\(F\)</span>), creating a <em>forward-looking stereo pair</em>, and camera 3 look backwards (<span class="math notranslate nohighlight">\(-F\)</span>). The other axes were then specified to have the images upright.</p>
-<p>We can again use the <code class="docutils literal notranslate"><span class="pre">gtbook.drones.axes</span></code> function to ease displaying this with plotly:</p>
+<p>Try to understand the code above, which made camera 1 and 2 look forward (<span class="math notranslate nohighlight">\(F\)</span>), creating a <em>forward-looking stereo pair</em>, and camera 3 look backwards (<span class="math notranslate nohighlight">\(-F\)</span>). The other axes were then specified to have the images upright.
+We can again use the <code class="docutils literal notranslate"><span class="pre">gtbook.drones.axes</span></code> function to ease displaying this with <code class="docutils literal notranslate"><span class="pre">plotly</span></code>, in Figure <a class="reference internal" href="#fig:camera-frames"><span class="xref myst">2</span></a>.
+Especially for visual odometry, which we will cover in the next section, having both forward and backward looking cameras is a good idea, yielding high quality estimates of the drone’s rotation. Cameras pointed to the side will often suffer from motion blur in forward flight mode, especially with close obstacles at high speed.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: The camera coordinate frames in the FLU frame.</span>
@@ -502,17 +503,16 @@ a camera towards the front of the drone will have a positive <span class="math n
 <img alt="_images/85f16f27582361d30d841767b06c4f0e282ed1a2745586d470d3dbe3e8f5b8e1.png" src="_images/85f16f27582361d30d841767b06c4f0e282ed1a2745586d470d3dbe3e8f5b8e1.png" />
 </div>
 </div>
-<p>Especially for visual odometry, which we will cover in the next section, having both forward and backward looking cameras is a good idea, yielding high quality estimates of the drone’s rotation. Cameras pointed to the side will often suffer from motion blur in forward flight mode, especially with close obstacles at high speed.</p>
 </section>
 <section id="projecting-3d-points">
 <h2><span class="section-number">7.3.3. </span>Projecting 3D Points<a class="headerlink" href="#projecting-3d-points" title="Link to this heading">#</a></h2>
 <blockquote>
 <div><p>Transforming coordinates into the right reference frame.</p>
 </div></blockquote>
-<p>We have seen in Chapter 5 how to project points specified in the <em>camera</em> frame onto the image plane. However, for visual odometry or visual SLAM, an additional step is needed: we need to transform the 3D points from the navigation frame into the camera frame. This involves both the camera extrinsics and the drone’s pose <span class="math notranslate nohighlight">\(T^n_b\)</span> in the navigation frame itself.</p>
+<p>We have seen in Chapter 5 how to project points specified in the <em>camera</em> frame onto the image plane. However, for visual SLAM - which we’ll discuss at length in the next section - an additional step is needed: we need to transform the 3D points from the navigation frame into the camera frame. This involves both the camera extrinsics and the drone’s pose <span class="math notranslate nohighlight">\(T^n_b\)</span> in the navigation frame itself.</p>
 <p>Let us start by reviewing the fundamental projection equation from chapter 5:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-286cd00b-765c-4382-90b5-797eb85b88f4">
-<span class="eqno">(7.55)<a class="headerlink" href="#equation-286cd00b-765c-4382-90b5-797eb85b88f4" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-a1cced74-7ce8-45cb-82f8-a76a5b7cae1c">
+<span class="eqno">(7.53)<a class="headerlink" href="#equation-a1cced74-7ce8-45cb-82f8-a76a5b7cae1c" title="Permalink to this equation">#</a></span>\[\begin{equation}
 u = u_0 + f \frac{X^c}{Z^c} ~~~~ v = v_0 + f \frac{Y^c}{Z^c}.
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(u_0\)</span>, <span class="math notranslate nohighlight">\(v_0\)</span>, and <span class="math notranslate nohighlight">\(f\)</span> are the <em>intrinsic</em> camera calibration parameters, and <span class="math notranslate nohighlight">\(P^c=(X^c,Y^c,Z^c)\)</span> are the coordinates of a 3D point in the <em>camera</em> coordinate frame, hence the superscript <span class="math notranslate nohighlight">\(C\)</span>. But what if we are given the 3D coordinates <span class="math notranslate nohighlight">\(P^n=(X^n,Y^n,Z^n)\)</span> in the ENU navigation frame, rather than in the camera frame? Because the camera is mounted on the drone, we do this in two steps:</p>
@@ -580,8 +580,8 @@ u2,v2 = [409.39 179.7 ] in image 2
 </div>
 </div>
 <p>Again, this is exactly what we expect for a stereo rig. In this case the disparity is <span class="math notranslate nohighlight">\(412.4-409.4\approx3\)</span> pixels, and if we plug that into the fundamental stereo equation from Section 5.2, with baseline <span class="math notranslate nohighlight">\(10cm\)</span> (check the extrinsics!), we indeed obtain that the point is at a depth of <span class="math notranslate nohighlight">\(10m\)</span>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-591074b8-7974-4e79-a70f-2ac1bfc80671">
-<span class="eqno">(7.56)<a class="headerlink" href="#equation-591074b8-7974-4e79-a70f-2ac1bfc80671" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-3a3849d3-146e-4cfc-b8d5-966603d2441e">
+<span class="eqno">(7.54)<a class="headerlink" href="#equation-3a3849d3-146e-4cfc-b8d5-966603d2441e" title="Permalink to this equation">#</a></span>\[\begin{equation}
 Z = B \frac{f}{d} = 0.1 \frac{300}{3} = 10
 \end{equation}\]</div>
 <p>In actuality, the disparity is a tiny bit larger, and if we plug in the exact number, we get the <em>true</em> depth from the camera center:</p>
