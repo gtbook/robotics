@@ -430,8 +430,8 @@ Furthermore, because these robots typically move at relatively low speeds, we ne
 <p>For this special case of robots that translate in the plane, and whose instantaneous
 velocity is the command input, the state space is merely the location of the robot
 in the world with respect to some global coordinate frame:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-f180b52d-5027-48a1-a15e-cebc1ee0d548">
-<span class="eqno">(4.1)<a class="headerlink" href="#equation-f180b52d-5027-48a1-a15e-cebc1ee0d548" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-fa649764-18df-40a7-8341-76a530f30075">
+<span class="eqno">(4.1)<a class="headerlink" href="#equation-fa649764-18df-40a7-8341-76a530f30075" title="Permalink to this equation">#</a></span>\[\begin{equation}
 x\in {\cal D} \subset \mathbb{R}^2
 \end{equation}\]</div>
 <p>In the remainder of this chapter, we will consider a rectangular warehouse
@@ -448,7 +448,7 @@ We have previously used univariate Gaussians to model weight for our trash sorti
 and the extension to the 2D case is not so difficult.
 In the of approximate representations of probability distributions,
 we will introduce two complementary methods: a finite element method, and a sampling-based method.
-In the former, we approximate the state space by a two-diminsional grid, and keep track of the
+In the former, we approximate the state space by a two-dimensional grid, and keep track of the
 probability mass in each individual grid cell.
 In the latter, we represent a PDF by a weighted collection of samples.
 This representation is particularly amenable to propagating uncertainties that arise during
@@ -458,8 +458,8 @@ robot motion.</p>
 <p id="index-3"><span id="index-2"></span><span id="index-1"></span>As we have seen with the trash sorting robot, a one-dimensional Gaussian density can be used
 to represent continuous random variables.
 The Gaussian probability density function (PDF) is defined by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-9329fba0-fcde-44dd-af4f-e82cc84a63a1">
-<span class="eqno">(4.2)<a class="headerlink" href="#equation-9329fba0-fcde-44dd-af4f-e82cc84a63a1" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-7591ebb3-0d9e-42b1-b63a-940d79b3ee13">
+<span class="eqno">(4.2)<a class="headerlink" href="#equation-7591ebb3-0d9e-42b1-b63a-940d79b3ee13" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathcal{N}(x;\mu,\sigma^2) \doteq \frac{1}{k} \exp\{ - \frac{1}{2} \frac{(x-\mu)^2}{\sigma^2} \}
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\mu\)</span> is the mean, <span class="math notranslate nohighlight">\(\sigma^2\)</span> is the variance, and <span class="math notranslate nohighlight">\(k=\sqrt{2\pi}\sigma\)</span> is a normalization constant.
@@ -470,8 +470,8 @@ It is instructive to consider the term in the exponent.</p>
 <li><p>The term <span class="math notranslate nohighlight">\(\sigma^{-2}(x-\mu)^2\)</span> is a weighted squared-distance to the mean.</p></li>
 </ol>
 <p>Thus, we can interpret the negative log of a 1D Gaussian as a simple quadratic error or “energy” function. This fact is worth emphasizing: <em>a Gaussian density is the probability density associated with a quadratic error function with zero error at the mean <span class="math notranslate nohighlight">\(\mu\)</span> and variance <span class="math notranslate nohighlight">\(\sigma^2\)</span>.</em> We suggestively write this quadratic below as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a311bf01-13c3-4f7f-ae19-1cf6284744ac">
-<span class="eqno">(4.3)<a class="headerlink" href="#equation-a311bf01-13c3-4f7f-ae19-1cf6284744ac" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-bf465d9f-4cb7-43ca-81a4-4f038e5a60cb">
+<span class="eqno">(4.3)<a class="headerlink" href="#equation-bf465d9f-4cb7-43ca-81a4-4f038e5a60cb" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathcal{E}(x;\mu,\sigma^2) \doteq \frac{1}{2} (x-\mu)\sigma^{-2}(x-\mu)
 \end{equation}\]</div>
 <p id="index-5"><span id="index-4"></span>The energy analogy can be extended to the multivariate case.
@@ -481,25 +481,25 @@ and the concept of variance is extended to define a
 <strong>covariance matrix</strong> <span class="math notranslate nohighlight">\(\Sigma\in\mathbb{R}^{n\times n}\)</span>,
 a symmetric, positive definite matrix that characterizes the “spread” of a quadratic in multiple dimensions.
 This allows us to generalize the 1D error function above to the <span class="math notranslate nohighlight">\(n\)</span>-dimensional case as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-86595686-3f56-4dea-8bbd-228de7a7d0bd">
-<span class="eqno">(4.4)<a class="headerlink" href="#equation-86595686-3f56-4dea-8bbd-228de7a7d0bd" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-6902a743-a6c5-47f6-bc92-e52836fd0551">
+<span class="eqno">(4.4)<a class="headerlink" href="#equation-6902a743-a6c5-47f6-bc92-e52836fd0551" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathcal{E}(x;\mu,\Sigma) \doteq \frac{1}{2} (x-\mu)^T\Sigma^{-1}(x-\mu)
 \end{equation}\]</div>
 <p>We define a <strong>multivariate Gaussian density</strong> using the error function <span class="math notranslate nohighlight">\(\mathcal{E}(x;\mu,\Sigma)\)</span>
 as follows</p>
-<div class="amsmath math notranslate nohighlight" id="equation-3afad70a-ef93-4207-a813-092242c88e9f">
-<span class="eqno">(4.5)<a class="headerlink" href="#equation-3afad70a-ef93-4207-a813-092242c88e9f" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-300d2ee6-324b-4868-bb5e-5c29abbe7076">
+<span class="eqno">(4.5)<a class="headerlink" href="#equation-300d2ee6-324b-4868-bb5e-5c29abbe7076" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathcal{N}(x;\mu,\Sigma) \doteq \frac{1}{k} \exp\{ - \frac{1}{2} (x-\mu)^T\Sigma^{-1}(x-\mu) \}
 \end{equation}\]</div>
 <p>The (non-obvious) normalization constant k can be written very elegantly in terms of the determinant of <span class="math notranslate nohighlight">\(2\pi\Sigma\)</span>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-e2548197-3cec-4c61-8f46-1da79a3fac77">
-<span class="eqno">(4.6)<a class="headerlink" href="#equation-e2548197-3cec-4c61-8f46-1da79a3fac77" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-19a1b14a-d805-45ec-b4f8-8e623a7943b4">
+<span class="eqno">(4.6)<a class="headerlink" href="#equation-19a1b14a-d805-45ec-b4f8-8e623a7943b4" title="Permalink to this equation">#</a></span>\[\begin{equation}
 k=\sqrt{(2\pi)^{n}|\Sigma|}=\sqrt{|2\pi\Sigma|}.
 \end{equation}\]</div>
 <p>Another name for multivariate Gaussian probability density is the multivariate normal distribution. We prefer to use <em>density</em> to denote its continuous nature, and Gaussian instead of “normal”, but it is good to be aware of both nomenclatures.</p>
 <p>To better understand the multivariate Gaussian PDF, consider a simple two-dimensional example,</p>
-<div class="amsmath math notranslate nohighlight" id="equation-085ea20d-2a73-4c26-b3c3-47cf9fc80b46">
-<span class="eqno">(4.7)<a class="headerlink" href="#equation-085ea20d-2a73-4c26-b3c3-47cf9fc80b46" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-406a2f85-29f5-4651-8ac3-b1f16ebe9405">
+<span class="eqno">(4.7)<a class="headerlink" href="#equation-406a2f85-29f5-4651-8ac3-b1f16ebe9405" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{aligned}
 \mu &amp;= \begin{bmatrix} 4 \\ 10 \end{bmatrix} \\
 \\
@@ -510,8 +510,8 @@ k=\sqrt{(2\pi)^{n}|\Sigma|}=\sqrt{|2\pi\Sigma|}.
 \end{aligned}
 \end{equation}\]</div>
 <p>If we evaluate <span class="math notranslate nohighlight">\(\mathcal{E}(x;\mu,\Sigma)\)</span> for this case, we obtain</p>
-<div class="amsmath math notranslate nohighlight" id="equation-d36b29c5-0602-426b-9219-a80dd4cfe48d">
-<span class="eqno">(4.8)<a class="headerlink" href="#equation-d36b29c5-0602-426b-9219-a80dd4cfe48d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-3c16f36d-7a1b-4bcf-b8cf-323d106938f8">
+<span class="eqno">(4.8)<a class="headerlink" href="#equation-3c16f36d-7a1b-4bcf-b8cf-323d106938f8" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathcal{E}(x;\mu,\Sigma) = \frac{1}{\sigma^2_{xx}}(x - 4)^2 + \frac{1}{\sigma^2_{yy}}(y - 10)^2
 \end{equation}\]</div>
 <p>which is the familiar equation of an axis-aligned ellipse in the plane with center at <span class="math notranslate nohighlight">\((4, 10)\)</span>.
@@ -640,7 +640,7 @@ and these can form the basis for perception algorithms used in localization (as 
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/0cf94a454c4447b1496556d44a47824bdf96b12bfc39545f5cc0994fc4baff5c.png" src="_images/0cf94a454c4447b1496556d44a47824bdf96b12bfc39545f5cc0994fc4baff5c.png" />
+<img alt="_images/efb4088d2f73fc27b6992f288cc91c647c2b56637e609f39a04061b681c39ff3.png" src="_images/efb4088d2f73fc27b6992f288cc91c647c2b56637e609f39a04061b681c39ff3.png" />
 </div>
 </div>
 </section>
@@ -649,8 +649,8 @@ and these can form the basis for perception algorithms used in localization (as 
 <p>In general, for continuous random variables, probability mass is computed by integrating probability density
 over a domain.
 In the 2D case,  we can find the probability of the state <span class="math notranslate nohighlight">\(x\)</span> being contained in any finite region <span class="math notranslate nohighlight">\({\cal R}\)</span> by integrating the PDF over <span class="math notranslate nohighlight">\({\cal R}\)</span>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-91f99cf9-def0-48a0-a99d-9caf6413e3d7">
-<span class="eqno">(4.9)<a class="headerlink" href="#equation-91f99cf9-def0-48a0-a99d-9caf6413e3d7" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-1c65f62e-3253-4b1f-89f2-891ffa59c0da">
+<span class="eqno">(4.9)<a class="headerlink" href="#equation-1c65f62e-3253-4b1f-89f2-891ffa59c0da" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P(x\in {\cal R}) = \int_{x\in {\cal R}} p(x) dx
 \end{equation}\]</div>
 <p>In the case of Gaussian PDFs, it is not possible to compute this integral in closed form, but

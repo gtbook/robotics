@@ -455,31 +455,31 @@ Given the ability to generate random samples from arbitrary distributions, it is
 <p>Many of the computational problems in robotics are either intractable (i.e., have high computational complexity) or cannot be solved in closed form (e.g., determining the exact form for probability distributions).  In both cases, roboticists have worked to develop efficient and accurate computational methods to solve these problems. In this book, there are two main computational approaches: sampling-based approaches, which we discussed above, and optimization methods.</p>
 <p id="index-17"><em>Optimization</em> is the process of finding extremal values of performance criteria, all of which, in this book, will be expressed as scalar-valued functions of a finite number of inputs. In some cases, we search for the single, scalar input that will minimize a cost function, such as when choosing the best action for a trash sorting robot in Chapter 2. In other cases, we might search for a sequence of input commands that will yield an ideal system trajectory, such as for drone flight in Chapter 7. We will often resort to factor graphs as a way to represent the problem space and objective function (defined below). We will use the open source library GTSAM, a powerful software system that facilitates computationally efficient solutions for a wide range of optimization problems that can be described by factor graphs. In still other cases, we might try to find millions of weights for a neural network to minimize recognition error of our computer vision system, such as the Convolutional Neural Nets (CNNs) of Chapter 5.</p>
 <p id="index-18">In general, we can express such problems as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-8b829bbf-c70f-4fa7-922b-368c39b72311">
-<span class="eqno">(1.6)<a class="headerlink" href="#equation-8b829bbf-c70f-4fa7-922b-368c39b72311" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-dd260d1c-a705-4a9e-9a86-fb3ba9e92a47">
+<span class="eqno">(1.6)<a class="headerlink" href="#equation-dd260d1c-a705-4a9e-9a86-fb3ba9e92a47" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \max_x f(x)
 \end{equation}\]</div>
 <p>in which <span class="math notranslate nohighlight">\(x\)</span> is called the optimization variable (or variables in the case where <span class="math notranslate nohighlight">\(x\)</span> is a vector) and <span class="math notranslate nohighlight">\(f(\cdot)\)</span> is called the objective function. For this formulation, when maximizing, <span class="math notranslate nohighlight">\(f(\cdot)\)</span> can be thought of as a reward. We could have framed the problem as a minimization, <span class="math notranslate nohighlight">\(\min_x f(x)\)</span>, in which case <span class="math notranslate nohighlight">\(f(\cdot)\)</span> should be thought of as a cost to be minimized. It is easy to convert between these two forms (e.g., simply multiply the objective function by <span class="math notranslate nohighlight">\(-1\)</span>), but it is often helpful to express problems specifically as either minimizing cost or maximizing reward, based on the semantics of the problem.</p>
 <p id="index-19">Many optimization problems can be solved using the method of gradient descent.  Such methods construct a sequence of estimates, <span class="math notranslate nohighlight">\(x^1, x^2, \dots\)</span> until a minimal value of cost is found. The incremental update rule for the estimates is given by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-40569bf0-4803-455f-add0-6bd68eaa8385">
-<span class="eqno">(1.7)<a class="headerlink" href="#equation-40569bf0-4803-455f-add0-6bd68eaa8385" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-19b705b2-344d-43f9-8622-e59ad59d9250">
+<span class="eqno">(1.7)<a class="headerlink" href="#equation-19b705b2-344d-43f9-8622-e59ad59d9250" title="Permalink to this equation">#</a></span>\[\begin{equation}
 x^{k+1} = x^k - \alpha \nabla f(x)
 \end{equation}\]</div>
 <p>in which <span class="math notranslate nohighlight">\(\alpha\)</span> is a step-size parameter.
 In some cases, the gradient <span class="math notranslate nohighlight">\(\nabla f(x) \)</span> can be computed in closed form, while for more complex functions it may be necessary to use numerical approximations of the gradient.</p>
 <p>When working with neural networks, the cost function can be written as a sum</p>
-<div class="amsmath math notranslate nohighlight" id="equation-5d902070-f4db-4504-8e8d-765dbf8edc11">
-<span class="eqno">(1.8)<a class="headerlink" href="#equation-5d902070-f4db-4504-8e8d-765dbf8edc11" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-60fa589c-f873-4962-af55-c655fd1ce34f">
+<span class="eqno">(1.8)<a class="headerlink" href="#equation-60fa589c-f873-4962-af55-c655fd1ce34f" title="Permalink to this equation">#</a></span>\[\begin{equation}
 f(x,S) = \sum_{s\in S} f_k(x; s)
 \end{equation}\]</div>
 <p>in which <span class="math notranslate nohighlight">\(x\)</span> denotes the weights assigned to the connections in the network, and <span class="math notranslate nohighlight">\(s\)</span> denotes a specific example in the data set <span class="math notranslate nohighlight">\(S\)</span>. Since differentiation is linear, the gradient of this function can be expressed as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-3de232ce-625f-4204-a671-dfc52a1bcc3b">
-<span class="eqno">(1.9)<a class="headerlink" href="#equation-3de232ce-625f-4204-a671-dfc52a1bcc3b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-0b0e64ac-4d6d-4a53-b8a7-690b5b12dcef">
+<span class="eqno">(1.9)<a class="headerlink" href="#equation-0b0e64ac-4d6d-4a53-b8a7-690b5b12dcef" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \nabla_x f(x,S) = \sum_{s\in S} \nabla_x f_k(x; s)
 \end{equation}\]</div>
 <p id="index-20">If the data set is very large, computing <span class="math notranslate nohighlight">\(|S|\)</span> gradients will be prohibitive. The method of stochastic gradient descent (SGD) deals with this problem by randomly selecting a few samples from the data set, <span class="math notranslate nohighlight">\(S' \subset S\)</span>, and using the approximation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-bc925ec0-85bf-4618-8af2-0d84c4a8f8c7">
-<span class="eqno">(1.10)<a class="headerlink" href="#equation-bc925ec0-85bf-4618-8af2-0d84c4a8f8c7" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-aad5cb14-d512-4bd3-8903-a32869aa6547">
+<span class="eqno">(1.10)<a class="headerlink" href="#equation-aad5cb14-d512-4bd3-8903-a32869aa6547" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \nabla_x f(x,S) \approx \sum_{s \in S'} \nabla_x f_k(x; s)
 \end{equation}\]</div>
 <p>We use stochastic gradient descent in chapter 5 to optimize the weights in a deep neural network.</p>
