@@ -421,22 +421,23 @@ document.write(`
 <blockquote id="index-0">
 <div><p>LIDAR, a sensor found in most autonomous cars, can be used to construct a 3D representation of the robot’s environment in real time.</p>
 </div></blockquote>
-<a class="reference internal image-reference" href="_images/S63-Autonomous_Vehicle_with_LIDAR_and_cameras-07.jpg"><img alt="Splash image with steampunk autonomous car" class="align-center" src="_images/S63-Autonomous_Vehicle_with_LIDAR_and_cameras-07.jpg" style="width: 40%;" /></a>
+<a class="reference internal image-reference" href="_images/S63-Autonomous_Vehicle_with_LIDAR_and_cameras-07.jpg"><img alt="Splash image with steampunk autonomous car" class="align-center" src="_images/S63-Autonomous_Vehicle_with_LIDAR_and_cameras-07.jpg" style="width: 40%;" />
+</a>
 <section id="lidar">
 <h2><span class="section-number">6.3.1. </span>LIDAR<a class="headerlink" href="#lidar" title="Link to this heading">#</a></h2>
 <p id="index-2"><span id="index-1"></span>LIDAR (LIght raDAR) is a technology that measures distance to an object by using laser light and the <strong>Time of Flight</strong> or <strong>ToF</strong> principle. There are several variants in use, and the simplest to explain is the <strong>direct ToF</strong> sensor, which sends out a short pulse and measures the elapsed time <span class="math notranslate nohighlight">\(\Delta t\)</span> for the light to bounce off an object and return to a detector collocated with the laser pulse emitter. If the object is situated at a distance <span class="math notranslate nohighlight">\(d\)</span> from the emitter-detector pair, we have</p>
-<div class="amsmath math notranslate nohighlight" id="equation-5a87c9fc-42e2-477e-ac3e-a5c160ac991a">
-<span class="eqno">(6.26)<a class="headerlink" href="#equation-5a87c9fc-42e2-477e-ac3e-a5c160ac991a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-82a1ec42-ce0e-4885-a291-91841597bb49">
+<span class="eqno">(6.26)<a class="headerlink" href="#equation-82a1ec42-ce0e-4885-a291-91841597bb49" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \Delta t = \frac{2 d}{c} 
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(c\approx300,000km/s\)</span> is the speed of light. For example, for an object at 15m, we have</p>
-<div class="amsmath math notranslate nohighlight" id="equation-8c5fb718-f5dd-44d5-953d-e4f38761fd92">
-<span class="eqno">(6.27)<a class="headerlink" href="#equation-8c5fb718-f5dd-44d5-953d-e4f38761fd92" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-6a9c87bb-1c34-41e8-991e-8359d87ed2ca">
+<span class="eqno">(6.27)<a class="headerlink" href="#equation-6a9c87bb-1c34-41e8-991e-8359d87ed2ca" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \Delta t \approx \frac{2 \times 0.015}{300,000} = 0.1\mu s
 \end{equation}\]</div>
 <p>Assuming we can measure <span class="math notranslate nohighlight">\(\Delta t\)</span> accurately, we can then easily compute the distance:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-3243e449-4724-436f-8254-dac9156d92e3">
-<span class="eqno">(6.28)<a class="headerlink" href="#equation-3243e449-4724-436f-8254-dac9156d92e3" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d9811e9e-2974-4d02-9a2e-b2b6362fdb05">
+<span class="eqno">(6.28)<a class="headerlink" href="#equation-d9811e9e-2974-4d02-9a2e-b2b6362fdb05" title="Permalink to this equation">#</a></span>\[\begin{equation}
 d= c\frac{\Delta t}{2}
 \end{equation}\]</div>
 <p>In a <em>scanning LIDAR</em>, there is typically one detector, whereas in a <em>flash LIDAR</em> a single pulse is emitted in a wide field of view, and an <em>array</em> of detectors, akin to a CCD sensor, is used to detect the returning light pulses in multiple directions at once.</p>
@@ -451,18 +452,18 @@ d= c\frac{\Delta t}{2}
 </div></blockquote>
 <p>To perform inference about the environment using LIDAR, we have to model how LIDAR beams interact with the environment, which in the case of polygonal objects comes down to line-line or line-plane intersections.</p>
 <p>We examine the 2D line-line intersection case first. Assume we have a line in 2D with equation <span class="math notranslate nohighlight">\(\hat{n} \cdot p = d\)</span>, where <span class="math notranslate nohighlight">\(\hat{n}\)</span> is a normal vector and <span class="math notranslate nohighlight">\(d&gt;0\)</span> is the distance of the line to the origin. The hat notation signifies that the normal vector <span class="math notranslate nohighlight">\(\hat{n}\)</span> is normalized to length 1. Then if we have a ray of points <span class="math notranslate nohighlight">\(p = \hat{r} s\)</span> where <span class="math notranslate nohighlight">\(\hat{r}\)</span> is the <strong>ray direction</strong> and <span class="math notranslate nohighlight">\(s&gt;0\)</span> is a scalar, we can find the intersection by plugging the ray equation into the line equation</p>
-<div class="amsmath math notranslate nohighlight" id="equation-77043844-9389-4384-a414-13a703f2b0f3">
-<span class="eqno">(6.29)<a class="headerlink" href="#equation-77043844-9389-4384-a414-13a703f2b0f3" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-80f49091-a71b-4afb-892e-e0c684e60346">
+<span class="eqno">(6.29)<a class="headerlink" href="#equation-80f49091-a71b-4afb-892e-e0c684e60346" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \hat{n} \cdot (\hat{r} s) = d,
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(a \cdot b \doteq a^T b = b^T a\)</span> is the standard vector dot product. We find the range <span class="math notranslate nohighlight">\(s\)</span> to the object as:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-05eb9b5f-a207-49f0-9536-f80eb40513cc">
-<span class="eqno">(6.30)<a class="headerlink" href="#equation-05eb9b5f-a207-49f0-9536-f80eb40513cc" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-19a15f47-23ff-412b-8a78-afcb586c2571">
+<span class="eqno">(6.30)<a class="headerlink" href="#equation-19a15f47-23ff-412b-8a78-afcb586c2571" title="Permalink to this equation">#</a></span>\[\begin{equation}
 s = \frac{d}{\hat{n} \cdot \hat{r}}.
 \end{equation}\]</div>
 <p>We can ensure that <span class="math notranslate nohighlight">\(s&gt;0\)</span> and avoid a division by zero by checking the dot product before doing the division:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-d0de9265-6ba9-421c-9e50-e5ed355c5486">
-<span class="eqno">(6.31)<a class="headerlink" href="#equation-d0de9265-6ba9-421c-9e50-e5ed355c5486" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-179ba65a-9d7a-4a33-8760-60cc3fc8de9c">
+<span class="eqno">(6.31)<a class="headerlink" href="#equation-179ba65a-9d7a-4a33-8760-60cc3fc8de9c" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \hat{n} \cdot \hat{r} &gt; 0
 \end{equation}\]</div>
 <p>The following code implements this:</p>
@@ -549,8 +550,8 @@ Then, in Figure <a class="reference internal" href="#fig:lidar_rays_200"><span c
 <h2><span class="section-number">6.3.4. </span>Geometry of a Moving LIDAR<a class="headerlink" href="#geometry-of-a-moving-lidar" title="Link to this heading">#</a></h2>
 <p>Above we assumed that the ray is situated at the <em>world</em> origin, but we can also generalize to the case where the rays are defined in a <em>body coordinate frame</em> <span class="math notranslate nohighlight">\((R^w_b,t^w_b)\)</span>.
 In this case, it is convenient to transform the plane to the body frame. We can do this by expressing a point <span class="math notranslate nohighlight">\(p^w\)</span> in world coordinates as a function of a point in body coordinates, <span class="math notranslate nohighlight">\(p^w = R^w_b p^b + t^w_b\)</span>, and plugging that into the plane equation:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-4aa4e920-4b8c-41b6-aa59-97e2c13f38e3">
-<span class="eqno">(6.32)<a class="headerlink" href="#equation-4aa4e920-4b8c-41b6-aa59-97e2c13f38e3" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-235fa4f1-2f62-4c8c-9e50-e95bce641ba5">
+<span class="eqno">(6.32)<a class="headerlink" href="#equation-235fa4f1-2f62-4c8c-9e50-e95bce641ba5" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{aligned}
 \hat{n}^w \cdot p^w &amp;= d^w \\
 \hat{n}^w \cdot \{ R^w_b p^b + t^w_b \} &amp;= d^w \\
@@ -560,8 +561,8 @@ In this case, it is convenient to transform the plane to the body frame. We can 
 \end{equation}\]</div>
 <p>where in the last line we made use of <span class="math notranslate nohighlight">\(a \cdot R b = R^T a \cdot b\)</span>.
 Hence, we obtain a new plane equation <em>in the body frame</em> as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-348f7190-a1c4-4cac-a574-a414b61eb93b">
-<span class="eqno">(6.33)<a class="headerlink" href="#equation-348f7190-a1c4-4cac-a574-a414b61eb93b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-6fdd947d-1b4b-49aa-ac1c-098934bfdedd">
+<span class="eqno">(6.33)<a class="headerlink" href="#equation-6fdd947d-1b4b-49aa-ac1c-098934bfdedd" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \hat{n}^b \cdot p^b = d^b
 \end{equation}\]</div>
 <p>with transformed plane parameters <span class="math notranslate nohighlight">\(\hat{n}^b \doteq (R^w_b)^T \hat{n}^w\)</span> and <span class="math notranslate nohighlight">\(d^b \doteq d^w - \hat{n}^w \cdot t^w_b\)</span>.</p>
@@ -672,7 +673,7 @@ and this will be exactly how we can infer the motion of the car in the next sect
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/0b2dbeab75f286130a0308312b51d133292edc0f8740db209035319d6a1c1b9b.png" src="_images/0b2dbeab75f286130a0308312b51d133292edc0f8740db209035319d6a1c1b9b.png" />
+<img alt="_images/a8f104f6357753c3b411f76d2ef07c867e6b25edfca971615e3a918982c61600.png" src="_images/a8f104f6357753c3b411f76d2ef07c867e6b25edfca971615e3a918982c61600.png" />
 </div>
 </div>
 <p>Finally, let us look - in Figure <a class="reference internal" href="#fig:lidar_scan_real_8"><span class="xref myst">6</span></a> - at scans that are taken a bit further apart, in this case there are 8 scans that we skipped.</p>
@@ -686,7 +687,7 @@ and this will be exactly how we can infer the motion of the car in the next sect
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/9e408ddfa8f3627b9559945f3fb56e86dc06cab8bb06258314b79397410fd46f.png" src="_images/9e408ddfa8f3627b9559945f3fb56e86dc06cab8bb06258314b79397410fd46f.png" />
+<img alt="_images/dcdeb8ba40aa825065022d9cc0fe7791d42add4508ff010537276fbbe4778bd9.png" src="_images/dcdeb8ba40aa825065022d9cc0fe7791d42add4508ff010537276fbbe4778bd9.png" />
 </div>
 </div>
 <p>By inspecting (you can do this interactively using the <a class="reference external" href="https://gtbook.github.io/gtbook/driving.html">gtbook website</a>) you can see that the car is <em>still</em> turning, but as the two scans are further apart the “mis-alginment” is more pronounced.</p>
@@ -697,8 +698,8 @@ and this will be exactly how we can infer the motion of the car in the next sect
 <div><p>Point clouds can be used to represent the 3D world.</p>
 </div></blockquote>
 <p id="index-5">If we know the exact pose at which a LIDAR scan was taken, we can transform the points in the scan into absolute coordinates, and create an extended <strong>point cloud map</strong> of the environment. In math, suppose we <em>know</em> that a scan was taken at <span class="math notranslate nohighlight">\(T^w_b\)</span>, then we can transform all LIDAR points <span class="math notranslate nohighlight">\(P^b\)</span>, which are given in body coordinates, to world coordinates:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-930198ec-62ec-4d41-932f-47fd8d8e1d1e">
-<span class="eqno">(6.34)<a class="headerlink" href="#equation-930198ec-62ec-4d41-932f-47fd8d8e1d1e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-3789c116-30e7-43e4-aa32-76ffbc50d28e">
+<span class="eqno">(6.34)<a class="headerlink" href="#equation-3789c116-30e7-43e4-aa32-76ffbc50d28e" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P^w = \phi(T^w_b, P^b)
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\phi\)</span> the action of <span class="math notranslate nohighlight">\(SE(3)\)</span> on points in <span class="math notranslate nohighlight">\(\mathbb{R}^3\)</span>. Earlier in this chapter we saw this can be done by matrix multiplication, but GTSAM actually implements <span class="math notranslate nohighlight">\(\phi\)</span> directly as <code class="docutils literal notranslate"><span class="pre">Pose3::transformFrom</span></code>. This method can be applied to a single <code class="docutils literal notranslate"><span class="pre">Point3</span></code> (just a <span class="math notranslate nohighlight">\(3\times 1\)</span> vector, really) or on many points simultaneously, by passing in a <span class="math notranslate nohighlight">\(3\times N\)</span> matrix:</p>

@@ -418,7 +418,8 @@ document.write(`
 <blockquote>
 <div><p>Most drones use inertial sensing and cameras.</p>
 </div></blockquote>
-<a class="reference internal image-reference" href="_images/S73-Autonomous_camera_drone-01.jpg"><img alt="Splash image with steampunk drone sporting an oversized IMU" class="align-center" src="_images/S73-Autonomous_camera_drone-01.jpg" style="width: 40%;" /></a>
+<a class="reference internal image-reference" href="_images/S73-Autonomous_camera_drone-01.jpg"><img alt="Splash image with steampunk drone sporting an oversized IMU" class="align-center" src="_images/S73-Autonomous_camera_drone-01.jpg" style="width: 40%;" />
+</a>
 <section id="inertial-measurement-units">
 <h2><span class="section-number">7.3.1. </span>Inertial Measurement Units<a class="headerlink" href="#inertial-measurement-units" title="Link to this heading">#</a></h2>
 <p id="index-1"><span id="index-0"></span>An <strong>inertial measurement unit</strong> or <strong>IMU</strong> measures how a rigid body moves through space. The technological development of IMUs has undergone revolutionary transformations since their invention. Whereas they were initially developed for military and later civilian navigation purposes, miniaturized (MEMS) versions of them are now built into most of the mobile computing devices people use every day. IMUs often bundle the following three sensors: gyroscopes, accelerometers, and magnetometers, which we discuss in turn below.</p>
@@ -426,8 +427,8 @@ document.write(`
 <h3><span class="section-number">7.3.1.1. </span>Gyroscopes<a class="headerlink" href="#gyroscopes" title="Link to this heading">#</a></h3>
 <p id="index-2">A <strong>gyroscope</strong> measures <em>changes</em> in orientation around three orthogonal axes, i.e., an angular velocity <span class="math notranslate nohighlight">\(\omega\)</span>.
 This is useful for drones, as they fly in 3D space and have to carefully control and hence measure their attitude <span class="math notranslate nohighlight">\(R^n_b\)</span>. Gyroscopes do not directly measure attitude however, only the <em>rate of change</em> in orientation, and hence we need to integrate the angular velocity <span class="math notranslate nohighlight">\(\omega(t)\)</span> over time:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-f44a7402-ddf9-4200-9f18-b136b546bb5a">
-<span class="eqno">(7.56)<a class="headerlink" href="#equation-f44a7402-ddf9-4200-9f18-b136b546bb5a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-c48f1707-e695-42a9-9aa6-acf9814d6807">
+<span class="eqno">(7.56)<a class="headerlink" href="#equation-c48f1707-e695-42a9-9aa6-acf9814d6807" title="Permalink to this equation">#</a></span>\[\begin{equation}
 R^n_b(t) = R^n_b(0) \int_{\tau=0}^t \exp \hat{\omega}(\tau) d\tau
 \end{equation}\]</div>
 <p>Above, the exponential map <span class="math notranslate nohighlight">\(\exp \hat{\omega}(\tau)\)</span> is as defined in the previous section, where we have also shown how to numerically integrate forward in rotation space.</p>
@@ -525,8 +526,8 @@ Especially for visual odometry, which we will cover in the next section, having 
 </div></blockquote>
 <p>We have seen in Chapter 5 how to project points specified in the <em>camera</em> frame onto the image plane. However, for visual SLAM - which we’ll discuss at length in the next section - an additional step is needed: we need to transform the 3D points from the navigation frame into the camera frame. This involves both the camera extrinsics and the drone’s pose <span class="math notranslate nohighlight">\(T^n_b\)</span> in the navigation frame itself.</p>
 <p>Let us start by reviewing the fundamental projection equation from chapter 5:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c4f504ab-eae5-4844-a49d-a0c7df70ba6f">
-<span class="eqno">(7.57)<a class="headerlink" href="#equation-c4f504ab-eae5-4844-a49d-a0c7df70ba6f" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-a7f09b07-dae6-4213-8ff1-7105e6c93ee4">
+<span class="eqno">(7.57)<a class="headerlink" href="#equation-a7f09b07-dae6-4213-8ff1-7105e6c93ee4" title="Permalink to this equation">#</a></span>\[\begin{equation}
 u = u_0 + f \frac{X^c}{Z^c} \,\,\,\, v = v_0 + f \frac{Y^c}{Z^c}.
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(u_0\)</span>, <span class="math notranslate nohighlight">\(v_0\)</span>, and <span class="math notranslate nohighlight">\(f\)</span> are the <em>intrinsic</em> camera calibration parameters, and <span class="math notranslate nohighlight">\(P^c=(X^c,Y^c,Z^c)\)</span> are the coordinates of a 3D point in the <em>camera</em> coordinate frame, hence the superscript <span class="math notranslate nohighlight">\(C\)</span>. But what if we are given the 3D coordinates <span class="math notranslate nohighlight">\(P^n=(X^n,Y^n,Z^n)\)</span> in the ENU navigation frame, rather than in the camera frame? Because the camera is mounted on the drone, we do this in two steps:</p>
@@ -594,8 +595,8 @@ u2,v2 = [409.39 179.7 ] in image 2
 </div>
 </div>
 <p>Again, this is exactly what we expect for a stereo rig. In this case the disparity is <span class="math notranslate nohighlight">\(412.4-409.4\approx3\)</span> pixels, and if we plug that into the fundamental stereo equation from Section 5.2, with baseline <span class="math notranslate nohighlight">\(10cm\)</span> (check the extrinsics!), we indeed obtain that the point is at a depth of <span class="math notranslate nohighlight">\(10m\)</span>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a789c6a5-57c9-4509-bd51-81b93ebe957d">
-<span class="eqno">(7.58)<a class="headerlink" href="#equation-a789c6a5-57c9-4509-bd51-81b93ebe957d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-60f8543c-e04b-4583-b3e6-6f273dba8d7d">
+<span class="eqno">(7.58)<a class="headerlink" href="#equation-60f8543c-e04b-4583-b3e6-6f273dba8d7d" title="Permalink to this equation">#</a></span>\[\begin{equation}
 Z = B \frac{f}{d} = 0.1 \frac{300}{3} = 10
 \end{equation}\]</div>
 <p>In actuality, the disparity is a tiny bit larger, and if we plug in the exact number, we get the <em>true</em> depth from the camera center:</p>
