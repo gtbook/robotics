@@ -436,6 +436,66 @@ document.write(`
   <section class="tex2jax_ignore mathjax_ignore" id="perception-with-graphical-models">
 <h1><span class="section-number">3.4. </span>Perception with Graphical Models<a class="headerlink" href="#perception-with-graphical-models" title="Link to this heading">#</a></h1>
 <p><a href="https://colab.research.google.com/github/gtbook/robotics/blob/main/S34_vacuum_perception.ipynb" target="_parent"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg" /></a></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">pip</span> install gtsam-develop
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Red">ERROR: Could not find a version that satisfies the requirement gtsam-develop (from versions: none)</span>
+
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Red">ERROR: No matching distribution found for gtsam-develop</span>
+
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Note: you may need to restart the kernel to use updated packages.
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">var</span> <span class="o">=</span> <span class="n">Variables</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Q5</span> <span class="o">=</span><span class="n">var</span><span class="o">.</span><span class="n">binary</span><span class="p">(</span><span class="s2">&quot;Qupid&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Q5</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(0, 2)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">var</span><span class="o">.</span><span class="n">discrete_series</span><span class="p">(</span><span class="s2">&quot;S&quot;</span><span class="p">,</span><span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="p">[</span><span class="s2">&quot;Sad&quot;</span><span class="p">,</span> <span class="s2">&quot;Happy&quot;</span><span class="p">,</span> <span class="s2">&quot;Excited&quot;</span><span class="p">,</span> <span class="s2">&quot;Angry&quot;</span><span class="p">,</span> <span class="s2">&quot;Relaxed&quot;</span><span class="p">,</span> <span class="s2">&quot;Bored&quot;</span><span class="p">,</span> <span class="s2">&quot;Sleepy&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{0: (5980780305148018688, 7),
+ 1: (5980780305148018689, 7),
+ 2: (5980780305148018690, 7)}
+</pre></div>
+</div>
+</div>
+</div>
 <blockquote id="index-0">
 <div><p>Perception using dynamic Bayes nets is equivalent to inference in hidden Markov models (HMMs).</p>
 </div></blockquote>
@@ -471,8 +531,8 @@ sets: the <strong>hidden variables</strong> <span class="math notranslate nohigh
 <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span>. First, let us recall what a Bayes net looks like in this case.
 From Section 3.2, we know that a general Bayes net over any set of variables is defined as a product of conditionals, as in Equation <a class="reference internal" href="S32_vacuum_actions.html#equation-bn-is-product">(3.13)</a>.
 Hence in our case we have</p>
-<div class="amsmath math notranslate nohighlight" id="equation-712d9e48-8798-4694-8b50-c684d27ce248">
-<span class="eqno">(3.17)<a class="headerlink" href="#equation-712d9e48-8798-4694-8b50-c684d27ce248" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-de3c515b-c50f-4c66-9d87-ed393cc623f2">
+<span class="eqno">(3.17)<a class="headerlink" href="#equation-de3c515b-c50f-4c66-9d87-ed393cc623f2" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P(\mathcal{X}, \mathcal{Z}) = \prod_{i=1}P(X_{i}|\Pi_{X_i}) \prod_{j=1}P(Z_{j}|\Pi_{Z_j})
 \end{equation}\]</div>
 <p>where there is no restriction on the parent sets <span class="math notranslate nohighlight">\(\Pi\)</span>, just that the directed graph is acyclic. Of course, we will be most interested here in dynamic Bayes nets as defined previously, but for now what follows applies to generic Bayes nets.</p>
@@ -485,8 +545,8 @@ To calculate this we apply Bayes’ theorem, but now applied to
 hidden variables <span class="math notranslate nohighlight">\(\mathcal{X}\)</span>. Using the “easy” version of Bayes’ theorem from Section 2.4,
 we just re-write the posterior as the joint, but with the values <span class="math notranslate nohighlight">\(\mathfrak{z}\)</span> for all variables in
 <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span> instantiated:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-abfdb624-7f6f-4757-bed6-8b70138b4ce5">
-<span class="eqno">(3.18)<a class="headerlink" href="#equation-abfdb624-7f6f-4757-bed6-8b70138b4ce5" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-e0501d52-fc05-41ce-9de0-d54a6285d4fd">
+<span class="eqno">(3.18)<a class="headerlink" href="#equation-e0501d52-fc05-41ce-9de0-d54a6285d4fd" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P(\mathcal{X}|\mathcal{Z}=\mathfrak{z})\propto P(\mathcal{X}, \mathcal{Z}=\mathfrak{z}).
 \end{equation}\]</div>
 <p>This seems almost too simple, but it really works, as shown in a small generic Bayes net example in Figure <a class="reference internal" href="#fig:bayesnet_4"><span class="xref myst">3.21</span></a>. Let us recall the 4-variable Bayes net example on variables <span class="math notranslate nohighlight">\(X\)</span>, <span class="math notranslate nohighlight">\(Y\)</span>, <span class="math notranslate nohighlight">\(W\)</span>, and <span class="math notranslate nohighlight">\(Z\)</span>, and let us take <span class="math notranslate nohighlight">\(\mathcal{X}=(X, Y)\)</span> and <span class="math notranslate nohighlight">\(\mathcal{Z}=(W, Z)\)</span>, which we indicate in the figure by rendering <span class="math notranslate nohighlight">\(W\)</span> and <span class="math notranslate nohighlight">\(Z\)</span> as boxes.</p>
@@ -571,8 +631,8 @@ Here, we consider MAP estimation.</p>
 <span class="math notranslate nohighlight">\(\mathfrak{z}\)</span> for <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span>.
 The MAP estimate of the
 joint assignment to the other variables <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> is given by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-d46977a8-8206-4b5a-8d3d-a274596f44e2">
-<span class="eqno">(3.19)<a class="headerlink" href="#equation-d46977a8-8206-4b5a-8d3d-a274596f44e2" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-f726e8a5-0c2a-4831-a505-a12556d07e6c">
+<span class="eqno">(3.19)<a class="headerlink" href="#equation-f726e8a5-0c2a-4831-a505-a12556d07e6c" title="Permalink to this equation">#</a></span>\[\begin{equation}
 x^*_{MAP} = \arg \max_x P(\mathcal{X}|\mathcal{Z}=\mathfrak{z}).
 \end{equation}\]</div>
 <p>For example, given
@@ -597,8 +657,8 @@ the nuisance variables <span class="math notranslate nohighlight">\(\mathcal{Y}\
 Now, the posterior <span class="math notranslate nohighlight">\(P(\mathcal{X}|\mathcal{Z}=\mathfrak{z})\)</span>
 can be determined by marginalizing (Section 2.4.7) over
 the nuisance variables:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-ca162b20-5fd0-4f4b-a6ce-1d8e8c1f70af">
-<span class="eqno">(3.20)<a class="headerlink" href="#equation-ca162b20-5fd0-4f4b-a6ce-1d8e8c1f70af" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-daa58f5e-2d78-448c-b5aa-931e3bdb4e9b">
+<span class="eqno">(3.20)<a class="headerlink" href="#equation-daa58f5e-2d78-448c-b5aa-931e3bdb4e9b" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P(\mathcal{X}|\mathcal{Z}=\mathfrak{z})=\sum_{\mathfrak{y}}P(\mathcal{X}, \mathcal{Y}=\mathfrak{y}|\mathcal{Z}=\mathfrak{z})\propto\sum_{\mathfrak{y}}P(\mathcal{X}, \mathcal{Y}=\mathfrak{y}, \mathcal{Z}=\mathfrak{z}).
 \end{equation}\]</div>
 <p>This approach to dealing with nuisance variables
@@ -654,28 +714,140 @@ chain has the prior <span class="math notranslate nohighlight">\(P(X_1)\)</span>
 depend only on the state <span class="math notranslate nohighlight">\(X_k\)</span>, modeled by measurement models
 <span class="math notranslate nohighlight">\(P(Z_k|X_k)\)</span>. In other words, the Bayes net associated with this HMM encodes the following
 joint distribution <span class="math notranslate nohighlight">\(P(\mathcal{X}, \mathcal{Z})\)</span>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-902dc1ff-f1b1-4711-b067-a551a678ff6f">
-<span class="eqno">(3.21)<a class="headerlink" href="#equation-902dc1ff-f1b1-4711-b067-a551a678ff6f" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-74713d92-d0c5-4d12-b228-79275f4f2c53">
+<span class="eqno">(3.21)<a class="headerlink" href="#equation-74713d92-d0c5-4d12-b228-79275f4f2c53" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P(\mathcal{X}, \mathcal{Z})=P(X_1)P(Z_1|X_1)P(X_2|X_1)P(Z_2|X_2)P(X_3|X_2)P(Z_3|X_3)
 \end{equation}\]</div>
 <p>Note that we can also write this more succinctly as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a2355890-0df2-4f4a-a14e-a9a8539df3ab">
-<span class="eqno">(3.22)<a class="headerlink" href="#equation-a2355890-0df2-4f4a-a14e-a9a8539df3ab" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d4437ae3-88ec-47aa-87f6-218288afa508">
+<span class="eqno">(3.22)<a class="headerlink" href="#equation-d4437ae3-88ec-47aa-87f6-218288afa508" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P(\mathcal{X}, \mathcal{Z})=P(\mathcal{Z}|\mathcal{X})P(\mathcal{X})
 \end{equation}\]</div>
 <p>where</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c2af296e-a763-45c0-b0ab-394de44b2c0a">
-<span class="eqno">(3.23)<a class="headerlink" href="#equation-c2af296e-a763-45c0-b0ab-394de44b2c0a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-fad025aa-b885-4e54-af01-d35112f927b9">
+<span class="eqno">(3.23)<a class="headerlink" href="#equation-fad025aa-b885-4e54-af01-d35112f927b9" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P(\mathcal{X})=P(X_1, X_2, X_3)=P(X_1)P(X_2|X_1)P(X_3|X_2)
 \end{equation}\]</div>
 <p>is the prior over state <em>trajectories</em>, and the measurement probability distribution for a given trajectory is given by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-16551aed-75d9-45f3-b04f-ac3b02d2d1c9">
-<span class="eqno">(3.24)<a class="headerlink" href="#equation-16551aed-75d9-45f3-b04f-ac3b02d2d1c9" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-8a879587-bcc2-43ed-96b1-7a7f3f34b9cf">
+<span class="eqno">(3.24)<a class="headerlink" href="#equation-8a879587-bcc2-43ed-96b1-7a7f3f34b9cf" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P(\mathcal{Z}|\mathcal{X})=P(Z_1|X_1)P(Z_2|X_2)P(Z_3|X_3).
 \end{equation}\]</div>
 <section id="example-an-hmm-describing-a-robot">
 <h3><span class="section-number">3.4.2.1. </span>Example: An HMM Describing a Robot<a class="headerlink" href="#example-an-hmm-describing-a-robot" title="Link to this heading">#</a></h3>
 <p>Let us recreate the dynamic Bayes net from the previous section here, with 3 time steps. However, we now also add conditionals on the three measurements <span class="math notranslate nohighlight">\(Z_1\)</span>, <span class="math notranslate nohighlight">\(Z_2\)</span>, and <span class="math notranslate nohighlight">\(Z_3\)</span>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(6341068275337658369, 5)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dbn</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">DiscreteBayesNet</span><span class="p">()</span>
+<span class="n">dbn</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[],</span> <span class="s2">&quot;2/2/3/1/2&quot;</span><span class="p">)</span>  <span class="c1"># P(X1)</span>
+<span class="n">dbn</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="s2">&quot;2/2/2/2/2 2/2/2/2/2 2/2/2/2/2 2/2/2/2/2 2/2/200/2/2&quot;</span><span class="p">)</span>  <span class="c1"># P(X2)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dbn</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div><p><tt>DiscreteBayesNet</tt> of size 2</p><div>
+<p>  <i>P(X1):</i></p>
+<div>
+<table class='DecisionTreeFactor'>
+  <thead>
+    <tr><th>X1</th><th>value</th></tr>
+  </thead>
+  <tbody>
+    <tr><th>0</th><td>0.2</td></tr>
+    <tr><th>1</th><td>0.2</td></tr>
+    <tr><th>2</th><td>0.3</td></tr>
+    <tr><th>3</th><td>0.1</td></tr>
+    <tr><th>4</th><td>0.2</td></tr>
+  </tbody>
+</table>
+</div>
+<div>
+<p>  <i>P(X2|X1):</i></p>
+<table class='DiscreteConditional'>
+  <thead>
+    <tr><th><i>X1</i></th><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th></tr>
+  </thead>
+  <tbody>
+    <tr><th>0</th><td>0.2</td><td>0.2</td><td>0.2</td><td>0.2</td><td>0.2</td></tr>
+    <tr><th>1</th><td>0.2</td><td>0.2</td><td>0.2</td><td>0.2</td><td>0.2</td></tr>
+    <tr><th>2</th><td>0.2</td><td>0.2</td><td>0.2</td><td>0.2</td><td>0.2</td></tr>
+    <tr><th>3</th><td>0.2</td><td>0.2</td><td>0.2</td><td>0.2</td><td>0.2</td></tr>
+    <tr><th>4</th><td>0.00961538</td><td>0.00961538</td><td>0.961538</td><td>0.00961538</td><td>0.00961538</td></tr>
+  </tbody>
+</table>
+</div>
+</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">show</span><span class="p">(</span><span class="n">dbn</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/aebe60a51b71e77b3d4486ce25ca67371b1375143d5a798cc0de064abe9e96ef.svg" src="_images/aebe60a51b71e77b3d4486ce25ca67371b1375143d5a798cc0de064abe9e96ef.svg" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">vacuum</span><span class="o">.</span><span class="n">action_spec</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    1/0/0/0/0 2/8/0/0/0 1/0/0/0/0 2/0/0/8/0
+    8/2/0/0/0 0/1/0/0/0 0/1/0/0/0 0/2/0/0/8
+    0/0/1/0/0 0/0/2/8/0 0/0/1/0/0 0/0/1/0/0
+    0/0/8/2/0 0/0/0/2/8 8/0/0/2/0 0/0/0/1/0
+    0/0/0/8/2 0/0/0/0/1 0/8/0/0/2 0/0/0/0/1
+    
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="n">dbn</span><span class="o">.</span><span class="n">add</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Help on method add in module gtsam.gtsam:
+
+add(...) method of gtsam.gtsam.DiscreteBayesNet instance
+    add(*args, **kwargs)
+    Overloaded function.
+    
+    1. add(self: gtsam.gtsam.DiscreteBayesNet, s: gtsam.gtsam.DiscreteConditional) -&gt; None
+    
+    2. add(self: gtsam.gtsam.DiscreteBayesNet, key: Tuple[int, int], spec: str) -&gt; None
+    
+    3. add(self: gtsam.gtsam.DiscreteBayesNet, key: Tuple[int, int], parents: gtsam.gtsam.DiscreteKeys, spec: str) -&gt; None
+    
+    4. add(self: gtsam.gtsam.DiscreteBayesNet, key: Tuple[int, int], parents: List[Tuple[int, int]], spec: str) -&gt; None
+</pre></div>
+</div>
+</div>
+</div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dbn</span> <span class="o">=</span> <span class="n">gtsam</span><span class="o">.</span><span class="n">DiscreteBayesNet</span><span class="p">()</span>
@@ -702,6 +874,382 @@ We “show” the resulting DBN in Figure <a class="reference internal" href="#f
 <img alt="_images/bb93d920146b60db0b064f3f14ec2e53034624e038e40e44d68890fc9e36a4a5.svg" src="_images/bb93d920146b60db0b064f3f14ec2e53034624e038e40e44d68890fc9e36a4a5.svg" />
 </div>
 </div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dbn</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div><p><tt>DiscreteBayesNet</tt> of size 6</p><div>
+<p>  <i>P(Z1|X1):</i></p>
+<table class='DiscreteConditional'>
+  <thead>
+    <tr><th><i>X1</i></th><th>0</th><th>1</th><th>2</th></tr>
+  </thead>
+  <tbody>
+    <tr><th>0</th><td>0.1</td><td>0.1</td><td>0.8</td></tr>
+    <tr><th>1</th><td>0.1</td><td>0.1</td><td>0.8</td></tr>
+    <tr><th>2</th><td>0.2</td><td>0.7</td><td>0.1</td></tr>
+    <tr><th>3</th><td>0.8</td><td>0.1</td><td>0.1</td></tr>
+    <tr><th>4</th><td>0.1</td><td>0.8</td><td>0.1</td></tr>
+  </tbody>
+</table>
+</div>
+<div>
+<p>  <i>P(Z2|X2):</i></p>
+<table class='DiscreteConditional'>
+  <thead>
+    <tr><th><i>X2</i></th><th>0</th><th>1</th><th>2</th></tr>
+  </thead>
+  <tbody>
+    <tr><th>0</th><td>0.1</td><td>0.1</td><td>0.8</td></tr>
+    <tr><th>1</th><td>0.1</td><td>0.1</td><td>0.8</td></tr>
+    <tr><th>2</th><td>0.2</td><td>0.7</td><td>0.1</td></tr>
+    <tr><th>3</th><td>0.8</td><td>0.1</td><td>0.1</td></tr>
+    <tr><th>4</th><td>0.1</td><td>0.8</td><td>0.1</td></tr>
+  </tbody>
+</table>
+</div>
+<div>
+<p>  <i>P(Z3|X3):</i></p>
+<table class='DiscreteConditional'>
+  <thead>
+    <tr><th><i>X3</i></th><th>0</th><th>1</th><th>2</th></tr>
+  </thead>
+  <tbody>
+    <tr><th>0</th><td>0.1</td><td>0.1</td><td>0.8</td></tr>
+    <tr><th>1</th><td>0.1</td><td>0.1</td><td>0.8</td></tr>
+    <tr><th>2</th><td>0.2</td><td>0.7</td><td>0.1</td></tr>
+    <tr><th>3</th><td>0.8</td><td>0.1</td><td>0.1</td></tr>
+    <tr><th>4</th><td>0.1</td><td>0.8</td><td>0.1</td></tr>
+  </tbody>
+</table>
+</div>
+<div>
+<p>  <i>P(X3|X2,A2):</i></p>
+<table class='DiscreteConditional'>
+  <thead>
+    <tr><th><i>X2</i></th><th><i>A2</i></th><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th></tr>
+  </thead>
+  <tbody>
+    <tr><th>0</th><th>0</th><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+    <tr><th>0</th><th>1</th><td>0.2</td><td>0.8</td><td>0</td><td>0</td><td>0</td></tr>
+    <tr><th>0</th><th>2</th><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+    <tr><th>0</th><th>3</th><td>0.2</td><td>0</td><td>0</td><td>0.8</td><td>0</td></tr>
+    <tr><th>1</th><th>0</th><td>0.8</td><td>0.2</td><td>0</td><td>0</td><td>0</td></tr>
+    <tr><th>1</th><th>1</th><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td></tr>
+    <tr><th>1</th><th>2</th><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td></tr>
+    <tr><th>1</th><th>3</th><td>0</td><td>0.2</td><td>0</td><td>0</td><td>0.8</td></tr>
+    <tr><th>2</th><th>0</th><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td></tr>
+    <tr><th>2</th><th>1</th><td>0</td><td>0</td><td>0.2</td><td>0.8</td><td>0</td></tr>
+    <tr><th>2</th><th>2</th><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td></tr>
+    <tr><th>2</th><th>3</th><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td></tr>
+    <tr><th>3</th><th>0</th><td>0</td><td>0</td><td>0.8</td><td>0.2</td><td>0</td></tr>
+    <tr><th>3</th><th>1</th><td>0</td><td>0</td><td>0</td><td>0.2</td><td>0.8</td></tr>
+    <tr><th>3</th><th>2</th><td>0.8</td><td>0</td><td>0</td><td>0.2</td><td>0</td></tr>
+    <tr><th>3</th><th>3</th><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td></tr>
+    <tr><th>4</th><th>0</th><td>0</td><td>0</td><td>0</td><td>0.8</td><td>0.2</td></tr>
+    <tr><th>4</th><th>1</th><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+    <tr><th>4</th><th>2</th><td>0</td><td>0.8</td><td>0</td><td>0</td><td>0.2</td></tr>
+    <tr><th>4</th><th>3</th><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+  </tbody>
+</table>
+</div>
+<div>
+<p>  <i>P(X2|X1,A1):</i></p>
+<table class='DiscreteConditional'>
+  <thead>
+    <tr><th><i>X1</i></th><th><i>A1</i></th><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th></tr>
+  </thead>
+  <tbody>
+    <tr><th>0</th><th>0</th><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+    <tr><th>0</th><th>1</th><td>0.2</td><td>0.8</td><td>0</td><td>0</td><td>0</td></tr>
+    <tr><th>0</th><th>2</th><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+    <tr><th>0</th><th>3</th><td>0.2</td><td>0</td><td>0</td><td>0.8</td><td>0</td></tr>
+    <tr><th>1</th><th>0</th><td>0.8</td><td>0.2</td><td>0</td><td>0</td><td>0</td></tr>
+    <tr><th>1</th><th>1</th><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td></tr>
+    <tr><th>1</th><th>2</th><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td></tr>
+    <tr><th>1</th><th>3</th><td>0</td><td>0.2</td><td>0</td><td>0</td><td>0.8</td></tr>
+    <tr><th>2</th><th>0</th><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td></tr>
+    <tr><th>2</th><th>1</th><td>0</td><td>0</td><td>0.2</td><td>0.8</td><td>0</td></tr>
+    <tr><th>2</th><th>2</th><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td></tr>
+    <tr><th>2</th><th>3</th><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td></tr>
+    <tr><th>3</th><th>0</th><td>0</td><td>0</td><td>0.8</td><td>0.2</td><td>0</td></tr>
+    <tr><th>3</th><th>1</th><td>0</td><td>0</td><td>0</td><td>0.2</td><td>0.8</td></tr>
+    <tr><th>3</th><th>2</th><td>0.8</td><td>0</td><td>0</td><td>0.2</td><td>0</td></tr>
+    <tr><th>3</th><th>3</th><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td></tr>
+    <tr><th>4</th><th>0</th><td>0</td><td>0</td><td>0</td><td>0.8</td><td>0.2</td></tr>
+    <tr><th>4</th><th>1</th><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+    <tr><th>4</th><th>2</th><td>0</td><td>0.8</td><td>0</td><td>0</td><td>0.2</td></tr>
+    <tr><th>4</th><th>3</th><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+  </tbody>
+</table>
+</div>
+<div>
+<p>  <i>P(X1):</i></p>
+<div>
+<table class='DecisionTreeFactor'>
+  <thead>
+    <tr><th>X1</th><th>value</th></tr>
+  </thead>
+  <tbody>
+    <tr><th>0</th><td>0.2</td></tr>
+    <tr><th>1</th><td>0.2</td></tr>
+    <tr><th>2</th><td>0.2</td></tr>
+    <tr><th>3</th><td>0.2</td></tr>
+    <tr><th>4</th><td>0.2</td></tr>
+  </tbody>
+</table>
+</div>
+</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Let&#39;s state actions and sensing:</span>
+<span class="n">actions</span> <span class="o">=</span> <span class="n">VARIABLES</span><span class="o">.</span><span class="n">assignment</span><span class="p">({</span><span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="s1">&#39;R&#39;</span><span class="p">,</span> <span class="n">A</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="s1">&#39;U&#39;</span><span class="p">})</span>
+<span class="n">measurements</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;dark&#39;</span><span class="p">,</span> <span class="s1">&#39;medium&#39;</span><span class="p">,</span> <span class="s1">&#39;light&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Let&#39;s iterate over states:</span>
+<span class="k">for</span> <span class="n">x1</span> <span class="ow">in</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">x2</span> <span class="ow">in</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">x3</span> <span class="ow">in</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="p">:</span>
+          <span class="nb">print</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span><span class="n">x2</span><span class="p">,</span><span class="n">x3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Living Room Living Room Living Room
+Living Room Living Room Kitchen
+Living Room Living Room Office
+Living Room Living Room Hallway
+Living Room Living Room Dining Room
+Living Room Kitchen Living Room
+Living Room Kitchen Kitchen
+Living Room Kitchen Office
+Living Room Kitchen Hallway
+Living Room Kitchen Dining Room
+Living Room Office Living Room
+Living Room Office Kitchen
+Living Room Office Office
+Living Room Office Hallway
+Living Room Office Dining Room
+Living Room Hallway Living Room
+Living Room Hallway Kitchen
+Living Room Hallway Office
+Living Room Hallway Hallway
+Living Room Hallway Dining Room
+Living Room Dining Room Living Room
+Living Room Dining Room Kitchen
+Living Room Dining Room Office
+Living Room Dining Room Hallway
+Living Room Dining Room Dining Room
+Kitchen Living Room Living Room
+Kitchen Living Room Kitchen
+Kitchen Living Room Office
+Kitchen Living Room Hallway
+Kitchen Living Room Dining Room
+Kitchen Kitchen Living Room
+Kitchen Kitchen Kitchen
+Kitchen Kitchen Office
+Kitchen Kitchen Hallway
+Kitchen Kitchen Dining Room
+Kitchen Office Living Room
+Kitchen Office Kitchen
+Kitchen Office Office
+Kitchen Office Hallway
+Kitchen Office Dining Room
+Kitchen Hallway Living Room
+Kitchen Hallway Kitchen
+Kitchen Hallway Office
+Kitchen Hallway Hallway
+Kitchen Hallway Dining Room
+Kitchen Dining Room Living Room
+Kitchen Dining Room Kitchen
+Kitchen Dining Room Office
+Kitchen Dining Room Hallway
+Kitchen Dining Room Dining Room
+Office Living Room Living Room
+Office Living Room Kitchen
+Office Living Room Office
+Office Living Room Hallway
+Office Living Room Dining Room
+Office Kitchen Living Room
+Office Kitchen Kitchen
+Office Kitchen Office
+Office Kitchen Hallway
+Office Kitchen Dining Room
+Office Office Living Room
+Office Office Kitchen
+Office Office Office
+Office Office Hallway
+Office Office Dining Room
+Office Hallway Living Room
+Office Hallway Kitchen
+Office Hallway Office
+Office Hallway Hallway
+Office Hallway Dining Room
+Office Dining Room Living Room
+Office Dining Room Kitchen
+Office Dining Room Office
+Office Dining Room Hallway
+Office Dining Room Dining Room
+Hallway Living Room Living Room
+Hallway Living Room Kitchen
+Hallway Living Room Office
+Hallway Living Room Hallway
+Hallway Living Room Dining Room
+Hallway Kitchen Living Room
+Hallway Kitchen Kitchen
+Hallway Kitchen Office
+Hallway Kitchen Hallway
+Hallway Kitchen Dining Room
+Hallway Office Living Room
+Hallway Office Kitchen
+Hallway Office Office
+Hallway Office Hallway
+Hallway Office Dining Room
+Hallway Hallway Living Room
+Hallway Hallway Kitchen
+Hallway Hallway Office
+Hallway Hallway Hallway
+Hallway Hallway Dining Room
+Hallway Dining Room Living Room
+Hallway Dining Room Kitchen
+Hallway Dining Room Office
+Hallway Dining Room Hallway
+Hallway Dining Room Dining Room
+Dining Room Living Room Living Room
+Dining Room Living Room Kitchen
+Dining Room Living Room Office
+Dining Room Living Room Hallway
+Dining Room Living Room Dining Room
+Dining Room Kitchen Living Room
+Dining Room Kitchen Kitchen
+Dining Room Kitchen Office
+Dining Room Kitchen Hallway
+Dining Room Kitchen Dining Room
+Dining Room Office Living Room
+Dining Room Office Kitchen
+Dining Room Office Office
+Dining Room Office Hallway
+Dining Room Office Dining Room
+Dining Room Hallway Living Room
+Dining Room Hallway Kitchen
+Dining Room Hallway Office
+Dining Room Hallway Hallway
+Dining Room Hallway Dining Room
+Dining Room Dining Room Living Room
+Dining Room Dining Room Kitchen
+Dining Room Dining Room Office
+Dining Room Dining Room Hallway
+Dining Room Dining Room Dining Room
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Does not work with strange error, because DBN needs values for all variables!</span>
+<span class="c1"># So let&#39;s create a DiscreteValues object with all actions and measurements:</span>
+<span class="n">known</span> <span class="o">=</span> <span class="p">{</span><span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="s1">&#39;R&#39;</span><span class="p">,</span> <span class="n">A</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="s1">&#39;U&#39;</span><span class="p">,</span> <span class="n">Z</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="s1">&#39;dark&#39;</span><span class="p">,</span> <span class="n">Z</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="s1">&#39;medium&#39;</span><span class="p">,</span> <span class="n">Z</span><span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="s1">&#39;light&#39;</span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Let&#39;s iterate over states and create trajectory values</span>
+<span class="n">trajectory</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">x1</span> <span class="ow">in</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="p">:</span>
+    <span class="n">trajectory</span><span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">x1</span>
+    <span class="k">for</span> <span class="n">x2</span> <span class="ow">in</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="p">:</span>
+        <span class="n">trajectory</span><span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span> <span class="o">=</span> <span class="n">x2</span>
+        <span class="k">for</span> <span class="n">x3</span> <span class="ow">in</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="p">:</span>
+            <span class="n">trajectory</span><span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="mi">3</span><span class="p">]]</span> <span class="o">=</span> <span class="n">x3</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">VARIABLES</span><span class="o">.</span><span class="n">assignment</span><span class="p">(</span><span class="n">known</span> <span class="o">|</span> <span class="n">trajectory</span><span class="p">)</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">dbn</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">p</span> <span class="o">&gt;</span> <span class="mf">1e-6</span><span class="p">):</span>
+              <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">x1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}{</span><span class="n">x2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}{</span><span class="n">x3</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">:</span><span class="se">\t</span><span class="si">{</span><span class="mi">100</span><span class="o">*</span><span class="n">p</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>LLL:	0.03%
+LKK:	0.13%
+KKK:	0.16%
+OOO:	0.06%
+OHL:	0.20%
+OHH:	0.01%
+HHL:	0.20%
+HHH:	0.01%
+HDK:	6.55%
+HDD:	0.20%
+DDK:	1.02%
+DDD:	0.03%
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># So: MPE:</span>
+<span class="c1"># iterate over states and create trajectory values and pick max</span>
+<span class="n">max_p</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">trajectory</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">max_trajectory</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">x1</span> <span class="ow">in</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="p">:</span>
+    <span class="n">trajectory</span><span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">x1</span>
+    <span class="k">for</span> <span class="n">x2</span> <span class="ow">in</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="p">:</span>
+        <span class="n">trajectory</span><span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span> <span class="o">=</span> <span class="n">x2</span>
+        <span class="k">for</span> <span class="n">x3</span> <span class="ow">in</span> <span class="n">vacuum</span><span class="o">.</span><span class="n">rooms</span><span class="p">:</span>
+            <span class="n">trajectory</span><span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="mi">3</span><span class="p">]]</span> <span class="o">=</span> <span class="n">x3</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">VARIABLES</span><span class="o">.</span><span class="n">assignment</span><span class="p">(</span><span class="n">known</span> <span class="o">|</span> <span class="n">trajectory</span><span class="p">)</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">dbn</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">p</span> <span class="o">&gt;</span> <span class="mf">1e-6</span><span class="p">):</span>
+              <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">x1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}{</span><span class="n">x2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}{</span><span class="n">x3</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">:</span><span class="se">\t</span><span class="si">{</span><span class="mi">100</span><span class="o">*</span><span class="n">p</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+              <span class="k">if</span> <span class="n">p</span> <span class="o">&gt;</span> <span class="n">max_p</span><span class="p">:</span>
+                  <span class="n">max_p</span> <span class="o">=</span> <span class="n">p</span>
+                  <span class="n">max_trajectory</span> <span class="o">=</span> <span class="n">trajectory</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Maximum a posteriori estimate (MPE), with p=</span><span class="si">{</span><span class="mi">100</span><span class="o">*</span><span class="n">max_p</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
+<span class="n">pretty</span><span class="p">(</span><span class="n">VARIABLES</span><span class="o">.</span><span class="n">assignment</span><span class="p">(</span><span class="n">max_trajectory</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>LLL:	0.03
+LKK:	0.13
+KKK:	0.16
+OOO:	0.06
+OHL:	0.20
+OHH:	0.01
+HHL:	0.20
+HHH:	0.01
+HDK:	6.55
+HDD:	0.20
+DDK:	1.02
+DDD:	0.03
+Maximum a posteriori estimate (MPE), with p=6.55:
+</pre></div>
+</div>
+<div class="output text_html"><div>
+<table class='DiscreteValues'>
+  <thead>
+    <tr><th>Variable</th><th>value</th></tr>
+  </thead>
+  <tbody>
+    <tr><th>X1</th><td>Hallway</td></tr>
+    <tr><th>X2</th><td>Dining Room</td></tr>
+    <tr><th>X3</th><td>Kitchen</td></tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
 </section>
 </section>
 <section id="naive-inference-in-hmms">
@@ -713,16 +1261,16 @@ We “show” the resulting DBN in Figure <a class="reference internal" href="#f
 one way to perform inference is to apply Bayes’ theorem to obtain an expression for the posterior probability distribution over
 the state trajectory <span class="math notranslate nohighlight">\(\mathcal{X}\)</span>, given the measurements
 <span class="math notranslate nohighlight">\(\mathcal{Z}=\mathfrak{z}\)</span>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c49dbc38-2d3a-4634-97a4-16b3358fa3dc">
-<span class="eqno">(3.25)<a class="headerlink" href="#equation-c49dbc38-2d3a-4634-97a4-16b3358fa3dc" title="Permalink to this equation">#</a></span>\[\begin{equation}\begin{aligned}
+<div class="amsmath math notranslate nohighlight" id="equation-21d7eb8a-27eb-40f9-a0d5-fcb4a8c1b542">
+<span class="eqno">(3.25)<a class="headerlink" href="#equation-21d7eb8a-27eb-40f9-a0d5-fcb4a8c1b542" title="Permalink to this equation">#</a></span>\[\begin{equation}\begin{aligned}
 P(\mathcal{X}|\mathcal{Z}) &amp; \propto P(\mathcal{Z}=\mathfrak{z}|\mathcal{X})P(\mathcal{X}) \\
 &amp; =L(\mathcal{X}; \mathcal{Z}=\mathfrak{z})P(\mathcal{X})
 \end{aligned}\end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(P(\mathcal{X})\)</span> is the trajectory prior
 and the likelihood <span class="math notranslate nohighlight">\(L(\mathcal{X}; \mathcal{Z}=\mathfrak{z})\)</span> of
 <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> given <span class="math notranslate nohighlight">\(\mathcal{Z}=\mathfrak{z}\)</span> is defined as before as a function of <span class="math notranslate nohighlight">\(\mathcal{X}\)</span>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-20fcb002-e244-4642-96a1-cd2218c46ada">
-<span class="eqno">(3.26)<a class="headerlink" href="#equation-20fcb002-e244-4642-96a1-cd2218c46ada" title="Permalink to this equation">#</a></span>\[\begin{equation}\begin{aligned}
+<div class="amsmath math notranslate nohighlight" id="equation-4998317c-5bc9-4ac1-816c-27619ea55ae1">
+<span class="eqno">(3.26)<a class="headerlink" href="#equation-4998317c-5bc9-4ac1-816c-27619ea55ae1" title="Permalink to this equation">#</a></span>\[\begin{equation}\begin{aligned}
 L(\mathcal{X}; \mathcal{Z}=\mathfrak{z}) &amp; \propto P(\mathcal{Z}=\mathfrak{z}|\mathcal{X})\\
 &amp; =P(z_1|X_1)P(z_2|X_2)P(z_3|X_3)\\
 &amp; \propto L(X_1; Z_1)L(X_2; Z_2)L(X_3; Z_3)
@@ -760,8 +1308,8 @@ Since the measurements <span class="math notranslate nohighlight">\(\mathcal{Z}\
 proportional to the product of six <strong>factors</strong>, three of which derive
 from the Markov chain, and three of which are likelihood factors as defined
 above:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-3a29a38f-50b3-46d0-8e4f-59cce08cefa3">
-<span class="eqno">(3.27)<a class="headerlink" href="#equation-3a29a38f-50b3-46d0-8e4f-59cce08cefa3" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-2baccc85-5468-4bab-8e29-1688440493f0">
+<span class="eqno">(3.27)<a class="headerlink" href="#equation-2baccc85-5468-4bab-8e29-1688440493f0" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P(\mathcal{X}|\mathcal{Z})\propto P(X_1)L(X_1; z_1)P(X_2|X_1)L(X_2; z_2)P(X_3|X_2)L(X_3; z_3)
 \end{equation}\]</div>
 <p>Some of these factors are <strong>unary factors</strong>, and some are <strong>binary factors</strong>, by which we mean that
@@ -783,14 +1331,14 @@ shown in Figure <a class="reference internal" href="#fig:HMM-FG"><span class="xr
 It should be clear from the figure that the connectivity of a factor
 graph encodes, for each factor <span class="math notranslate nohighlight">\(\phi_{i}\)</span>, which subset of variables
 <span class="math notranslate nohighlight">\(\mathcal{X}_{i}\)</span> it depends on. We write:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-db5b150a-5fc3-498e-8866-0cf23fc71e8c">
-<span class="eqno">(3.28)<a class="headerlink" href="#equation-db5b150a-5fc3-498e-8866-0cf23fc71e8c" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-83a7f029-76c2-4af4-8201-40f1e2e2a1d9">
+<span class="eqno">(3.28)<a class="headerlink" href="#equation-83a7f029-76c2-4af4-8201-40f1e2e2a1d9" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \phi(\mathcal{X})=\phi_1(X_1)\phi_2(X_1)\phi_3(X_1, X_2)\phi_4(X_2)\phi_5(X_2, X_{3})\phi_6(X_3)
 \end{equation}\]</div>
 <p>where the factors above are defined to correspond one-to-one to the six factors in the posterior,
 e.g.,</p>
-<div class="amsmath math notranslate nohighlight" id="equation-2b297cf0-a1be-44db-8bb0-a8aefec9e58c">
-<span class="eqno">(3.29)<a class="headerlink" href="#equation-2b297cf0-a1be-44db-8bb0-a8aefec9e58c" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-7086692b-0f97-46cb-a8d8-79c3baaa7674">
+<span class="eqno">(3.29)<a class="headerlink" href="#equation-7086692b-0f97-46cb-a8d8-79c3baaa7674" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \phi_6(X_3)\doteq L(X_3; z_3).
 \end{equation}\]</div>
 <p>All measurements are associated with unary factors, whereas the Markov chain is
@@ -807,16 +1355,16 @@ The set of random variable nodes
 adjacent to a factor <span class="math notranslate nohighlight">\(\phi_{i}\)</span> is written as <span class="math notranslate nohighlight">\(\mathcal{X}_{i}\)</span>. With
 these definitions, a factor graph <span class="math notranslate nohighlight">\(F\)</span> defines the factorization of a
 global function <span class="math notranslate nohighlight">\(\phi(\mathcal{X})\)</span> as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-f8b17df3-73e9-49bd-8a1d-7466763fbc4a">
-<span class="eqno">(3.30)<a class="headerlink" href="#equation-f8b17df3-73e9-49bd-8a1d-7466763fbc4a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-1c0ea134-42a6-4968-843e-516cc2adcf09">
+<span class="eqno">(3.30)<a class="headerlink" href="#equation-1c0ea134-42a6-4968-843e-516cc2adcf09" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \phi(\mathcal{X})=\prod_{i}\phi_{i}(\mathcal{X}_{i}).
 \end{equation}\]</div>
 <p>In other words, the independence relationships are encoded by the edges
 <span class="math notranslate nohighlight">\(e_{ij}\)</span> of the factor graph, with each factor <span class="math notranslate nohighlight">\(\phi_{i}\)</span> a function of
 <em>only</em> the variables <span class="math notranslate nohighlight">\(\mathcal{X}_{i}\)</span> in its adjacency set. As example,
 for the factor graph in Figure <a class="reference internal" href="#fig:HMM-FG"><span class="xref myst">4</span></a> we have:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-66fb2fe9-b5db-4224-9915-baf4b5560a0f">
-<span class="eqno">(3.31)<a class="headerlink" href="#equation-66fb2fe9-b5db-4224-9915-baf4b5560a0f" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-20dd9ebd-4dfd-4807-9347-5b63f77ee604">
+<span class="eqno">(3.31)<a class="headerlink" href="#equation-20dd9ebd-4dfd-4807-9347-5b63f77ee604" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{aligned}
 \mathcal{X}_1 &amp; =\{X_1\}\\
 \mathcal{X}_2 &amp; =\{X_1\}\\
@@ -980,38 +1528,38 @@ Given an HMM factor graph of size <span class="math notranslate nohighlight">\(n
 to find the MAP estimate, which is used by GTSAM under the hood.</p>
 <p>Let us use the example from Figure <a class="reference internal" href="#fig:HMM-FG"><span class="xref myst">4</span></a> to understand the main idea behind it. To find the MAP estimate for <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> we need to
 <em>maximize</em> the product</p>
-<div class="amsmath math notranslate nohighlight" id="equation-581f3b31-316c-4e68-8b90-5b1b1356bf99">
-<span class="eqno">(3.32)<a class="headerlink" href="#equation-581f3b31-316c-4e68-8b90-5b1b1356bf99" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-49775174-db8c-4fde-99ba-dd9b4a3e0a41">
+<span class="eqno">(3.32)<a class="headerlink" href="#equation-49775174-db8c-4fde-99ba-dd9b4a3e0a41" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \phi(X_1, X_2, X_3)=\prod\phi_{i}(\mathcal{X}_{i})
 \end{equation}\]</div>
 <p>i.e., the value of the factor graph.
 Because this is a product of factor values, we can compute its maximum recursively - dynamic programming style. We start by writing out the maximization over the product explicitly:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-5f05e976-314e-43b9-8cd4-f3eed542c3c0">
-<span class="eqno">(3.33)<a class="headerlink" href="#equation-5f05e976-314e-43b9-8cd4-f3eed542c3c0" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ce9a667d-86a3-436d-989c-13f13bcfc013">
+<span class="eqno">(3.33)<a class="headerlink" href="#equation-ce9a667d-86a3-436d-989c-13f13bcfc013" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \max_{\mathcal{X}} \prod\phi_{i}(\mathcal{X}_{i}) = 
 \max_{X_1, X_2, X_3} ~~~\phi_1(X_1)\phi_2(X_1)\phi_3(X_1, X_2) \phi_4(X_2)\phi_5(X_2, X_3)\phi_6(X_3) 
 \end{equation}\]</div>
 <p>The key to our recursion will be to consider each variable in turn, starting with <span class="math notranslate nohighlight">\(X_1\)</span>. In particular, let us group all the factors connected to <span class="math notranslate nohighlight">\(X_1\)</span></p>
-<div class="amsmath math notranslate nohighlight" id="equation-fa7a9050-4ac6-4711-a094-9b89c2ba6e3a">
-<span class="eqno">(3.34)<a class="headerlink" href="#equation-fa7a9050-4ac6-4711-a094-9b89c2ba6e3a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-a2407002-596a-43df-9222-4cd5a10e76fb">
+<span class="eqno">(3.34)<a class="headerlink" href="#equation-a2407002-596a-43df-9222-4cd5a10e76fb" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \max_{\mathcal{X}} \prod\phi_{i}(\mathcal{X}_{i}) = 
 \max_{X_1, X_2, X_3} ~~~ \{ \phi_1(X_1)\phi_2(X_1)\phi_3(X_1, X_2) \} ~~~ \phi_4(X_2)\phi_5(X_2, X_3)\phi_6(X_3)
 \end{equation}\]</div>
 <p>which allows us to move the <em>max</em> operator over <span class="math notranslate nohighlight">\(X_1\)</span> inside:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b279a18d-3313-4cbb-a345-a14efc21a590">
-<span class="eqno">(3.35)<a class="headerlink" href="#equation-b279a18d-3313-4cbb-a345-a14efc21a590" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-874b8807-c57e-43a2-8611-5298a025417d">
+<span class="eqno">(3.35)<a class="headerlink" href="#equation-874b8807-c57e-43a2-8611-5298a025417d" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \max_{\mathcal{X}} \prod\phi_{i}(\mathcal{X}_{i}) = 
 \max_{X_2, X_3} ~~~ \{ \max_{X_1} \phi_1(X_1)\phi_2(X_1)\phi_3(X_1, X_2) \} ~~~ \phi_4(X_2)\phi_5(X_2, X_3)\phi_6(X_3)
 \end{equation}\]</div>
 <p>The key to the recursion is that we can simply consider the expression inside the curly braces as new factor on <span class="math notranslate nohighlight">\(X_2\)</span>, defined as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-efe6460b-a0f6-44ac-992a-88bf611cb47b">
-<span class="eqno">(3.36)<a class="headerlink" href="#equation-efe6460b-a0f6-44ac-992a-88bf611cb47b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-2380cc7a-5f16-4a98-ae1f-d00bb091fb2c">
+<span class="eqno">(3.36)<a class="headerlink" href="#equation-2380cc7a-5f16-4a98-ae1f-d00bb091fb2c" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \tau(X_2)\doteq \max_{X_1} \phi_1(X_1)\phi_2(X_1)\phi_3(X_1, X_2),
 \end{equation}\]</div>
 <p>which records the maximum value resulting from <em>only</em> maximizing <span class="math notranslate nohighlight">\(X_1\)</span>. The value of the computation depends on the value of <span class="math notranslate nohighlight">\(X_2\)</span>, because <span class="math notranslate nohighlight">\(X_2\)</span> was involved in factor <span class="math notranslate nohighlight">\(\phi_3\)</span>. However, crucially, the variable <span class="math notranslate nohighlight">\(X_3\)</span> is not involved in the maximization.</p>
 <p>Substituting the new factor into the maximization, we now need to maximize over a <em>reduced</em> factor graph that no longer is a function of <span class="math notranslate nohighlight">\(X_1\)</span>,</p>
-<div class="amsmath math notranslate nohighlight" id="equation-ac407742-49c4-40ad-b247-affab15b2b4e">
-<span class="eqno">(3.37)<a class="headerlink" href="#equation-ac407742-49c4-40ad-b247-affab15b2b4e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-c68181b8-a494-4998-910d-aafb2d496efb">
+<span class="eqno">(3.37)<a class="headerlink" href="#equation-c68181b8-a494-4998-910d-aafb2d496efb" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \max_{\mathcal{X}} \prod\phi_{i}(\mathcal{X}_{i}) =
 \max_{X_2, X_3} ~~~\tau(X_2) \phi_4(X_2)\phi_5(X_2, X_3)\phi_6(X_3)
 \end{equation}\]</div>
@@ -1067,8 +1615,8 @@ distribution <span class="math notranslate nohighlight">\(P(\mathcal{X}, \mathca
 However, the second, “posterior Bayes net” represents just <span class="math notranslate nohighlight">\(P(\mathcal{X}|\mathcal{Z})\)</span>, and only has nodes for the random variables in <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> and is only half the size. Below we show how to compute it.</p>
 <p>Again, the key is that we can compute the posterior recursively from the product of factors, in dynamic programming style.
 For the example above, this gives</p>
-<div class="amsmath math notranslate nohighlight" id="equation-69e10977-8aab-4d31-aa05-65ddded9e8a3">
-<span class="eqno">(3.38)<a class="headerlink" href="#equation-69e10977-8aab-4d31-aa05-65ddded9e8a3" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ca88e3ce-d8dd-4ec0-98a1-61b12287ac43">
+<span class="eqno">(3.38)<a class="headerlink" href="#equation-ca88e3ce-d8dd-4ec0-98a1-61b12287ac43" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{aligned}
 P(\mathcal{X}|\mathcal{Z}) &amp;\propto \prod\phi_{i}(\mathcal{X}_{i})
 \\&amp;\propto \phi_1(X_1)\phi_2(X_1)\phi_3(X_1, X_2) \phi_4(X_2)\phi_5(X_2, X_{3})\phi_6(X_3)
@@ -1077,13 +1625,13 @@ P(\mathcal{X}|\mathcal{Z}) &amp;\propto \prod\phi_{i}(\mathcal{X}_{i})
 \end{equation}\]</div>
 <p>where we once again grouped the factors connected to <span class="math notranslate nohighlight">\(X_1\)</span> inside the curly braces.
 Using the chain rule, we can express those as the product of a conditional (which will end up in the Bayes net) and a new factor <span class="math notranslate nohighlight">\(\tau(X_2)\)</span>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-e125f304-ba52-4608-8cc1-75f80f3aa72a">
-<span class="eqno">(3.39)<a class="headerlink" href="#equation-e125f304-ba52-4608-8cc1-75f80f3aa72a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ff2320b9-2bea-4d2d-9afc-3c459f0833d6">
+<span class="eqno">(3.39)<a class="headerlink" href="#equation-ff2320b9-2bea-4d2d-9afc-3c459f0833d6" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \phi_1(X_1)\phi_2(X_1)\phi_3(X_1, X_2) = P(X_1|X_2, \mathcal{Z}) \tau(X_2).
 \end{equation}\]</div>
 <p>Note that above we explicitly indicate the dependence on <span class="math notranslate nohighlight">\(\mathcal{Z}\)</span> in <span class="math notranslate nohighlight">\(P(X_1|X_2, \mathcal{Z})\)</span>, which was left implicit in the factor graph. Substituting this back in, we get a conditional multiplied with a smaller factor graph that no longer involves <span class="math notranslate nohighlight">\(X_1\)</span>, and we can recurse:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-fd6ac73c-fe1a-4658-b56e-2d12d35074d4">
-<span class="eqno">(3.40)<a class="headerlink" href="#equation-fd6ac73c-fe1a-4658-b56e-2d12d35074d4" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-f16d73a9-4030-4c55-aef0-5c4eff8305a5">
+<span class="eqno">(3.40)<a class="headerlink" href="#equation-f16d73a9-4030-4c55-aef0-5c4eff8305a5" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{aligned}
 P(\mathcal{X}|\mathcal{Z}) &amp;\propto P(X_1|X_2, \mathcal{Z}) ~~ \{ \tau(X_2) \phi_4(X_2)\phi_5(X_2, X_{3})\phi_6(X_3)\}
 \\ &amp;\propto P(X_1|X_2, \mathcal{Z}) P(X_2 | X_{3}, \mathcal{Z}) ~~ \{\tau(X_{3})\phi_6(X_3)\}
@@ -1139,8 +1687,8 @@ P(\mathcal{X}|\mathcal{Z}) &amp;\propto P(X_1|X_2, \mathcal{Z}) ~~ \{ \tau(X_2) 
 <p>When we can produce samples <span class="math notranslate nohighlight">\(\mathcal{X}^{(s)}\)</span> from a posterior
 <span class="math notranslate nohighlight">\(P(\mathcal{X}|\mathcal{Z})\)</span>, we can calculate the empirical mean of any
 real-valued function <span class="math notranslate nohighlight">\(f(\mathcal{X})\)</span> as follows,</p>
-<div class="amsmath math notranslate nohighlight" id="equation-610c0958-75ad-454d-bd89-324a2e2ddc3e">
-<span class="eqno">(3.41)<a class="headerlink" href="#equation-610c0958-75ad-454d-bd89-324a2e2ddc3e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-49891e7f-c088-4dd9-9c91-70b7fc880925">
+<span class="eqno">(3.41)<a class="headerlink" href="#equation-49891e7f-c088-4dd9-9c91-70b7fc880925" title="Permalink to this equation">#</a></span>\[\begin{equation}
 E_{P(\mathcal{X}|\mathcal{Z})}[f(x)]\approx \frac{1}{N}\sum f(\mathcal{X}^{(s)}),
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(N\)</span> is the number of samples.
@@ -1161,6 +1709,20 @@ than just using a single (albeit most probable) estimate.</p>
         <span class="n">key</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">room_index</span> <span class="o">=</span> <span class="n">sample</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
         <span class="n">counts</span><span class="p">[</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">room_index</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span> <span class="c1"># base 0!</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">counts</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[ 33.,  14.,  38., 806., 109.],
+       [  9.,  38.,   8.,  50., 895.],
+       [ 59., 907.,   8.,   0.,  26.]])
 </pre></div>
 </div>
 </div>

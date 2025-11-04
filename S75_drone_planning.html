@@ -484,8 +484,8 @@ we discretize the time interval in which we expect to fly, and solve for a corre
 <li><p>a smoothness objective that bounds velocity and/or acceleration.</p></li>
 </ul>
 <p>If these objectives are in conflict, we can assign them weights such that we trade off some against others. <em>Constrained optimization</em> techniques allow to set hard constraints and/or bounds, but we do not use those here. Instead, we opt for a simple nonlinear least-squares scheme that finds the path <span class="math notranslate nohighlight">\(X^*\)</span> that minimizes the following objective:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-f6154f5c-d02b-4d45-b979-2970541d9132">
-<span class="eqno">(7.59)<a class="headerlink" href="#equation-f6154f5c-d02b-4d45-b979-2970541d9132" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-8ebd0a99-dabf-46a5-add2-404ab1794792">
+<span class="eqno">(7.59)<a class="headerlink" href="#equation-8ebd0a99-dabf-46a5-add2-404ab1794792" title="Permalink to this equation">#</a></span>\[\begin{equation}
 X^* = \arg \min \sum_{k=1}^K \phi_k(X_k)^2  + \sum_{k=1}^{K-1} \psi_k(X_k, X_{k+1})^2
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(X_k\)</span> is the position at time, and <span class="math notranslate nohighlight">\(\phi_k(X_k)\)</span> and <span class="math notranslate nohighlight">\(\psi_k(X_k, X_{k+1})\)</span> are unary and binary objectives, respectively, that we want to minimize.
@@ -682,8 +682,8 @@ we can compute the directional derivatives of the Gaussian kernel, <em>or</em> w
 </div>
 </div>
 <p>Let us discretize the path using <span class="math notranslate nohighlight">\(M=100\)</span> discrete time steps, using the keys <span class="math notranslate nohighlight">\(k\in 1...M\)</span>. We can define a start and goal point, and initialize the path as straight line. In other words, we initialize according to this formula:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-71100147-8c2e-4de4-8380-1bdb4628688b">
-<span class="eqno">(7.60)<a class="headerlink" href="#equation-71100147-8c2e-4de4-8380-1bdb4628688b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-659e3c02-78d0-46c8-846f-45ca2126c664">
+<span class="eqno">(7.60)<a class="headerlink" href="#equation-659e3c02-78d0-46c8-846f-45ca2126c664" title="Permalink to this equation">#</a></span>\[\begin{equation}
 X_k = (1-\alpha)\ X_{\text{start}} + \alpha\ X_{\text{goal}} \text{~~~with~} \alpha = \frac{k-1}{M-1},
 \end{equation}\]</div>
 <p>Who knows, we might be lucky and hit no obstacles along the way:</p>
@@ -917,14 +917,14 @@ Finally, it is instructive to inspect the velocity profiles as well, in Figure <
 <div><p>What we want, in theory…</p>
 </div></blockquote>
 <p id="index-7">We control the position of the drone using a 3DOF vectored thrust input: thrust magnitude, roll, and pitch. The idea outlined here is a simplified version of the geometric controller in a 2019 paper by <span id="id1">Gamagedara <em>et al.</em> [<a class="reference internal" href="bibliography.html#id23" title="Kanishke Gamagedara, Mahdis Bisheban, Evan Kaufman, and Taeyoung Lee. Geometric Controls of a Quadrotor UAV with Decoupled Yaw Control. In 2019 American Control Conference (ACC), 3285-3290. 2019. doi:10.23919/ACC.2019.8815189.">2019</a>]</span>, but while the paper is fairly advanced, the idea is rather simple. Remember the translational equations of motion from Section 7.2,</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a71679f9-23cc-4000-a11c-2ad792c15bd6">
-<span class="eqno">(7.61)<a class="headerlink" href="#equation-a71679f9-23cc-4000-a11c-2ad792c15bd6" title="Permalink to this equation">#</a></span>\[\begin{equation}\begin{aligned}
+<div class="amsmath math notranslate nohighlight" id="equation-ad3158c9-8c06-43e5-be1c-297abbb30acc">
+<span class="eqno">(7.61)<a class="headerlink" href="#equation-ad3158c9-8c06-43e5-be1c-297abbb30acc" title="Permalink to this equation">#</a></span>\[\begin{equation}\begin{aligned}
 \dot r^n &amp;= v^n \\
 m \dot v ^n &amp;= R^n_b f + m g^n
 \end{aligned}\end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(m\)</span> is the mass. Let us concentrate on the dynamics part: we <em>know</em> the acceleration <span class="math notranslate nohighlight">\(\dot v^n_d\)</span> we want from our planned trajectory, and gravity is a given. Hence, to make the drone do what we want, we can only change the quantity <span class="math notranslate nohighlight">\(R^n_b f\)</span>. Let us call that the <strong>vectored thrust</strong> <span class="math notranslate nohighlight">\(T^n\)</span>, where the superscript <span class="math notranslate nohighlight">\(n\)</span> denotes that the thrust is defined in the navigation frame. Then, to obtain the <em>desired</em> acceleration <span class="math notranslate nohighlight">\(\dot v^n_d\)</span>, the vectored thrust <span class="math notranslate nohighlight">\(T^n\)</span> has to satisfy</p>
-<div class="amsmath math notranslate nohighlight" id="equation-7a6a4f25-c58f-40c5-911d-4e662ef12300">
-<span class="eqno">(7.62)<a class="headerlink" href="#equation-7a6a4f25-c58f-40c5-911d-4e662ef12300" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-c6faf0cf-a733-4b7e-8117-8bccd0aadf88">
+<span class="eqno">(7.62)<a class="headerlink" href="#equation-c6faf0cf-a733-4b7e-8117-8bccd0aadf88" title="Permalink to this equation">#</a></span>\[\begin{equation}
 T^n = m \dot v^n_d - m g^n.
 \end{equation}\]</div>
 <p>You can think of <span class="math notranslate nohighlight">\(T^n\)</span>, which is a 3D vector, as a thrust vector that pushes the drone toward where it needs to be. It can move the drone forwards or backwards by pitching appropriately, and left or right by rolling. But of course, at all times we need to make sure it cancels gravity as well, which explains the second term above. Even after gravity compensation, to gain or lose altitude, the thrust magnitude can be adjusted to make either happen. In control parlance, <span class="math notranslate nohighlight">\(T^n\)</span> can be thought of as a <em>virtual control input</em>.</p>
@@ -1000,8 +1000,8 @@ In our case, we will use the position and velocity errors.
 We define
 the <em>desired</em> position <span class="math notranslate nohighlight">\(X_d\)</span> and <em>desired</em> velocity <span class="math notranslate nohighlight">\(\dot X_d\)</span> at any given time,
 which leads to the following controller:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c88d0b55-7738-46ba-beb9-f75c5f0bc0fb">
-<span class="eqno">(7.63)<a class="headerlink" href="#equation-c88d0b55-7738-46ba-beb9-f75c5f0bc0fb" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-59f4ca57-f67c-44a5-afde-70d8321602ae">
+<span class="eqno">(7.63)<a class="headerlink" href="#equation-59f4ca57-f67c-44a5-afde-70d8321602ae" title="Permalink to this equation">#</a></span>\[\begin{equation}
 T^n = m \dot v^n_d - m g^n - K_x (X - X_d) - K_v (\dot X - \dot X_d)
 \end{equation}\]</div>
 <p>This now requires tuning two additional parameters, <span class="math notranslate nohighlight">\(K_x\)</span> and <span class="math notranslate nohighlight">\(K_v\)</span>, for the <em>proportional</em> and <em>derivative</em> control terms respectively (such a controller is called, appropriately, PD control).</p>
@@ -1087,16 +1087,16 @@ T^n = m \dot v^n_d - m g^n - K_x (X - X_d) - K_v (\dot X - \dot X_d)
 <section id="vectoring-using-fast-rotational-dynamics">
 <h2><span class="section-number">7.5.8. </span>Vectoring using Fast Rotational Dynamics<a class="headerlink" href="#vectoring-using-fast-rotational-dynamics" title="Link to this heading">#</a></h2>
 <p>While we cannot <em>instantaneously</em> produce the desired vectored thrust <span class="math notranslate nohighlight">\(T^n\)</span> at any given time, the dynamics of a quadrotor are fast enough that we can get rather close. Remember that the inertia matrix, which resists rotational acceleration, is typically small around the roll and pitch axes. Let us recall the (approximate) rotational equations of motion, in the body frame <span class="math notranslate nohighlight">\(B\)</span>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-db039f3d-abb3-4154-9a8d-e13c116261a6">
-<span class="eqno">(7.64)<a class="headerlink" href="#equation-db039f3d-abb3-4154-9a8d-e13c116261a6" title="Permalink to this equation">#</a></span>\[\begin{equation}\begin{aligned}
+<div class="amsmath math notranslate nohighlight" id="equation-2aed4dea-c88a-42f6-a4f5-fb971cbaa86b">
+<span class="eqno">(7.64)<a class="headerlink" href="#equation-2aed4dea-c88a-42f6-a4f5-fb971cbaa86b" title="Permalink to this equation">#</a></span>\[\begin{equation}\begin{aligned}
 \dot{R}^n_b	&amp;= R^n_b\hat{\omega}^b \\
 I \dot{\omega}^b &amp;\approx \tau^b
 \end{aligned}\end{equation}\]</div>
 <p>For typical drone configurations the inertia matrix <span class="math notranslate nohighlight">\(I\)</span> can be well approximated as <span class="math notranslate nohighlight">\(\text{diag}(I_{xx},I_{yy},I_zz)\)</span>, with the roll-pitch components <span class="math notranslate nohighlight">\(I_{xx}, I_{yy} &lt;&lt; I_{zz}\)</span>, the yaw component. Since <span class="math notranslate nohighlight">\(I_{xx}\)</span> and <span class="math notranslate nohighlight">\(I_{yy}\)</span> are small, and we have four powerful motors that can provide differential thrust very quickly, those dynamics are quite fast. Hence, if the attitude <span class="math notranslate nohighlight">\(R^n_b\)</span> does not yet align the total thrust <span class="math notranslate nohighlight">\(f\)</span> with the desired thrust vector <span class="math notranslate nohighlight">\(T^n\)</span>, we can quickly make it so by rotating.</p>
 <p id="index-11">To understand how to make the drone tilt, think of a video game where you are given a two axis controller and the screen displays the <em>current</em> orientation of the drone’s z-axis and the <em>desired</em> thrust vector <span class="math notranslate nohighlight">\(T^n\)</span>. Your job is to align the two by rolling (rotate around the body x-axis) and pitching (rotating around the body y-axis). Looking at the drone from the outside, in the navigation frame, this will actually be rather hard: typically the controls are fixed to the <em>body</em> frame, and at every step you need to perform a mental rotation to find the right action. That is why racing drone pilots much prefer to use a <em>first person view</em> or FPV display and controller.</p>
 <p id="index-12">The mathematical equivalent of FPV for a control <em>algorithm</em> is to rotate everything into the body frame. Taking the desired thrust vector <span class="math notranslate nohighlight">\(T^n_d\)</span> and multiplying it with the transpose of the attitude <span class="math notranslate nohighlight">\(R^n_b\)</span> (which is the inverse rotation, recall Sections 6.1 and 7.1) yields the desired thrust vector <span class="math notranslate nohighlight">\(T^b_d\)</span> in the body frame:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-30f1d7ca-ff3e-4866-890f-17fa44268df3">
-<span class="eqno">(7.65)<a class="headerlink" href="#equation-30f1d7ca-ff3e-4866-890f-17fa44268df3" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-a18e8c4b-81bd-46b2-b943-2047faff6957">
+<span class="eqno">(7.65)<a class="headerlink" href="#equation-a18e8c4b-81bd-46b2-b943-2047faff6957" title="Permalink to this equation">#</a></span>\[\begin{equation}
 T^b_d = (R^n_b)^T T^n_d = \begin{bmatrix}T_{Fd}\\T_{Ld}\\T_{Ud}\end{bmatrix}.
 \end{equation}\]</div>
 <p>Remember we use the Forward-Left-Up convention for the body frame, so let us examine each component <span class="math notranslate nohighlight">\(T_{Fd}\)</span>,  <span class="math notranslate nohighlight">\(T_{Ld}\)</span>, and <span class="math notranslate nohighlight">\(T_{Ud}\)</span> of the thrust vector <span class="math notranslate nohighlight">\(T^b_d\)</span> in turn.</p>
@@ -1150,8 +1150,8 @@ control[0] = [0.034 0.026 9.81 ]
 <section id="calculating-motor-thrust-vectors">
 <h3><span class="section-number">7.5.8.1. </span>Calculating Motor Thrust Vectors<a class="headerlink" href="#calculating-motor-thrust-vectors" title="Link to this heading">#</a></h3>
 <p>Creating the requested torque and thrust by the control law is done by adjusting the individual motor thrusts <span class="math notranslate nohighlight">\(f_i\)</span>. Recalling the force-torque equation in Section 7.2, if we ensure <span class="math notranslate nohighlight">\(f_{1} + f_{3} = f_{2} + f_{4}\)</span> (which makes the yaw moment zero) we obtain:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-2af197f2-5d5c-4ca9-94c7-cde42df12210">
-<span class="eqno">(7.66)<a class="headerlink" href="#equation-2af197f2-5d5c-4ca9-94c7-cde42df12210" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-7c917d7e-36ff-4b06-83e3-cc5cbec1912b">
+<span class="eqno">(7.66)<a class="headerlink" href="#equation-7c917d7e-36ff-4b06-83e3-cc5cbec1912b" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \tau^b = l \begin{bmatrix}
 f_{1}-f_{2}-f_{3}+f_{4}\\
 f_{1}+f_{2}-f_{3}-f_{4}\\
@@ -1159,13 +1159,13 @@ f_{1}+f_{2}-f_{3}-f_{4}\\
 \end{bmatrix}
 \end{equation}\]</div>
 <p>The thrust vector magnitude <span class="math notranslate nohighlight">\(F^b_z = f\)</span> can be adjusted quickly as well:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-39d5a436-a813-4763-913f-8024690e04e2">
-<span class="eqno">(7.67)<a class="headerlink" href="#equation-39d5a436-a813-4763-913f-8024690e04e2" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-47c68819-3cf3-4a20-9e16-4f1a1bbb5c36">
+<span class="eqno">(7.67)<a class="headerlink" href="#equation-47c68819-3cf3-4a20-9e16-4f1a1bbb5c36" title="Permalink to this equation">#</a></span>\[\begin{equation}
 f = f_1 + f_2 + f_3 + f_4.
 \end{equation}\]</div>
 <p>and hence we now have four equations in four unknowns. Solving for the forces yields</p>
-<div class="amsmath math notranslate nohighlight" id="equation-f903fddb-eff5-44b4-bca4-b0878433803a">
-<span class="eqno">(7.68)<a class="headerlink" href="#equation-f903fddb-eff5-44b4-bca4-b0878433803a" title="Permalink to this equation">#</a></span>\[\begin{equation}\begin{aligned}
+<div class="amsmath math notranslate nohighlight" id="equation-c7420696-b94e-426a-828d-65a270fe0ae5">
+<span class="eqno">(7.68)<a class="headerlink" href="#equation-c7420696-b94e-426a-828d-65a270fe0ae5" title="Permalink to this equation">#</a></span>\[\begin{equation}\begin{aligned}
 f_1 &amp;= 0.25 \left( f + \tau_x/l + \tau_y/l \right) \\
 f_2 &amp;= 0.25 \left( f - \tau_x/l + \tau_y/l \right) \\
 f_3 &amp;= 0.25 \left( f + \tau_x/l - \tau_y/l \right) \\
