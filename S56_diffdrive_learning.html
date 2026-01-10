@@ -487,9 +487,9 @@ We will often refer to the <em>training dataset</em> as <span class="math notran
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Interpolated Output: tensor([[ 0.7645, -0.1807],
-        [-0.2935,  0.9092],
-        [-1.2520,  0.6403]], grad_fn=&lt;AddBackward0&gt;)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Interpolated Output: tensor([[-1.0894,  0.5480],
+        [-0.8016, -0.6580],
+        [ 0.2066,  0.5187]], grad_fn=&lt;AddBackward0&gt;)
 </pre></div>
 </div>
 </div>
@@ -507,8 +507,8 @@ We will often refer to the <em>training dataset</em> as <span class="math notran
 <div><p>A loss function for every occasion.</p>
 </div></blockquote>
 <p id="index-3">Different tasks require different loss functions, and a lot of creativity and research goes into crafting loss functions for complex tasks. For “vanilla” regression tasks, we typically use a <strong>mean squared error</strong> loss function as we already encountered before:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-2a04cb41-8a50-4d89-8c27-eb00a586f084">
-<span class="eqno">(5.57)<a class="headerlink" href="#equation-2a04cb41-8a50-4d89-8c27-eb00a586f084" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-62ce0331-d528-4a65-afc5-3cfee7c5b7ea">
+<span class="eqno">(5.57)<a class="headerlink" href="#equation-62ce0331-d528-4a65-afc5-3cfee7c5b7ea" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathcal{L}_{\text{MSE}}(\theta; D) \doteq \frac{1}{|D|} \sum_{(x,y)\in D}|f(x;\theta)-y|^2
 \end{equation}\]</div>
 <p>Above <span class="math notranslate nohighlight">\(f(x;\theta)\)</span> is the continuous prediction function implemented by, say, a neural network, where <span class="math notranslate nohighlight">\(\theta\)</span> represents the weights in all layers. Note that the formula above can be easily generalized to vector-valued labels <span class="math notranslate nohighlight">\(y\)</span>. In fact, our 1D interpolation example above yielded a 2-dimensional output, so let us illustrate the MSE loss in that case:</p>
@@ -520,7 +520,7 @@ We will often refer to the <em>training dataset</em> as <span class="math notran
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Our MSE Loss: 15.503975868225098
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Our MSE Loss: 15.940658569335938
 </pre></div>
 </div>
 </div>
@@ -535,22 +535,22 @@ We will often refer to the <em>training dataset</em> as <span class="math notran
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Pytorch MSE Loss: 15.503975868225098
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Pytorch MSE Loss: 15.940658569335938
 </pre></div>
 </div>
 </div>
 </div>
 <p id="index-4">For classification, the <strong>cross entropy</strong> loss function is very popular.
 It measures the average disagreement of the predicted labels with the ground truth labels:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-18be5c7a-c3ec-4f51-aacf-be527835604a">
-<span class="eqno">(5.58)<a class="headerlink" href="#equation-18be5c7a-c3ec-4f51-aacf-be527835604a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-4aa032b1-a9fb-4647-bd33-b3699886938d">
+<span class="eqno">(5.58)<a class="headerlink" href="#equation-4aa032b1-a9fb-4647-bd33-b3699886938d" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathcal{L}_{\text{CE}}(\theta; D) \doteq \sum_c \sum_{(x,y=c)\in D}\log\frac{1}{p_c(x;\theta)}
 \end{equation}\]</div>
 <p>This formula seems perhaps unintuitive and rather complicated;
 however, it is actually quite intuitive once you understand a few concepts.
 In particular, in the multi-class classification problem we assume that the model outputs a probability <span class="math notranslate nohighlight">\(p_c(x;\theta)\)</span> for every class <span class="math notranslate nohighlight">\(c\in[N]\)</span>, where <span class="math notranslate nohighlight">\(N\)</span> is the number of classes. The quantity</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b895ce31-320e-4b40-bbd3-f4023514f2e1">
-<span class="eqno">(5.59)<a class="headerlink" href="#equation-b895ce31-320e-4b40-bbd3-f4023514f2e1" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ea3181a1-12d6-490d-b319-cede8267f2f2">
+<span class="eqno">(5.59)<a class="headerlink" href="#equation-ea3181a1-12d6-490d-b319-cede8267f2f2" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \log\frac{1}{p_c(x;\theta)}
 \end{equation}\]</div>
 <p>is called the <em>surprise</em> that we should experience when seeing a label <span class="math notranslate nohighlight">\(y=c\)</span>.
@@ -589,12 +589,12 @@ The lower the probability, the higher the surprise. Hence, the cross-entropy abo
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>dataset[12]: (tensor(16.9384), tensor([-0.7096,  0.5576]))
-dataset[10:15]: (tensor([11.2875,  4.2192, 16.9384, 16.6006,  7.9431]), tensor([[-0.3256, -0.9526],
-        [ 1.1736,  0.2981],
-        [-0.7096,  0.5576],
-        [-0.8551,  0.3661],
-        [ 0.4870, -0.9047]]))
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>dataset[12]: (tensor(18.4051), tensor([-0.6276,  0.7498]))
+dataset[10:15]: (tensor([ 6.1938,  2.6900, 18.4051, 10.2891, 11.0168]), tensor([[ 0.7433, -0.2394],
+        [ 0.8976,  0.7410],
+        [-0.6276,  0.7498],
+        [-0.0018, -0.9387],
+        [-0.4760, -0.9144]]))
 </pre></div>
 </div>
 </div>
@@ -663,7 +663,7 @@ dataset[10:15]: (tensor([11.2875,  4.2192, 16.9384, 16.6006,  7.9431]), tensor([
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/59cb17216ef2459fda55c642608966cf3067151daf7af9adb8451ac8a8659267.png" src="_images/59cb17216ef2459fda55c642608966cf3067151daf7af9adb8451ac8a8659267.png" />
+<img alt="_images/88b232dadb2ac426fc00c7bee49b8265ec78a8fff463ef3cd61a6fd2f257c19b.png" src="_images/88b232dadb2ac426fc00c7bee49b8265ec78a8fff463ef3cd61a6fd2f257c19b.png" />
 </div>
 </div>
 <p>The resulting loss function is shown in Figure <a class="reference internal" href="#fig:loss_training"><span class="xref myst">2</span></a>.
@@ -687,7 +687,7 @@ and Figure <a class="reference internal" href="#fig:sin_cos_approx"><span class=
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/ff42b2941ec9e9eee65f48c5dbb6c8b4a630cc43064120d041baf059f3072934.png" src="_images/ff42b2941ec9e9eee65f48c5dbb6c8b4a630cc43064120d041baf059f3072934.png" />
+<img alt="_images/e1909e91a5076eb0529e93fe2ebbaa2f10b1156cb84cd147bce23e98ceed13af.png" src="_images/e1909e91a5076eb0529e93fe2ebbaa2f10b1156cb84cd147bce23e98ceed13af.png" />
 </div>
 </div>
 </section>
@@ -747,7 +747,7 @@ and Figure <a class="reference internal" href="#fig:sin_cos_approx"><span class=
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/61af7420b4da1ee81e331fa75248c2a5fee08fdc25c84dec68703bb8d2b66b4b.png" src="_images/61af7420b4da1ee81e331fa75248c2a5fee08fdc25c84dec68703bb8d2b66b4b.png" />
+<img alt="_images/97527a419fa95fc031124952ff7f05bd560df98c99a06bcf99e722ba70c40882.png" src="_images/97527a419fa95fc031124952ff7f05bd560df98c99a06bcf99e722ba70c40882.png" />
 </div>
 </div>
 <p>The training loss is shown in Figure <a class="reference internal" href="#fig:loss_training_sgd"><span class="xref myst">4</span></a>.
