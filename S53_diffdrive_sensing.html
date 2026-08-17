@@ -518,8 +518,8 @@ When we express 3D points in the scene according to this convention, in a coordi
 </div>
 <p>Note that we specify the location of the person’s feet in <em>camera coordinates</em>, and if we are holding the camera level at a height of 1.7 meters, the feet will be 1.7 meters <em>below</em> the pinhole position.</p>
 <p>Thinking back to the camera obscura example, the pinhole camera model specifies that a 3D point <span class="math notranslate nohighlight">\((X,Y,Z)\)</span> in camera coordinates will be projected onto an image plane <em>behind</em> the camera:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-2c57583b-0d03-4f44-b6ae-64b4e1b4fdfb">
-<span class="eqno">(5.15)<a class="headerlink" href="#equation-2c57583b-0d03-4f44-b6ae-64b4e1b4fdfb" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-3eb61f1a-12db-452e-8b09-b1e799e9ec38">
+<span class="eqno">(5.15)<a class="headerlink" href="#equation-3eb61f1a-12db-452e-8b09-b1e799e9ec38" title="Permalink to this equation">#</a></span>\[\begin{equation}
 X_I = - F \frac{X}{Z} ~~~~
 Y_I = - F \frac{Y}{Z} ~~~~
 Z_I = -F
@@ -542,8 +542,8 @@ We show the geometry in Figure <a class="reference internal" href="#fig:pinhole_
 </div>
 </div>
 <p>However, it is not easy to debug algorithms with a true <em>upside down</em>  pinhole image. Instead, we can define a <em>virtual image plane</em> at a distance <span class="math notranslate nohighlight">\(F\)</span> <em>in front</em> of the pinhole, which is non-physical, but has the advantage that the image now appears right-side up. We simply have to reflect the projected coordinates:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-4bb15a02-dc04-4f5a-89e1-2bd4973bb606">
-<span class="eqno">(5.16)<a class="headerlink" href="#equation-4bb15a02-dc04-4f5a-89e1-2bd4973bb606" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-9084ddea-bbfc-4b95-9322-e1cd40774e20">
+<span class="eqno">(5.16)<a class="headerlink" href="#equation-9084ddea-bbfc-4b95-9322-e1cd40774e20" title="Permalink to this equation">#</a></span>\[\begin{equation}
 X_V = F \frac{X}{Z} ~~~~
 Y_V = F \frac{Y}{Z} ~~~~
 Z_V = F
@@ -562,8 +562,8 @@ Z_V = F
 </div>
 </div>
 <p id="index-12">The above has the disadvantage that we still have to take into account the focal length <span class="math notranslate nohighlight">\(F\)</span> when doing the projection. Dividing by the focal length yields the fundamental <em>pinhole projection equation</em>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-49a2db52-8c09-4bcb-938f-1d0e3103c0bf">
-<span class="eqno">(5.17)<a class="headerlink" href="#equation-49a2db52-8c09-4bcb-938f-1d0e3103c0bf" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-f94ec485-722b-4041-9b5b-9f8ec8baded6">
+<span class="eqno">(5.17)<a class="headerlink" href="#equation-f94ec485-722b-4041-9b5b-9f8ec8baded6" title="Permalink to this equation">#</a></span>\[\begin{equation}
 x = \frac{X}{Z} ~~~~ y = \frac{Y}{Z}
 \end{equation}\]</div>
 <p>The dimensionless <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> coordinates are called the <strong>intrinsic camera coordinates</strong>, and can be thought of as the image of the scene in a virtual image plane situated at a focal length of 1.0.
@@ -593,8 +593,8 @@ To translate from intrinsic coordinates to pixel coordinates, we introduce real-
 <li><p>the middle of pixel <span class="math notranslate nohighlight">\((r, c)=(H-1, W-1)\)</span> has sensor coordinates <span class="math notranslate nohighlight">\((u, v)=(W-0.5, H-0.5)\)</span>.</p></li>
 </ul>
 <p id="index-14">The simplest <strong>camera calibration model</strong> is just a linear mapping, which is most appropriate for lenses with a small field of view. For this we need four parameters <span class="math notranslate nohighlight">\(\alpha\)</span>, <span class="math notranslate nohighlight">\(\beta\)</span>, <span class="math notranslate nohighlight">\(u_0\)</span>, and <span class="math notranslate nohighlight">\(v_0\)</span>, to convert from intrinsic coordinates <span class="math notranslate nohighlight">\((x,y)\)</span> to sensor coordinates <span class="math notranslate nohighlight">\((u,v)\)</span>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-8cbf55d7-42c9-4704-a30b-7fe0adeaba80">
-<span class="eqno">(5.18)<a class="headerlink" href="#equation-8cbf55d7-42c9-4704-a30b-7fe0adeaba80" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-5c6bf6f3-f321-4e43-86ca-f64fd4de7262">
+<span class="eqno">(5.18)<a class="headerlink" href="#equation-5c6bf6f3-f321-4e43-86ca-f64fd4de7262" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{aligned}
 u &amp;= u_0 + \alpha x \\
 v &amp;= v_0 + \beta y
@@ -611,16 +611,16 @@ v &amp;= v_0 + \beta y
 We typically expect the <em>image center</em>, corresponding to <span class="math notranslate nohighlight">\((x,y)=(0.0,0.0)\)</span>, to be close to <span class="math notranslate nohighlight">\((u_0,v_0)=(W/2,H/2)\)</span>.
 For the sensor above this would be <span class="math notranslate nohighlight">\((u_0,v_0)=(364.0, 272.0)\)</span>.
 To compute <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span> we have to take into account the lens focal length <span class="math notranslate nohighlight">\(F\)</span>. Since <span class="math notranslate nohighlight">\(u\)</span> and <span class="math notranslate nohighlight">\(v\)</span> are expressed in pixels, and <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> are dimensionless, it is clear that <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span> must also be expressed in pixels. They can be computed as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-35822c3a-cd2a-4921-afa5-45c2e31acd95">
-<span class="eqno">(5.19)<a class="headerlink" href="#equation-35822c3a-cd2a-4921-afa5-45c2e31acd95" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-8322be13-a40a-4fd3-aadc-4af11e93487b">
+<span class="eqno">(5.19)<a class="headerlink" href="#equation-8322be13-a40a-4fd3-aadc-4af11e93487b" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{aligned}
 \alpha = F k &amp;= 8\text{mm}/6.9\mu\text{m} \approx 1160\text{px}\\
 \beta = F l &amp;= 8\text{mm}/6.9\mu\text{m} \approx 1160\text{px}
 \end{aligned}
 \end{equation}\]</div>
 <p>where</p>
-<div class="amsmath math notranslate nohighlight" id="equation-788aa71b-9cf6-4132-b1fe-29a200f4271e">
-<span class="eqno">(5.20)<a class="headerlink" href="#equation-788aa71b-9cf6-4132-b1fe-29a200f4271e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-411f4406-2708-4770-b14d-fea6afcdbb05">
+<span class="eqno">(5.20)<a class="headerlink" href="#equation-411f4406-2708-4770-b14d-fea6afcdbb05" title="Permalink to this equation">#</a></span>\[\begin{equation}
 k = \text{px}/6.9\mu\text{m}\,\,\,\,\,\mathrm{and}\,\,\,\,l = \text{px}/6.9\mu\text{m}
 \end{equation}\]</div>
 <p>are sensor-specific constants that indicated the number of pixels per unit of length.</p>
@@ -634,18 +634,18 @@ In this case, <span class="math notranslate nohighlight">\(f\)</span> again deno
 </div></blockquote>
 <p id="index-15">Putting all of the above together,
 we finally obtain the fundamental <strong>pinhole projection</strong> equation, projecting a point <span class="math notranslate nohighlight">\(P\)</span> in 3D camera coordinates <span class="math notranslate nohighlight">\(P=(X,Y,Z)\)</span>, to its 2D image projection <span class="math notranslate nohighlight">\(p=(u,v)\)</span> in sensor coordinates:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-ab001be6-10e3-4247-bc13-404ca73130ff">
-<span class="eqno">(5.21)<a class="headerlink" href="#equation-ab001be6-10e3-4247-bc13-404ca73130ff" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-7e8043f8-acd5-49f1-8ee5-1cc57531da25">
+<span class="eqno">(5.21)<a class="headerlink" href="#equation-7e8043f8-acd5-49f1-8ee5-1cc57531da25" title="Permalink to this equation">#</a></span>\[\begin{equation}
 u = u_0 + f \frac{X}{Z} ~~~~ v = v_0 + f \frac{Y}{Z}.
 \end{equation}\]</div>
 <p>To obtain integer pixel coordinates <span class="math notranslate nohighlight">\((r,c)\)</span>, we simply need to use the <em>floor</em> function, truncating the fractional pixel sensor coordinates to a location in the image array. Note that in doing so we also flip horizontal and vertical:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-ba1d1247-b1f8-4654-9cdf-6608c607e924">
-<span class="eqno">(5.22)<a class="headerlink" href="#equation-ba1d1247-b1f8-4654-9cdf-6608c607e924" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-eee89230-d28c-4ab7-816f-033f2c02dad6">
+<span class="eqno">(5.22)<a class="headerlink" href="#equation-eee89230-d28c-4ab7-816f-033f2c02dad6" title="Permalink to this equation">#</a></span>\[\begin{equation}
 (r,c) = (\lfloor v \rfloor, \lfloor u \rfloor)
 \end{equation}\]</div>
 <p>We can also go the other way, <em>calibrating</em> the sensor coordinates <span class="math notranslate nohighlight">\((u,v)\)</span> to the dimensionless intrinsic coordinates <span class="math notranslate nohighlight">\((x,y)\)</span>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-ba0c4dca-d5bb-47fb-b281-7a3a04f9df59">
-<span class="eqno">(5.23)<a class="headerlink" href="#equation-ba0c4dca-d5bb-47fb-b281-7a3a04f9df59" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-0af14c4b-3d7a-44d6-b300-3c7c3388d485">
+<span class="eqno">(5.23)<a class="headerlink" href="#equation-0af14c4b-3d7a-44d6-b300-3c7c3388d485" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{aligned}
 x &amp;= (u-u_0)/f \\
 y &amp;= (v-v_0)/f
@@ -713,8 +713,8 @@ Also, the above was a “calibration” example where we go from pixel coordinat
 is the camera’s <strong>field of view</strong> or <strong>FOV</strong>.
 Because the <em>left-most</em> ray we can see has <span class="math notranslate nohighlight">\(u=0\)</span>, it corresponds to <span class="math notranslate nohighlight">\(x=-u_0/f\approx-W/2f\)</span>.
 The horizontal FOV can then be calculated by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-fb5ae863-927b-45f7-aae4-d28d224a3f3a">
-<span class="eqno">(5.24)<a class="headerlink" href="#equation-fb5ae863-927b-45f7-aae4-d28d224a3f3a" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-f1062e54-06cc-49e6-ba80-0a6c1b72b356">
+<span class="eqno">(5.24)<a class="headerlink" href="#equation-f1062e54-06cc-49e6-ba80-0a6c1b72b356" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathrm{HFOV} = 2 \arctan(W/2f)\,\,\mathrm{rad} = 360 \arctan(W/2f) / \pi\,\,\mathrm{degrees}
 \end{equation}\]</div>
 <p>For the sensor-lens combination above we get a relatively narrow field of view of about 35 degrees:</p>
@@ -748,13 +748,13 @@ The horizontal FOV can then be calculated by</p>
 </div>
 </div>
 <p>We can also ask the opposite question: what lens focal length should we choose to get a certain filed of view. For example, for a <em>diagonal</em> field of view we have</p>
-<div class="amsmath math notranslate nohighlight" id="equation-f958bf1c-2100-47b0-b3f1-1c11ae6a7e26">
-<span class="eqno">(5.25)<a class="headerlink" href="#equation-f958bf1c-2100-47b0-b3f1-1c11ae6a7e26" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-0198679f-6379-4114-adf4-dedd8fa6ab04">
+<span class="eqno">(5.25)<a class="headerlink" href="#equation-0198679f-6379-4114-adf4-dedd8fa6ab04" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathrm{DFOV} = 360 \arctan(\sqrt{W^2+H^2}/2f) / \pi~~\mathrm{degrees}
 \end{equation}\]</div>
 <p>and hence</p>
-<div class="amsmath math notranslate nohighlight" id="equation-21d7bb6a-31c5-4000-8106-c0ff3c54bc3d">
-<span class="eqno">(5.26)<a class="headerlink" href="#equation-21d7bb6a-31c5-4000-8106-c0ff3c54bc3d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-7f3a6f7c-51de-4f6c-9702-b943a386b71e">
+<span class="eqno">(5.26)<a class="headerlink" href="#equation-7f3a6f7c-51de-4f6c-9702-b943a386b71e" title="Permalink to this equation">#</a></span>\[\begin{equation}
 f = \frac{\sqrt{W^2+H^2}}{2 \tan(\mathrm{DFOV} \pi/360)}
 \end{equation}\]</div>
 <div class="cell docutils container">
@@ -782,8 +782,8 @@ Given a projection <span class="math notranslate nohighlight">\(p=(u,v)\)</span>
 However, if we see <em>two</em> projections of the same feature in two cameras, placed side by side, we can <em>triangulate</em> the location of <span class="math notranslate nohighlight">\(P\)</span>.
 In particular, let us name the cameras “Left” and “Right”, abbreviated as “L” and “R”, and let the two projections be <span class="math notranslate nohighlight">\(p_L=(u_L,v_L)\)</span> and <span class="math notranslate nohighlight">\(p_R=(u_R,v_R)\)</span>. How could we recover the coordinates <span class="math notranslate nohighlight">\((X,Y,Z)\)</span> in, say, the <em>left</em> camera coordinate frame?</p>
 <p id="index-17">We can easily work out the answer <em>if</em> the cameras have the same calibration <em>and</em> the camera pair is in a “stereo” configuration. The latter means that the cameras have exactly the same orientation with respect to the world, and the right camera is displaced only horizontally with respect to the left camera. We call the displacement the <strong>stereo baseline</strong> <span class="math notranslate nohighlight">\(B\)</span>. In that case we have</p>
-<div class="amsmath math notranslate nohighlight" id="equation-65a0e563-4ad7-450b-9028-e74b93676f6b">
-<span class="eqno">(5.27)<a class="headerlink" href="#equation-65a0e563-4ad7-450b-9028-e74b93676f6b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-84ffc0d2-78ff-4866-a085-d3180eefd313">
+<span class="eqno">(5.27)<a class="headerlink" href="#equation-84ffc0d2-78ff-4866-a085-d3180eefd313" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{aligned}
 u_L &amp;= u_0 + f \frac{X}{Z}, \,\,\,\,\, &amp;v_L = v_0 + f \frac{Y}{Z} \\
 \\
@@ -792,20 +792,20 @@ u_R &amp;= u_0 + f \frac{X-B}{Z}, \,\,\,\,\, &amp;v_R = v_0 + f \frac{Y}{Z}
 \end{equation}\]</div>
 <p id="index-18">Two interesting things to note: (a) <span class="math notranslate nohighlight">\(u_L\)</span> and <span class="math notranslate nohighlight">\(u_R\)</span> differ only because the <span class="math notranslate nohighlight">\(X\)</span> coordinate of the point <span class="math notranslate nohighlight">\(P\)</span>, measured in the right camera, is <span class="math notranslate nohighlight">\(B\)</span> less than its value in the left camera.
 and (b) <span class="math notranslate nohighlight">\(v_L\)</span> and <span class="math notranslate nohighlight">\(v_R\)</span> have the same value: <em>corresponding</em> points in a stereo pair lie on the same scanline in the images. We can use the first fact to calculate the <em>unknown depth</em> <span class="math notranslate nohighlight">\(Z\)</span>, by defining the <strong>disparity</strong> <span class="math notranslate nohighlight">\(d\)</span> as the difference of <span class="math notranslate nohighlight">\(u_L\)</span> and <span class="math notranslate nohighlight">\(u_R\)</span>,</p>
-<div class="amsmath math notranslate nohighlight" id="equation-8844c44a-a63f-4337-b107-1cc6f372c29e">
-<span class="eqno">(5.28)<a class="headerlink" href="#equation-8844c44a-a63f-4337-b107-1cc6f372c29e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d7cf20fc-7d7c-4683-b1a8-3d073b43c3e1">
+<span class="eqno">(5.28)<a class="headerlink" href="#equation-d7cf20fc-7d7c-4683-b1a8-3d073b43c3e1" title="Permalink to this equation">#</a></span>\[\begin{equation}
 d \doteq u_L - u_R = f \frac{X}{Z} - f \frac{X-B}{Z},
 \end{equation}\]</div>
 <p>and then performing some algebraic manipulation to obtain the <strong>fundamental stereo equation</strong>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-2fe889b7-361b-4d39-81c9-599016fd14be">
-<span class="eqno">(5.29)<a class="headerlink" href="#equation-2fe889b7-361b-4d39-81c9-599016fd14be" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-74194558-4fbe-4dfc-a293-6f20b714ad82">
+<span class="eqno">(5.29)<a class="headerlink" href="#equation-74194558-4fbe-4dfc-a293-6f20b714ad82" title="Permalink to this equation">#</a></span>\[\begin{equation}
 Z = B \frac{f}{d}.
 \end{equation}\]</div>
 <p>The fraction <span class="math notranslate nohighlight">\(f/d\)</span> is dimensionless, as both disparity <span class="math notranslate nohighlight">\(d\)</span> and focal length <span class="math notranslate nohighlight">\(f\)</span> are expressed in pixels, and hence the resulting depth <span class="math notranslate nohighlight">\(Z\)</span> is expressed in the units of the baseline <span class="math notranslate nohighlight">\(B\)</span>.
 Using this together with the projection equations above,
 we can now completely reconstruct the location of the point <span class="math notranslate nohighlight">\(P\)</span> in (left) camera coordinates:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a379c092-4c89-4d51-9777-ebff3a6f40cd">
-<span class="eqno">(5.30)<a class="headerlink" href="#equation-a379c092-4c89-4d51-9777-ebff3a6f40cd" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-0fd339b6-8d4e-4855-92e0-506edf0708af">
+<span class="eqno">(5.30)<a class="headerlink" href="#equation-0fd339b6-8d4e-4855-92e0-506edf0708af" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{bmatrix}X\\Y\\Z\end{bmatrix}
 = \begin{bmatrix}Z(u_L-u_0)/f\\Z(v_L-v_0)/f\\B f/d\end{bmatrix}
 = B \frac{f}{d} \begin{bmatrix}(u_L-u_0)/f\\(v_L-v_0)/f\\1\end{bmatrix}
