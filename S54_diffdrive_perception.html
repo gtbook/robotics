@@ -399,7 +399,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fully-connected-neural-networks">5.4.5. Fully Connected Neural Networks</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#convolutional-neural-networks">5.4.6. Convolutional Neural Networks</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#going-wide-in-cnns">5.4.6.1. Going Wide in CNNs</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#going-deep-in-cnns">5.4.6.2. Going Deep in CNNS</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#going-deep-in-cnns">5.4.6.2. Going Deep in CNNs</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pooling-layers">5.4.6.3. Pooling Layers</a></li>
 </ul>
 </li>
@@ -531,8 +531,8 @@ and the second line shows the “edge” image.
 Every value in the edge image is computed from three values in the original image.
 For example, the first pixel in the edge image has the value 2, which is calculated from the values
 <span class="math notranslate nohighlight">\(\begin{bmatrix}3 &amp; 3 &amp; 5\end{bmatrix}\)</span>, as highlighted below:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-7105b8da-4f8f-4cb2-9cb7-829b48bb5c74">
-<span class="eqno">(5.31)<a class="headerlink" href="#equation-7105b8da-4f8f-4cb2-9cb7-829b48bb5c74" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-0d0a2793-5c37-4b07-a2ea-c93c8ce50489">
+<span class="eqno">(5.31)<a class="headerlink" href="#equation-0d0a2793-5c37-4b07-a2ea-c93c8ce50489" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{bmatrix}
 3 &amp; \textbf{3} &amp; \textbf{3} &amp; \textbf{5} &amp; 5 &amp; 5 &amp; 5 &amp; 2 &amp; 2 &amp; 2 \\
 3 &amp; 0 &amp; \textbf{2} &amp; 2 &amp; 0 &amp; 0 &amp; -3 &amp; -3 &amp; 0 &amp; -2
@@ -540,20 +540,20 @@ For example, the first pixel in the edge image has the value 2, which is calcula
 \end{equation}\]</div>
 <p>The “recipe” to calculate the edge value is just taking a weighted sum,
 where the weights are defined by our filter:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-75e38c27-e5fb-487d-a06c-bd0775815268">
-<span class="eqno">(5.32)<a class="headerlink" href="#equation-75e38c27-e5fb-487d-a06c-bd0775815268" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-69371d4c-dce1-4b13-9449-866c1ce33a4f">
+<span class="eqno">(5.32)<a class="headerlink" href="#equation-69371d4c-dce1-4b13-9449-866c1ce33a4f" title="Permalink to this equation">#</a></span>\[\begin{equation}
 3 \times -1 + 3 \times 0 + 5 \times 1 = 2 = \begin{bmatrix}3 &amp; 3 &amp; 5\end{bmatrix} \begin{bmatrix}-1 &amp; 0 &amp; 1\end{bmatrix}^T
 \end{equation}\]</div>
 <p>The value <span class="math notranslate nohighlight">\(2\)</span> indicates a <em>positive</em> edge where the input values go from <span class="math notranslate nohighlight">\(3\)</span> to <span class="math notranslate nohighlight">\(5\)</span>. This operation is then repeated for every output pixel. In other words, every output pixel is computed as the dot product of the filter <span class="math notranslate nohighlight">\(\begin{bmatrix}-1 &amp; 0 &amp; 1\end{bmatrix}\)</span> with the <em>window</em> of pixels in the input image, centered around the location of the output pixel.</p>
 <p id="index-4">For the simple 1D example above, we could write this with the simple formula</p>
-<div class="amsmath math notranslate nohighlight" id="equation-7f433646-68bb-4981-8ff3-e0f260deae0b">
-<span class="eqno">(5.33)<a class="headerlink" href="#equation-7f433646-68bb-4981-8ff3-e0f260deae0b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-5b7ffa71-a15c-4530-9a0d-0687e6c1271d">
+<span class="eqno">(5.33)<a class="headerlink" href="#equation-5b7ffa71-a15c-4530-9a0d-0687e6c1271d" title="Permalink to this equation">#</a></span>\[\begin{equation}
 h[i] = \sum_{k=-1}^1 g[k] f[i+k]
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(f\)</span> is the 1D input image, <span class="math notranslate nohighlight">\(g\)</span> is the 1D filter or <strong>kernel</strong>, and <span class="math notranslate nohighlight">\(h\)</span> is the output edge image. Note that we index into the kernel <span class="math notranslate nohighlight">\(g\)</span> with coordinates <span class="math notranslate nohighlight">\(k\in[-1,0,1]\)</span>. By adding <span class="math notranslate nohighlight">\(k\)</span> to the output coordinate <span class="math notranslate nohighlight">\(i\)</span>, we automatically take the weighted sum of pixels in the input image <span class="math notranslate nohighlight">\(f\)</span> centered around <span class="math notranslate nohighlight">\(i\)</span>.</p>
 <p id="index-5">Let us examine the input and output again:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-d4f24969-9505-41e9-9bf1-086c8cf6c2b5">
-<span class="eqno">(5.34)<a class="headerlink" href="#equation-d4f24969-9505-41e9-9bf1-086c8cf6c2b5" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-fa63e162-7194-452a-985d-ed8123717e80">
+<span class="eqno">(5.34)<a class="headerlink" href="#equation-fa63e162-7194-452a-985d-ed8123717e80" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{bmatrix}
 3 &amp; 3 &amp; 3 &amp; 5 &amp; 5 &amp; 5 &amp; 5 &amp; 2 &amp; 2 &amp; 2 \\
 3 &amp; 0 &amp; 2 &amp; 2 &amp; 0 &amp; 0 &amp; -3 &amp; -3 &amp; 0 &amp; -2
@@ -563,8 +563,8 @@ h[i] = \sum_{k=-1}^1 g[k] f[i+k]
 <p>We can now look at the remaining values. It is easy to verify that the <span class="math notranslate nohighlight">\(-3\)</span> values result from the negative edge transition from <span class="math notranslate nohighlight">\(5\)</span> to <span class="math notranslate nohighlight">\(2\)</span> in the image. Also, where the input image is <em>constant</em>, the edge output image has a zero, which is great!</p>
 <p>However, we need to make a decision about the output array size and padding. Indeed, what is less obvious are the <span class="math notranslate nohighlight">\(3\)</span> and <span class="math notranslate nohighlight">\(-2\)</span> values at the beginning and end of the output array. The answer is that here we used <em>zero-padding</em>: note that the calculation of the output <span class="math notranslate nohighlight">\(h[0]\)</span> requires access to input values <span class="math notranslate nohighlight">\(f[-1]\)</span>, <span class="math notranslate nohighlight">\(f[0]\)</span>, and <span class="math notranslate nohighlight">\(f[1]\)</span>. This is problematic, because <span class="math notranslate nohighlight">\(f[-1]\)</span> is <em>out of bounds</em>. Zero-padding is the convention to use a zero for every value that is out of bounds for the input. Another way to deal with this issue is to calculate a smaller output image that will only require access to valid input values. Many other strategies can be employed but “zero padding” and “valid” output image size are the two most common ones.</p>
 <p id="index-6"><strong>Correlation vs. Convolution</strong>: we use the term convolution above, but the formula above is really <em>correlation</em>. The correct formula for <em>convolution</em>, a term from the signal processing literature, is</p>
-<div class="amsmath math notranslate nohighlight" id="equation-1c8f7c5f-a298-4cef-a1c1-3fe0e0cf5cd1">
-<span class="eqno">(5.35)<a class="headerlink" href="#equation-1c8f7c5f-a298-4cef-a1c1-3fe0e0cf5cd1" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-29a08d64-a667-48f8-8359-d06adbd6af7c">
+<span class="eqno">(5.35)<a class="headerlink" href="#equation-29a08d64-a667-48f8-8359-d06adbd6af7c" title="Permalink to this equation">#</a></span>\[\begin{equation}
 h[i] = \sum_{k=-1}^1 g[k] f[i-k]
 \end{equation}\]</div>
 <p>with the only difference being the minus sign. With the advent of convolutional neural networks (CNNs),
@@ -576,8 +576,8 @@ which we will see below, everyone is now using the term <em>convolution</em> eve
 <div><p>Extending the concept of convolution to 2D.</p>
 </div></blockquote>
 <p>The 1D definition of convolution above can be easily extended to 2D images and 2D filters:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-85d8b43f-00d7-4f8a-8d97-e8aef8317e19">
-<span class="eqno">(5.36)<a class="headerlink" href="#equation-85d8b43f-00d7-4f8a-8d97-e8aef8317e19" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-8cccb774-fe18-4681-96d6-1ed576c78b9f">
+<span class="eqno">(5.36)<a class="headerlink" href="#equation-8cccb774-fe18-4681-96d6-1ed576c78b9f" title="Permalink to this equation">#</a></span>\[\begin{equation}
 h[i,j] = \sum_{k, l} g[k,l] f[i+k, j+l]
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(k\)</span> and <span class="math notranslate nohighlight">\(l\)</span> range over the two kernel dimensions.
@@ -585,19 +585,19 @@ For example, if we applied our 1D filter above to a 2D image,
 we would have <span class="math notranslate nohighlight">\(k \in \{ 0 \}\)</span> and <span class="math notranslate nohighlight">\(l \in \{ -1, 0, 1 \}\)</span>,
 which would apply the filter along individual rows of the image.</p>
 <p>Armed with this formula, we can now understand the edge detection above. For each output pixel <span class="math notranslate nohighlight">\(h[i,j]\)</span>, we do a pointwise multiplication of the <span class="math notranslate nohighlight">\(1 \times 3\)</span> filter</p>
-<div class="amsmath math notranslate nohighlight" id="equation-12c5ffe1-8eb3-4a61-8364-7579a521c88f">
-<span class="eqno">(5.37)<a class="headerlink" href="#equation-12c5ffe1-8eb3-4a61-8364-7579a521c88f" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-0d532fbc-295e-44d2-ab7a-0672a74faa25">
+<span class="eqno">(5.37)<a class="headerlink" href="#equation-0d532fbc-295e-44d2-ab7a-0672a74faa25" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{pmatrix}g[0,-1] &amp; g[0,0] &amp; g[0,1]\end{pmatrix} = \begin{pmatrix}-1 &amp; 0 &amp; 1\end{pmatrix}
 \end{equation}\]</div>
 <p>with the <span class="math notranslate nohighlight">\(1 \times 3\)</span> window</p>
-<div class="amsmath math notranslate nohighlight" id="equation-18a21e80-0050-4f07-8c57-42dbd13e4b4e">
-<span class="eqno">(5.38)<a class="headerlink" href="#equation-18a21e80-0050-4f07-8c57-42dbd13e4b4e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-9547d26c-8a3b-473e-a867-07aced28c240">
+<span class="eqno">(5.38)<a class="headerlink" href="#equation-9547d26c-8a3b-473e-a867-07aced28c240" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \begin{pmatrix}f[i,j-1] &amp; f[i,j+0] &amp; f[i,j+1]\end{pmatrix}
 \end{equation}\]</div>
 <p>in the input image <span class="math notranslate nohighlight">\(f\)</span>.</p>
 <p>We can use a different filter to detect horizontal edges. Indeed, the <strong>Horizontal Sobel edge detector</strong> is simply the <span class="math notranslate nohighlight">\(3 \times 1\)</span> equivalent, with</p>
-<div class="amsmath math notranslate nohighlight" id="equation-30d741fd-0316-40a8-bd0c-e20384c654e2">
-<span class="eqno">(5.39)<a class="headerlink" href="#equation-30d741fd-0316-40a8-bd0c-e20384c654e2" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-8742241a-a8bf-48b3-b9f9-cd17b997828f">
+<span class="eqno">(5.39)<a class="headerlink" href="#equation-8742241a-a8bf-48b3-b9f9-cd17b997828f" title="Permalink to this equation">#</a></span>\[\begin{equation}
 g = \begin{pmatrix}-1 \\ 0 \\ 1\end{pmatrix}
 \end{equation}\]</div>
 <p>The code in Figure <a class="reference internal" href="#fig:gray_image_and_horizontal_edges_by_robot"><span class="xref myst">4</span></a> applies the horizontal Sobel edge detector to our original image from above, and shows the result alongside the original.
@@ -666,27 +666,27 @@ Could we use our Sobel gradient operators to construct an edge detector?</p>
 </div></blockquote>
 <p>Above we looked at edge detection as a classification problem. Our solution was to calculate the output of two different filters (both Sobel operators), combine these with a non-linear operation (the norm), and then apply a threshold at some hand-tuned level. It is only natural to ask whether this idea of taking a linear combination of pixels and feeding it into some “decision maker” could solve other tasks, including the a main goal of computer vision, detecting and recognizing objects, a capability which seems effortless to people yet which eluded computer vision researchers for a long time.</p>
 <p>Inspired by the way neurons in the brain appear to be connected, <strong>neural networks</strong> were first proposed by <a class="reference external" href="https://en.wikipedia.org/wiki/Frank_Rosenblatt">Frank Rosenblatt</a> in the 1950s, who with his collaborators proposed the <strong>Perceptron</strong>. The mathematical equation for a perceptron is simple:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-deb67c6e-2795-4b2a-b67e-4a1d3f84fce1">
-<span class="eqno">(5.40)<a class="headerlink" href="#equation-deb67c6e-2795-4b2a-b67e-4a1d3f84fce1" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-45e243df-a560-46ff-88c7-4d6ae890808e">
+<span class="eqno">(5.40)<a class="headerlink" href="#equation-45e243df-a560-46ff-88c7-4d6ae890808e" title="Permalink to this equation">#</a></span>\[\begin{equation}
 f(x) = \theta \begin{pmatrix}\sum_k w[k] x[k] + b\end{pmatrix} = \theta(w \cdot x + b)
 \end{equation}\]</div>
 <p>Here, <span class="math notranslate nohighlight">\(w \in \mathbb{R}^n\)</span> is the 1D vector of weights and <span class="math notranslate nohighlight">\(x \in \mathbb{R}^n\)</span> is the 1D input signal.
 The output <span class="math notranslate nohighlight">\(f(x) \in \mathbb{R} \)</span> of the network is obtained by pointwise multiplying the input signal <span class="math notranslate nohighlight">\(x\)</span> and the weights <span class="math notranslate nohighlight">\(w\)</span>, and thresholding.
 Here, <span class="math notranslate nohighlight">\(\theta :\mathbb{R} \rightarrow \{0,1\} \)</span> denotes the thresholding operation:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-bb78d913-9923-4be8-b61f-b257f9b6897b">
-<span class="eqno">(5.41)<a class="headerlink" href="#equation-bb78d913-9923-4be8-b61f-b257f9b6897b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d3767b78-1577-465e-8869-f9202daae2cf">
+<span class="eqno">(5.41)<a class="headerlink" href="#equation-d3767b78-1577-465e-8869-f9202daae2cf" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \theta(x) \doteq 1 \text{  if  } (x&gt;0) \text{  else  } 0
 \end{equation}\]</div>
 <p>The scalar quantity <span class="math notranslate nohighlight">\(b\)</span> is known as the bias, and can be seen as shifting the decision boundary to values different from <span class="math notranslate nohighlight">\(0\)</span>.</p>
 <p id="index-10">While a perceptron computes a single output <span class="math notranslate nohighlight">\(f(x)\)</span> from the input signal <span class="math notranslate nohighlight">\(x\)</span>, there are two ways to extend the concept: going <em>wide</em> and going <em>deep</em>. First, we can extend the concept of the perceptron to be multi-output, yielding <span class="math notranslate nohighlight">\(n_o\)</span> <strong>output features</strong></p>
-<div class="amsmath math notranslate nohighlight" id="equation-8104079c-e264-4369-9a6e-7cdcd5a83f5d">
-<span class="eqno">(5.42)<a class="headerlink" href="#equation-8104079c-e264-4369-9a6e-7cdcd5a83f5d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-fc5cb875-8d01-4057-b442-a83e447543dd">
+<span class="eqno">(5.42)<a class="headerlink" href="#equation-fc5cb875-8d01-4057-b442-a83e447543dd" title="Permalink to this equation">#</a></span>\[\begin{equation}
 f_o(x) = \theta \begin{pmatrix}\sum_k W[o,k] x[k] + b[o]\end{pmatrix},
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(o\in1\ldots n_o\)</span> is the output index.
 We can stack the <span class="math notranslate nohighlight">\(n_o\)</span> equations to build a single matrix equation for the multi-output case:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-1732107a-7100-4d4a-b108-2412ef53b14d">
-<span class="eqno">(5.43)<a class="headerlink" href="#equation-1732107a-7100-4d4a-b108-2412ef53b14d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-fc331785-6534-46e9-93f0-8b47f0965d0f">
+<span class="eqno">(5.43)<a class="headerlink" href="#equation-fc331785-6534-46e9-93f0-8b47f0965d0f" title="Permalink to this equation">#</a></span>\[\begin{equation}
 f(x) =
 \begin{bmatrix}
 f_1(x) \\ \vdots \\ f_{n_o}(x)
@@ -732,8 +732,8 @@ Suppose we apply kernel <span class="math notranslate nohighlight">\(g\)</span> 
 Translation invariance implies that if we shift the input by <span class="math notranslate nohighlight">\(t\)</span>, the resulting output
 will merely be the original <span class="math notranslate nohighlight">\(f\)</span> also shifted by <span class="math notranslate nohighlight">\(t\)</span>.
 Formally, in 1D we write this condition as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-0949d81b-1a9d-494d-b88f-babaaf2a133d">
-<span class="eqno">(5.44)<a class="headerlink" href="#equation-0949d81b-1a9d-494d-b88f-babaaf2a133d" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-a9655650-a96f-46fc-ad1c-1163c6458f4f">
+<span class="eqno">(5.44)<a class="headerlink" href="#equation-a9655650-a96f-46fc-ad1c-1163c6458f4f" title="Permalink to this equation">#</a></span>\[\begin{equation}
 f[i+t] = \sum_{k=-1}^1 g[k] x[i+t+k],
 \end{equation}\]</div>
 <p>i.e., if we <em>translate</em> the input signal <span class="math notranslate nohighlight">\(x\)</span> by <span class="math notranslate nohighlight">\(t\)</span>, the output signal <span class="math notranslate nohighlight">\(f\)</span> is identical but translated by the same amount. A similar definition holds for 2D translation in the case of 2D convolution.</p>
@@ -744,25 +744,25 @@ For <strong>convolutional layer</strong> <span class="math notranslate nohighlig
 of output channels by <span class="math notranslate nohighlight">\(n_{l,o}\)</span>.
 The <span class="math notranslate nohighlight">\(o^{th}\)</span> output of layer <span class="math notranslate nohighlight">\(l\)</span> is obtained by convolution of its input with the
 kernel for output <span class="math notranslate nohighlight">\(o\)</span> of layer <span class="math notranslate nohighlight">\(l\)</span>:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-ab33f19e-2f72-4ce5-8dde-7cced296757f">
-<span class="eqno">(5.45)<a class="headerlink" href="#equation-ab33f19e-2f72-4ce5-8dde-7cced296757f" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d799434b-36bd-40b5-a6d0-90ed18994edb">
+<span class="eqno">(5.45)<a class="headerlink" href="#equation-d799434b-36bd-40b5-a6d0-90ed18994edb" title="Permalink to this equation">#</a></span>\[\begin{equation}
 f_{l,o}(x) = \sum_{ k} g[l, o, k] x[l, k] + b[l, o]
 \end{equation}\]</div>
 <p>In CNNs, each layer also has one bias value <span class="math notranslate nohighlight">\(b[o]\)</span> per output channel, as indicated above.</p>
 </section>
 <section id="going-deep-in-cnns">
-<h3><span class="section-number">5.4.6.2. </span>Going Deep in CNNS<a class="headerlink" href="#going-deep-in-cnns" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">5.4.6.2. </span>Going Deep in CNNs<a class="headerlink" href="#going-deep-in-cnns" title="Link to this heading">#</a></h3>
 <p id="index-18"><span id="index-17"></span>To go <em>deep</em>, we specify a nonlinear operation or <strong>activation function</strong> that is applied after the linear convolution step.
 This activation function plays the role of <span class="math notranslate nohighlight">\(\theta\)</span> in our fully connected networks above.
 Indeed, <em>without</em> an activation function, it makes little sense to have two successive linear layers with weights <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(B\)</span>: one could just as easily replace them with a <em>single</em> linear layer with weights <span class="math notranslate nohighlight">\(W = A B\)</span>. In addition, from the multi-layer perceptron work we know that the <em>threshold</em> operation is a crucial step in <em>activating</em> a feature, i.e., deciding when a feature is really present or whether the generated signal is just due to noise. Think back to our primitive edge detector above as well: both the thresholding and the threshold value (which in a perceptron is encoded in a bias <span class="math notranslate nohighlight">\(b\)</span>) are important for the final result.</p>
 <p>The most important activation functions are the sigmoid and “ReLU”. We have already encountered the threshold function <span class="math notranslate nohighlight">\(\theta\)</span>, but historically a “soft threshold” function called the <strong>sigmoid function</strong> was, and still is, very popular:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-961275ba-bb39-497a-a6de-c55bc3db6aa7">
-<span class="eqno">(5.46)<a class="headerlink" href="#equation-961275ba-bb39-497a-a6de-c55bc3db6aa7" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-79f435cd-e2fb-45d2-a07b-702b35f46e29">
+<span class="eqno">(5.46)<a class="headerlink" href="#equation-79f435cd-e2fb-45d2-a07b-702b35f46e29" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \sigma(x) \doteq \frac{1}{1+\exp(-x)}.
 \end{equation}\]</div>
 <p>Many other activation functions have been proposed since, but it is now widely accepted that the exact shape of the function matters less than the simple fact of having <em>some</em> non-linearity. One of the simplest and most popular activation functions just zeroes out any negative values, but otherwise leaves the input signal untouched. This is called the <strong>rectified linear unit</strong>, abbreviated ReLU, and is given by this simple formula:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-4cd07ca8-d11a-420e-818c-566fb3cf54ae">
-<span class="eqno">(5.47)<a class="headerlink" href="#equation-4cd07ca8-d11a-420e-818c-566fb3cf54ae" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-e34f6e17-7653-4e09-bac0-34a1099e2803">
+<span class="eqno">(5.47)<a class="headerlink" href="#equation-e34f6e17-7653-4e09-bac0-34a1099e2803" title="Permalink to this equation">#</a></span>\[\begin{equation}
 ReLU(x) \doteq \max(0,x).
 \end{equation}\]</div>
 </section>
@@ -770,13 +770,13 @@ ReLU(x) \doteq \max(0,x).
 <h3><span class="section-number">5.4.6.3. </span>Pooling Layers<a class="headerlink" href="#pooling-layers" title="Link to this heading">#</a></h3>
 <p id="index-19">Finally, CNNs also frequently have <strong>pooling layers</strong>. A downside of a convolutional layer is that each output layer is as large as the previous one: the convolution, even when in <code class="docutils literal notranslate"><span class="pre">valid</span></code> mode, only slightly reduces the image size, and not at all when using <code class="docutils literal notranslate"><span class="pre">same</span></code> mode with zero-padding. So called <em>pooling</em> layers were again inspired by the human visual system, where an experimentalists observed that while early processing layers where “retinotopic”, i.e., had a one-to-one mapping to locations on the imaging surface, successive layers gradually became coarser <em>and</em> activated by wider “receptive fields”, defined as the area on the retina that were able to influence the activation of a neuron at a given processing stage. There are also computational reasons to wanting to “downscale” the resolution in deeper layers, as many neural net architectures increase the number of features with depth, and hence reducing the resolution correspondingly yielded in approximately the same amount of computation per layer.</p>
 <p>Formally, a pooling layer is most often an averaging or maximization operation over an input window of a given size. For example, a “max-pooling” layer in 2D implements the following equation,</p>
-<div class="amsmath math notranslate nohighlight" id="equation-eb4bc7e7-16d5-48c5-8ac4-ff5a1e3a9bb6">
-<span class="eqno">(5.48)<a class="headerlink" href="#equation-eb4bc7e7-16d5-48c5-8ac4-ff5a1e3a9bb6" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-eeba695c-0497-41a7-92ae-67f1ad654593">
+<span class="eqno">(5.48)<a class="headerlink" href="#equation-eeba695c-0497-41a7-92ae-67f1ad654593" title="Permalink to this equation">#</a></span>\[\begin{equation}
 h[c, i, j] = \max_{k, l} f[c, i+k, j+l],
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(c\in[n_c]\)</span> ranges over the <span class="math notranslate nohighlight">\(n_c\)</span> channels, and once again <span class="math notranslate nohighlight">\(k \in [H_k]\)</span> and <span class="math notranslate nohighlight">\(l \in [W_k]\)</span>. The max operation actually <em>does</em> not reduce the resolution by itself: that is done by only computing the pooling output at a certain <em>stride</em> <span class="math notranslate nohighlight">\(s\)</span>, where often the stride is equal to the size of the window. Formally, we have</p>
-<div class="amsmath math notranslate nohighlight" id="equation-bbde31fb-a5ad-4ce0-8654-d56a0f349898">
-<span class="eqno">(5.49)<a class="headerlink" href="#equation-bbde31fb-a5ad-4ce0-8654-d56a0f349898" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-64007470-770a-436e-9708-408da04ab1a2">
+<span class="eqno">(5.49)<a class="headerlink" href="#equation-64007470-770a-436e-9708-408da04ab1a2" title="Permalink to this equation">#</a></span>\[\begin{equation}
 h[c, i, j] = \max_{k, l} f[c, i s_i + k, j s_j + l],
 \end{equation}\]</div>
 <p>where the strides <span class="math notranslate nohighlight">\(s_i\)</span> and <span class="math notranslate nohighlight">\(s_j\)</span> for the row and column indexing can be different. More often than not, however, practitioners choose <span class="math notranslate nohighlight">\(s_i=s_j=W_k=H_k\)</span>, i.e., square pooling windows with the same stride, e.g., max pooling over <span class="math notranslate nohighlight">\(2\times 2\)</span> windows with a stride of <span class="math notranslate nohighlight">\(2\)</span>. Average and sum-pooling are similarly defined, and are equivalent up to a constant scaling factor.</p>
@@ -787,7 +787,7 @@ h[c, i, j] = \max_{k, l} f[c, i s_i + k, j s_j + l],
 <blockquote>
 <div><p>A historically important example.</p>
 </div></blockquote>
-<p>Convolutional neural networks were pioneered by <a class="reference external" href="https://en.wikipedia.org/wiki/Kunihiko_Fukushima">Kunihiko Fukushima</a> in the 70s, and and <a class="reference external" href="https://en.wikipedia.org/wiki/Yann_LeCun">Yann LeCun</a> in the 1980s. The latter created several CNN-style neural networks for the task of handwritten digit recognition, motivated by an application for the US Postal Service. This work took part from the late 80s to well into the 90s, and is described in a <a class="reference external" href="https://ieeexplore.ieee.org/abstract/document/726791">highly cited 1998 overview paper</a> <span id="id2">[<a class="reference internal" href="bibliography.html#id39" title="Yann LeCun, Léon Bottou, Yoshua Bengio, and Patrick Haffner. Gradient-based learning applied to document recognition. Proceedings of the IEEE, 86(11):2278–2324, 1998. URL: https://ieeexplore.ieee.org/abstract/document/726791.">LeCun <em>et al.</em>, 1998</a>]</span>. Below we show the architecture of LeNet-5 described in that paper.</p>
+<p>Convolutional neural networks were pioneered by <a class="reference external" href="https://en.wikipedia.org/wiki/Kunihiko_Fukushima">Kunihiko Fukushima</a> in the 70s, and <a class="reference external" href="https://en.wikipedia.org/wiki/Yann_LeCun">Yann LeCun</a> in the 1980s. The latter created several CNN-style neural networks for the task of handwritten digit recognition, motivated by an application for the US Postal Service. This work took part from the late 80s to well into the 90s, and is described in a <a class="reference external" href="https://ieeexplore.ieee.org/abstract/document/726791">highly cited 1998 overview paper</a> <span id="id2">[<a class="reference internal" href="bibliography.html#id39" title="Yann LeCun, Léon Bottou, Yoshua Bengio, and Patrick Haffner. Gradient-based learning applied to document recognition. Proceedings of the IEEE, 86(11):2278–2324, 1998. URL: https://ieeexplore.ieee.org/abstract/document/726791.">LeCun <em>et al.</em>, 1998</a>]</span>. Below we show the architecture of LeNet-5 described in that paper.</p>
 <p>LeNet-5 takes a single-channel, <span class="math notranslate nohighlight">\(32\times 32\)</span> grayscale image as input, and has the following layers:</p>
 <ul class="simple">
 <li><p>6-channel, <span class="math notranslate nohighlight">\(28\times 28\)</span> convolutional layer with <span class="math notranslate nohighlight">\(5\times 5\)</span> kernel;</p></li>
@@ -802,7 +802,7 @@ h[c, i, j] = \max_{k, l} f[c, i s_i + k, j s_j + l],
 <p>An instance of this network was able to achieve 0.8% error rate on a standard OCR dataset called <a class="reference external" href="https://en.wikipedia.org/wiki/MNIST_database">MNIST</a>.
 You can see an animation of it <a class="reference external" href="http://yann.lecun.com/exdb/lenet/">here</a>.
 The MNIST task is now considered solved, and LeNet-5 is not even the best performer anymore, but the network is a great example of the seminal work on CNNs that ultimately led to the latest deep learning revolution.</p>
-<p>LeNet-5 it is an example of a very typical architecture that is still used by many modern methods: a sequence of convolutional and pooling layers, progressively increasing the feature-channel count as we go deeper while at the same time decreasing the feature map resolution, until the point where a few fully connected layers are used to perform a final classification decision.</p>
+<p>LeNet-5 is an example of a very typical architecture that is still used by many modern methods: a sequence of convolutional and pooling layers, progressively increasing the feature-channel count as we go deeper while at the same time decreasing the feature map resolution, until the point where a few fully connected layers are used to perform a final classification decision.</p>
 </section>
 <section id="semantic-segmentation">
 <h2><span class="section-number">5.4.8. </span>Semantic Segmentation<a class="headerlink" href="#semantic-segmentation" title="Link to this heading">#</a></h2>
@@ -866,7 +866,7 @@ The MNIST task is now considered solved, and LeNet-5 is not even the best perfor
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Semantic segmentation of the highway image.</span>
 <span class="c1">#| label: fig:semantic_segmentation_by_robot</span>
-<span class="c1"># create a color pallette, selecting a color for each class</span>
+<span class="c1"># create a color palette, selecting a color for each class</span>
 <span class="n">palette</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">2</span> <span class="o">**</span> <span class="mi">25</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span> <span class="o">**</span> <span class="mi">15</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span> <span class="o">**</span> <span class="mi">21</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
 <span class="n">colors</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">as_tensor</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">21</span><span class="p">)])[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">palette</span>
 <span class="n">colors</span> <span class="o">=</span> <span class="p">(</span><span class="n">colors</span> <span class="o">%</span> <span class="mi">255</span><span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;uint8&quot;</span><span class="p">)</span>
@@ -1004,7 +1004,7 @@ The MNIST task is now considered solved, and LeNet-5 is not even the best perfor
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fully-connected-neural-networks">5.4.5. Fully Connected Neural Networks</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#convolutional-neural-networks">5.4.6. Convolutional Neural Networks</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#going-wide-in-cnns">5.4.6.1. Going Wide in CNNs</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#going-deep-in-cnns">5.4.6.2. Going Deep in CNNS</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#going-deep-in-cnns">5.4.6.2. Going Deep in CNNs</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pooling-layers">5.4.6.3. Pooling Layers</a></li>
 </ul>
 </li>
