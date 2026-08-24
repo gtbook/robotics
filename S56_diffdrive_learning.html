@@ -434,7 +434,7 @@ We will often refer to the <em>training dataset</em> as <span class="math notran
 <li><p><strong>Classification</strong>; If the labels <span class="math notranslate nohighlight">\(y\)</span> are <em>discrete</em>, we talk about a supervised <em>classification</em> problem. The prototypical example is classifying images as portraying either a cat or a dog: here the images are the inputs <span class="math notranslate nohighlight">\(x\)</span>, and the output label <span class="math notranslate nohighlight">\(y \in \{\text{cat},\text{dog}\}\)</span>.</p></li>
 <li><p><strong>Regression</strong> If the labels <span class="math notranslate nohighlight">\(y\)</span> are <em>continuous</em>, this is called a supervised <em>regression</em> problem. For example, predicting the blue-book value of a second-hand car based on its make, model, year, and miles driven.</p></li>
 </ol>
-<p id="index-2">Whether we are talking about classification or regression, the supervised leaning process normally follows these steps:</p>
+<p id="index-2">Whether we are talking about classification or regression, the supervised learning process normally follows these steps:</p>
 <ol class="arabic simple">
 <li><p>Define a model <span class="math notranslate nohighlight">\(f\)</span> and its parameters <span class="math notranslate nohighlight">\(\theta\)</span> that allow you to output a prediction <span class="math notranslate nohighlight">\(\hat{y}\)</span> from the input features <span class="math notranslate nohighlight">\(x\)</span>:
 \begin{equation}
@@ -487,14 +487,14 @@ We will often refer to the <em>training dataset</em> as <span class="math notran
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Interpolated Output: tensor([[ 0.0613, -0.2694],
-        [-0.5093, -0.7209],
-        [-1.0866, -1.0053]], grad_fn=&lt;AddBackward0&gt;)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Interpolated Output: tensor([[-0.6011,  0.3709],
+        [ 0.4525, -0.4859],
+        [ 0.3109, -0.7932]], grad_fn=&lt;AddBackward0&gt;)
 </pre></div>
 </div>
 </div>
 </div>
-<p>In the example above, the shape of the output is <span class="math notranslate nohighlight">\(3\times 2\)</span> because we asked to interpolate a 2D function (<code class="docutils literal notranslate"><span class="pre">d</span></code> is 2) at three different locations (as <code class="docutils literal notranslate"><span class="pre">x.shape</span></code> is (3,)). In addition, the interpolate function is written to accommodate and shape for the tensor x to allow evaluating over arbitrary batches of examples. If we input a tensor with shape <code class="docutils literal notranslate"><span class="pre">(b,</span> <span class="pre">m)</span></code>, the output will have shape <code class="docutils literal notranslate"><span class="pre">(b,</span> <span class="pre">m,</span> <span class="pre">d)</span></code>, and so forth.</p>
+<p>In the example above, the shape of the output is <span class="math notranslate nohighlight">\(3\times 2\)</span> because we asked to interpolate a 2D function (<code class="docutils literal notranslate"><span class="pre">d</span></code> is 2) at three different locations (as <code class="docutils literal notranslate"><span class="pre">x.shape</span></code> is (3,)). In addition, the interpolate function is written to accommodate any shape for the tensor x to allow evaluating over arbitrary batches of examples. If we input a tensor with shape <code class="docutils literal notranslate"><span class="pre">(b,</span> <span class="pre">m)</span></code>, the output will have shape <code class="docutils literal notranslate"><span class="pre">(b,</span> <span class="pre">m,</span> <span class="pre">d)</span></code>, and so forth.</p>
 <p>The output looks rather random, however, because the grid was initialized with random values in the constructor. Below we discuss often-used loss functions and the stochastic gradient descent method to train models, and show how to train the simple regression example above to drive all these concepts home.</p>
 <section id="exercise">
 <h3><span class="section-number">5.6.2.1. </span>Exercise<a class="headerlink" href="#exercise" title="Link to this heading">#</a></h3>
@@ -507,8 +507,8 @@ We will often refer to the <em>training dataset</em> as <span class="math notran
 <div><p>A loss function for every occasion.</p>
 </div></blockquote>
 <p id="index-3">Different tasks require different loss functions, and a lot of creativity and research goes into crafting loss functions for complex tasks. For “vanilla” regression tasks, we typically use a <strong>mean squared error</strong> loss function as we already encountered before:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-1f15bc27-3cc9-4cff-8b69-4feae7eaf521">
-<span class="eqno">(5.57)<a class="headerlink" href="#equation-1f15bc27-3cc9-4cff-8b69-4feae7eaf521" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-9e03c468-2298-47d2-9611-0c227443cbff">
+<span class="eqno">(5.57)<a class="headerlink" href="#equation-9e03c468-2298-47d2-9611-0c227443cbff" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathcal{L}_{\text{MSE}}(\theta; D) \doteq \frac{1}{|D|} \sum_{(x,y)\in D}|f(x;\theta)-y|^2
 \end{equation}\]</div>
 <p>Above <span class="math notranslate nohighlight">\(f(x;\theta)\)</span> is the continuous prediction function implemented by, say, a neural network, where <span class="math notranslate nohighlight">\(\theta\)</span> represents the weights in all layers. Note that the formula above can be easily generalized to vector-valued labels <span class="math notranslate nohighlight">\(y\)</span>. In fact, our 1D interpolation example above yielded a 2-dimensional output, so let us illustrate the MSE loss in that case:</p>
@@ -520,7 +520,7 @@ We will often refer to the <em>training dataset</em> as <span class="math notran
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Our MSE Loss: 21.125699996948242
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Our MSE Loss: 16.661161422729492
 </pre></div>
 </div>
 </div>
@@ -535,22 +535,22 @@ We will often refer to the <em>training dataset</em> as <span class="math notran
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Pytorch MSE Loss: 21.125699996948242
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Pytorch MSE Loss: 16.661161422729492
 </pre></div>
 </div>
 </div>
 </div>
 <p id="index-4">For classification, the <strong>cross entropy</strong> loss function is very popular.
 It measures the average disagreement of the predicted labels with the ground truth labels:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-70bb6c93-ad2b-414d-9741-85915400c9c9">
-<span class="eqno">(5.58)<a class="headerlink" href="#equation-70bb6c93-ad2b-414d-9741-85915400c9c9" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-201ee310-2964-47a7-8c93-5a04ee3b88cb">
+<span class="eqno">(5.58)<a class="headerlink" href="#equation-201ee310-2964-47a7-8c93-5a04ee3b88cb" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathcal{L}_{\text{CE}}(\theta; D) \doteq \sum_c \sum_{(x,y=c)\in D}\log\frac{1}{p_c(x;\theta)}
 \end{equation}\]</div>
 <p>This formula seems perhaps unintuitive and rather complicated;
 however, it is actually quite intuitive once you understand a few concepts.
 In particular, in the multi-class classification problem we assume that the model outputs a probability <span class="math notranslate nohighlight">\(p_c(x;\theta)\)</span> for every class <span class="math notranslate nohighlight">\(c\in[N]\)</span>, where <span class="math notranslate nohighlight">\(N\)</span> is the number of classes. The quantity</p>
-<div class="amsmath math notranslate nohighlight" id="equation-38b213b0-4714-4f56-b2bd-77e758dbe6e2">
-<span class="eqno">(5.59)<a class="headerlink" href="#equation-38b213b0-4714-4f56-b2bd-77e758dbe6e2" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-a92bb095-e0e0-4fe8-be59-693c4df2fc0c">
+<span class="eqno">(5.59)<a class="headerlink" href="#equation-a92bb095-e0e0-4fe8-be59-693c4df2fc0c" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \log\frac{1}{p_c(x;\theta)}
 \end{equation}\]</div>
 <p>is called the <em>surprise</em> that we should experience when seeing a label <span class="math notranslate nohighlight">\(y=c\)</span>.
@@ -589,12 +589,12 @@ The lower the probability, the higher the surprise. Hence, the cross-entropy abo
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>dataset[12]: (tensor(6.4749), tensor([ 0.9088, -0.5189]))
-dataset[10:15]: (tensor([15.8467,  8.4158,  6.4749,  6.6108, 15.9157]), tensor([[-0.9575,  0.3437],
-        [ 0.5203, -1.0741],
-        [ 0.9088, -0.5189],
-        [ 0.8737, -0.5790],
-        [-0.8506,  0.3831]]))
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>dataset[12]: (tensor(8.8263), tensor([ 0.2904, -0.8517]))
+dataset[10:15]: (tensor([8.8507, 0.0654, 8.8263, 6.8949, 3.8887]), tensor([[ 0.4727, -0.7194],
+        [-0.0079,  1.0751],
+        [ 0.2904, -0.8517],
+        [ 0.6886, -0.4988],
+        [ 0.8529,  0.3683]]))
 </pre></div>
 </div>
 </div>
@@ -663,7 +663,7 @@ dataset[10:15]: (tensor([15.8467,  8.4158,  6.4749,  6.6108, 15.9157]), tensor([
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/60aa1e34322d6da43742a24f32edaa285d74193b310a97217a86569770603f10.png" src="_images/60aa1e34322d6da43742a24f32edaa285d74193b310a97217a86569770603f10.png" />
+<img alt="_images/9ef46ffe3ea09b540c725c812b869778e363c5574e1c710ce64ffefb556b14ec.png" src="_images/9ef46ffe3ea09b540c725c812b869778e363c5574e1c710ce64ffefb556b14ec.png" />
 </div>
 </div>
 <p>The resulting loss function is shown in Figure <a class="reference internal" href="#fig:loss_training"><span class="xref myst">2</span></a>.
@@ -687,7 +687,7 @@ and Figure <a class="reference internal" href="#fig:sin_cos_approx"><span class=
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/f998ff0f71eb88fbda7a0d9ae717f0b4869b48cf6ef0bbc0676c30eadd139312.png" src="_images/f998ff0f71eb88fbda7a0d9ae717f0b4869b48cf6ef0bbc0676c30eadd139312.png" />
+<img alt="_images/2737c4ac6151195fa246148cad850958d4895f8f3d67ea86c4e6be0263edaa93.png" src="_images/2737c4ac6151195fa246148cad850958d4895f8f3d67ea86c4e6be0263edaa93.png" />
 </div>
 </div>
 </section>
@@ -740,18 +740,18 @@ and Figure <a class="reference internal" href="#fig:sin_cos_approx"><span class=
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Loss of the model during stochastic gradient descent training.</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Loss of the model during full gradient descent training.</span>
 <span class="c1">#| label: fig:loss_training_sgd</span>
 <span class="n">px</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">loss_data</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;Epoch&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;Loss&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/a458dd61cad73da5909b85c3ef09272c442d764cee427314ba53e5493c01b595.png" src="_images/a458dd61cad73da5909b85c3ef09272c442d764cee427314ba53e5493c01b595.png" />
+<img alt="_images/8b016abb8d7e232c56ca78444c1b144a869417620d7f70ddaf1da66364665e78.png" src="_images/8b016abb8d7e232c56ca78444c1b144a869417620d7f70ddaf1da66364665e78.png" />
 </div>
 </div>
 <p>The training loss is shown in Figure <a class="reference internal" href="#fig:loss_training_sgd"><span class="xref myst">4</span></a>.
-Note that we converge <em>much</em> faster in this case: in just 30 iterations we reached the same low loss as with 300 iterations before. The answer is because with 250 training samples and mini-batches of size 25, each epoch adjusts the model’s parameters 10 times. This effectively boosts the learning rate by a factor of 10. However, note that because each mini-batch looks at only one 10th of the dataset, each mini-batch’s adjustment could <em>adversely</em> affect the performance on the other training samples.</p>
+Note that we converge <em>much</em> faster in this case: in about 31 epochs we reached the same low loss as with 300 iterations before. The answer is because with 250 training samples and mini-batches of size 25, each epoch adjusts the model’s parameters 10 times. This effectively boosts the learning rate by a factor of 10. However, note that because each mini-batch looks at only one 10th of the dataset, each mini-batch’s adjustment could <em>adversely</em> affect the performance on the other training samples.</p>
 <section id="validation-and-testing">
 <h3><span class="section-number">5.6.5.1. </span>Validation and Testing<a class="headerlink" href="#validation-and-testing" title="Link to this heading">#</a></h3>
 <p>In practice, validation and test datasets are used to evaluate the performance of a model. The validation dataset is used to tune the hyperparameters of a model, while the test dataset is used to evaluate the performance of the model on unseen data.</p>
@@ -762,7 +762,7 @@ Note that we converge <em>much</em> faster in this case: in just 30 iterations w
 <p id="index-9"><span id="index-8"></span>We would be remiss in not mentioning the increasing importance of <strong>transformer</strong> architectures in computer vision and robotics. A transformer network can be viewed as deep multi-layer neural network whose connections can be rewired during training, through a process called <strong>attention</strong>. This architecture has led to the breakthrough of <strong>large language models</strong> or <strong>LLMs</strong>, which take a large context of <em>tokens</em> and produce a <em>next-token probability distribution</em> , which is then sampled to output a response to an input prompt.</p>
 <p id="index-10">In computer vision, <strong>vision transformers</strong> or <strong>VITs</strong> use this same architecture, by <em>tokenizing</em> an image and provide it as part of the context. This allows LLM-style models to then answer questions about images, or perform traditional computer vision tasks such as object detection, image segmentation, and much more.</p>
 <p id="index-11">One step beyond VITs are <strong>vision-language-action</strong> models, specifically crafted for use in robots. They take not only visual input alongside language prompts, but also other signals such as joint angles (in case of articulated robotics), orientation sensors, etc… And, more importantly, they are trained to also output <em>actions</em> via specialized output heads, matched to the particular robot architecture that is targeted.</p>
-<p>A drawback of transformer-based methods is that they take a large aount of time and effort to train, and running the models on embedded computers is also a challenge. Hence, convolutional architectures remain competetive in robotics, especially when computational resources are constrained and/or there are constraints on communication that prevent calling a remote API. However, this is an intense area of study and the mix between fully connected, convolutional, and transformer architectures is sure to shift.</p>
+<p>A drawback of transformer-based methods is that they take a large amount of time and effort to train, and running the models on embedded computers is also a challenge. Hence, convolutional architectures remain competitive in robotics, especially when computational resources are constrained and/or there are constraints on communication that prevent calling a remote API. However, this is an intense area of study and the mix between fully connected, convolutional, and transformer architectures is sure to shift.</p>
 <p>While we do not discuss transformer architectures in detail here, some pointers into the literature are provided in section 5.7.</p>
 </section>
 </section>
