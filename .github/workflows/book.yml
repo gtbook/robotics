@@ -1,60 +1,52 @@
 name: deploy-book
 
-# Only run this when the master branch changes
+# Validate pull requests and deploy when main changes
 on:
+  pull_request:
   push:
     branches:
       - main
 
 # This job installs dependencies, builds the book, and pushes it to `gh-pages`
-# If using conda lock, re-generate conda-lock file with:
-# > conda-lock -f environment.yml -p linux-64
 jobs:
   deploy-book:
     runs-on: ubuntu-latest
     env:
-      CONDA_LOCK: false
+      MPLBACKEND: module://matplotlib_inline.backend_inline
     defaults:
       run:
         shell: bash -l {0}
     steps:
       - uses: actions/checkout@v4
 
-      - name: Activate conda env with conda.lock
-        if: env.CONDA_LOCK == 'true'
-        uses: conda-incubator/setup-miniconda@v3
-        with:
-          auto-update-conda: false
-          auto-activate-base: false
-          activate-environment: gtbook
-          python-version: 3.9
-          environment-file: conda-linux-64.lock
+      - name: Check Zenodo dataset availability
+        timeout-minutes: 4
+        shell: bash
+        run: |
+          url='https://zenodo.org/records/10765346/files/training_rays-199-4.npz'
+          if ! curl --fail --silent --show-error --location --head \
+            --connect-timeout 10 --max-time 40 \
+            --retry 3 --retry-delay 10 --retry-max-time 180 \
+            --output /dev/null "$url"; then
+            echo "::error::S76's Zenodo dataset is unavailable after retries. Re-run this job when Zenodo recovers. URL: $url"
+            exit 1
+          fi
+          echo "Zenodo dataset is reachable."
 
       - name: Activate conda env with environment.yml
-        if: env.CONDA_LOCK == 'false'
         uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: false
           auto-activate-base: false
           activate-environment: gtbook
-          python-version: 3.9
+          python-version: '3.13'
           environment-file: environment.yml
 
       - run: conda info --envs
-        if: env.CONDA_LOCK == 'false'
         name: Check active env
 
       - run: conda list
-        if: env.CONDA_LOCK == 'false'
         name: Check versions
-
-      - run: pip install plotly==5.5.0
-        if: env.CONDA_LOCK == 'true'
-        name: Install plotly
-
-      - run: pip install gtbook
-        if: env.CONDA_LOCK == 'true'
-        name: Install gtbook
 
       - name: Build Frank and Seth's book
         run: |
@@ -64,6 +56,7 @@ jobs:
 
       # Push the book's HTML to github-pages
       - name: GitHub Pages action
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
