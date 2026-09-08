@@ -11,6 +11,10 @@ on:
 jobs:
   deploy-book:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      s76-outcome: ${{ steps.s76.outcome }}
     env:
       MPLBACKEND: module://matplotlib_inline.backend_inline
     defaults:
@@ -18,20 +22,6 @@ jobs:
         shell: bash -l {0}
     steps:
       - uses: actions/checkout@v4
-
-      - name: Check Zenodo dataset availability
-        timeout-minutes: 4
-        shell: bash
-        run: |
-          url='https://zenodo.org/records/10765346/files/training_rays-199-4.npz'
-          if ! curl --fail --silent --show-error --location --head \
-            --connect-timeout 10 --max-time 40 \
-            --retry 3 --retry-delay 10 --retry-max-time 180 \
-            --output /dev/null "$url"; then
-            echo "::error::S76's Zenodo dataset is unavailable after retries. Re-run this job when Zenodo recovers. URL: $url"
-            exit 1
-          fi
-          echo "Zenodo dataset is reachable."
 
       - name: Activate conda env with environment.yml
         uses: conda-incubator/setup-miniconda@v3
@@ -48,11 +38,47 @@ jobs:
       - run: conda list
         name: Check versions
 
+      - name: Execute S76 independently
+        id: s76
+        continue-on-error: true
+        timeout-minutes: 15
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/s76"
+          python scripts/s76_ci.py execute --output-dir "$RUNNER_TEMP/s76" \
+            2>&1 | tee "$RUNNER_TEMP/s76/execution.log"
+
+      - name: Select S76 outputs and prepare book configuration
+        if: steps.s76.outcome == 'success' || steps.s76.outcome == 'failure'
+        env:
+          S76_OUTCOME: ${{ steps.s76.outcome }}
+        run: |
+          set -euo pipefail
+          args=()
+          if [ "$S76_OUTCOME" = success ]; then
+            args+=(--use-executed)
+            echo 'S76: using freshly executed outputs.' >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo '::warning::S76 execution failed; using saved committed outputs.'
+            echo 'S76: execution failed or timed out; using saved committed outputs. See the S76 diagnostic artifact.' >> "$GITHUB_STEP_SUMMARY"
+          fi
+          python scripts/s76_ci.py prepare --output-dir "$RUNNER_TEMP/s76" \
+            --prepared-config "$RUNNER_TEMP/book-config.yml" "${args[@]}"
+
+      - name: Preserve S76 diagnostics
+        if: always() && (steps.s76.outcome == 'success' || steps.s76.outcome == 'failure')
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: s76-execution-${{ github.run_id }}
+          path: ${{ runner.temp }}/s76/
+          if-no-files-found: warn
+
       - name: Build Frank and Seth's book
         run: |
           jupyter-book clean .
-          touch *.ipynb
-          jupyter-book build .
+          touch ./*.ipynb
+          jupyter-book build . --config "$RUNNER_TEMP/book-config.yml"
 
       # Push the book's HTML to github-pages
       - name: GitHub Pages action
@@ -62,3 +88,23 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./_build/html
           cname: www.roboticsbook.org
+
+  report-s76:
+    needs: deploy-book
+    if: always() && github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.deploy-book.outputs.s76-outcome == 'failure'
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    permissions:
+      contents: read
+      issues: write
+    concurrency:
+      group: s76-failure-report
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - name: Open an issue unless this failure is already tracked
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const report = require('./scripts/report_s76.cjs');
+            await report({github, context, core});

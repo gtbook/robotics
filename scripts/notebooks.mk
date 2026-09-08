@@ -9,3 +9,8 @@ testNotebooks.run:
 .PHONY: testBook.run
 testBook.run:
 	cd .. && MPLBACKEND=module://matplotlib_inline.backend_inline OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 conda run --no-capture-output -n $(CONDA_ENV) jupyter-book build . --all
+
+.PHONY: testS76CI.run
+testS76CI.run:
+	cd .. && conda run --no-capture-output -n $(CONDA_ENV) python -m unittest discover -s tests -p 'test_s76_ci.py' -v
+	cd .. && node --test tests/test_report_s76.cjs

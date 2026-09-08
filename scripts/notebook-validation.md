@@ -120,3 +120,35 @@ Fresh results: `build/notebook-pypi-041-inline/summary.json`.
 Forced-build log: `build/book-pypi-041-retry.log`.
 Preview-build log: `build/book-preview-inline.log`.
 Local-link report: `build/html-link-check.json`.
+
+## Non-blocking S76 CI execution
+
+The workflow now runs S76 separately, replacing the earlier blocking Zenodo
+preflight. The helper executes an in-memory notebook and checkpoints diagnostics
+without changing the source. Only a successful execution step permits promotion
+of fresh outputs. A failed execution or 15-minute step timeout retains the saved
+committed outputs. A generated CI-only configuration excludes S76 from execution
+while still rendering its page; other notebook errors remain fatal. The local
+`_config.yml` still forces execution of all notebooks.
+
+S76 diagnostics are uploaded as an artifact and the run summary records which
+outputs were selected. A separate main-push-only job can create one open issue
+marked `robotics-ci:s76-execution-failure`; repeated failures do not create
+additional issues. Only this job has `issues: write`, and its failure cannot
+block publication. PRs retain logs and artifacts but create no issue.
+
+Regression checks cover successful promotion, HTTP and Python exceptions,
+per-cell timeout, byte-for-byte preservation of saved source on failure, fallback
+HTML and PNG output, fatal errors in another notebook, and main-only deduplicated
+issue creation using a mocked GitHub client. Reproduce with:
+
+```bash
+cd build
+make -f ../scripts/notebooks.mk -j6 testS76CI.run
+```
+
+The full production book was also built locally with the generated S76 exclusion
+and forced execution for the other notebooks. It passed. S76 was not re-executed,
+its source remained byte-for-byte identical to the committed notebook, and its
+six local figure references resolve in `_build/html/S76_drone_learning.html`.
+The log is `build/s76-fallback-book.log`. `actionlint` and `git diff --check` pass.
