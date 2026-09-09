@@ -448,8 +448,8 @@ In particular, below we extend the 1D interpolation example from Chapter 5 to in
 <section id="sampling-from-rays">
 <h3><span class="section-number">7.6.2.1. </span>Sampling from Rays<a class="headerlink" href="#sampling-from-rays" title="Link to this heading">#</a></h3>
 <p>The first part of a volume renderer is to evenly sample points on rays that emanate from the optical center of a camera. When we are given the origin and the direction of a ray (as a unit vector) sampling is simple enough: a point <span class="math notranslate nohighlight">\(P\)</span> on the ray at a distance <span class="math notranslate nohighlight">\(t\)</span> from the origin <span class="math notranslate nohighlight">\(O\)</span>, in the direction <span class="math notranslate nohighlight">\(D\)</span> is given as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-7fac664b-2ab4-479a-8f4e-c4db30a78b96">
-<span class="eqno">(7.69)<a class="headerlink" href="#equation-7fac664b-2ab4-479a-8f4e-c4db30a78b96" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-857557dc-e39a-4cce-9ab2-482aac454f98">
+<span class="eqno">(7.69)<a class="headerlink" href="#equation-857557dc-e39a-4cce-9ab2-482aac454f98" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P(t,O,D) = O + t  D
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(t\)</span> is the along the ray. Hence, we only need to sample many <span class="math notranslate nohighlight">\(t\)</span> values evenly and we are done.</p>
@@ -498,13 +498,13 @@ The figure shows the 25 regularly sampled points, up to a distance of 1.0 units,
 <section id="integration-along-rays">
 <h3><span class="section-number">7.6.2.2. </span>Integration along Rays<a class="headerlink" href="#integration-along-rays" title="Link to this heading">#</a></h3>
 <p id="index-3">The second part of the volume rendering story is where the magic happens. Let us assume that we are given the above densities <span class="math notranslate nohighlight">\(\sigma_i\)</span> and colors <span class="math notranslate nohighlight">\(c_i\)</span> at <span class="math notranslate nohighlight">\(N\)</span> sampled points <span class="math notranslate nohighlight">\(P_i\)</span> on a ray corresponding to a given pixel. We can then calculate the color <span class="math notranslate nohighlight">\(C\)</span> for the pixel using the equation below,</p>
-<div class="amsmath math notranslate nohighlight" id="equation-20d856ab-5302-423d-b7d3-10a99afda248">
-<span class="eqno">(7.70)<a class="headerlink" href="#equation-20d856ab-5302-423d-b7d3-10a99afda248" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-f58033b8-e8d0-449b-aad3-caa10e89e5f6">
+<span class="eqno">(7.70)<a class="headerlink" href="#equation-f58033b8-e8d0-449b-aad3-caa10e89e5f6" title="Permalink to this equation">#</a></span>\[\begin{equation}
 C = \sum_{i=1}^N \alpha_i T_i c_i
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\alpha_i\)</span> is the <strong>opacity</strong> and <span class="math notranslate nohighlight">\(T_i\)</span> is the <strong>transmittance</strong> at <span class="math notranslate nohighlight">\(P_i\)</span>, both defined below:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-ee351548-814d-46a7-b318-dd2375f59ddc">
-<span class="eqno">(7.71)<a class="headerlink" href="#equation-ee351548-814d-46a7-b318-dd2375f59ddc" title="Permalink to this equation">#</a></span>\[\begin{equation}\begin{aligned}
+<div class="amsmath math notranslate nohighlight" id="equation-4735b304-a815-4613-830d-957008f61da4">
+<span class="eqno">(7.71)<a class="headerlink" href="#equation-4735b304-a815-4613-830d-957008f61da4" title="Permalink to this equation">#</a></span>\[\begin{equation}\begin{aligned}
 \alpha_i &amp;\doteq 1 - \exp(-\sigma_i) \\
 T_i &amp;\doteq \exp ( - \sum_{j=1}^{i-1} \sigma_j).
 \end{aligned}\end{equation}\]</div>
@@ -556,8 +556,8 @@ T_i &amp;\doteq \exp ( - \sum_{j=1}^{i-1} \sigma_j).
 <div><p>A voxel grid of density or color.</p>
 </div></blockquote>
 <p>A key decision in the NeRF architecture is how to represent the function <span class="math notranslate nohighlight">\(F_\Theta\)</span> so it can be queried for a density and a color at every point. In short, we need:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-8c89cc42-a903-4bd1-8557-86f8c5fb2695">
-<span class="eqno">(7.72)<a class="headerlink" href="#equation-8c89cc42-a903-4bd1-8557-86f8c5fb2695" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-bdba2446-6505-45e1-b703-e8be76d2415c">
+<span class="eqno">(7.72)<a class="headerlink" href="#equation-bdba2446-6505-45e1-b703-e8be76d2415c" title="Permalink to this equation">#</a></span>\[\begin{equation}
 (\sigma, c) = F_\Theta(P)
 \end{equation}\]</div>
 <p>with <span class="math notranslate nohighlight">\(P\in R^3\)</span>, <span class="math notranslate nohighlight">\(\sigma\in R\)</span>, and <span class="math notranslate nohighlight">\(c\in[0...255]^3\)</span>. Note that in computer vision, neural networks typically take high-dimensional inputs, e.g., entire images, so having such a low-dimensional input (3) is highly unusual. This “coordinate-based” approach is one of the breakthroughs of NeRF-style representations.</p>
@@ -794,7 +794,7 @@ Beyond sampling rays and volume rendering, which we discussed before, there are 
 <img src="https://github.com/gtbook/robotics/blob/main/stonehenge/train/render47.png?raw=1" style="width:14cm" alt="">
 <figcaption>One of the synthetically generated images from the stonehenge dataset.</figcaption>
 </figure> -->
-<p>We will use a dataset generated by Stanford researchers <span class="bibtex-citation" id="id3">[<a class="reference internal" href="bibliography.html#id2" title="Michal Adamkiewicz, Timothy Chen, Adam Caccavale, Rachel Gardner, Preston Culbertson, Jeannette Bohg, and Mac Schwager. Vision-Only Robot Navigation in a Neural Radiance World. IEEE Robotics and Automation Letters, 7(2):4606-4613, 2022. doi:10.1109/LRA.2022.3150497.">Adamkiewicz <em>et al.</em>, 2022</a>]</span> using Blender, using a simple 3D model of the Stonehenge monument in England. The dataset was originally published as part of the <a class="reference external" href="https://mikh3x4.github.io/nerf-navigation/">Stanford NeRF Navigation project</a>, and consists of 500 images, split into 200 images for training, and then validation and tests sets of 150 images each. Figure <a class="reference internal" href="#fig:training-image"><span class="xref myst">6</span></a> illustrates how to read the image into memory (using a function from the <code class="docutils literal notranslate"><span class="pre">stonehenge</span></code> module) and display it.</p>
+<p>We will use a dataset generated by Stanford researchers <span class="bibtex-citation" id="id3">[<a class="reference internal" href="bibliography.html#id2" title="Michal Adamkiewicz, Timothy Chen, Adam Caccavale, Rachel Gardner, Preston Culbertson, Jeannette Bohg, and Mac Schwager. Vision-Only Robot Navigation in a Neural Radiance World. IEEE Robotics and Automation Letters, 7(2):4606-4613, 2022. doi:10.1109/LRA.2022.3150497.">Adamkiewicz <em>et al.</em>, 2022</a>]</span> using Blender, using a simple 3D model of the Stonehenge monument in England. The dataset was originally published as part of the <a class="reference external" href="https://mikh3x4.github.io/nerf-navigation/">Stanford NeRF Navigation project</a>, and consists of 500 images, split into 200 images for training, and then validation and tests sets of 150 images each. Figure <a class="reference internal" href="#fig:training-image"><span class="xref myst">5</span></a> illustrates how to read the image into memory (using a function from the <code class="docutils literal notranslate"><span class="pre">stonehenge</span></code> module) and display it.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: An image from the training set.</span>
@@ -825,28 +825,28 @@ Beyond sampling rays and volume rendering, which we discussed before, there are 
 <p>Acquiring all this information for an arbitrary image sequence taken with some unknown, uncalibrated camera can be complicated. Cameras come in a variety of sizes and with very different lenses, and effects like radial distortion make the modeling process nontrivial. In addition, recovering the actual position and attitude of the camera in a scene is typically done through structure from motion, which can be time-consuming and tricky.</p>
 <p id="index-8">In the following, we will assume that all this hard work has been done for us, and/or the images have been simulated with exactly known camera parameters, both intrinsic and extrinsic. One popular way to accomplish this is by providing undistorted images accompanied by a <span class="math notranslate nohighlight">\(3 \times 4\)</span> <strong>camera matrix</strong> <span class="math notranslate nohighlight">\(M\)</span>.
 Recall from Section 5.3 that a 3D point <span class="math notranslate nohighlight">\(P\)</span> can be projected into an image via</p>
-<div class="amsmath math notranslate nohighlight" id="equation-4375eca0-1d95-44af-8fb3-640ff41d76b8">
-<span class="eqno">(7.73)<a class="headerlink" href="#equation-4375eca0-1d95-44af-8fb3-640ff41d76b8" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-36696dd1-f209-4035-9625-30c4982190de">
+<span class="eqno">(7.73)<a class="headerlink" href="#equation-36696dd1-f209-4035-9625-30c4982190de" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \tilde{p} = K R^T (P - t)
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\tilde{p}\)</span> are <em>homogeneous</em> 2D image coordinates. We can re-write this as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-bb5a3054-f4a7-479d-84a9-4d5fca9bc407">
-<span class="eqno">(7.74)<a class="headerlink" href="#equation-bb5a3054-f4a7-479d-84a9-4d5fca9bc407" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ffadb8b7-9987-45f9-aaed-3cbda4b5d71b">
+<span class="eqno">(7.74)<a class="headerlink" href="#equation-ffadb8b7-9987-45f9-aaed-3cbda4b5d71b" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \tilde{p} = M\tilde{P}
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\tilde{P} = \begin{bmatrix}P \\1 \end{bmatrix}\)</span> and the camera matrix <span class="math notranslate nohighlight">\(M\)</span> is given by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-8e5ee1e4-251a-4184-8f14-7e09cb0f9926">
-<span class="eqno">(7.75)<a class="headerlink" href="#equation-8e5ee1e4-251a-4184-8f14-7e09cb0f9926" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-3d45fcd1-330a-418e-9bd2-2301bd3a5502">
+<span class="eqno">(7.75)<a class="headerlink" href="#equation-3d45fcd1-330a-418e-9bd2-2301bd3a5502" title="Permalink to this equation">#</a></span>\[\begin{equation}
 M = [A|a] = [K R^T | - K R^T t]
 \end{equation}\]</div>
 <p>That means that if we are <em>given</em> the camera matrix <span class="math notranslate nohighlight">\(M\)</span> we can always recover the ray origins as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-70fbf870-c848-47a0-8cb8-e59969264122">
-<span class="eqno">(7.76)<a class="headerlink" href="#equation-70fbf870-c848-47a0-8cb8-e59969264122" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-a2e0e9d0-c47d-4489-8364-6a0f388b0636">
+<span class="eqno">(7.76)<a class="headerlink" href="#equation-a2e0e9d0-c47d-4489-8364-6a0f388b0636" title="Permalink to this equation">#</a></span>\[\begin{equation}
 t = -A^{-1} a
 \end{equation}\]</div>
 <p>and a random 3D point <span class="math notranslate nohighlight">\(P\)</span> on the ray corresponding to <span class="math notranslate nohighlight">\(\tilde{p}\)</span> as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-4ce9e5fa-d444-42b1-be92-7ccb97296f9e">
-<span class="eqno">(7.77)<a class="headerlink" href="#equation-4ce9e5fa-d444-42b1-be92-7ccb97296f9e" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-1ce24753-f55c-4f38-bca8-13783fb345ca">
+<span class="eqno">(7.77)<a class="headerlink" href="#equation-1ce24753-f55c-4f38-bca8-13783fb345ca" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P = A^{-1}(\tilde{p} - a)
 \end{equation}\]</div>
 <p>since <span class="math notranslate nohighlight">\(\tilde{p} = AP + a\)</span>. We will illustrate this below with the Stonehenge dataset.</p>
@@ -910,7 +910,7 @@ P = A^{-1}(\tilde{p} - a)
 </div>
 </div>
 </div>
-<p>In Figure <a class="reference internal" href="#fig:300-rays"><span class="xref myst">7</span></a> we show what a batch of 300 rays looks like, with the rendering volume shown as well.</p>
+<p>In Figure <a class="reference internal" href="#fig:300-rays"><span class="xref myst">6</span></a> we show what a batch of 300 rays looks like, with the rendering volume shown as well.</p>
 <div class="cell tag_hide-input docutils container">
 <details class="admonition hide above-input">
 <summary aria-label="Toggle hidden content">
@@ -1057,7 +1057,7 @@ P = A^{-1}(\tilde{p} - a)
 <img src="https://raw.githubusercontent.com/gtbook/robotics/main/Figures7/loss-5-epochs.png?raw=1" style="width:90%" alt="">
 <figcaption>Training loss for SimpleDVGO training run over 5 epochs.</figcaption>
 </figure>
-<p>The training loss curve is shown in Figure <a class="reference internal" href="#fig:NeRF-loss"><span class="xref myst">8</span></a>. Note that, since we used 199 images and down-sampled the images by a factor of 4, each epoch corresponds to <span class="math notranslate nohighlight">\(200\times 200\times 199\approx 8M\)</span> rays. Given that the batch size used was 1024, this corresponds to approximately 7,800 iterations per epoch, or 39,000 iterations in total for 5 epochs. The loss drops dramatically in the first few iterations, but even after 5 epochs the loss is slowly but steadily declining.</p>
+<p>The training loss curve is shown in Figure <a class="reference internal" href="#fig:NeRF-loss"><span class="xref myst">7</span></a>. Note that, since we used 199 images and down-sampled the images by a factor of 4, each epoch corresponds to <span class="math notranslate nohighlight">\(200\times 200\times 199\approx 8M\)</span> rays. Given that the batch size used was 1024, this corresponds to approximately 7,800 iterations per epoch, or 39,000 iterations in total for 5 epochs. The loss drops dramatically in the first few iterations, but even after 5 epochs the loss is slowly but steadily declining.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: Comparison between training image and rendered image.</span>
@@ -1075,8 +1075,8 @@ P = A^{-1}(\tilde{p} - a)
 <img alt="_images/0eefdc56b4582176275bdc5db7b02eb1df06da3b9b736fec4835f26e83e79cf0.png" src="_images/0eefdc56b4582176275bdc5db7b02eb1df06da3b9b736fec4835f26e83e79cf0.png" />
 </div>
 </div>
-<p>A rendering from the model is compared with a ground truth image in Figure <a class="reference internal" href="#fig:training-vs-rendered"><span class="xref myst">9</span></a>. The predicted image is still quite blurry compared to the ground truth image, because our voxel grid is fairly coarse. In addition, in an effort to keep the code simple, we did not include many improvements to the ray sampling and rendering equations that have appeared in the literature, which would also improve results. But the figure illustrates that even this basic code works quite well.</p>
-<p>In figure <a class="reference internal" href="#fig:20-predicted"><span class="xref myst">10</span></a> we rendered the predictions for 20 of the 199 training images for further comparison.</p>
+<p>A rendering from the model is compared with a ground truth image in Figure <a class="reference internal" href="#fig:training-vs-rendered"><span class="xref myst">8</span></a>. The predicted image is still quite blurry compared to the ground truth image, because our voxel grid is fairly coarse. In addition, in an effort to keep the code simple, we did not include many improvements to the ray sampling and rendering equations that have appeared in the literature, which would also improve results. But the figure illustrates that even this basic code works quite well.</p>
+<p>In figure <a class="reference internal" href="#fig:20-predicted"><span class="xref myst">9</span></a> we rendered the predictions for 20 of the 199 training images for further comparison.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#| caption: every 10th image in a 5x4 grid.</span>
