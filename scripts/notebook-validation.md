@@ -152,3 +152,16 @@ and forced execution for the other notebooks. It passed. S76 was not re-executed
 its source remained byte-for-byte identical to the committed notebook, and its
 six local figure references resolve in `_build/html/S76_drone_learning.html`.
 The log is `build/s76-fallback-book.log`. `actionlint` and `git diff --check` pass.
+
+## Ubuntu CI follow-up: MiDaS and action runtimes
+
+The first Ubuntu run stopped in S54 because PyTorch Hub requested interactive
+trust confirmation for MiDaS. An empty-cache local reproduction also exposed the
+same prompt for its nested `rwightman/gen-efficientnet-pytorch` dependency.
+S54 now explicitly trusts those two existing model sources using the public Hub
+APIs. The notebook passes with a fresh Hub repository/trust cache (55.2 seconds),
+reusing only downloaded weight files. Installation cells remain unchanged.
+
+The workflow actions were upgraded to verified Node 24 releases: checkout
+7.0.1, setup-miniconda 4.0.1, upload-artifact 7.0.1, github-script 9.0.0, and
+GitHub Pages 4.1.0. `actionlint` and `git diff --check` pass.
