@@ -9,7 +9,7 @@ An independent companion to *Robotics & Perception*. Open [the index](index.html
 | 2.1 | [Modeling the World State](S21_sorter_state.html) | PMF → CDF → samples; Normalize a specification |
 | 2.2 | [Actions for Sorting Trash](S22_sorter_actions.html) | The cost of an action |
 | 2.3 | [Sensors for Sorting Trash](S23_sorter_sensing.html) | Conditional weight density; Shape a Gaussian; Simulate all three sensors |
-| 2.4 | [The Perception Engine](S24_perception.html) | Weight likelihood; detector likelihood; posterior curves; adjustable-prior MAP sensor fusion |
+| 2.4 | [The Perception Engine](S24_perception.html) | Weight likelihood; detector likelihood; adjustable-prior MAP sensor fusion; posterior curves |
 | 2.5 | [Decision Theory](S25_sorter_decision_theory.html) | Which bin should we choose? |
 | 2.6 | [Learning from Data](S26_sorter_learning.html) | Learn a categorical distribution; Learn sensor conditionals; Fit a Gaussian from samples |
 | 3.1 | [The Vacuum’s State](S31_vacuum_state.html) | A belief over rooms |

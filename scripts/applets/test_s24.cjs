@@ -11,9 +11,9 @@ assert.deepEqual(Array.from(M.posterior(500,0,'paper',[0,1,0,0,0])),[0,1,0,0,0])
 assert.deepEqual(Array.from(M.winners([.5,.5,0,0,0])),[0,1]);
 const $=id=>doc.getElementById(id),event=(id,type,value)=>{if(value!==undefined)$(id).value=value;$(id).dispatchEvent(new win.Event(type,{bubbles:true}));};
 const selected=()=>doc.querySelector('[role=tab][aria-selected=true]').id;
-for(const name of ['weight','detector','curves','fusion']){event('tab-'+name,'click');assert.equal(selected(),'tab-'+name);assert.equal(doc.querySelectorAll('[role=tabpanel]:not([hidden])').length,1);}
-$('tab-fusion').dispatchEvent(new win.KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true}));assert.equal(selected(),'tab-weight');
-$('tab-weight').dispatchEvent(new win.KeyboardEvent('keydown',{key:'End',bubbles:true}));assert.equal(selected(),'tab-fusion');
+for(const name of ['weight','detector','fusion','curves']){event('tab-'+name,'click');assert.equal(selected(),'tab-'+name);assert.equal(doc.querySelectorAll('[role=tabpanel]:not([hidden])').length,1);}
+$('tab-curves').dispatchEvent(new win.KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true}));assert.equal(selected(),'tab-weight');
+$('tab-weight').dispatchEvent(new win.KeyboardEvent('keydown',{key:'End',bubbles:true}));assert.equal(selected(),'tab-curves');
 event('weight-slider','input','500');assert.equal($('weight-number').value,'500');assert.match($('weight-result').textContent,/Bottle/);assert.match($('weight-normalized').textContent,/500 g/);
 event('detector-reading','change','cardboard');assert.match($('detector-result').textContent,/Cardboard/);
 event('curves-conductivity','change','1');event('curves-detection','change','bottle');event('curves-number','input','300');assert.equal($('curves-slider').value,'300');
