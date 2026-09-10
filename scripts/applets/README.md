@@ -1,6 +1,6 @@
 # Building the robotics laboratories
 
-The published pages in `applets/` are independent HTML documents with embedded JavaScript, CSS, data, and images. They require no server, Python, CDN, or network connection. The index links into this separate collection; the book does not link back to it.
+The published pages in `applets/` are independent HTML documents with embedded JavaScript, CSS, data, and images. They require no server, Python, CDN, or network connection. Each covered notebook links to its section's applets through an Applets button beside the Colab badge; the collection also has its own index.
 
 ## Edit and rebuild
 
