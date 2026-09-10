@@ -1,0 +1,32 @@
+const fs=require('node:fs'),assert=require('node:assert/strict'),{JSDOM,VirtualConsole}=require('jsdom');
+const html=fs.readFileSync(require('node:path').resolve(__dirname,'../../applets/S24_perception.html'),'utf8');
+const errors=[],vc=new VirtualConsole();vc.on('jsdomError',e=>errors.push(e));
+const dom=new JSDOM(html,{runScripts:'dangerously',virtualConsole:vc});
+const win=dom.window,doc=win.document,M=win.eval('Perception');
+assert.equal(errors.length,0,errors.map(String).join('\n'));
+const refs=JSON.parse(fs.readFileSync('s24_reference.json','utf8'));
+for(const r of refs){const p=M.posterior(r.w,r.c,r.d,r.prior);assert.ok(Math.abs(p.reduce((a,b)=>a+b,0)-1)<1e-12);p.forEach((v,i)=>assert.ok(Math.abs(v-r.p[i])<1e-12,JSON.stringify(r)));}
+assert.equal(M.posterior(50,0,'paper',[0,0,0,0,0]),null);
+assert.deepEqual(Array.from(M.posterior(500,0,'paper',[0,1,0,0,0])),[0,1,0,0,0]);
+assert.deepEqual(Array.from(M.winners([.5,.5,0,0,0])),[0,1]);
+const $=id=>doc.getElementById(id),event=(id,type,value)=>{if(value!==undefined)$(id).value=value;$(id).dispatchEvent(new win.Event(type,{bubbles:true}));};
+const selected=()=>doc.querySelector('[role=tab][aria-selected=true]').id;
+for(const name of ['weight','detector','curves','fusion']){event('tab-'+name,'click');assert.equal(selected(),'tab-'+name);assert.equal(doc.querySelectorAll('[role=tabpanel]:not([hidden])').length,1);}
+$('tab-fusion').dispatchEvent(new win.KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true}));assert.equal(selected(),'tab-weight');
+$('tab-weight').dispatchEvent(new win.KeyboardEvent('keydown',{key:'End',bubbles:true}));assert.equal(selected(),'tab-fusion');
+event('weight-slider','input','500');assert.equal($('weight-number').value,'500');assert.match($('weight-result').textContent,/Bottle/);assert.match($('weight-normalized').textContent,/500 g/);
+event('detector-reading','change','cardboard');assert.match($('detector-result').textContent,/Cardboard/);
+event('curves-conductivity','change','1');event('curves-detection','change','bottle');event('curves-number','input','300');assert.equal($('curves-slider').value,'300');
+event('prior-uniform','click');for(let i=0;i<5;i++)assert.equal($('prior-out-'+i).textContent,'20.0%');
+for(let i=0;i<5;i++)event('prior-'+i,'input','0');assert.equal($('fusion-error').hidden,false);assert.match($('map-result').textContent,/Undefined/);assert.equal($('fusion-table').textContent,'');
+event('prior-1','input','100');event('fusion-slider','input','500');assert.match($('map-result').textContent,/Paper/);assert.match($('map-result').textContent,/100.0%/);assert.equal($('fusion-error').hidden,true);
+event('fusion-reset','click');assert.equal($('fusion-number').value,'50');assert.equal($('fusion-detection').value,'cardboard');assert.match($('map-result').textContent,/Cardboard/);assert.match($('map-result').textContent,/75.7%/);
+event('fusion-number','input','999');assert.equal($('fusion-number').value,'500');event('fusion-number','input','-3');assert.equal($('fusion-number').value,'0');event('fusion-number','input','');event('fusion-number','change');assert.equal($('fusion-number').value,'0');event('fusion-reset','click');
+assert.ok(doc.querySelectorAll('svg').length>=7);assert.ok(!/NaN|Infinity/.test([...doc.querySelectorAll('svg')].map(el=>el.outerHTML).join('')));
+const ids=[...doc.querySelectorAll('[id]')].map(e=>e.id);assert.equal(new Set(ids).size,ids.length);
+for(const el of doc.querySelectorAll('[aria-controls]'))assert.ok($(el.getAttribute('aria-controls')));
+for(const el of doc.querySelectorAll('label[for]'))assert.ok($(el.htmlFor));
+assert.ok(!doc.querySelector('script[src],link[rel=stylesheet]'));assert.ok([...doc.images].every(im=>im.src.startsWith('data:')));assert.ok(!html.includes('__ARTWORK__'));
+assert.equal(errors.length,0,errors.map(String).join('\n'));
+console.log(`${refs.length} GTSAM comparisons passed; tabs, keyboard navigation, measurements, priors, reset, numerical extremes, HTML structure and offline dependencies passed.`);
+dom.window.close();
