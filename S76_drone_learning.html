@@ -448,8 +448,8 @@ In particular, below we extend the 1D interpolation example from Chapter 5 to in
 <section id="sampling-from-rays">
 <h3><span class="section-number">7.6.2.1. </span>Sampling from Rays<a class="headerlink" href="#sampling-from-rays" title="Link to this heading">#</a></h3>
 <p>The first part of a volume renderer is to evenly sample points on rays that emanate from the optical center of a camera. When we are given the origin and the direction of a ray (as a unit vector) sampling is simple enough: a point <span class="math notranslate nohighlight">\(P\)</span> on the ray at a distance <span class="math notranslate nohighlight">\(t\)</span> from the origin <span class="math notranslate nohighlight">\(O\)</span>, in the direction <span class="math notranslate nohighlight">\(D\)</span> is given as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-0b5bbdf9-d921-42d2-b55b-85babb9b9b75">
-<span class="eqno">(7.69)<a class="headerlink" href="#equation-0b5bbdf9-d921-42d2-b55b-85babb9b9b75" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-8c65c5c7-1b45-41d5-afe6-61d3b4eaee2b">
+<span class="eqno">(7.69)<a class="headerlink" href="#equation-8c65c5c7-1b45-41d5-afe6-61d3b4eaee2b" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P(t,O,D) = O + t  D
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(t\)</span> is the along the ray. Hence, we only need to sample many <span class="math notranslate nohighlight">\(t\)</span> values evenly and we are done.</p>
@@ -498,13 +498,13 @@ The figure shows the 25 regularly sampled points, up to a distance of 1.0 units,
 <section id="integration-along-rays">
 <h3><span class="section-number">7.6.2.2. </span>Integration along Rays<a class="headerlink" href="#integration-along-rays" title="Link to this heading">#</a></h3>
 <p id="index-3">The second part of the volume rendering story is where the magic happens. Let us assume that we are given the above densities <span class="math notranslate nohighlight">\(\sigma_i\)</span> and colors <span class="math notranslate nohighlight">\(c_i\)</span> at <span class="math notranslate nohighlight">\(N\)</span> sampled points <span class="math notranslate nohighlight">\(P_i\)</span> on a ray corresponding to a given pixel. We can then calculate the color <span class="math notranslate nohighlight">\(C\)</span> for the pixel using the equation below,</p>
-<div class="amsmath math notranslate nohighlight" id="equation-2d07ebb3-97f7-471a-ad3f-3c6143e468f0">
-<span class="eqno">(7.70)<a class="headerlink" href="#equation-2d07ebb3-97f7-471a-ad3f-3c6143e468f0" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-10747878-7087-4c1c-adcc-2c0f97bec17d">
+<span class="eqno">(7.70)<a class="headerlink" href="#equation-10747878-7087-4c1c-adcc-2c0f97bec17d" title="Permalink to this equation">#</a></span>\[\begin{equation}
 C = \sum_{i=1}^N \alpha_i T_i c_i
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\alpha_i\)</span> is the <strong>opacity</strong> and <span class="math notranslate nohighlight">\(T_i\)</span> is the <strong>transmittance</strong> at <span class="math notranslate nohighlight">\(P_i\)</span>, both defined below:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b674fbd0-aec2-42c5-84b3-8c6380f4be38">
-<span class="eqno">(7.71)<a class="headerlink" href="#equation-b674fbd0-aec2-42c5-84b3-8c6380f4be38" title="Permalink to this equation">#</a></span>\[\begin{equation}\begin{aligned}
+<div class="amsmath math notranslate nohighlight" id="equation-cb2438c8-84c7-48ca-b0ae-c963a19ebe70">
+<span class="eqno">(7.71)<a class="headerlink" href="#equation-cb2438c8-84c7-48ca-b0ae-c963a19ebe70" title="Permalink to this equation">#</a></span>\[\begin{equation}\begin{aligned}
 \alpha_i &amp;\doteq 1 - \exp(-\sigma_i) \\
 T_i &amp;\doteq \exp ( - \sum_{j=1}^{i-1} \sigma_j).
 \end{aligned}\end{equation}\]</div>
@@ -541,8 +541,8 @@ T_i &amp;\doteq \exp ( - \sum_{j=1}^{i-1} \sigma_j).
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[0.16265255 0.7255432  0.65002245]
- [0.418046   0.45353496 0.82854503]]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[0.54661024 0.23232138 0.4714507 ]
+ [0.50517523 0.31225687 0.45951548]]
 </pre></div>
 </div>
 </div>
@@ -556,8 +556,8 @@ T_i &amp;\doteq \exp ( - \sum_{j=1}^{i-1} \sigma_j).
 <div><p>A voxel grid of density or color.</p>
 </div></blockquote>
 <p>A key decision in the NeRF architecture is how to represent the function <span class="math notranslate nohighlight">\(F_\Theta\)</span> so it can be queried for a density and a color at every point. In short, we need:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-2aa8d6bf-f1fb-499e-bb1a-e1d022d6d2cb">
-<span class="eqno">(7.72)<a class="headerlink" href="#equation-2aa8d6bf-f1fb-499e-bb1a-e1d022d6d2cb" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-ecf65741-8ff6-4705-994a-c351a57a6f37">
+<span class="eqno">(7.72)<a class="headerlink" href="#equation-ecf65741-8ff6-4705-994a-c351a57a6f37" title="Permalink to this equation">#</a></span>\[\begin{equation}
 (\sigma, c) = F_\Theta(P)
 \end{equation}\]</div>
 <p>with <span class="math notranslate nohighlight">\(P\in R^3\)</span>, <span class="math notranslate nohighlight">\(\sigma\in R\)</span>, and <span class="math notranslate nohighlight">\(c\in[0...255]^3\)</span>. Note that in computer vision, neural networks typically take high-dimensional inputs, e.g., entire images, so having such a low-dimensional input (3) is highly unusual. This “coordinate-based” approach is one of the breakthroughs of NeRF-style representations.</p>
@@ -627,7 +627,7 @@ The code in Figure <a class="reference internal" href="#fig:rendering-along-ray"
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Interpolated Output: 0.53169
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Interpolated Output: 0.51401
 </pre></div>
 </div>
 </div>
@@ -825,28 +825,28 @@ Beyond sampling rays and volume rendering, which we discussed before, there are 
 <p>Acquiring all this information for an arbitrary image sequence taken with some unknown, uncalibrated camera can be complicated. Cameras come in a variety of sizes and with very different lenses, and effects like radial distortion make the modeling process nontrivial. In addition, recovering the actual position and attitude of the camera in a scene is typically done through structure from motion, which can be time-consuming and tricky.</p>
 <p id="index-8">In the following, we will assume that all this hard work has been done for us, and/or the images have been simulated with exactly known camera parameters, both intrinsic and extrinsic. One popular way to accomplish this is by providing undistorted images accompanied by a <span class="math notranslate nohighlight">\(3 \times 4\)</span> <strong>camera matrix</strong> <span class="math notranslate nohighlight">\(M\)</span>.
 Recall from Section 5.3 that a 3D point <span class="math notranslate nohighlight">\(P\)</span> can be projected into an image via</p>
-<div class="amsmath math notranslate nohighlight" id="equation-46a25068-fc44-4b1b-9056-49d290204a17">
-<span class="eqno">(7.73)<a class="headerlink" href="#equation-46a25068-fc44-4b1b-9056-49d290204a17" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-6f9a7815-7925-4852-9eaf-c23eb54e16b1">
+<span class="eqno">(7.73)<a class="headerlink" href="#equation-6f9a7815-7925-4852-9eaf-c23eb54e16b1" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \tilde{p} = K R^T (P - t)
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\tilde{p}\)</span> are <em>homogeneous</em> 2D image coordinates. We can re-write this as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-1b2ba95f-194a-4f7f-991b-dd2944138103">
-<span class="eqno">(7.74)<a class="headerlink" href="#equation-1b2ba95f-194a-4f7f-991b-dd2944138103" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-c6687ef7-1f0d-468d-9db2-eee8c3683e2a">
+<span class="eqno">(7.74)<a class="headerlink" href="#equation-c6687ef7-1f0d-468d-9db2-eee8c3683e2a" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \tilde{p} = M\tilde{P}
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\tilde{P} = \begin{bmatrix}P \\1 \end{bmatrix}\)</span> and the camera matrix <span class="math notranslate nohighlight">\(M\)</span> is given by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-db7d3a8e-ffd9-4df2-96ce-94e6f9c01031">
-<span class="eqno">(7.75)<a class="headerlink" href="#equation-db7d3a8e-ffd9-4df2-96ce-94e6f9c01031" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-94f9e0f2-8109-494c-9590-9e708e360764">
+<span class="eqno">(7.75)<a class="headerlink" href="#equation-94f9e0f2-8109-494c-9590-9e708e360764" title="Permalink to this equation">#</a></span>\[\begin{equation}
 M = [A|a] = [K R^T | - K R^T t]
 \end{equation}\]</div>
 <p>That means that if we are <em>given</em> the camera matrix <span class="math notranslate nohighlight">\(M\)</span> we can always recover the ray origins as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-828aae15-759c-4059-8814-90302cb32583">
-<span class="eqno">(7.76)<a class="headerlink" href="#equation-828aae15-759c-4059-8814-90302cb32583" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-99edcabb-7a9d-4af5-bec6-e0192c39b650">
+<span class="eqno">(7.76)<a class="headerlink" href="#equation-99edcabb-7a9d-4af5-bec6-e0192c39b650" title="Permalink to this equation">#</a></span>\[\begin{equation}
 t = -A^{-1} a
 \end{equation}\]</div>
 <p>and a random 3D point <span class="math notranslate nohighlight">\(P\)</span> on the ray corresponding to <span class="math notranslate nohighlight">\(\tilde{p}\)</span> as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-72007d8a-20da-4fe9-89ad-98f575a546a1">
-<span class="eqno">(7.77)<a class="headerlink" href="#equation-72007d8a-20da-4fe9-89ad-98f575a546a1" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-0ad349b7-28c1-4333-8aa8-3ec908059c64">
+<span class="eqno">(7.77)<a class="headerlink" href="#equation-0ad349b7-28c1-4333-8aa8-3ec908059c64" title="Permalink to this equation">#</a></span>\[\begin{equation}
 P = A^{-1}(\tilde{p} - a)
 \end{equation}\]</div>
 <p>since <span class="math notranslate nohighlight">\(\tilde{p} = AP + a\)</span>. We will illustrate this below with the Stonehenge dataset.</p>
@@ -973,7 +973,7 @@ P = A^{-1}(\tilde{p} - a)
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="_images/67e23cfcb3f8dde26d268b48fc025fbf42eb710f61ab9f05a43d4e3702b31670.png" src="_images/67e23cfcb3f8dde26d268b48fc025fbf42eb710f61ab9f05a43d4e3702b31670.png" />
+<img alt="_images/c43c2aeed44863852c527d6fdd7897210dd99309cb5e2804225426088d2afc83.png" src="_images/c43c2aeed44863852c527d6fdd7897210dd99309cb5e2804225426088d2afc83.png" />
 </div>
 </div>
 </section>
@@ -1077,7 +1077,7 @@ P = A^{-1}(\tilde{p} - a)
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/4a9b873fa048ac3be8b408f165b8d1322aa7cadcf0ec9d75f0a3b14b21666cbe.png" src="_images/4a9b873fa048ac3be8b408f165b8d1322aa7cadcf0ec9d75f0a3b14b21666cbe.png" />
+<img alt="_images/39dbe272d09b7c248696f97b5a3442694536d42ea28aff75af4d67d6291a087c.png" src="_images/39dbe272d09b7c248696f97b5a3442694536d42ea28aff75af4d67d6291a087c.png" />
 </div>
 </div>
 <p>A rendering from the model is compared with a ground truth image in Figure <a class="reference internal" href="#fig:training-vs-rendered"><span class="xref myst">8</span></a>. The predicted image is still quite blurry compared to the ground truth image, because our voxel grid is fairly coarse. In addition, in an effort to keep the code simple, we did not include many improvements to the ray sampling and rendering equations that have appeared in the literature, which would also improve results. But the figure illustrates that even this basic code works quite well.</p>
@@ -1096,7 +1096,7 @@ P = A^{-1}(\tilde{p} - a)
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/747fb041616f1453dba2a49ccdd36fa28f829d487af78d7e5fbe2ed568d268cf.png" src="_images/747fb041616f1453dba2a49ccdd36fa28f829d487af78d7e5fbe2ed568d268cf.png" />
+<img alt="_images/c0d25e27ab864ae8e87e4e5b20d3365fa2d329ade1f88070ac808d4eb2f061d7.png" src="_images/c0d25e27ab864ae8e87e4e5b20d3365fa2d329ade1f88070ac808d4eb2f061d7.png" />
 </div>
 </div>
 </section>
