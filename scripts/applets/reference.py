@@ -43,6 +43,16 @@ for _ in range(120):
 case('S45','value-map',['charts',0,'values'],V)
 metric('S52','wheels','Left wheel (rad/s)',1.25);metric('S52','wheels','Right wheel (rad/s)',2.75)
 metric('S53','projection','Image height (pixels)',464)
+# Independent calibrated GTSAM projection/backprojection for the stereo extension.
+for args in [{}, {'Z':10}, {'X':2.5}, {'X':-.5,'Y':.7,'Z':3,'B':1.5,'f':1000}]:
+    values=dict(X=1.5,Y=-.3,Z=6,B=3,f=700);values.update(args)
+    calibration=gtsam.Cal3_S2Stereo(values['f'],values['f'],0,0,0,values['B'])
+    camera=gtsam.StereoCamera(gtsam.Pose3(),calibration)
+    pixel=camera.project(np.array([values['X'],values['Y'],values['Z']]))
+    recovered=camera.backproject(pixel)
+    for key,value in dict(uL=pixel.uL(),uR=pixel.uR(),vL=pixel.v(),vR=pixel.v(),d=pixel.uL()-pixel.uR(),Z=recovered[2]).items():
+        case('S53','stereo',['stereo',key],value,args)
+
 case('S54','derivative',['tables',0,'rows'],[[i,x,y]for i,(x,y)in enumerate(zip([3,3,3,5,5,5,5,2,2,2],np.correlate([0,3,3,3,5,5,5,5,2,2,2,0],[-1,0,1],'valid')))])
 from PIL import Image,ImageOps
 im=np.asarray(ImageOps.grayscale(Image.open(next(ROOT.rglob('LL_color_1201754063.387872.jpeg')))),dtype=float);p=np.pad(im,1);u=p[1:-1,2:]-p[1:-1,:-2];v=p[2:,1:-1]-p[:-2,1:-1]

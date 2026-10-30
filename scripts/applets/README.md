@@ -6,6 +6,7 @@ The published pages in `applets/` are independent HTML documents with embedded J
 
 - `sections.json`: section titles and descriptions, in book order.
 - `sorter.js`, `vacuum.js`, `logistics.js`, `diffdrive.js`, `driving.js`, `drone.js`: experiment definitions grouped by robot chapter.
+- `stereo.js`: the Section 5.3 stereo rig, draggable point, image projections, and animation.
 - `models.js`: numerical kernels; `runtime.js`: controls, accessible tabs, SVG plots, and tables; `style.css`: the shared brass-and-teal presentation.
 - `data/`: exported book images, small lidar subsets, and fixed maps. These are source assets; the builder embeds the relevant data into each page.
 - `build.py`: embeds the source and the referenced notebook Python cells. S24 retains its original implementation; the builder includes it in the index without overwriting it.
@@ -39,9 +40,9 @@ make -j6 -f ../scripts/applets/Makefile testApplets.run
 Run the make command with escalated permissions as required by the workspace instructions. The test target generates reference data in the build directory, then checks:
 
 - All 33 indexed section pages, embedded assets, and notebook code references.
-- Default calculations and every slider endpoint and selector option for the 70 new experiments.
-- Keyboard tab navigation and reset behavior.
-- 54 independent numerical cases, including complete probability tables and warehouse value maps, image edge counts, GTSAM pose-graph and landmark solutions, and drone obstacle costs.
+- Default calculations and every slider endpoint and selector option for the 71 new experiments.
+- Keyboard tab navigation, stereo deep links, reset behavior, and animation cleanup on tab changes.
+- 78 independent numerical cases, including complete probability tables and warehouse value maps, image edge counts, GTSAM pose-graph and landmark solutions, and drone obstacle costs.
 - 198 GTSAM posterior comparisons and interactive controls for the original S24 applet.
 
 These are numerical and DOM tests. They do not substitute for visual review in a browser, and they do not run the heavy notebook training pipelines.
@@ -55,3 +56,7 @@ The Markov filter uses the notebook's grid and threshold, with Gaussian convolut
 S71 explicitly distinguishes the literal `Rot3.Yaw(math.degrees(20))` example from its comment's intended 20-degree rotation. S74's live experiment isolates IMU integration and bias correction rather than claiming to reproduce the full IMU graph optimization. DeepLab, MiDaS, the larger graph/SfM examples, Chebyshev trajectory tracking, and trained Stonehenge outputs appear as clearly labeled recorded notebook figures.
 
 The existing GitHub Pages workflow copies the `applets` directory into the book's HTML output. Publishing this collection therefore uses the existing repository deployment; no book TOC changes are needed.
+
+## Stereo extension (Section 5.3)
+
+The third tab, `#stereo`, illustrates the stereo equations in the notebook's prose. It uses centered image coordinates and illustrative parameters, rather than claiming to reproduce a notebook code cell. The tab preserves the shared laboratory controls, palette, typography, and offline packaging. Animation and pointer handlers are released on tab changes and reset. The notebook links directly to this tab from its stereo discussion. Visual inspiration: [Costas’ epipolar geometry visualization](https://csprofkgd.github.io/epipolar-geometry-visualization/).
