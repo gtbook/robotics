@@ -1,6 +1,6 @@
 # The Robotics Laboratory
 
-An independent companion to *Robotics & Perception*. Open [the index](index.html) to explore 33 standalone section laboratories with 74 tabbed demonstrations, including the original S24 sensor-fusion applet. Each page can be copied or downloaded and used offline.
+An independent companion to *Robotics & Perception*. Open [the index](index.html) to explore 33 standalone section laboratories with 75 tabbed demonstrations, including the original S24 sensor-fusion applet. Each page can be copied or downloaded and used offline.
 
 ## Section coverage
 
@@ -26,7 +26,7 @@ An independent companion to *Robotics & Perception*. Open [the index](index.html
 | 4.6 | [System Identification](S46_logistics_learning.html) | Identify a scalar sensor; Identify a multivariate model |
 | 5.1 | [Differential-drive State](S51_diffdrive_state.html) | Position and heading |
 | 5.2 | [Differential-drive Motion](S52_diffdrive_actions.html) | Wheel speeds and body motion |
-| 5.3 | [Cameras for Robot Vision](S53_diffdrive_sensing.html) | A person through a pinhole; Pixel rays and field of view |
+| 5.3 | [Cameras for Robot Vision](S53_diffdrive_sensing.html) | A person through a pinhole; Pixel rays and field of view; Depth from stereo |
 | 5.4 | [Computer Vision 101](S54_diffdrive_perception.html) | A derivative you can inspect; Find edges in the robot image; Pretrained vision results |
 | 5.5 | [Path Planning](S55_diffdrive_planning.html) | Grow a rapidly exploring tree |
 | 5.6 | [Deep Learning](S56_diffdrive_learning.html) | Between grid vertices; Learn sine and cosine |
