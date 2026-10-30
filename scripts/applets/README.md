@@ -6,7 +6,7 @@ The published pages in `applets/` are independent HTML documents with embedded J
 
 - `sections.json`: section titles and descriptions, in book order.
 - `sorter.js`, `vacuum.js`, `logistics.js`, `diffdrive.js`, `driving.js`, `drone.js`: experiment definitions grouped by robot chapter.
-- `stereo.js`: the Section 5.3 stereo rig, draggable point, image projections, and animation.
+- `stereo.js` and `stereo.css`: the Section 5.3 stereo rig, draggable point, image projections, and animation.
 - `models.js`: numerical kernels; `runtime.js`: controls, accessible tabs, SVG plots, and tables; `style.css`: the shared brass-and-teal presentation.
 - `data/`: exported book images, small lidar subsets, and fixed maps. These are source assets; the builder embeds the relevant data into each page.
 - `build.py`: embeds the source and the referenced notebook Python cells. S24 retains its original implementation; the builder includes it in the index without overwriting it.
@@ -16,6 +16,14 @@ From the repository root:
 ```sh
 conda run --no-capture-output -n py312 python scripts/applets/build.py
 ```
+
+For a section-specific change, rebuild just that standalone page and the catalogue:
+
+```sh
+conda run --no-capture-output -n py312 python scripts/applets/build.py --section S53
+```
+
+Other generated section pages are left untouched. Shared runtime changes are incorporated into each page when that page is rebuilt; omit `--section` when deliberately updating the whole collection.
 
 To refresh embedded notebook figures, camera pixels, the three lidar subsets, or map assets:
 
