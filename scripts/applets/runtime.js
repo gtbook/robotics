@@ -35,10 +35,32 @@ function chart(ch){if(ch.type==='custom')return ch.render();if(ch.type==='color'
  return `<div class="plot-scroll"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(ch.title)}"><title>${esc(ch.title)}</title>${b}</svg></div>`+(ch.type==='xy'?`<div class="legend">${ch.series.map((s,i)=>`<span><i style="background:${s.color||C[i%C.length]}"></i>${esc(s.name)}</span>`).join('')}</div>`:'');
 }
 function renderTable(t){return `<div class="table-wrap"><table><caption>${esc(t.title)}</caption><thead><tr>${t.headers.map(h=>`<th scope="col">${esc(h)}</th>`).join('')}</tr></thead><tbody>${t.rows.map(r=>`<tr>${r.map((v,i)=>`<${i?'td':'th scope="row"'}>${esc(fmt(v))}</${i?'td':'th'}>`).join('')}</tr>`).join('')}</tbody></table></div>`;}
-function mount(){let active=0,states=experiments.map(e=>Object.fromEntries(e.controls.map(c=>[c.key,c.value]))),timer,cleanup;
+function embedStudy(study, workbench) {
+ const frame=document.createElement('iframe');
+ frame.className='motion-study';
+ frame.title=study.title;
+ frame.height='600';
+ frame.setAttribute('sandbox','allow-scripts');
+ function resize(event) {
+  if(event.source!==frame.contentWindow)return;
+  const height=event.data?.studyHeight;
+  if(Number.isSafeInteger(height)&&height>0)frame.height=String(height);
+ }
+ window.addEventListener('message',resize);
+ frame.srcdoc=study.srcdoc;
+ workbench.after(frame);
+ return ()=>{window.removeEventListener('message',resize);frame.remove();};
+}
+function mount(){
+ for(const study of PAGE.studies||[])experiments.push({...study,controls:[],cells:[]});
+ let active=0,states=experiments.map(e=>Object.fromEntries(e.controls.map(c=>[c.key,c.value]))),timer,cleanup;
+ const workbench=$('experiment').querySelector('.workbench');
  const tabs=$('tabs');tabs.innerHTML=experiments.map((e,i)=>`<button id="tab-${i}" role="tab" aria-controls="experiment" aria-selected="${i===0}" tabindex="${i===0?0:-1}">${esc(e.title)}</button>`).join('');
  function show(i,focus=false){if(cleanup){cleanup();cleanup=null;}clearTimeout(timer);active=i;const e=experiments[i],s=states[i];[...tabs.children].forEach((b,j)=>{b.setAttribute('aria-selected',String(i===j));b.tabIndex=i===j?0:-1;});$('experiment').setAttribute('aria-labelledby','tab-'+i);if(focus)tabs.children[i].focus();$('experiment-title').textContent=e.title;$('description').textContent=e.description;$('note').textContent=e.note;$('note').hidden=!e.note||e.mode==='recorded';
- const recorded=e.mode==='recorded';$('recorded-notice').hidden=!recorded;$('run').hidden=recorded;$('reset').textContent=e.resetLabel||(recorded?'Default figure':'Notebook defaults');$('controls-title').textContent=recorded?'Saved figures':'The experiment';
+ const recorded=e.mode==='recorded';$('recorded-notice').hidden=!recorded;
+ workbench.hidden=Boolean(e.srcdoc);
+ if(e.srcdoc){cleanup=embedStudy(e,workbench);return;}
+ $('run').hidden=recorded;$('reset').textContent=e.resetLabel||(recorded?'Default figure':'Notebook defaults');$('controls-title').textContent=recorded?'Saved figures':'The experiment';
  $('controls').innerHTML=e.controls.map(c=>{const id='control-'+c.key;return `<div class="control"><label for="${id}">${esc(c.label)}${c.type==='range'?`<output for="${id}">${esc(s[c.key])}</output>`:''}</label>${c.type==='select'?`<select id="${id}">${c.options.map(o=>{const [v,t]=Array.isArray(o)?o:[o,o];return `<option value="${esc(v)}" ${String(v)===String(s[c.key])?'selected':''}>${esc(t)}</option>`;}).join('')}</select>`:`<input id="${id}" type="${c.type}" value="${esc(s[c.key])}" ${c.type==='range'?`min="${c.min}" max="${c.max}" step="${c.step}"`:''}>`}</div>`;}).join('');
  e.controls.forEach(c=>{const el=$('control-'+c.key);el.addEventListener(c.type==='select'?'change':'input',()=>{s[c.key]=c.type==='range'?el.valueAsNumber:el.value;if(c.type==='range')el.previousElementSibling.querySelector('output').textContent=el.value;clearTimeout(timer);timer=setTimeout(update,c.type==='text'?250:35);});});
  $('source').closest('details').hidden=!e.cells.length;$('source').innerHTML=e.cells.map(i=>`<h4>Notebook code cell ${i}</h4><pre><code>${esc(PAGE.code[i]||'See the source notebook.')}</code></pre>`).join('');update();if(e.attach)cleanup=e.attach({state:s,update,setValues(values){Object.assign(s,values);for(const key of Object.keys(values)){const el=$('control-'+key);if(el){el.value=s[key];const out=el.previousElementSibling.querySelector('output');if(out)out.textContent=fmt(s[key]);}}update();}});}

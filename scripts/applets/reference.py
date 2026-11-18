@@ -58,8 +58,7 @@ from PIL import Image,ImageOps
 im=np.asarray(ImageOps.grayscale(Image.open(next(ROOT.rglob('LL_color_1201754063.387872.jpeg')))),dtype=float);p=np.pad(im,1);u=p[1:-1,2:]-p[1:-1,:-2];v=p[2:,1:-1]-p[:-2,1:-1]
 metric('S54','edges','Pixels above threshold',np.count_nonzero(np.hypot(u,v)>50))
 metric('S56','interpolation','Interpolated value',1.5)
-# Use GTSAM's actual pose operations and the notebook's two graph definitions.
-p=gtsam.Pose2(1,2,math.radians(20)).transformFrom([4,3]);case('S61','transform',['charts',0,'series',2,'points',1],p)
+# Use the notebook's two graph definitions with GTSAM.
 nb=json.loads((ROOT/'S64_driving_perception.ipynb').read_text());ns={'np':np,'gtsam':gtsam,'show':lambda *a,**k:None}
 with contextlib.redirect_stdout(io.StringIO()):
     for i in [27,29,32,38,39,41]:exec(''.join(nb['cells'][i]['source']),ns)

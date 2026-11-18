@@ -1,12 +1,13 @@
 # Building the robotics laboratories
 
-The published pages in `applets/` are independent HTML documents with embedded JavaScript, CSS, data, and images. They require no server, Python, CDN, or network connection. Each covered notebook links to its section's applets through an Applets button beside the Colab badge; the collection also has its own index.
+The published pages in `applets/` are independent HTML documents with embedded JavaScript, CSS, data, and images. They require no server, Python, CDN, or network connection. The collection index links to all section laboratories. Notebooks with an Applets button link directly to their section page.
 
 ## Edit and rebuild
 
 - `sections.json`: section titles and descriptions, in book order.
 - `sorter.js`, `vacuum.js`, `logistics.js`, `diffdrive.js`, `driving.js`, `drone.js`: experiment definitions grouped by robot chapter.
 - `stereo.js` and `stereo.css`: the Section 5.3 stereo rig, draggable point, image projections, and animation.
+- `studies/`: the teaching assistants’ reference-frame, rotation composition, and driving kinematics animations for Sections 6.1 and 6.2. The builder embeds each study in its own tab.
 - `models.js`: numerical kernels; `runtime.js`: controls, accessible tabs, SVG plots, and tables; `style.css`: the shared brass-and-teal presentation.
 - `data/`: exported book images, small lidar subsets, and fixed maps. These are source assets; the builder embeds the relevant data into each page.
 - `build.py`: embeds the source and the referenced notebook Python cells. S24 retains its original implementation; the builder includes it in the index without overwriting it.
@@ -47,10 +48,11 @@ make -j6 -f ../scripts/applets/Makefile testApplets.run
 
 Run the make command with escalated permissions as required by the workspace instructions. The test target generates reference data in the build directory, then checks:
 
-- All 33 indexed section pages, embedded assets, and notebook code references.
-- Default calculations and every slider endpoint and selector option for the 71 new experiments.
+- All 34 indexed section pages, embedded assets, and notebook code references.
+- Default calculations and every slider endpoint and selector option for 69 experiments.
+- The three embedded motion studies in S61 and S62, including their canvas inventory, play and pause controls, and tab lifecycle.
 - Keyboard tab navigation, stereo deep links, reset behavior, and animation cleanup on tab changes.
-- 78 independent numerical cases, including complete probability tables and warehouse value maps, image edge counts, GTSAM pose-graph and landmark solutions, and drone obstacle costs.
+- 77 independent numerical cases, including complete probability tables and warehouse value maps, image edge counts, GTSAM pose-graph and landmark solutions, and drone obstacle costs.
 - 198 GTSAM posterior comparisons and interactive controls for the original S24 applet.
 
 These are numerical and DOM tests. They do not substitute for visual review in a browser, and they do not run the heavy notebook training pipelines.

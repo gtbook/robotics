@@ -1,0 +1,251 @@
+<section id="driving">
+<div class="transport"><div class="controls"><button id="d-play" class="play" aria-label="Play all three">▶ Play all</button><span id="d-playlabel" class="time">Paused</span></div><div class="timeline"><span class="time" id="d-elapsed">00:00</span><input id="d-scrub" class="range" type="range" min="0" max="1000" value="0" step="1" aria-label="Set time for all three views"/><span class="time">00:12</span></div><div class="buttons" aria-label="Playback speed"><button class="speed" data-speed="0.5">0.5×</button><button class="speed selected" data-speed="1">1×</button><button class="speed" data-speed="2">2×</button><button id="d-restart" class="speed" title="Restart">↺ Reset</button></div></div>
+<section class="cards" aria-label="Driving kinematics views">
+<article class="card">
+  <h2 class="top">Rear-axle body frame</h2>
+  <div class="canvaswrap"><canvas id="d-frame" aria-label="Vehicle trajectory in the world frame with velocity vectors at the rear-axle midpoint and body center"></canvas><div class="corner">World frame</div></div>
+  <div class="foot">
+    <div class="formula"><span class="dot cyan"></span>dp<sub>origin</sub>/dt = v<sub>car</sub> · x̂<sub>B</sub></div>
+    <p class="desc">Under the no-slip assumption, lateral velocity is zero at the rear-axle midpoint. A point at longitudinal offset Δx from the axle has lateral velocity (dθ/dt) Δx in the body frame.</p>
+  </div>
+</article>
+<article class="card">
+  <h2 class="top">Ackermann steering</h2>
+  <div class="canvaswrap"><canvas id="d-ackermann" aria-label="Instantaneous center of rotation, wheel paths, and angles of the inner, outer, and virtual front wheels"></canvas><div class="corner">Body frame</div></div>
+  <div class="foot">
+    <div class="formula"><span class="dot purple"></span>R = L / tan φ</div>
+    <p class="desc">In a no-slip turn, the wheel velocities are tangent to circles with a common instantaneous center on the rear-axle line. The inner front wheel has a greater steering angle in magnitude. R is the signed turning radius at the rear-axle midpoint.</p>
+  </div>
+</article>
+<article class="card">
+  <h2 class="top">Differential kinematics</h2>
+  <div class="canvaswrap"><canvas id="d-diffkin" aria-label="Velocity components at the virtual front wheel and time series of speed, steering angle, and heading"></canvas><div class="corner">Body frame</div></div>
+  <div class="foot">
+    <div class="formula"><span class="dot orange"></span>dθ/dt = (v<sub>car</sub> / L) · tan φ, dφ/dt = u<sub>2</sub></div>
+    <p class="desc">The inputs are rear-axle speed v<sub>car</sub> and steering rate u<sub>2</sub>. At the virtual front wheel, the lateral velocity v<sub>car</sub> tan φ equals L dθ/dt. The plot uses a separate vertical scale for each variable.</p>
+  </div>
+</article>
+</section>
+<div class="phasebar" id="d-phasebar" role="group" aria-label="Maneuver phases"></div>
+<div class="settings"><div class="checks"><label class="check"><input type="checkbox" id="d-frames" checked/> Coordinate axes</label><label class="check"><input type="checkbox" id="d-trails" checked/> Paths</label><label class="check"><input type="checkbox" id="d-annotations" checked/> Measurements and labels</label><label class="check warn"><input type="checkbox" id="d-parallel"/> Equal front-wheel angles</label></div><div class="footer-note">Wheelbase L = 2.7 m · Track width = 1.6 m</div></div>
+</section>
+<script>
+(()=>{'use strict';
+const SEC=document.getElementById('driving'),$=id=>document.getElementById('d-'+id);
+const DURATION=12,TAU=Math.PI*2,DEG=Math.PI/180;
+const L=2.7,W=1.6,DT=0.002;
+const canvases=['frame','ackermann','diffkin'].map(id=>$(id));
+const config={frames:true,trails:true,annotations:true,parallel:false};
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+const smooth=(a,b,x)=>{let u=clamp((x-a)/(b-a),0,1);return u*u*(3-2*u)};
+const fmt=(v,d=1)=>(v>=0?'+':'')+v.toFixed(d);
+
+// ---------- Scripted inputs (shared by all three views) ----------
+const PHASES=[
+  [0,1.7,'Steer at rest','v = 0, dθ/dt = 0'],
+  [1.7,2.7,'Accelerate','v increases'],
+  [2.7,5.0,'Hold φ = 25°','Constant curvature'],
+  [5.0,6.6,'Reverse steering','dφ/dt < 0'],
+  [6.6,8.6,'Hold φ = −22°','Constant curvature'],
+  [8.6,9.8,'Center the wheels','φ → 0'],
+  [9.8,10.4,'Drive straight','φ = 0'],
+  [10.4,12,'Brake','v → 0'],
+];
+const phiOf=s=>{
+  if(s<5.0) return 25*DEG*smooth(0.2,1.5,s);
+  if(s<8.6) return (25+(-22-25)*smooth(5.0,6.6,s))*DEG;
+  return -22*DEG*(1-smooth(8.6,9.8,s));
+};
+const vOf=s=>5*smooth(1.7,2.7,s)*(1-smooth(10.4,11.6,s));
+const phaseOf=s=>PHASES.findIndex(p=>s>=p[0]&&s<p[1]);
+
+// Precompute the trajectory by integrating dq/dt = f(q,u) (eq. 6.25); scrubbing samples it.
+const N=Math.round(DURATION/DT)+1;
+const X=new Float64Array(N),Y=new Float64Array(N),TH=new Float64Array(N),PHI=new Float64Array(N),V=new Float64Array(N);
+{let x=0,y=0,th=0;for(let i=0;i<N;i++){const s=i*DT,phi=phiOf(s),v=vOf(s);X[i]=x;Y[i]=y;TH[i]=th;PHI[i]=phi;V[i]=v;x+=v*Math.cos(th)*DT;y+=v*Math.sin(th)*DT;th+=v/L*Math.tan(phi)*DT}}
+const state=s=>{const f=clamp(s/DT,0,N-1),i=Math.min(Math.floor(f),N-2),a=f-i;const m=(A)=>A[i]+(A[i+1]-A[i])*a;const phi=m(PHI),v=m(V);return {x:m(X),y:m(Y),th:m(TH),phi,v,thdot:v/L*Math.tan(phi),phidot:(phiOf(s+.01)-phiOf(s-.01))/.02}};
+let bounds={minx:1e9,maxx:-1e9,miny:1e9,maxy:-1e9};for(let i=0;i<N;i+=10){bounds.minx=Math.min(bounds.minx,X[i]);bounds.maxx=Math.max(bounds.maxx,X[i]);bounds.miny=Math.min(bounds.miny,Y[i]);bounds.maxy=Math.max(bounds.maxy,Y[i])}
+let thMin=1e9,thMax=-1e9;for(let i=0;i<N;i+=10){thMin=Math.min(thMin,TH[i]);thMax=Math.max(thMax,TH[i])}
+
+// Ackermann wheel angle for a front wheel at lateral offset yw (left +). No singularity at φ = 0.
+const wheelAngle=(phi,yw)=>Math.atan2(L*Math.tan(phi),L-yw*Math.tan(phi));
+
+// ---------- Drawing helpers (same as the pose visualization) ----------
+function ctxFor(canvas){const rect=canvas.getBoundingClientRect();const dpr=Math.min(window.devicePixelRatio||1,2);const w=Math.max(1,rect.width),h=Math.max(1,rect.height);let bw=Math.round(w*dpr),bh=Math.round(h*dpr);if(canvas.width!==bw||canvas.height!==bh){canvas.width=bw;canvas.height=bh}const c=canvas.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);return {c,w,h}}
+function line(c,a,b,color='#ffffff',thick=1,dash=[]){c.save();c.strokeStyle=color;c.lineWidth=thick;c.setLineDash(dash);c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke();c.restore()}
+function poly(c,pts,fill,stroke=null,width=1,dash=[]){c.save();c.setLineDash(dash);c.beginPath();pts.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.closePath();if(fill){c.fillStyle=fill;c.fill()}if(stroke){c.strokeStyle=stroke;c.lineWidth=width;c.stroke()}c.restore()}
+function circle(c,x,y,r,fill,stroke=null,sw=1,dash=[]){c.save();c.setLineDash(dash);c.beginPath();c.arc(x,y,Math.max(0,r),0,TAU);if(fill){c.fillStyle=fill;c.fill()}if(stroke){c.lineWidth=sw;c.strokeStyle=stroke;c.stroke()}c.restore()}
+function text(c,str,x,y,color='#adbfda',sz=11,align='left',weight=500){c.fillStyle=color;c.font=`${weight} ${sz}px ui-monospace,Consolas,monospace`;c.textAlign=align;c.fillText(str,x,y);c.textAlign='left'}
+function arrow(c,a,b,color='#b6dcfb',width=2,dash=[]){if(Math.hypot(b[0]-a[0],b[1]-a[1])<2)return;line(c,a,b,color,width,dash);let ang=Math.atan2(b[1]-a[1],b[0]-a[0]),q=7;line(c,b,[b[0]-q*Math.cos(ang-.48),b[1]-q*Math.sin(ang-.48)],color,width);line(c,b,[b[0]-q*Math.cos(ang+.48),b[1]-q*Math.sin(ang+.48)],color,width)}
+function grid(c,w,h){c.fillStyle='#091422';c.fillRect(0,0,w,h);c.save();c.lineWidth=.7;c.strokeStyle='rgba(99,135,179,.095)';const s=25;for(let x=0;x<w;x+=s){c.beginPath();c.moveTo(x,0);c.lineTo(x,h);c.stroke()}for(let y=0;y<h;y+=s){c.beginPath();c.moveTo(0,y);c.lineTo(w,y);c.stroke()}c.restore()}
+function badge(c,content,x,y,fill='#1c3047',fg='#bdd8ed'){let sz=10,w=content.length*6.2+15;c.fillStyle=fill;c.fillRect(x,y-12,w,18);text(c,content,x+7,y,fg,sz)}
+
+// Car outline in body coordinates (origin = rear-axle midpoint, x forward, y left), metres.
+const BODY=[[-0.85,-0.92],[L+0.75,-0.92],[L+0.95,-0.6],[L+0.95,0.6],[L+0.75,0.92],[-0.85,0.92]];
+const TIRE=[[-0.34,-0.12],[0.34,-0.12],[0.34,0.12],[-0.34,0.12]];
+// Draws a car. M maps body (a,b) -> canvas px. sc = px per metre.
+function drawCar(c,M,sc,phi,{alpha=1,wheels='ackermann',bodyFill='rgba(75,211,230,.16)',edge='#8fe9f3'}={}){
+  poly(c,BODY.map(M),bodyFill,edge,1.4);
+  poly(c,[[L+.15,-.72],[L+.55,-.62],[L+.55,.62],[L+.15,.72]].map(M),'rgba(32,76,101,.75)','#7fb9cc',1);
+  const tire=(cx,cy,ang,fill)=>poly(c,TIRE.map(([a,b])=>M([cx+a*Math.cos(ang)-b*Math.sin(ang),cy+a*Math.sin(ang)+b*Math.cos(ang)])),fill,'#c9d4dc',1);
+  tire(0,W/2,0,'#1b2631');tire(0,-W/2,0,'#1b2631');
+  line(c,M([0,-W/2]),M([0,W/2]),'#5e7896',1.6);line(c,M([L,-W/2]),M([L,W/2]),'#5e7896',1.6);
+  const aL=wheels==='parallel'?phi:wheelAngle(phi,W/2),aR=wheels==='parallel'?phi:wheelAngle(phi,-W/2);
+  const fc=wheels==='parallel'?'#5a2630':'#3a2a5c';
+  tire(L,W/2,aL,fc);tire(L,-W/2,aR,fc);
+  return {aL,aR};
+}
+
+// ---------- 04 / FRAME: world view ----------
+function frameView(time){
+  let {c,w,h}=ctxFor(canvases[0]);
+  const q0=state(time);
+  const sc=Math.min(w/17,(h-36)/14);                 // camera follows the car: ~17 m across
+  const camx=q0.x+1.6*Math.cos(q0.th),camy=q0.y+1.6*Math.sin(q0.th);
+  const ox=w/2-camx*sc,oy=(h-30)/2+camy*sc;
+  const P=([x,y])=>[ox+x*sc,oy-y*sc];
+  // world-fixed grid every 2 m, so the motion reads against the ground
+  c.fillStyle='#091422';c.fillRect(0,0,w,h);c.save();c.lineWidth=.7;c.strokeStyle='rgba(99,135,179,.13)';
+  const g=2,x0=Math.floor((-ox/sc)/g)*g,x1=(w-ox)/sc,y1=oy/sc,y0=Math.floor(((oy-h)/sc)/g)*g;
+  for(let x=x0;x<=x1;x+=g){const a=P([x,0]);c.beginPath();c.moveTo(a[0],0);c.lineTo(a[0],h);c.stroke()}
+  for(let y=y0;y<=y1;y+=g){const a=P([0,y]);c.beginPath();c.moveTo(0,a[1]);c.lineTo(w,a[1]);c.stroke()}
+  c.restore();
+  const q=state(time);
+  const M=([a,b])=>P([q.x+a*Math.cos(q.th)-b*Math.sin(q.th),q.y+a*Math.sin(q.th)+b*Math.cos(q.th)]);
+  // full planned path faintly, travelled part brighter
+  if(config.trails){c.save();c.strokeStyle='rgba(75,211,230,.13)';c.lineWidth=1.4;c.setLineDash([4,5]);c.beginPath();for(let i=0;i<N;i+=25){const p=P([X[i],Y[i]]);i?c.lineTo(...p):c.moveTo(...p)}c.stroke();
+    c.setLineDash([]);c.strokeStyle='rgba(75,211,230,.55)';c.lineWidth=2;c.beginPath();const end=Math.floor(time/DT);for(let i=0;i<=end;i+=10){const p=P([X[i],Y[i]]);i?c.lineTo(...p):c.moveTo(...p)}c.stroke();
+    // trace of the body-center point (slides outward of the rear-axle trace in turns)
+    c.strokeStyle='rgba(255,185,116,.45)';c.lineWidth=1.3;c.setLineDash([2,3]);c.beginPath();for(let i=0;i<=end;i+=10){const d=L/2,p=P([X[i]+d*Math.cos(TH[i]),Y[i]+d*Math.sin(TH[i])]);i?c.lineTo(...p):c.moveTo(...p)}c.stroke();c.restore()}
+  if(config.frames){const O=P([-3,-2]);arrow(c,O,P([-1,-2]),'#ff8d8d',1.5);arrow(c,O,P([-3,0]),'#75d3a7',1.5);text(c,'W',O[0]-12,O[1]+4,'#c2d1e7',10)}
+  drawCar(c,M,sc,q.phi);
+  const origin=M([0,0]),centerPt=M([L/2,0]);
+  const k=sc*0.42; // px per (m/s)
+  const hx=[Math.cos(q.th),Math.sin(q.th)],hy=[-Math.sin(q.th),Math.cos(q.th)];
+  // velocity of origin: v x̂ ; velocity of a point d ahead: v x̂ + dθ/dt d ŷ
+  const d=L/2,vc=[q.v*hx[0]+q.thdot*d*hy[0],q.v*hx[1]+q.thdot*d*hy[1]];
+  if(config.frames){arrow(c,origin,M([1.25,0]),'#ffaaa3',2);arrow(c,origin,M([0,1.25]),'#86e7be',2);if(config.annotations){const a=M([1.45,0]),b=M([0,1.45]);text(c,'xB',a[0]+2,a[1],'#ffaaa3',9);text(c,'yB',b[0]+2,b[1],'#86e7be',9)}}
+  arrow(c,origin,[origin[0]+k*q.v*hx[0],origin[1]-k*q.v*hx[1]],'#dbffff',2.4);
+  arrow(c,centerPt,[centerPt[0]+k*vc[0],centerPt[1]-k*vc[1]],'#ffb974',2);
+  if(Math.abs(q.thdot*d)>.05)arrow(c,[centerPt[0]+k*q.v*hx[0],centerPt[1]-k*q.v*hx[1]],[centerPt[0]+k*vc[0],centerPt[1]-k*vc[1]],'rgba(255,141,141,.9)',1.4,[3,3]);
+  circle(c,...centerPt,3.6,'#ffb974','#2a1a0c',1);
+  circle(c,...origin,4.6,'#ffd84d','#3a2c00',1.2);
+  if(config.annotations){
+    if(q.v<.5)text(c,'origin (rear axle)',origin[0]-10,origin[1]+18,'#ffe28a',9,'right');
+    const lat=q.thdot*d;
+    let bx=w-12;text(c,'Lateral velocity (m/s)',bx,h-44,'#b9c5c8',9,'right');
+    text(c,'Rear axle 0.00',bx,h-30,'#c7f3f7',9,'right');
+    text(c,`Body center ${lat.toFixed(2)}`,bx,h-16,'#ffcf9c',9,'right');
+    const ph=phaseOf(time);if(ph>=0)badge(c,PHASES[ph][2],12,h-12-36+12,'#173a48','#9cf0f6');
+    text(c,`v ${q.v.toFixed(1)} m/s`,12,h-12+2-14+14,'#8bb6ca',9);
+  }
+}
+
+// ---------- 05 / GEOMETRY: Ackermann ----------
+function ackermannView(time){
+  let {c,w,h}=ctxFor(canvases[1]);grid(c,w,h);
+  const q=state(time),phi=q.phi;
+  const sc=Math.min(w/14,h/8.6);const cx=w/2,cy=h*.64;
+  const M=([a,b])=>[cx-b*sc,cy-a*sc]; // body x up, body y left
+  const big=Math.abs(phi)<.4*DEG;
+  const R=big?Infinity:L/Math.tan(phi);
+  // rear axle line
+  line(c,[0,cy],[w,cy],'rgba(180,157,255,.28)',1,[5,5]);
+  const wheelsPts=[[0,W/2],[0,-W/2],[L,W/2],[L,-W/2]];
+  const C=big?null:M([0,R]);
+  if(!big&&config.trails){
+    wheelsPts.forEach(([a,b])=>{const r=Math.hypot(a,R-b)*sc;circle(c,...C,r,null,(a===L?'rgba(180,157,255,.42)':'rgba(125,215,176,.34)'),1.2,[3,4])});
+    circle(c,...C,Math.abs(R)*sc,null,'rgba(255,216,77,.55)',1.6);
+  }
+  if(!big&&config.annotations){wheelsPts.forEach(([a,b])=>line(c,C,M([a,b]),'rgba(255,141,141,.38)',1));line(c,C,M([L,0]),'rgba(180,157,255,.75)',1.2,[4,3])}
+  // virtual wheel (dashed) + φ arc
+  const drawn=drawCar(c,M,sc,phi,{wheels:config.parallel?'parallel':'ackermann',bodyFill:'rgba(180,157,255,.10)',edge:'#cbb9ff'});
+  const VW=[[-0.42,-0.13],[0.42,-0.13],[0.42,0.13],[-0.42,0.13]].map(([a,b])=>M([L+a*Math.cos(phi)-b*Math.sin(phi),a*Math.sin(phi)+b*Math.cos(phi)]));
+  poly(c,VW,'rgba(180,157,255,.18)','#e3d7ff',1.4,[3,2]);
+  const fw=M([L,0]);
+  if(config.frames){arrow(c,M([0,0]),M([1.1,0]),'#ffaaa3',1.8);arrow(c,M([0,0]),M([0,1.1]),'#86e7be',1.8)}
+  arrow(c,fw,M([L+1.4*Math.cos(phi),1.4*Math.sin(phi)]),'#e3d7ff',1.8);
+  line(c,fw,M([L+1.6,0]),'rgba(220,234,251,.35)',1,[2,3]);
+  if(Math.abs(phi)>1*DEG){c.save();c.strokeStyle='#e3d7ff';c.lineWidth=1.2;c.beginPath();c.arc(fw[0],fw[1],1.05*sc,-Math.PI/2,-Math.PI/2-phi,phi>0);c.stroke();c.restore();if(config.annotations){const lp=M([L+1.25*Math.cos(phi/2),1.25*Math.sin(phi/2)]);text(c,'φ',lp[0]+(phi>0?-12:4),lp[1]-2,'#e3d7ff',11,'left',700)}}
+  circle(c,...M([0,0]),4,'#ffd84d','#3a2c00',1.2);
+  if(!big){circle(c,...C,5,'#ffd84d','#3a2c00',1.2);if(config.annotations){const lbl=C[0]<0?'← turning center':C[0]>w?'turning center →':'turning center';const lx=clamp(C[0],8,w-8);text(c,lbl,lx,cy+16,'#ffe28a',9,lx<60?'left':lx>w-60?'right':'center')}}
+  // Parallel steering: each front wheel's normal hits the rear-axle line at a different point
+  if(config.parallel&&!big){[W/2,-W/2].forEach(yw=>{const P=M([0,R+yw]);line(c,M([L,yw]),P,'rgba(255,120,120,.75)',1.2,[4,3]);c.save();c.strokeStyle='#ff6b6b';c.lineWidth=2;c.beginPath();c.moveTo(P[0]-5,P[1]-5);c.lineTo(P[0]+5,P[1]+5);c.moveTo(P[0]+5,P[1]-5);c.lineTo(P[0]-5,P[1]+5);c.stroke();c.restore()});if(config.annotations)badge(c,'Distinct turning centers',12,58,'#4a1f27','#ffb3b3')}
+  if(config.annotations){
+    const inner=phi>=0?drawn.aL:drawn.aR,outer=phi>=0?drawn.aR:drawn.aL;
+    const vals=config.parallel?[['Left δ',drawn.aL/DEG,'#ffb3b3'],['φ',phi/DEG,'#e3d7ff'],['Right δ',drawn.aR/DEG,'#ffb3b3'],['|R|',R,'#ffd84d']]:[['Inner δ',big?0:inner/DEG,'#c3b2ff'],['Virtual φ',phi/DEG,'#e3d7ff'],['Outer δ',big?0:outer/DEG,'#9fd9ff'],['|R|',R,'#ffd84d']];
+    let boxW=Math.min(w-24,330),xx=(w-boxW)/2,yy=h-55;c.fillStyle='rgba(15,26,45,.94)';c.strokeStyle='#33445b';c.lineWidth=1;c.fillRect(xx,yy,boxW,45);c.strokeRect(xx,yy,boxW,45);
+    vals.forEach(([name,v,col],i)=>{let x=xx+boxW*(i+.5)/4;text(c,name,x,yy+14,'#8ba2bd',9,'center');const s=name==='|R|'?(isFinite(v)?`${Math.abs(v).toFixed(1)} m`:'∞'):`${v.toFixed(1)}°`;text(c,s,x,yy+33,col,14,'center',700)});
+  }
+}
+
+// ---------- 06 / INTEGRATE: velocity decomposition + state strip chart ----------
+function diffkinView(time){
+  let {c,w,h}=ctxFor(canvases[2]);grid(c,w,h);
+  const q=state(time),phi=q.phi;
+  const topH=h*.58;
+  const sc=Math.min(w*.40/L,topH/4.0);const x0=w*.17,y0=topH*.47;
+  const M=([a,b])=>[x0+a*sc,y0-b*sc]; // body x right, body y up
+  drawCar(c,M,sc,phi,{bodyFill:'rgba(255,185,116,.10)',edge:'#ffd3a0'});
+  if(config.frames){arrow(c,M([0,0]),M([0.9,0]),'#ffaaa3',1.6);arrow(c,M([0,0]),M([0,0.9]),'#86e7be',1.6)}
+  // L dimension
+  if(config.annotations){const a=M([0,-1.25]),b=M([L,-1.25]);line(c,a,b,'#7dd7b0',1.2);line(c,[a[0],a[1]-4],[a[0],a[1]+4],'#7dd7b0',1.2);line(c,[b[0],b[1]-4],[b[0],b[1]+4],'#7dd7b0',1.2);text(c,'L',(a[0]+b[0])/2,a[1]-4,'#7dd7b0',10,'center',700)}
+  const k=sc*0.32; // px per m/s
+  const o=M([0,0]),fw=M([L,0]);
+  const vw=q.v/Math.cos(phi),vt=q.v*Math.tan(phi);
+  // velocities
+  arrow(c,o,[o[0]+k*q.v,o[1]],'#dbffff',2.4);
+  arrow(c,fw,[fw[0]+k*q.v,fw[1]],'#b49dff',1.6,[4,3]);
+  arrow(c,[fw[0]+k*q.v,fw[1]],[fw[0]+k*q.v,fw[1]-k*vt],'#4bd3e6',1.6,[4,3]);
+  arrow(c,fw,[fw[0]+k*vw*Math.cos(phi),fw[1]-k*vw*Math.sin(phi)],'#7dd7b0',2.4);
+  // dθ/dt curved arrow at rear axle
+  if(Math.abs(q.thdot)>.01){const r=.75*sc,span=clamp(q.thdot*1.1,-1.6,1.6);c.save();c.strokeStyle='#ffb974';c.lineWidth=2;c.beginPath();c.arc(o[0],o[1],r,0,-span,span>0);c.stroke();const e=-span,ex=o[0]+r*Math.cos(e),ey=o[1]+r*Math.sin(e),tg=e+(span>0?-Math.PI/2:Math.PI/2);line(c,[ex,ey],[ex-7*Math.cos(tg-.5),ey-7*Math.sin(tg-.5)],'#ffb974',2);line(c,[ex,ey],[ex-7*Math.cos(tg+.5),ey-7*Math.sin(tg+.5)],'#ffb974',2);c.restore()}
+  circle(c,...o,4.4,'#ffd84d','#3a2c00',1.2);
+  if(config.annotations){
+    if(q.v>.3){text(c,'v_car',o[0]+k*q.v+4,o[1]+14,'#dbffff',9);const tip=[fw[0]+k*vw*Math.cos(phi),fw[1]-k*vw*Math.sin(phi)];text(c,'v_wheel',tip[0]+4,tip[1]-4,'#7dd7b0',9);if(Math.abs(vt)>.4)text(c,'v_tangent',fw[0]+k*q.v+5,fw[1]-k*vt/2,'#4bd3e6',9)}
+    else if(q.v===0)text(c,'At rest, dθ/dt = 0',w/2,topH-22,'#ffcf9c',10,'center',600);
+    text(c,`dθ/dt = (${q.v.toFixed(1)}/${L}) · tan(${(phi/DEG).toFixed(0)}°) = ${fmt(q.thdot,2)} rad/s`,w/2,topH-6,'#ffd8ae',10,'center',600);
+  }
+  // strip chart
+  const gx=34,gw=w-gx-60,gy=topH+14,gh=h-gy-26;
+  c.fillStyle='rgba(15,26,45,.9)';c.fillRect(gx-6,gy-8,gw+60,gh+22);c.strokeStyle='#26364f';c.strokeRect(gx-6,gy-8,gw+60,gh+22);
+  for(let i=0;i<=12;i+=2){const x=gx+gw*i/12;line(c,[x,gy],[x,gy+gh],'rgba(99,135,179,.12)',1);text(c,`${i}s`,x,gy+gh+11,'#5f7894',8,'center')}
+  // phase shading
+  const ph=phaseOf(time);if(ph>=0){const p=PHASES[ph];c.fillStyle='rgba(105,214,229,.07)';c.fillRect(gx+gw*p[0]/12,gy,gw*(p[1]-p[0])/12,gh)}
+  const traces=[['v',V,0,5.5,'#4bd3e6',v=>`${v.toFixed(1)} m/s`,q.v],['φ',PHI,-30*DEG,30*DEG,'#b49dff',v=>`${(v/DEG).toFixed(0)}°`,q.phi],['θ',TH,thMin-.1,thMax+.1,'#ffb974',v=>`${(v/DEG).toFixed(0)}°`,q.th]];
+  traces.forEach(([name,A,lo,hi,col,f,cur],j)=>{
+    c.save();c.strokeStyle=col;c.lineWidth=1.6;c.beginPath();
+    for(let i=0;i<N;i+=40){const x=gx+gw*(i*DT)/12,y=gy+gh-(A[i]-lo)/(hi-lo)*gh;i?c.lineTo(x,y):c.moveTo(x,y)}c.stroke();c.restore();
+    const cy=gy+gh-(cur-lo)/(hi-lo)*gh;circle(c,gx+gw*time/12,cy,3.4,col,'#091422',1);
+    text(c,`${name} ${f(cur)}`,gx+gw+8,gy+10+j*14,col,9,'left',700);
+  });
+  if(PHI[0]===0){const zy=gy+gh-(0-(-30*DEG))/(60*DEG)*gh;line(c,[gx,zy],[gx+gw,zy],'rgba(180,157,255,.18)',1,[2,3])}
+  line(c,[gx+gw*time/12,gy-4],[gx+gw*time/12,gy+gh+2],'#dceafb',1.2);
+  text(c,'v, φ, θ',gx-2,gy-12+4,'#8ba2bd',8);
+}
+
+// ---------- Phase bar ----------
+const bar=$('phasebar');
+for (const [start, end, title, detail] of PHASES) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'phase';
+  button.innerHTML = `${title}<br><span>${detail}</span>`;
+  button.title = 'Set all views to the midpoint of this phase';
+  button.onclick = () => seekAll((start + end) / 2);
+  bar.appendChild(button);
+}
+
+const seekAll = mountMotionPlayback({
+  section: SEC,
+  prefix: 'd',
+  duration: DURATION,
+  views: [frameView, ackermannView, diffkinView],
+  config,
+  onProgress(time) {
+    const phase = phaseOf(time);
+    [...bar.children].forEach((button, i) => button.classList.toggle('on', i === phase));
+  },
+});
+})();
+</script>
