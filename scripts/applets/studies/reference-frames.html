@@ -1,0 +1,153 @@
+<section id="poses">
+<div class="transport"><div class="controls"><button id="p-play" class="play" aria-label="Play all three">▶ Play all</button><span id="p-playlabel" class="time">Paused</span></div><div class="timeline"><span class="time" id="p-elapsed">00:00</span><input id="p-scrub" class="range" type="range" min="0" max="1000" value="0" step="1" aria-label="Set time for all three views"/><span class="time">00:12</span></div><div class="buttons" aria-label="Playback speed"><button class="speed" data-speed="0.5">0.5×</button><button class="speed selected" data-speed="1">1×</button><button class="speed" data-speed="2">2×</button><button id="p-restart" class="speed" title="Restart">↺ Reset</button></div></div>
+<section class="cards" aria-label="Reference frame examples">
+<article class="card">
+  <h2 class="top">Camera observations</h2>
+  <div class="canvaswrap"><canvas id="p-perception" aria-label="Top view of a moving camera, its field of view, and fixed landmarks"></canvas></div>
+  <div class="foot">
+    <div class="formula"><span class="dot cyan"></span>p<sub>C</sub> = R<sub>CW</sub>(p<sub>W</sub> − t<sub>WC</sub>)</div>
+    <p class="desc">To express a fixed landmark in the camera frame, subtract the camera’s world position t<sub>WC</sub> and rotate by R<sub>CW</sub>. The shaded sector marks the field of view.</p>
+  </div>
+</article>
+<article class="card">
+  <h2 class="top">Planar arm kinematics</h2>
+  <div class="canvaswrap"><canvas id="p-planning" aria-label="Two-link planar arm following a specified end-effector path"></canvas></div>
+  <div class="foot">
+    <div class="formula"><span class="dot purple"></span>T<sub>WE</sub>(q) = T<sub>WB</sub> T<sub>BE</sub>(q)</div>
+    <p class="desc">Inverse kinematics solves for joint angles q = (q₁, q₂) along the specified end-effector path. Composing the base pose T<sub>WB</sub> with T<sub>BE</sub>(q) gives the end-effector pose in the world frame.</p>
+  </div>
+</article>
+<article class="card">
+  <h2 class="top">Vehicle pose on terrain</h2>
+  <div class="canvaswrap"><canvas id="p-control" aria-label="Vehicle body frame and individual wheel suspension positions on uneven terrain"></canvas></div>
+  <div class="foot">
+    <div class="formula"><span class="dot orange"></span>T<sub>WB</sub> = (R<sub>WB</sub>, p<sub>WB</sub>)</div>
+    <p class="desc">The horizontal path and yaw are prescribed. Terrain heights at the wheels determine chassis height, roll, and pitch. The wheel readouts report the vertical separation between each suspension mount and wheel center.</p>
+  </div>
+</article>
+</section>
+<div class="settings"><div class="checks"><label class="check"><input type="checkbox" id="p-frames" checked/> Coordinate axes</label><label class="check"><input type="checkbox" id="p-trails" checked/> Paths</label><label class="check"><input type="checkbox" id="p-annotations" checked/> Measurements and labels</label></div><div class="footer-note">Lengths are in arbitrary units.</div></div>
+</section>
+<script>
+(()=>{'use strict';
+const SEC=document.getElementById('poses'),$=id=>document.getElementById('p-'+id);
+const DURATION=12,TAU=Math.PI*2;
+const canvases=['perception','planning','control'].map(id=>$(id));
+const config={frames:true,trails:true,annotations:true};
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+const mix=(a,b,u)=>a+(b-a)*u;
+const rgba=(rgb,a)=>`rgba(${rgb},${a})`;
+function ctxFor(canvas){const rect=canvas.getBoundingClientRect();const dpr=Math.min(window.devicePixelRatio||1,2);const w=Math.max(1,rect.width),h=Math.max(1,rect.height);let bw=Math.round(w*dpr),bh=Math.round(h*dpr);if(canvas.width!==bw||canvas.height!==bh){canvas.width=bw;canvas.height=bh}const c=canvas.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);return {c,w,h}}
+function line(c,a,b,color='#ffffff',thick=1,dash=[]){c.save();c.strokeStyle=color;c.lineWidth=thick;c.setLineDash(dash);c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke();c.restore()}
+function poly(c,pts,fill,stroke=null,width=1){c.beginPath();pts.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.closePath();if(fill){c.fillStyle=fill;c.fill()}if(stroke){c.strokeStyle=stroke;c.lineWidth=width;c.stroke()}}
+function circle(c,x,y,r,fill,stroke=null,sw=1){c.beginPath();c.arc(x,y,r,0,TAU);if(fill){c.fillStyle=fill;c.fill()}if(stroke){c.lineWidth=sw;c.strokeStyle=stroke;c.stroke()}}
+function text(c,str,x,y,color='#adbfda',sz=11,align='left',weight=500){c.fillStyle=color;c.font=`${weight} ${sz}px ui-monospace,Consolas,monospace`;c.textAlign=align;c.fillText(str,x,y);c.textAlign='left'}
+function arrow(c,a,b,color='#b6dcfb',width=2){line(c,a,b,color,width);let ang=Math.atan2(b[1]-a[1],b[0]-a[0]),q=7;line(c,b,[b[0]-q*Math.cos(ang-.48),b[1]-q*Math.sin(ang-.48)],color,width);line(c,b,[b[0]-q*Math.cos(ang+.48),b[1]-q*Math.sin(ang+.48)],color,width)}
+function grid(c,w,h){c.fillStyle='#091422';c.fillRect(0,0,w,h);c.save();c.lineWidth=.7;c.strokeStyle='rgba(99,135,179,.095)';const s=25;for(let x=0;x<w;x+=s){c.beginPath();c.moveTo(x,0);c.lineTo(x,h);c.stroke()}for(let y=0;y<h;y+=s){c.beginPath();c.moveTo(0,y);c.lineTo(w,y);c.stroke()}c.restore()}
+function perception(time){let {c,w,h}=ctxFor(canvases[0]);grid(c,w,h);const s=Math.min(w/390,h/340),ox=w*.5,oy=h*.51;const P=([x,y])=>[ox+x*s,oy-y*s];const ph=TAU*time/DURATION;
+const landmarks=[[-130,93],[135,98],[-114,-104],[105,-110],[17,124],[143,-13]];
+const cam=[59*Math.cos(ph+.4),44*Math.sin(ph+.4)];const heading=ph+.98;const dir=[Math.cos(heading),Math.sin(heading)];const aperture=.55,len=152;
+const toFov=(a)=>P([cam[0]+len*Math.cos(heading+a),cam[1]+len*Math.sin(heading+a)]);
+const origin=P(cam),left=toFov(-aperture),right=toFov(aperture);
+poly(c,[origin,left,right],'rgba(75,211,230,.095)','rgba(75,211,230,.32)',1.2);
+if(config.trails){let pts=[];for(let i=0;i<=70;i++){let q=ph*i/70;pts.push(P([59*Math.cos(q+.4),44*Math.sin(q+.4)]))}c.save();c.strokeStyle='rgba(75,211,230,.27)';c.lineWidth=1.8;c.setLineDash([4,5]);c.beginPath();pts.forEach((p,i)=>i?c.lineTo(...p):c.moveTo(...p));c.stroke();c.restore()}
+landmarks.forEach((pos,i)=>{let p=P(pos),dx=pos[0]-cam[0],dy=pos[1]-cam[1];let depth=dx*dir[0]+dy*dir[1],cross=-dx*dir[1]+dy*dir[0];let inView=depth>0&&Math.abs(Math.atan2(cross,depth))<aperture;circle(c,...p,inView?5.4:4,inView?'#74e8ef':'#4d6983');if(inView){line(c,origin,p,'rgba(105,220,234,.38)',1,[3,4]);circle(c,...p,9,'rgba(76,211,230,.10)')}if(config.annotations)text(c,`L${i+1}`,p[0]+8,p[1]-7,inView?'#b7eff3':'#63809a',9)});
+// Camera body and optical axis
+c.save();c.translate(...origin);c.rotate(-heading);poly(c,[[-13,-9],[10,-9],[15,-5],[15,5],[10,9],[-13,9]],'#45cedf','#c3faff',1.3);circle(c,-4,0,4,'#091422');c.restore();arrow(c,origin,P([cam[0]+36*dir[0],cam[1]+36*dir[1]]),'#dbffff',1.8);
+if(config.frames){const O=P([-164,-129]);arrow(c,O,[O[0]+29,O[1]],'#ff8d8d',1.5);arrow(c,O,[O[0],O[1]-29],'#75d3a7',1.5);text(c,'W',O[0]-12,O[1]+4,'#c2d1e7',10);arrow(c,origin,P([cam[0]+22*Math.cos(heading),cam[1]+22*Math.sin(heading)]),'#ffaaa3',2);arrow(c,origin,P([cam[0]-22*Math.sin(heading),cam[1]+22*Math.cos(heading)]),'#86e7be',2)}
+if(config.annotations){let v=landmarks.filter(p=>{let d=[p[0]-cam[0],p[1]-cam[1]],depth=d[0]*dir[0]+d[1]*dir[1],cross=-d[0]*dir[1]+d[1]*dir[0];return depth>0&&Math.abs(Math.atan2(cross,depth))<aperture}).length;text(c,`Landmarks in view ${v}`,12,h-15,'#8bb6ca',9);text(c,`t_WC = (${cam[0].toFixed(0)}, ${cam[1].toFixed(0)})`,w-12,h-15,'#8bb6ca',9,'right')}
+}
+function planning(time){let {c,w,h}=ctxFor(canvases[1]);grid(c,w,h);const s=Math.min(w/390,h/340),O=[w*.28,h*.72],L1=112*s,L2=100*s,ph=TAU*time/DURATION;
+const target=(u)=>[O[0]+(120+38*Math.cos(u))*s,O[1]-(114+51*Math.sin(u))*s];const tip=target(ph);
+if(config.trails){c.save();c.strokeStyle='rgba(189,163,255,.44)';c.lineWidth=1.7;c.setLineDash([5,5]);c.beginPath();for(let i=0;i<=120;i++){let p=target(i/120*TAU);i?c.lineTo(...p):c.moveTo(...p)}c.closePath();c.stroke();c.restore()}
+let vx=tip[0]-O[0],vy=tip[1]-O[1],d=clamp(Math.hypot(vx,vy),Math.abs(L1-L2)+.1,L1+L2-.1),a=Math.atan2(vy,vx);let q2=Math.acos(clamp((d*d-L1*L1-L2*L2)/(2*L1*L2),-1,1));let q1=a-Math.atan2(L2*Math.sin(q2),L1+L2*Math.cos(q2));let E=[O[0]+L1*Math.cos(q1),O[1]+L1*Math.sin(q1)],T=[E[0]+L2*Math.cos(q1+q2),E[1]+L2*Math.sin(q1+q2)];
+// future target ghost
+let future=target(ph+.38);line(c,T,future,'rgba(179,151,255,.26)',1,[4,5]);circle(c,...future,5,null,'#7568a9',1.4);
+// robot base
+poly(c,[[O[0]-25,O[1]+11],[O[0]+25,O[1]+11],[O[0]+17,O[1]+22],[O[0]-17,O[1]+22]],'#263a50','#607b96');line(c,[O[0]-32,O[1]+23],[O[0]+33,O[1]+23],'#67839d',1.4);
+line(c,O,E,'#a68cf0',14*s);line(c,E,T,'#d0b8ff',11*s);line(c,O,E,'#e4d8ff',1.2);line(c,E,T,'#f2e9ff',1.2);
+circle(c,...O,11*s,'#17243c','#baa9f7',3);circle(c,...E,9*s,'#1a2440','#cbb9ff',3);circle(c,...T,8*s,'#eedaff','#a994ff',2);
+if(config.frames){arrow(c,O,[O[0]+33*s,O[1]],'#ff9e9e',1.6);arrow(c,O,[O[0],O[1]-33*s],'#7be2b6',1.6);const ang=q1+q2;arrow(c,T,[T[0]+34*s*Math.cos(ang),T[1]+34*s*Math.sin(ang)],'#ff9999',2);arrow(c,T,[T[0]-34*s*Math.sin(ang),T[1]+34*s*Math.cos(ang)],'#80e6b6',2)}
+if(config.annotations){
+  text(c,'Base {B}',O[0]-25,O[1]+43,'#93abc6',10);
+  text(c,'Tool {E}',T[0]+11,T[1]-12,'#d9c6ff',10);
+  // Canvas coordinates increase downward. Report angles in the base frame with y up.
+  text(c,`q₁ ${(-q1*180/Math.PI).toFixed(0)}°`,O[0]+22,O[1]-16,'#aca0e2',10);
+  text(c,`q₂ ${(-q2*180/Math.PI).toFixed(0)}°`,E[0]-8,E[1]-16,'#aca0e2',10);
+  text(c,`Target in {B} (${Math.round((tip[0]-O[0])/s)}, ${Math.round((O[1]-tip[1])/s)})`,w-12,h-15,'#b3a2dc',9,'right');
+}
+}
+
+// 3D off-road vehicle: world X/Y horizontal, Z upward; vehicle X forward, Y left.
+const rot=(v,roll,pitch,yaw)=>{let [x,y,z]=v;let cr=Math.cos(roll),sr=Math.sin(roll),cp=Math.cos(pitch),sp=Math.sin(pitch),cy=Math.cos(yaw),sy=Math.sin(yaw);let y1=cr*y-sr*z,z1=sr*y+cr*z;let x2=cp*x+sp*z1,z2=-sp*x+cp*z1;return [cy*x2-sy*y1,sy*x2+cy*y1,z2]};
+const smooth=(a,b,x)=>{let u=clamp((x-a)/(b-a),0,1);return u*u*(3-2*u)};
+const terrain=(x,y)=>{
+  const rough=5*Math.sin(x*.032)+7*Math.sin(x*.058+y*.032)+3.5*Math.cos(y*.085-x*.025)+2.5*Math.sin(x*.1-y*.11);
+  const hill=34*Math.exp(-(((x-18)*(x-18))/1800 + (y*y)/3600));
+  const backside=-.16*Math.max(0,x-28);
+  return rough+hill+backside;
+};
+function control(time){
+let {c,w,h}=ctxFor(canvases[2]);grid(c,w,h);
+const u=time/DURATION,rad=Math.PI/180;
+// Smooth traversal from the near side of the hill to its far side; no tumbling.
+const progress=smooth(0,1,u);
+let x=mix(-118,108,progress);
+let y=8*Math.sin(progress*Math.PI*.7)+7*Math.sin(progress*Math.PI*1.6);
+let pos=[x,y,0];
+const yaw=.12+.14*Math.sin(progress*Math.PI*1.5);
+const forward=[Math.cos(yaw),Math.sin(yaw)],side=[-Math.sin(yaw),Math.cos(yaw)];
+const hx=48,hy=32,rest=27,wheelRadius=14;
+const wheels=[{x:hx,y:-hy},{x:hx,y:hy},{x:-hx,y:-hy},{x:-hx,y:hy}];
+const hs=wheels.map(q=>terrain(pos[0]+q.x*forward[0]+q.y*side[0],pos[1]+q.x*forward[1]+q.y*side[1]));
+const front=(hs[0]+hs[1])/2,back=(hs[2]+hs[3])/2,left=(hs[1]+hs[3])/2,right=(hs[0]+hs[2])/2;
+const pitch=Math.atan2(back-front,2*hx)*.9;
+const roll=Math.atan2(right-left,2*hy)*.84;
+const chassisZ=hs.reduce((a,b)=>a+b,0)/4+wheelRadius+rest;
+pos[2]=chassisZ;
+const angles=[roll,pitch,yaw];
+const sc=Math.min(w/390,h/340)*1.10;
+const origin=[w*.50,h*.50];
+const P=v=>[origin[0]+sc*(v[0]*.78-v[1]*.67),origin[1]+sc*(v[0]*.35+v[1]*.38-v[2]*.95)];
+const body=v=>{let r=rot(v,...angles);return [pos[0]+r[0],pos[1]+r[1],pos[2]+r[2]]};
+const BP=v=>P(body(v));
+// Terrain wire mesh with a highlighted hill profile.
+for(let yi=-135;yi<=135;yi+=27){let points=[];for(let xi=-190;xi<=190;xi+=9)points.push(P([xi,yi,terrain(xi,yi)]));for(let i=1;i<points.length;i++)line(c,points[i-1],points[i],'rgba(107,143,131,.17)',.8)}
+for(let xi=-189;xi<=189;xi+=27){let points=[];for(let yi=-135;yi<=135;yi+=9)points.push(P([xi,yi,terrain(xi,yi)]));for(let i=1;i<points.length;i++)line(c,points[i-1],points[i],'rgba(107,143,131,.17)',.8)}
+let ridge=[];for(let xi=-160;xi<=118;xi+=4)ridge.push(P([xi,0,terrain(xi,0)]));for(let i=1;i<ridge.length;i++)line(c,ridge[i-1],ridge[i],'rgba(255,197,120,.30)',2.2);
+if(config.trails){let points=[];for(let i=0;i<=120;i++){let uu=i/120,pp=smooth(0,1,uu);let xx=mix(-118,108,pp),yy=8*Math.sin(pp*Math.PI*.7)+7*Math.sin(pp*Math.PI*1.6);points.push(P([xx,yy,terrain(xx,yy)+2]))}for(let i=1;i<points.length;i++)line(c,points[i-1],points[i],'rgba(255,185,116,.45)',1.8,[4,4])}
+if(config.frames){let o=P([-124,-92,terrain(-124,-92)]);let axes=[[[37,0,0],'#ff9999','xW'],[[0,37,0],'#8ae4b7','yW'],[[0,0,43],'#89baff','zW']];axes.forEach(([v,color,label])=>{let b=P([-124+v[0],-92+v[1],terrain(-124,-92)+v[2]]);arrow(c,o,b,color,1.5);text(c,label,b[0]+3,b[1]-3,color,10)})}
+let wheelData=wheels.map((q,i)=>{let attach=body([q.x,q.y,-9]);let ground=[pos[0]+forward[0]*q.x+side[0]*q.y,pos[1]+forward[1]*q.x+side[1]*q.y,hs[i]];let tire=[ground[0],ground[1],ground[2]+wheelRadius];return {attach,ground,tire,travel:attach[2]-tire[2],i}});
+wheelData.forEach(d=>{let gp=P(d.ground);circle(c,...gp,12*sc,'rgba(16,26,29,.42)')});
+let bottom=[[-60,-27,-10],[60,-27,-10],[60,27,-10],[-60,27,-10]];
+let roof=[[-33,-23,25],[20,-23,27],[20,23,27],[-33,23,25]];
+poly(c,bottom.map(BP),'rgba(94,110,115,.68)','#c5b6a2',1);
+wheelData.forEach(d=>{let a=P(d.attach),b=P(d.tire);line(c,a,b,'#889cb1',5*sc);line(c,a,b,'#f3d3a4',1.4);let dx=b[0]-a[0],dy=b[1]-a[1],norm=Math.hypot(dx,dy)||1,nx=-dy/norm,ny=dx/norm;let pts=[];for(let i=0;i<=10;i++){let f=.22+.55*i/10,sg=i===0||i===10?0:(i%2?1:-1);pts.push([a[0]+dx*f+nx*sg*5*sc,a[1]+dy*f+ny*sg*5*sc])}for(let i=1;i<pts.length;i++)line(c,pts[i-1],pts[i],'#f9bb72',2.2*sc);circle(c,...b,12*sc,'#1b2631','#b1b8b8',2);circle(c,...b,5*sc,'#687684','#dce0dc',1)});
+poly(c,[bottom[0],bottom[1],roof[1],roof[0]].map(BP),'rgba(229,143,75,.83)','#ffd3a0',1.2);
+poly(c,[bottom[1],bottom[2],roof[2],roof[1]].map(BP),'rgba(182,98,46,.86)','#ffd3a0',1.2);
+poly(c,[bottom[2],bottom[3],roof[3],roof[2]].map(BP),'rgba(204,116,56,.88)','#ffd3a0',1.2);
+poly(c,roof.map(BP),'#efb16d','#ffe0b6',1.4);
+poly(c,[[-28,-23,24],[12,-23,26],[14,-23,5],[-39,-23,5]].map(BP),'rgba(35,76,97,.9)','#8fc2d6',1);
+poly(c,[[12,-23,26],[12,23,26],[12,23,5],[12,-23,5]].map(BP),'rgba(32,76,101,.91)','#9ec9d6',1);
+[[-21],[21]].forEach(([y])=>{let p=BP([61,y,-1]);circle(c,...p,3.6*sc,'#fff2ca','#d5a67a',1)});
+if(config.frames){let o=BP([0,0,8]);[[[48,0,8],'#ff8f8f','xB'],[[0,47,8],'#82e7b9','yB'],[[0,0,58],'#8bbfff','zB']].forEach(([v,col,label])=>{let b=BP(v);arrow(c,o,b,col,2);text(c,label,b[0]+4,b[1]-5,col,10)})}
+if(config.annotations){
+let vals=[['Roll φ',roll/rad,'#ffb974'],['Pitch θ',pitch/rad,'#c3b2ff'],['Yaw ψ',yaw/rad,'#75ddea']];
+let boxW=Math.min(w-24,292),xx=(w-boxW)/2,yy=h-59;c.fillStyle='rgba(15,26,45,.94)';c.strokeStyle='#33445b';c.lineWidth=1;c.fillRect(xx,yy,boxW,48);c.strokeRect(xx,yy,boxW,48);
+vals.forEach(([name,v,col],i)=>{let x=xx+boxW*(i+.5)/3;text(c,name,x,yy+14,'#8ba2bd',9,'center');text(c,`${v>=0?'+':''}${v.toFixed(1)}°`,x,yy+34,col,15,'center',700)});
+const travels=wheelData.map(d=>Math.round(d.travel));
+text(c,`p_WB = (${pos.map(value=>value.toFixed(0)).join(', ')})`,12,20,'#b9c5c8',9);
+text(c,`Suspension  FL ${travels[1]}  FR ${travels[0]}  RL ${travels[3]}  RR ${travels[2]}`,w/2,h-69,'#b9c5c8',9,'center');
+}
+}
+
+
+mountMotionPlayback({
+  section: SEC,
+  prefix: 'p',
+  duration: DURATION,
+  views: [perception, planning, control],
+  config,
+});
+})();
+</script>

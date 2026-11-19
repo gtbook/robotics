@@ -3,6 +3,32 @@ from pathlib import Path
 import argparse, base64, html, json
 ROOT=Path(__file__).resolve().parents[2]; SRC=Path(__file__).resolve().parent; OUT=ROOT/'applets'
 CHAPTERS={'2':('The trash sorter','sorter.js'),'3':('The robot vacuum','vacuum.js'),'4':('Warehouse robots','logistics.js'),'5':('The differential-drive robot','diffdrive.js'),'6':('Autonomous vehicles','driving.js'),'7':('Autonomous drones','drone.js')}
+STUDIES = {
+    'S61': [
+        ('reference-frames', 'Reference frames in motion', 'Rigid transforms for camera observations, manipulator kinematics, and vehicle pose.'),
+        ('rotation-composition', 'SO(3) rotation composition', 'Rᵢⱼ maps coordinates from frame j to frame i. Compare R₀₁R₁₂ and R₁₂R₀₁ acting on the same column vector p₂.'),
+    ],
+    'S62': [
+        ('driving-kinematics', 'Ackermann steering and car motion', 'The kinematic bicycle model uses the state (x, y, θ, φ), where (x, y) is the rear-axle midpoint, θ is the heading, and φ is the virtual front-wheel angle.'),
+    ],
+}
+
+def motion_studies(section):
+    source = SRC / 'studies'
+    css = (source / 'motion.css').read_text()
+    playback = (source / 'playback.js').read_text()
+    for ident, title, description in STUDIES[section]:
+        content = (source / f'{ident}.html').read_text()
+        if ident in {'reference-frames', 'driving-kinematics'}:
+            content = f'<script>{playback}</script>{content}'
+        document = f'''<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{html.escape(title)}</title><style>{css}</style></head><body><main>{content}</main>
+<script>
+const main = document.querySelector('main');
+new ResizeObserver(() => parent.postMessage({{studyHeight: main.offsetHeight}}, '*')).observe(main);
+</script></body></html>'''
+        yield {'id': ident, 'title': title, 'description': description, 'srcdoc': document}
 
 def script(data):return json.dumps(data,ensure_ascii=False,separators=(',',':')).replace('<','\\u003c')
 def build(section=None):
@@ -22,6 +48,8 @@ def build(section=None):
         if not artwork:artwork=sorted((ROOT/'Art/steampunk').glob('S'+chapter+'*-*.jpg'))
         art='data:image/jpeg;base64,'+base64.b64encode(artwork[0].read_bytes()).decode() if artwork else ''
         payload={'id':ident,'code':code,'data':data};source=bundle.read_text();
+        if ident in STUDIES:
+            payload['studies'] = list(motion_studies(ident))
         page_css=css
         if ident=='S53':
             source+='\n'+(SRC/'stereo.js').read_text()
@@ -36,7 +64,7 @@ def build(section=None):
     for chapter,(name,_) in CHAPTERS.items():
         cards=''.join(f'<a href="{file}"><span class="number">SECTION {ident[1]}.{ident[2]}</span><h3>{html.escape(title)}</h3><p>{html.escape(desc)}</p></a>' for ident,title,desc,file,_ in rendered if ident[1]==chapter)
         groups+=f'<section class="chapter" id="chapter-{chapter}"><h2>{chapter}. {name}</h2><div class="catalogue">{cards}</div></section>'
-    index=f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Independent, offline interactive laboratories for Robotics and Perception."><title>The Robotics Laboratory</title><style>{css}</style></head><body><main class="shell"><header class="index-head"><div class="eyebrow">Robotics &amp; Perception · An independent companion</div><h1>The Robotics Laboratory</h1><p class="muted">Turn the book’s numerical examples into experiments. Adjust a measurement, move a robot, or step through an algorithm—and inspect what changes.</p><div class="index-stats"><div><strong>{len(rendered)}</strong><span>Section laboratories</span></div><div><strong>6</strong><span>Robot chapters</span></div><div><strong>Offline</strong><span>Every page is self-contained</span></div></div></header><nav class="chapter-links" aria-label="Robot chapters">{''.join(f'<a href="#chapter-{c}">{name}</a>' for c,(name,_) in CHAPTERS.items())}</nav>{groups}<details><summary>About this collection</summary><p>Each laboratory starts from the notebook’s numerical models and includes the relevant Python code. Randomized experiments expose a reproducible seed. Recorded outputs from large pretrained models are labeled as recorded results; they are not live neural-network inference.</p><p>The collection covers every section containing substantive executable Python. Introductions, summaries, and sections containing only imports or comments are omitted. You can save or copy an individual HTML file and use it without installing Python or connecting to a server.</p></details><footer class="footer"><span>Robotics &amp; Perception · Frank Dellaert &amp; Seth Hutchinson</span><span>Steampunk artwork from the book · Independent pedagogical resource</span></footer></main></body></html>'''
+    index=f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Independent, offline interactive laboratories for Robotics and Perception."><title>The Robotics Laboratory</title><style>{css}</style></head><body><main class="shell"><header class="index-head"><div class="eyebrow">Robotics &amp; Perception · An independent companion</div><h1>The Robotics Laboratory</h1><p class="muted">Turn the book’s numerical examples into experiments. Adjust a measurement, move a robot, or step through an algorithm—and inspect what changes.</p><div class="index-stats"><div><strong>{len(rendered)}</strong><span>Section laboratories</span></div><div><strong>6</strong><span>Robot chapters</span></div><div><strong>Offline</strong><span>Every page is self-contained</span></div></div></header><nav class="chapter-links" aria-label="Robot chapters">{''.join(f'<a href="#chapter-{c}">{name}</a>' for c,(name,_) in CHAPTERS.items())}</nav>{groups}<details><summary>About this collection</summary><p>Numerical experiments include the relevant notebook Python code. Randomized experiments expose a reproducible seed. Saved outputs from pretrained models are labeled as recorded results.</p><p>The collection covers every section containing substantive executable Python and includes an animated laboratory for Section 6.2, Kinematics for Driving. You can save or copy an individual HTML file and use it without installing Python or connecting to a server.</p></details><footer class="footer"><span>Robotics &amp; Perception · Frank Dellaert &amp; Seth Hutchinson</span><span>Steampunk artwork from the book · Independent pedagogical resource</span></footer></main></body></html>'''
     (OUT/'index.html').write_text(index)
     print(f'Built {section or str(len(rendered)) + " section pages"} and applets/index.html.')
 if __name__=='__main__':
