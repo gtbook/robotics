@@ -36,7 +36,7 @@
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
-    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=6a604523" />
     <link rel="stylesheet" type="text/css" href="_static/style.css?v=51e3b7cf" />
   
   <!-- So that users can add custom icons -->
@@ -56,7 +56,7 @@
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="_static/togglebutton.js?v=4a39c7ea"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
-    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="_static/design-tabs.js?v=fcb327ea"></script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
@@ -473,9 +473,9 @@ We will often refer to the <em>training dataset</em> as <span class="math notran
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Interpolated Output: tensor([[-0.8580,  0.1170],
-        [-0.4574,  1.2184],
-        [-0.2438, -0.4383]], grad_fn=&lt;AddBackward0&gt;)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Interpolated Output: tensor([[ 1.2242, -1.1814],
+        [ 1.4405, -0.4480],
+        [ 1.4478,  1.2294]], grad_fn=&lt;AddBackward0&gt;)
 </pre></div>
 </div>
 </div>
@@ -493,8 +493,8 @@ We will often refer to the <em>training dataset</em> as <span class="math notran
 <div><p>A loss function for every occasion.</p>
 </div></blockquote>
 <p id="index-3">Different tasks require different loss functions, and a lot of creativity and research goes into crafting loss functions for complex tasks. For “vanilla” regression tasks, we typically use a <strong>mean squared error</strong> loss function as we already encountered before:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-c99d6331-3a6b-4d40-bbfb-f7189fb27a33">
-<span class="eqno">(5.57)<a class="headerlink" href="#equation-c99d6331-3a6b-4d40-bbfb-f7189fb27a33" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-63989aef-a32a-491b-8ea6-4fea6a5e7107">
+<span class="eqno">(5.57)<a class="headerlink" href="#equation-63989aef-a32a-491b-8ea6-4fea6a5e7107" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathcal{L}_{\text{MSE}}(\theta; D) \doteq \frac{1}{|D|} \sum_{(x,y)\in D}|f(x;\theta)-y|^2
 \end{equation}\]</div>
 <p>Above <span class="math notranslate nohighlight">\(f(x;\theta)\)</span> is the continuous prediction function implemented by, say, a neural network, where <span class="math notranslate nohighlight">\(\theta\)</span> represents the weights in all layers. Note that the formula above can be easily generalized to vector-valued labels <span class="math notranslate nohighlight">\(y\)</span>. In fact, our 1D interpolation example above yielded a 2-dimensional output, so let us illustrate the MSE loss in that case:</p>
@@ -506,7 +506,7 @@ We will often refer to the <em>training dataset</em> as <span class="math notran
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Our MSE Loss: 15.93963623046875
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Our MSE Loss: 11.294268608093262
 </pre></div>
 </div>
 </div>
@@ -521,22 +521,22 @@ We will often refer to the <em>training dataset</em> as <span class="math notran
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Pytorch MSE Loss: 15.93963623046875
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Pytorch MSE Loss: 11.294268608093262
 </pre></div>
 </div>
 </div>
 </div>
 <p id="index-4">For classification, the <strong>cross entropy</strong> loss function is very popular.
 It measures the average disagreement of the predicted labels with the ground truth labels:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-08e7ef10-948d-412a-8264-ebd9c4ca0afe">
-<span class="eqno">(5.58)<a class="headerlink" href="#equation-08e7ef10-948d-412a-8264-ebd9c4ca0afe" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-f55a87ca-f9c3-444a-8d25-0de528444f50">
+<span class="eqno">(5.58)<a class="headerlink" href="#equation-f55a87ca-f9c3-444a-8d25-0de528444f50" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \mathcal{L}_{\text{CE}}(\theta; D) \doteq \sum_c \sum_{(x,y=c)\in D}\log\frac{1}{p_c(x;\theta)}
 \end{equation}\]</div>
 <p>This formula seems perhaps unintuitive and rather complicated;
 however, it is actually quite intuitive once you understand a few concepts.
 In particular, in the multi-class classification problem we assume that the model outputs a probability <span class="math notranslate nohighlight">\(p_c(x;\theta)\)</span> for every class <span class="math notranslate nohighlight">\(c\in[N]\)</span>, where <span class="math notranslate nohighlight">\(N\)</span> is the number of classes. The quantity</p>
-<div class="amsmath math notranslate nohighlight" id="equation-97deaa17-d326-49b2-8131-a626f279c93b">
-<span class="eqno">(5.59)<a class="headerlink" href="#equation-97deaa17-d326-49b2-8131-a626f279c93b" title="Permalink to this equation">#</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-698faed0-a067-4d66-9211-1fdd51091c34">
+<span class="eqno">(5.59)<a class="headerlink" href="#equation-698faed0-a067-4d66-9211-1fdd51091c34" title="Permalink to this equation">#</a></span>\[\begin{equation}
 \log\frac{1}{p_c(x;\theta)}
 \end{equation}\]</div>
 <p>is called the <em>surprise</em> that we should experience when seeing a label <span class="math notranslate nohighlight">\(y=c\)</span>.
@@ -575,12 +575,12 @@ The lower the probability, the higher the surprise. Hence, the cross-entropy abo
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>dataset[12]: (tensor(1.7986), tensor([0.5798, 0.9923]))
-dataset[10:15]: (tensor([11.6219,  0.5089,  1.7986,  1.3714, 16.1441]), tensor([[-0.5496, -0.9385],
-        [ 0.2181,  0.9318],
-        [ 0.5798,  0.9923],
-        [ 0.4695,  0.9359],
-        [-0.8336,  0.4663]]))
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>dataset[12]: (tensor(10.2367), tensor([ 0.0658, -1.0826]))
+dataset[10:15]: (tensor([ 7.6875, 13.8730, 10.2367, 11.0375,  4.1273]), tensor([[ 0.5385, -0.6829],
+        [-1.0654, -0.4114],
+        [ 0.0658, -1.0826],
+        [-0.2455, -0.9132],
+        [ 1.1199,  0.3331]]))
 </pre></div>
 </div>
 </div>
@@ -649,7 +649,7 @@ dataset[10:15]: (tensor([11.6219,  0.5089,  1.7986,  1.3714, 16.1441]), tensor([
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/ce0ca5da4f8577145c49467c2f78973d9c8d9a3290bb7eb221d81c2f0855ef53.png" src="_images/ce0ca5da4f8577145c49467c2f78973d9c8d9a3290bb7eb221d81c2f0855ef53.png" />
+<img alt="_images/32e9439e07dd778306f32854567b7639f7ff5af593cf22770e2f6e1de32ba7d6.png" src="_images/32e9439e07dd778306f32854567b7639f7ff5af593cf22770e2f6e1de32ba7d6.png" />
 </div>
 </div>
 <p>The resulting loss function is shown in Figure <a class="reference internal" href="#fig:loss_training"><span class="xref myst">1</span></a>.
@@ -673,7 +673,7 @@ and Figure <a class="reference internal" href="#fig:sin_cos_approx"><span class=
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/f1a2bd3d5597a865809cdb09227d42b42810bd4ffe8ddb0f1c8fa332ace76356.png" src="_images/f1a2bd3d5597a865809cdb09227d42b42810bd4ffe8ddb0f1c8fa332ace76356.png" />
+<img alt="_images/8213ccf4dfb3f608b236570b132e32b7935e9b604344e685fb61dbf651089d34.png" src="_images/8213ccf4dfb3f608b236570b132e32b7935e9b604344e685fb61dbf651089d34.png" />
 </div>
 </div>
 </section>
@@ -733,7 +733,7 @@ and Figure <a class="reference internal" href="#fig:sin_cos_approx"><span class=
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/002a896fd971eb106b05daf308537e16c531474b57d9e575ae862cbad34a4c5f.png" src="_images/002a896fd971eb106b05daf308537e16c531474b57d9e575ae862cbad34a4c5f.png" />
+<img alt="_images/3c76a723c3fb6a445ab049a43c00082ec172febb73ea8d4a6c97cb964a8e7dfc.png" src="_images/3c76a723c3fb6a445ab049a43c00082ec172febb73ea8d4a6c97cb964a8e7dfc.png" />
 </div>
 </div>
 <p>The training loss is shown in Figure <a class="reference internal" href="#fig:loss_training_sgd"><span class="xref myst">3</span></a>.
